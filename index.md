@@ -1,11 +1,6 @@
 ---
-layout: page
+layout: default
 title: High Dimensional Data Analysis 2020 (HDA2020)
-
-# License & Language & url
-license: https://creativecommons.org/licenses/by/4.0/
-inLanguage: "en-us"
-
 ---
 
 ![IntroFig](./figures/wpGraph.jpeg)
