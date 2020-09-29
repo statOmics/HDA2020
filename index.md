@@ -5,7 +5,6 @@ title: High Dimensional Data Analysis 2020 (HDA2020)
 # License & Language & url
 license: https://creativecommons.org/licenses/by/4.0/
 inLanguage: "en-us"
-url: "https://statOmics.github.io/HDA2020"
 
 ---
 
