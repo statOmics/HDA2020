@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: page
 title: High Dimensional Data Analysis 2020 (HDA2020)
 
 # License & Language & url
