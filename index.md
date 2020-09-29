@@ -27,7 +27,7 @@ R Data Exploration: https://dodona.ugent.be/nl/courses/345/
 
 **1. Introduction**
 
-  - Slides: [Intro](assets/intro.pdf)
+  - Slides: [Intro](assets/IntroHighDim.pdf)
   - Software: [Install and Launch Statistical Software](pages/software4stats.md)
   - [introduction](pages/intro.html)
 
