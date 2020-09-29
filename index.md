@@ -29,7 +29,7 @@ R Data Exploration: https://dodona.ugent.be/nl/courses/345/
 
   - Slides: [Intro](assets/IntroHighDim.pdf)
   - Software: [Install and Launch Statistical Software](pages/software4stats.md)
-  - [introduction](pages/intro.html)
+  - [Introduction](pages/intro.html)
 
 
 **2. Singular value decomposition**
