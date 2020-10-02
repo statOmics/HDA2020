@@ -5,6 +5,8 @@
 *.html
 *_files/
 *_cache/
+Gemfile.lock
+_site/
 
 ## data
 raw-data/
