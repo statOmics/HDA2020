@@ -14,10 +14,8 @@ output:
 
 # Introduction
 
-```{r include=FALSE}
-knitr::opts_chunk$set(include = TRUE, comment = NA, echo = TRUE,
-                      message = FALSE, warning = FALSE)
-library(tidyverse)
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(comment = NA, message = FALSE, warning = FALSE)
 ```
 
 - We live in a big data era
@@ -63,22 +61,19 @@ Issues with high-dimensional data:
 
 ## Example:   Kang et al. (2018)’s droplet-based scRNA-seq data of PBMCs cells from 8 lupus patients measured before and after 6h-treatment with INF-β (16 samples in total).
 
-```{r}
+```{r libraries, message=FALSE, warning=FALSE}
+library(tidyverse)
+
+## Packages to load and visualize the single-cell data
 library(ExperimentHub)
 library(scater)
-library(dplyr)
-library(magrittr)
-library(Matrix)
-library(purrr)
-library(tibble)
-
-library(Matrix.utils)
-library(geepack)
-eh <- ExperimentHub()
-sce <- eh[["EH2259"]]
 ```
 
 ```{r}
+## Load Kang single-cell data from ExperimentHub
+eh <- ExperimentHub()
+sce <- eh[["EH2259"]]
+
 sce
 ```
 
