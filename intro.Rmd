@@ -493,4 +493,15 @@ In this introductory chapter we only aim to give a rough discussion on predictio
 
 - For prediction models with a large number of predictors we will therefore introduce penalized regression. This will induce some bias in the estimation, but will allow us to reduce the variance considerably.
 
+# Session info {-}
+
+<details><summary>Session info</summary>
+
+```{r session_info, echo=FALSE, cache=FALSE}
+Sys.time()
+sessioninfo::session_info()
+```
+
+</details>
+
 # [Home](https://statomics.github.io/HDA2020/) {-}

@@ -2164,4 +2164,15 @@ grid.arrange(
 
 - Olivier Thas for sharing his materials of Analysis of High Dimensional Data 2019-2020, which I used as the starting point for this chapter.  
 
+# Session info {-}
+
+<details><summary>Session info</summary>
+
+```{r session_info, echo=FALSE, cache=FALSE}
+Sys.time()
+sessioninfo::session_info()
+```
+
+</details>
+
 # [Home](https://statomics.github.io/HDA2020/) {-}
