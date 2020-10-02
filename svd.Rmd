@@ -55,9 +55,18 @@ library(downloader)
 library(imager)
 ```
 
+```{r download-data, warning=FALSE, message=FALSE}
+## Download and unzip data
+download(
+  "https://raw.githubusercontent.com/statOmics/HDA2020/gh-pages/assets/data/yalefaces_cropped.zip",
+  dest = "raw-data/yalefaces_cropped.zip", mode = "wb", quiet = TRUE
+)
+unzip ("raw-data/yalefaces_cropped.zip", exdir = "./raw-data")
 
-dir <- "./CroppedYale"
+dir <- "./raw-data/CroppedYale"
+```
 
+```{r}
 people <- list.files(dir)
 people2 <- sapply(people,
   function(x) list.files(
