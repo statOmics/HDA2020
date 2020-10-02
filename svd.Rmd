@@ -45,15 +45,15 @@ When you want to run the script you will have to comment out the eval=FALSE stat
 - Each of the facial images in our library will be reshaped into a large vector with 192 × 168 = 32 256 elements.
 - We will use the 64 images of 36 people to build our models
 
-```{r warning=FALSE,silent=TRUE}
-library("pixmap")
-library("tidyverse")
-library("gridExtra")
-library("grid")
-library("ggmap")
-library("downloader")
-download("https://raw.githubusercontent.com/statOmics/HDA2020/gh-pages/assets/data/yalefaces_cropped.zip", dest="yalefaces_cropped.zip", mode="wb")
-unzip ("yalefaces_cropped.zip", exdir = "./")
+```{r libraries, message=FALSE, warning=FALSE, silent=TRUE}
+library(pixmap)
+library(tidyverse)
+library(gridExtra)
+library(grid)
+library(ggmap)
+library(downloader)
+library(imager)
+```
 
 
 dir <- "./CroppedYale"
@@ -76,6 +76,7 @@ facesList <- lapply(people2, function(x) read.pnm(x))
   ncol=6)
 ```
 
+
 ## Method
 
 Let $\mathbf{X}$ be an $n\times p$ matrix e.g.
@@ -83,6 +84,9 @@ Let $\mathbf{X}$ be an $n\times p$ matrix e.g.
 - gene expression of $p=40 000$ genes for $n=30$ subjects
 - n = 100 000 000 webpages indexed with p search terms, or
 - $n$ images each stored as a $p=32 256$ vector with the intensity of each pixel
+
+<!-- Need "emo" package for emojis, install with -->
+<!-- `devtools::install_github("hadley/emo")` -->
 
 \[X=
 \left[\begin{array}{ccc}
@@ -248,7 +252,6 @@ allFacesMxCentered <- allFacesCenteredMx -
 
 ### Visualisation of mean image
 ```{r}
-library(ggmap)
 plotFaceVector <- function(faceVector,nrow=192,ncol=168) {
   matrix(faceVector,nrow=nrow,ncol=ncol) %>%
   ggimage()  
@@ -593,7 +596,6 @@ Some **informal statement** about the truncated SVD
 4. save as Matrix
 
 ```{r}
-library(imager)
 mondriaan <- load.image("https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Piet_Mondrian_-_Composition_No._III%2C_with_red%2C_blue%2C_yellow_and_black%2C_1929.jpg/1920px-Piet_Mondrian_-_Composition_No._III%2C_with_red%2C_blue%2C_yellow_and_black%2C_1929.jpg")
 mondriaan <- grayscale(mondriaan)
 plot(mondriaan,axes=FALSE)
@@ -1052,7 +1054,6 @@ cbind(lm1$coef,betaSvd)
 In this section we will use a dataset on food consumption in the UK. The data originate from the UKs ‘Department for Environment, Food and Rural Affairs’ (DEFRA), showing the consumption in grams (per person, per week) of 17 different types of foodstuff measured and averaged in the four countries of the United Kingdom in 1997. We would like to explore the data and interpret how the food patterns of the different countries differ.
 
 ```{r}
-library(tidyverse)
 uk <- read_csv(
 "https://raw.githubusercontent.com/statOmics/HDA2020/data/ukFoods.csv")
 knitr::kable(uk, caption="The full UK foods data table")
@@ -1353,8 +1354,6 @@ From $\mathbf{x}_{k,i}^T =  \mathbf{z}_{k,i}^T\mathbf{V}_k^T$ we learnt that the
 ## Illustration Uk food
 
 ```{r}
-library(gridExtra)
-
 p1 <- ggplot() +
   geom_bar(
     aes( x=rownames(Vk), y=Vk[,1]),
