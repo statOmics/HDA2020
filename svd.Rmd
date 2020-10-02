@@ -13,6 +13,7 @@ output:
 ---
 
 # Introduction
+
 ## Motivation
 
 The SVD is one of the most well used and general purpose tools from linear algebra for data processing!
@@ -66,7 +67,7 @@ unzip ("raw-data/yalefaces_cropped.zip", exdir = "./raw-data")
 dir <- "./raw-data/CroppedYale"
 ```
 
-```{r}
+```{r, warning=FALSE}
 people <- list.files(dir)
 people2 <- sapply(people,
   function(x) list.files(
@@ -2054,7 +2055,7 @@ grid.arrange(
     ylim=range(ovarian[c(1,2,200,201),])),
   ncol=1
   )
-  ```
+```
 
 
 ### SVD Analysis
