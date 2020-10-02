@@ -32,7 +32,7 @@ Challenge: We have to learn from high dimensional data!
 ## What are high dimensional data?
 
 - We typically observe multiple variables/features (p) for each subject/experimental unit $i=1,\ldots,n$ i.e.
-\[ \mathbf{x}_i^t=[x_{i1},\ldots,x_{ip}]\]
+\[ \mathbf{x}_i^T=[x_{i1},\ldots,x_{ip}]\]
 
 - Multivariate statistics have a long history, but were designed for the $n>>>p$ case,
 
@@ -453,7 +453,7 @@ $$
 
 where
 
--  $\hat{Y}(\mathbf{x})=\mathbf{x}^t\hat{\boldsymbol{\beta}}$ is the prediction at $\mathbf{x}$
+-  $\hat{Y}(\mathbf{x})=\mathbf{x}^T\hat{\boldsymbol{\beta}}$ is the prediction at $\mathbf{x}$
 
 -  $Y^*$ is an outcome at predictor $\mathbf{x}$
 
