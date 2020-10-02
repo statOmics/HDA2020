@@ -135,8 +135,8 @@ $$
 \begin{array}{lcl}
 y_{ig} &\sim& NB(\mu_{ig}, \phi_{g})\\
 E[y_{ig}] &=& \mu\\
-log(\mu_{ig}) &=& \eta_{ig}\\
-\eta_{ig} &=& \beta_{0,g} + \sum\limits_{c=1}^C \beta_{c,g} X_{ic} + \beta_{s,g} X_{is} + \sum\limits_{c=1}^C \beta_{c:t,g} X_{ic} X_{is} + \alpha_{ig}
+\log(\mu_{ig}) &=& \eta_{ig}\\
+\eta_{ig} &=& \beta_{0,g} + \sum\limits_{c=1}^C \beta_{c,g} X_{ic} + \beta_{s,g} X_{is} + \sum\limits_{c=1}^C \beta_{c:s,g} X_{ic} X_{is} + \alpha_{ig}
 \end{array} \right.
 $$
 
@@ -148,8 +148,8 @@ With
 
 Suppose we want to test if the effect of the stimulus (average difference in expression between stimulated and non stimulated cells) is different in cell type c than in the reference cell type 1?
 
-- $H_0: \beta_{c:t,g} = 0$
-- $H_1: \beta_{c:t,g} \neq 0$
+- $H_0: \beta_{c:s,g} = 0$
+- $H_1: \beta_{c:s,g} \neq 0$
 
 
 - We have to assess this for `r nrow(sce)` genes!
