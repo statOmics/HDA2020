@@ -93,8 +93,8 @@ counts(sce)[18990:19000,9:20]
 - We should be able to explore the data in a low dimensional projection
 
 ```{r}
-plotReducedDim(sce, use_dimred="TSNE", colour_by="cell")
-plotReducedDim(sce, use_dimred="TSNE", colour_by="stim")
+plotReducedDim(sce, dimred="TSNE", colour_by="cell")
+plotReducedDim(sce, dimred="TSNE", colour_by="stim")
 ```
 
 - Note, that we see huge effect of treatment. If I see this I am always on my guard!
@@ -103,7 +103,7 @@ plotReducedDim(sce, use_dimred="TSNE", colour_by="stim")
 ## Prediction
 
 ```{r}
-plotReducedDim(sce, use_dimred="TSNE", colour_by="cell")
+plotReducedDim(sce, dimred="TSNE", colour_by="cell")
 ```
 
 - In single cell analysis it is key to identify cell types in scRNA-seq data sets before in-depth investigations of their functional and pathological roles.
@@ -123,7 +123,7 @@ plotReducedDim(sce, use_dimred="TSNE", colour_by="cell")
 ## Large scale hypothesis testing
 
 ```{r}
-plotReducedDim(sce, use_dimred="TSNE", colour_by="cell", shape_by="stim")
+plotReducedDim(sce, dimred="TSNE", colour_by="cell", shape_by="stim")
 ```
 
 - Which genes are differentially expressed between control and stimulated treatment  (assess in each cell type)
