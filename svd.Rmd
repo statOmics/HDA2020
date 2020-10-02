@@ -275,17 +275,25 @@ meanFace %>%
 #### Perform SVD in R
 
 1. We adopt svd on the centered matrix
-2. We store the result because the calculation take 10 minutes.
+2. We cache the result because the calculation takes 10 minutes.
 
-```{r eval=FALSE}
+```{r run-SVD, cache=TRUE}
 faceSvd <- svd(allFacesMxCentered)
-saveRDS(faceSvd,file="faceSvd.rds")
 ```
 
-#### SVD
-```{r silent=TRUE,warnings=FALSE}
+```{r, eval=FALSE}
+## Run this code manually to store the SVD for later re-use
+saveRDS(faceSvd, file = "faceSvd.rds")
+```
+
+```{r, eval=FALSE}
+## Run this code manually to reload the SVD result
 faceSvd <- readRDS("faceSvd.rds")
 ```
+
+
+
+#### SVD
 
 Dimensions of $\mathbf{U}$, $\mathbf{V}$?
 
