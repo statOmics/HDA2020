@@ -289,10 +289,31 @@ Toy Example: fit without intercept
 
 ```{r}
 set.seed(4)
-x1 <- c(2,0,0)
-x2 <- c(0,2,0)
-y <- x1*0.5 + x2*0.5 + rnorm(3,2)
-fit <- lm(y~-1+x1+x2)
+x1 <- c(2, 0, 0)
+x2 <- c(0, 2, 0)
+y <- x1 * 0.5 + x2 * 0.5 + rnorm(3, 2)
+fit <- lm(y ~ -1 + x1 + x2)
+```
+
+- $\mathbf{Y}$ is now given by
+
+\[
+\mathbf{Y}=\left[\begin{array}{c}
+1 + \epsilon_1 \\
+1 + \epsilon_2\\
+0 + \epsilon_3
+\end{array}\right]
+\]
+
+with the $\epsilon_i$s some random noise.
+
+- The actual values of $\mathbf{Y}$ are:
+
+```{r}
+## True Y
+y
+## Fitted Y
+fit$fitted.values
 ```
 
 #### Visualise fit
@@ -381,15 +402,40 @@ So the column space of X is a plane in the three dimensional space.
 
 1. Plane spanned by column space:
 ```{r}
-arrows3D(0,0,0,x1[1],x1[2],x1[3],xlim=c(0,5),ylim=c(0,5),zlim=c(0,5),bty = "g",theta=th,col=2,xlab="row 1",ylab="row 2",zlab="row 3")
+arrows3D(
+  0, 0, 0, x1[1], x1[2], x1[3],
+  xlim = c(0, 5), ylim = c(0, 5), zlim = c(0, 5), bty = "g",
+  theta = th, col = 2, ticktype = "detailed",
+  xlab = "observation 1", ylab = "observation 2", zlab = "observation 3"
+)
 text3D(x1[1],x1[2],x1[3],labels="X1",col=2,add=TRUE)
 arrows3D(0,0,0,x2[1],x2[2],x2[3],add=TRUE,col=2)
 text3D(x2[1],x2[2],x2[3],labels="X2",col=2,add=TRUE)
 ```
 
 2. Vector of Y:
+
+Actual values of $\mathbf{Y}$:
+
 ```{r}
-arrows3D(0,0,0,x1[1],x1[2],x1[3],xlim=c(0,5),ylim=c(0,5),zlim=c(0,5),bty = "g",theta=th,col=2,xlab="row 1",ylab="row 2",zlab="row 3")
+y
+```
+
+\[
+\mathbf{Y}=\left[\begin{array}{c}
+`r y[1]` \\
+`r y[2]` \\
+`r y[3]`
+\end{array}\right]
+\]
+
+```{r}
+arrows3D(
+  0, 0, 0, x1[1], x1[2], x1[3],
+  xlim = c(0, 5), ylim = c(0, 5), zlim = c(0, 5), bty = "g",
+  theta = th, col = 2, ticktype = "detailed",
+  xlab = "observation 1", ylab = "observation 2", zlab = "observation 3"
+)
 text3D(x1[1],x1[2],x1[3],labels="X1",col=2,add=TRUE)
 arrows3D(0,0,0,x2[1],x2[2],x2[3],add=TRUE,col=2)
 text3D(x2[1],x2[2],x2[3],labels="X2",col=2,add=TRUE)
@@ -398,8 +444,28 @@ text3D(y[1],y[2],y[3],labels="Y",col="darkblue",add=TRUE)
 ```
 
 3. Projection of Y onto column space
+
+Actual values of fitted values $\mathbf{\hat{Y}}$:
+
 ```{r}
-arrows3D(0,0,0,x1[1],x1[2],x1[3],xlim=c(0,5),ylim=c(0,5),zlim=c(0,5),bty = "g",theta=th,col=2,xlab="row 1",ylab="row 2",zlab="row 3")
+fitted.values(fit)
+```
+
+\[
+\mathbf{Y}=\left[\begin{array}{c}
+`r fitted.values(fit)[1]` \\
+`r fitted.values(fit)[2]` \\
+`r fitted.values(fit)[3]`
+\end{array}\right]
+\]
+
+```{r}
+arrows3D(
+  0, 0, 0, x1[1], x1[2], x1[3],
+  xlim = c(0, 5), ylim = c(0, 5), zlim = c(0, 5), bty = "g",
+  theta = th, col = 2, ticktype = "detailed",
+  xlab = "observation 1", ylab = "observation 2", zlab = "observation 3"
+)
 text3D(x1[1],x1[2],x1[3],labels="X1",col=2,add=TRUE)
 arrows3D(0,0,0,x2[1],x2[2],x2[3],add=TRUE,col=2)
 text3D(x2[1],x2[2],x2[3],labels="X2",col=2,add=TRUE)
@@ -408,7 +474,6 @@ text3D(y[1],y[2],y[3],labels="Y",col="darkblue",add=TRUE)
 arrows3D(0,0,0,fit$fitted[1],fit$fitted[2],fit$fitted[3],add=TRUE,col="darkblue")
 segments3D(y[1],y[2],y[3],fit$fitted[1],fit$fitted[2],fit$fitted[3],add=TRUE,lty=2,col="darkblue")
 text3D(fit$fitted[1],fit$fitted[2],fit$fitted[3],labels="fit",col="darkblue",add=TRUE)
-
 ```
 
 - Note, that it is also clear from the equation in the derivation of the LS that the residual is orthogonal on the column space:
