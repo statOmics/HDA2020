@@ -3,3 +3,9 @@
 .RData
 .Ruserdata
 *.html
+*_files/
+*_cache/
+
+## data
+raw-data/
+faceSvd.rds
