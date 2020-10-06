@@ -174,7 +174,7 @@ Also note that
 \]
 
 
-- For high dimensional data $n>>>p$ $\rightarrow$ $\text{max}(r)=n$ and
+- For high dimensional data $p>>>n$ $\rightarrow$ $\text{max}(r)=n$ and
 
 - equivalently for multivariate data with $n>p$ $\rightarrow$ $\text{max}(r)=p$
 
@@ -311,7 +311,7 @@ Check orthogonality?
 
 We do not do it for all vectors because it takes too long.
 First left eigen vector and second left eigenvector.
-Happens in $\mathbf{U}^T]\mathbf{U}$
+Happens in $\mathbf{U}^T\mathbf{U}$
 ```{r}
 t(faceSvd$u[,1])%*%faceSvd$u[,1]
 t(faceSvd$u[,1])%*%faceSvd$u[,2]
@@ -362,8 +362,10 @@ grid.arrange(
 
 - From eigen face 5 onwards we start to see specific features.
 
+- In this case: $n < p$, so $r = n$.
+
 \[
-\mathbf{X}_{n\times p}=\mathbf{U}_{n \times r}\boldsymbol{\Sigma}_{r\times r}\mathbf{V}_{p\times r}^T
+\mathbf{X}_{n\times p}=\mathbf{U}_{n \times n}\boldsymbol{\Delta}_{n\times n}\mathbf{V}_{p\times n}^T
 \]
 
 \[
@@ -388,7 +390,7 @@ grid.arrange(
 \mid&&\mid\\
 \mathbf{u}_1&\ldots&\mathbf{u}_n\\
 \mid&&\mid
-\end{array}\right]_{n \times r}\\
+\end{array}\right]_{n \times n}\\
 \quad \\
 \end{array}
 \begin{array}{c}
@@ -396,18 +398,18 @@ grid.arrange(
 \left[\begin{array}{ccc}
 \delta_1\\
 &\ddots&\\
-&&\delta_r\\
-\end{array}\right]_{r \times r}\\
+&&\delta_n\\
+\end{array}\right]_{n \times n}\\
 \quad\\
 \end{array}
 \begin{array}{c}
 \quad
 \left[\begin{array}{ccc}
 \mid&&\mid\\
-\mathbf{v}_1&\ldots&\mathbf{v}_r\\
+\mathbf{v}_1&\ldots&\mathbf{v}_n\\
 \mid&&\mid\\
 \end{array}
-\right]^T_{p \times r}\\
+\right]^T_{p \times n}\\
 \begin{array}{ccc}
 `r set.seed(1);emo::ji("fear")`&\quad&`r set.seed(1);emo::ji("meh")`
 \end{array}
@@ -437,12 +439,12 @@ grid.arrange(
 \mid&&\mid\\
 \mathbf{u}_1&\ldots&\mathbf{u}_n\\
 \mid&&\mid
-\end{array}\right]_{n \times r}
+\end{array}\right]_{n \times n}
 \left[\begin{array}{ccc}
 \delta_1\\
 &\ddots&\\
 &&\delta_r\\
-\end{array}\right]_{r \times r}
+\end{array}\right]_{n \times n}
 \left[\begin{array}{ccc}
 -&\mathbf{v}_{1}^T &- \\
 \vdots&\vdots&\vdots\\
@@ -495,10 +497,10 @@ In left singular vectors $u_{ij}$ we quantify the contribution of the $j^\text{t
 \\\quad\\\quad
 \end{array}
 + \ldots +
-\delta_1\left[
+\delta_r\left[
 \begin{array}{c}
 \mid\\
-\mathbf{u}_1\\
+\mathbf{u}_r\\
 \mid
 \end{array}
 \right]
@@ -506,7 +508,7 @@ In left singular vectors $u_{ij}$ we quantify the contribution of the $j^\text{t
 \left[
 \begin{array}{ccc}
 -&
-\mathbf{v}_1^T&
+\mathbf{v}_r^T&
 -
 \end{array}
 \right]\\\quad\\\quad
@@ -716,7 +718,7 @@ X <- matrix(as.data.frame(mondriaan)[,3],nrow=dim(mondriaan)[1],ncol=dim(mondria
 
 #### Singular values
 
-```{r}
+```{r, cache=TRUE}
 monSvd <- svd(X)
 
 p1 <- data.frame(x=1:length(monSvd$d),y=monSvd$d) %>%
@@ -772,7 +774,7 @@ X <- matrix(as.data.frame(mondriaan)[,3],nrow=dim(mondriaan)[1],ncol=dim(mondria
 
 #### Singular values
 
-```{r}
+```{r, cache=TRUE}
 monSvd <- svd(X)
 
 p1 <- data.frame(x=1:length(monSvd$d),y=monSvd$d) %>%
@@ -1034,7 +1036,7 @@ If we now think about the fit:
 
 \begin{eqnarray}
 \hat{\mathbf{Y}}&=&\mathbf{X}\hat{\boldsymbol{\beta}}\\
-&=&\mathbf{U}\boldsymbol{\Delta}\mathbf{V}^T\mathbf{V}\boldsymbol{\Delta}\mathbf{U}^T\mathbf{Y}\\
+&=&\mathbf{U}\boldsymbol{\Delta}^{-1}\mathbf{V}^T\mathbf{V}\boldsymbol{\Delta}\mathbf{U}^T\mathbf{Y}\\
 &=&\mathbf{U}\mathbf{U}^T\mathbf{Y}
 \end{eqnarray}
 
