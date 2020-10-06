@@ -11,15 +11,15 @@ Modern high throughput technologies easily generate data on thousands of variabl
 
 ### Prerequisites
 
-The prerequisites for the Statistical Genomics course are the successful completion of a basic course of statistics that covers topics on data exploration and descriptive statistics, statistical modeling, and inference: linear models, confidence intervals, t-tests, F-tests, anova, chi-squared test.
+The prerequisites for the High Dimensional Data Analysis course are the successful completion of a basic course of statistics that covers topics on data exploration and descriptive statistics, statistical modeling, and inference: linear models, confidence intervals, t-tests, F-tests, anova, chi-squared test.
 
-The basis concepts may be revisited in my online course https://gtpb.github.io/PSLS20/ (english) and in https://statomics.github.io/statistiekCursusNotas/ (dutch)
+The basis concepts may be revisited in my online course <https://gtpb.github.io/PSLS20/> (English) and in <https://statomics.github.io/statistiekCursusNotas/> (Dutch).
 
 A primer to R and Data visualisation  in R can be found in:
 
-R Basics: https://dodona.ugent.be/nl/courses/335/
+- R Basics: <https://dodona.ugent.be/nl/courses/335/>
 
-R Data Exploration: https://dodona.ugent.be/nl/courses/345/
+- R Data Exploration: <https://dodona.ugent.be/nl/courses/345/>
 
 ---
 
