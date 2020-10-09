@@ -474,3 +474,13 @@ Vk
 3. Can you give a meaningful interpretation to each dimension? 
 Interpretation is crucial, quickly write this on a piece of paper and submit.
 
+# Session info {-}
+
+<details><summary>Session info</summary>
+
+```{r session_info, echo=FALSE, cache=FALSE}
+Sys.time()
+sessioninfo::session_info()
+```
+
+</details>
