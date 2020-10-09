@@ -39,6 +39,7 @@ Installation code is commented, uncomment and paste this code in an R console to
 
 ```{r libraries, message=FALSE, warning=FALSE}
 # install.packages(c("ggplot2", "ggfortify"))
+library(dplyr)
 library(ggplot2)
 library(ggfortify)
 ```
@@ -147,7 +148,6 @@ D_X <- dist_mx ^ 2
 ```
 
 
-
 ### The SVD
 
 We can now compute the SVD of the Gram matrix and use it to project our original matrix $\mathbf{X}$ (which is still unknown to us!) into a lower dimensional space while preserving the Euclidean distances as well as possible.
@@ -170,6 +170,9 @@ Components of the `Gx_svd` object:
 
 ### Truncated SVD and projection into lower dimensional space
 
+The truncated SVD from the Gram matrix can be used to find projections $Z_k$ of $\mathbf{X}$ in a lower dimensional space.
+Here we will use $k = 2$.
+
 ```{r}
 # k=2 approximation
 k <- 2
@@ -181,15 +184,61 @@ colnames(Zk) <- c("Z1", "Z2")
 Zk
 
 # Plotting Zk in 2-D
-plot(Zk, type = "n", xlab = "Z1", ylab = "Z2", xlim = c(-1500, 1500))
-text(Zk, rownames(Zk), cex = 1.25)
+
+## Using base R
+# plot(Zk, type = "n", xlab = "Z1", ylab = "Z2", xlim = c(-1500, 1500))
+# text(Zk, rownames(Zk), cex = 1.25)
+
+## Using ggplot, by first converting Zk to a tibble
+Zk %>%
+  # create tibble and change rownames to column named "city"
+  as_tibble(rownames = "city") %>% 
+  ggplot(aes(Z1, Z2, label = city)) +
+    geom_point() +
+    # adding the city names as label 
+    geom_text(nudge_y = 50) +
+    # setting limits of the x-axis to center the plot around 0
+    xlim(c(-1500, 1500)) +
+    ggtitle("MDS plot of the UScitiesD data") +
+    theme_minimal()
 ```
 
-What can you say about the plot?
+What can you say about the plot? 
+Think about the real locations of these cities on a map of the US.
+
+<details><summary>Answer</summary>
+$Z_1$ can be interpreted as the *longitude*, i.e. the East-West position.
+$Z_2$ reflects the *latitude*, or the North-South position.
+</details>
+
+
+### The short way {-}
+
+The calculations above demonstrate how MDS works and what the underlying components are.
+However, in a real data analysis, one would typically not go through all the hassle of calculating all the intermediate steps.
+Fortunately, the MDS is already implemented in base R (in the `stats` package).
+
+So the whole derivation we did above can be reproduced with a single line of code, using the `cmdscale` function (see `?cmdscale` for details).
+
+```{r}
+## Calculate MDS in 2 dimensions from distance matrix
+(us_mds <- cmdscale(UScitiesD, k = 2))
+colnames(us_mds) <- c("Z1", "Z2")
+
+## Plot MDS
+us_mds %>% 
+  as_tibble(rownames = "city") %>% 
+  ggplot(aes(Z1, Z2, label = city)) +
+  geom_point() +
+  geom_text(nudge_y = 50) +
+  xlim(c(-1500, 1500)) +
+  theme_minimal()
+```
+
+Which gives us the same result as before (which is a good check that we didn't make mistakes!).
 
 
 
-Can you say something about the plot?
 
 ###Exercise: Cheese data 
 Read in the data
