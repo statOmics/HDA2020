@@ -32,21 +32,20 @@ For a brief introduction to RMarkdown, see [Introduction to RMarkdown](./Introdu
 For an introduction to working with matrices in R, see [Working with Matrices in R](./Introduction-Matrices-R.html).
 
 
-## Libraries
+## Libraries {-}
 
 Packages used in this document.
 Installation code is commented, uncomment and paste this code in an R console to install the packages.
 
 ```{r libraries, message=FALSE, warning=FALSE}
-# install.packages(c("ggplot2", "ggfortify"))
-library(dplyr)
-library(ggplot2)
+# install.packages(c("tidyverse", "ggfortify"))
+library(tidyverse)
 library(ggfortify)
 ```
 
 
 
-# Multidimensional Scaling (MDS)
+# Multidimensional Scaling (MDS) demonstration
 
 See [course notes](https://statomics.github.io/HDA2020/pages/svd.html#7_SVD_and_Multi-Dimensional_Scaling_(MDS)) for background.
 
@@ -212,7 +211,7 @@ $Z_2$ reflects the *latitude*, or the North-South position.
 </details>
 
 
-### The short way {-}
+## The short way
 
 The calculations above demonstrate how MDS works and what the underlying components are.
 However, in a real data analysis, one would typically not go through all the hassle of calculating all the intermediate steps.
