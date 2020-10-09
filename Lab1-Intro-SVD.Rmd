@@ -1,0 +1,366 @@
+---
+title: "Analysis of High Dimensional Data - Lab 1"
+author: "Adapted by Milan Malfait"
+date: "15 Oct 2020"
+output:
+    html_document:
+      code_download: true
+      theme: cosmo
+      toc: true
+      toc_float: true
+      highlight: tango
+      number_sections: true
+---
+
+
+
+
+##The purpose of the following exercises is mainly to get more familiar with SVD, and with working with vectors and matrices in R.  Perform all the  tasks  in R (i.e., Mathematical proofs are not needed)
+
+
+
+###A Few Demonstrations
+
+We start by loading the library `Matrix` which has tailor-made functions that make it fun working with Matrices.
+```{r load library}
+#Should you not have Matrix installed, use  the command
+#install.packages("Matrix") 
+library(Matrix)
+```
+Example from theory course notes page 18. We will create a matrix and compute its rank. 
+```{r creat matrix}
+# Define the matrix X
+X <- matrix(data=c(3,6,1,2,0.23,0.46,-2,-4), nrow=4, byrow=TRUE)
+X
+# Alternative way to define the matrix
+X <- matrix(data=c(3,1,0.23,-2,6,2,0.46,-4), ncol=2)
+X
+```
+Generally you can check the parameters of a function, e.g. `matrix`, in R with `?matrix`. 
+
+Note that R sees a matrix as $X$`[row,column]`, e.g., 
+```{r access rows and columns}
+X[1,] #the first row of X
+X[,1] #the first column of X
+```
+###Rank of a Matrix
+Calculating  the rank of the matrix $\mathbf X$
+```{r rank}
+# For explanation of the attributes: use the command ?rankMatrix.
+res<-rankMatrix(X)
+# To return just the rank:
+res[[1]]
+```
+###Multidimensional Scaling, MDS
+Now lets try a more sophisticated example from the course notes --  page 46. We will perform Multidimensional Scaling (MDS) with Euclidean distances. 
+
+* We will use the US cities distances `UScitiesD` of 10 cities from the package `MASS`.
+* To perform matrix operations on this `data.frame`, we convert the  `data.frame` to  `matrix`, 
+using the function `as.matrix`.
+* Our goal is to use the distance matrix $\mathbf D_X$  without knowledge of $\mathbf X$ to represent the rows of $\mathbf X$ in a low dimensional space, say 2-D or 3-D. 
+* We search for $\mathbf V_k$ that orthogonally project the rows of $\mathbf X$, $\mathbf x^t_i$  onto a $k-D$ space spanned by the columns of $\mathbf V_k$. Infact we are looking for $\mathbf Z_k$, such that $\mathbf Z_k=\mathbf X \mathbf V_k$
+*  But we do not know $\mathbf X$ how do we get $\mathbf Z_k$?  We will use the $\mathbf G_X$ trick, page 45 in course notes.  
+
+###First the data
+```{r readin distance mat}
+#If you do not have MASS installed uncomment the next comment to install it
+#install.packages(MASS)
+library(MASS)
+D_X <- UScitiesD
+D_X
+
+#Convert D_X to  a matrix
+D_X<-as.matrix(D_X)
+```
+
+Assign column names to row names,
+
+```{r assign rownames}
+rownames(D_X) <- colnames(D_X)
+D_X
+```
+
+The dimension of the $D_X$ 
+```{r dimesion of D_X}
+#It is a square matrix of order 9 (dimension 9 x 9)
+dim(D_X)
+```
+And the rank of $\mathbf D_X$
+```{r rank of D_X} 
+rankMatrix(D_X)[[1]]
+```
+
+Now lets create the $\mathbf  H$ matrix on page 41, course notes. We will use this matrix for computing the $\mathbf  G_X$ (Gram matrix of $\mathbf{X}$) matrix on page 42 (course notes). 
+```{r H matrix}
+# nxn centering matrix
+n <- nrow(D_X)
+OneMat<-matrix(rep(1,n*n), ncol=n, nrow=n)
+H <- diag(n) -(1/n)*OneMat
+H[,1:4]
+```
+The $\mathbf G_X$ matrix
+```{r GX matrix,fig.height=6,fig.width=9}
+# matrix BX
+D_X2<-D_X^2
+G_X <- -1/2 * H %*% (D_X2) %*% H
+G_X.svd <- svd(G_X)  # singular value decomposition
+str(G_X.svd)
+
+
+# k=2 approximation
+k <- 2
+Uk <- G_X.svd$u[ , 1:k]
+Sk <- diag(G_X.svd$d[1:k])
+Zk <- Uk %*% sqrt(Sk)
+rownames(Zk) <- colnames(D_X)
+Zk
+
+#Plotting Zk in 2-D
+plot(Zk, type="n", xlab="Z1", ylab="Z2",xlim = c(-1500,1500))  # empty plot
+text(Zk, rownames(Zk), cex=1.25)          # adding values
+```
+
+
+
+Can you say something about the plot?
+
+###Exercise: Cheese data 
+Read in the data
+```{r CheeseData}
+Cheese <- read.csv("cheese.csv", header=TRUE)
+head(Cheese)
+
+#assigning row names
+rownames(Cheese) <-paste("case",1:dim(Cheese)[1])
+X.orig <- Cheese[ , -1]
+X.orig[,1:4]
+rankMatrix(X.orig)[[1]] 
+n <- nrow(X.orig)
+
+# Centering the data matrix
+H <- diag(n) -1/n*matrix(1, ncol=n, nrow=n)
+X <- H %*% as.matrix(X.orig)
+
+```
+
+1.  Earlier, we obtained the column-centered data matrix $\mathbf{X}$ after multiplying $\mathbf{X.orig}$ with
+$$
+   \mathbf{H} = \mathbf{I} - \frac{1}{n} \mathbf{1}\mathbf{1}^t ,
+$$
+
++ Demonstrate that $\mathbf{X}$ is indeed column-centered (and not row-centered). 
+
+```{r demonstrate column center,echo=FALSE,results=FALSE}
+# X is indeed column-centered:
+colMeans(X)
+
+# but it is not row-centered:
+ rowMeans(X)
+```
+
++ Verify that whenever $\mathbf{X}$ is column-centered, the equality $\mathbf{HX = X}$ holds.
+```{r,echo=FALSE,results=FALSE}
+# verifying that HX = X i.e HX-X=0 matrix
+H %*% X-X
+```
++ Repeat the SVD of $\mathbf{X}$, and store the matrices $\mathbf{U}$, $\mathbf{V}$ and $\mathbf{D}$ as separate ```R```-objects.
+```{r SVD,echo=FALSE,results=FALSE}
+ # The Singular Value Decomposition of X
+# =====================================
+X.svd <- svd(X)
+str(X.svd)
+U <- X.svd$u
+V <- X.svd$v
+D <- diag(X.svd$d)
+```
+  
+2. Show that $\mathbf{u_1}$ is a normalized vector; show the same for $\mathbf{u_2}$. Show that $\mathbf{u_1}$ and $\mathbf{u_2}$ are orthogonal vectors. Then show the orthonormality of all vectors $\mathbf{u_j}$ in a single calculation (using the matrix $\mathbf{U}$). Similarly, show the orthonormality of all vectors $\mathbf{v_j}$ in a single calculation (using the matrix $\mathbf{V}$). Did you obtain the result you expected? If not, explain.
+```{r orthonorlity,echo=FALSE,results=FALSE}
+# Verifying orthonormality
+# ------------------------
+# The vectors u1 and u2 are orthonormal
+t(U[,1]) %*% U[,1]
+t(U[,2]) %*% U[,2]
+t(U[,1]) %*% U[,2]
+
+# Verifying that U forms an orthonormal basis in one step:
+t(U) %*% U   # computational imperfections
+round(t(U) %*% U, digits=15)
+ 
+ 
+# Verifying that V forms an orthonormal basis:
+t(V) %*% V   # computational imperfections
+round(t(V) %*% V, digits=15)
+```
+
+3.  Check that ```R``` has performed the SVD correctly, i.e. calculate the matrix $\mathbf{X}$ from the elements of the SVD. Do this in two different ways:
+
++ via the sum definition of the SVD (course notes p. 18) 
+```{r SVD calculations,echo=FALSE,results=FALSE}
+# Calculating X via the sum definition of the SVD:
+# ------------------------------------------------
+X.sum <- matrix(0, nrow=nrow(X), ncol=ncol(X))
+X.sum
+for (j in 1:ncol(U))
+{ 
+  X.sum <- X.sum + (X.svd$d[j]* U[,j] %*% t(V[,j]))
+}
+X.sum
+```
+
++ via the matrix notation of the SVD (course notes. 19)
+```{r,echo=FALSE,results=FALSE}
+# Calculating X via the SVD matrix multiplication:
+# ------------------------------------------------
+X.mult <- U %*% D %*% t(V)
+X.mult
+```
+
++ Verify that the obtained results are identical to the  matrix $\mathbf{X}$.
+```{r,echo=FALSE,results=FALSE}
+round(X.sum-X,digits = 10)    # for comparison
+```
+4. Calculate the matrix $\mathbf{X_k}$, for $k = 2$. Do this again:
++ via the sum definition of the SVD (course notes  p. 18) 
+```{r,echo=FALSE,results=FALSE}
+# Calculating Xk (for k=2)
+# ========================
+# Calculating Xk via the sum definition of the SVD:
+# -------------------------------------------------
+Xk.sum <- matrix(0, nrow=nrow(X), ncol=ncol(X))
+Xk.sum
+for (j in 1:2)
+{ 
+  Xk.sum <- Xk.sum + (X.svd$d[j]* U[,j] %*% t(V[,j]))
+}
+Xk.sum
+```
++ via the matrix notation of the SVD (course notes p. 19)
+```{r,echo=FALSE,results=FALSE}
+# Calculating Xk via the SVD matrix multiplication:
+# -------------------------------------------------
+Xk.mult <- U[, 1:2] %*% D[1:2,1:2] %*% t(V[,1:2])
+Xk.mult
+```
+
++ Compare the obtained results with the matrix $\mathbf{X}$. Just at a first glance, does it seem that $\mathbf{X_2}$ is an approximation of $\mathbf{X}$?
+
+
+
+###Exercise: employment by industry
+
+###In this exercise we will focus on the interpretation of the biplot.
+
+The file ```Industries.txt``` contains data on the distribution of employment between 9 industrial sectors, in 26 European countries. The dataset stems from the Cold-War era; the data are expressed as percentages. Read in the data and have a feel about it. 
+```{r,echo=FALSE,results=FALSE}
+Indus <- read.table("Industries.txt", sep=" ", header=TRUE)
+#First 6 rows of data.frame are displayed
+head(Indus)
+
+#assign row names
+rownames(Indus) <- Indus$country
+
+#delete the first column we will not need it.
+X.orig <- Indus[ , -1]
+
+#visualise
+head(X.orig)
+
+#Check the dimension
+dim(X.orig)
+
+#and then the rank
+rankMatrix(X.orig)[[1]] 
+
+#n will be used subsequently
+n <- nrow(X.orig)
+```
+
+
+1. Perform the truncated SVD for $k=2$, and construct the biplot accordingly.
+```{r,echo=FALSE,results=FALSE}
+# Centering the data matrix first
+H <- diag(n) -1/n*matrix(1, ncol=n, nrow=n)
+X <- H %*% as.matrix(X.orig)
+```
+
+```{r,echo=FALSE,results=FALSE}
+# Singular Value Decomposition is performed
+X.svd <- svd(X)
+X.svd
+k <- 3
+Uk <- X.svd$u[ , 1:k]
+Dk <- diag(X.svd$d[1:k])
+Zk <- Uk %*% Dk
+rownames(Zk) <- Indus$country
+Zk
+```
+
+```{r,echo=FALSE,results=FALSE}
+#Prepare Vk
+Vk <- X.svd$v[ , 1:k]
+rownames(Vk) <- colnames(Indus[,-1])
+Vk
+```
+
+```{r,echo=FALSE,results=FALSE}
+# # Constructing the biplot for Z1 and Z2
+#  # -------------------------------------
+# plot(Zk[,1:2], type="n", xlim=c(-30,60), ylim=c(-15,15), 
+#       xlab="Z1", ylab="Z2") 
+# text(Zk[,1:2], rownames(Zk), cex=0.9)
+# # alpha <- 1
+# alpha <- 20  # rescaling to get better visualisation
+# for(i in 1:9)
+# { arrows(0,0, alpha*Vk[i,1], alpha*Vk[i,2], length=0.2, col=2)
+#   text(alpha*Vk[i,1], alpha*Vk[i,2], rownames(Vk)[i], col=2)
+# }
+```
+
+```{r,echo=FALSE,results=FALSE}
+#  # Constructing the biplot for Z1 and Z3
+# # -------------------------------------
+# plot(Zk[,c(1,3)], type="n", xlim=c(-30,60), ylim=c(-15,15), 
+#      xlab="Z1", ylab="Z3") 
+# text(Zk[,c(1,3)], rownames(Zk), cex=0.9)
+# # alpha <- 1
+# alpha <- 20  # rescaling to get better visualisation
+# for(i in 1:9)
+# { arrows(0,0, alpha*Vk[i,1], alpha*Vk[i,3], length=0.2, col=2)
+#    text(alpha*Vk[i,1], alpha*Vk[i,3], rownames(Vk)[i], col=2)
+# }
+ 
+```
+
+```{r,echo=FALSE,results='hide'}
+#  # Constructing the biplot for Z2 and Z3
+#  # -------------------------------------
+# plot(Zk[,2:3], type="n", xlim=c(-30,60), ylim=c(-15,15), 
+#       xlab="Z2", ylab="Z3") 
+# text(Zk[,2:3], rownames(Zk), cex=0.9)
+# # alpha <- 1
+# alpha <- 20  # rescaling to get better visualisation
+# for(i in 1:9)
+# { arrows(0,0, alpha*Vk[i,2], alpha*Vk[i,3], length=0.2, col=2)
+#    text(alpha*Vk[i,2], alpha*Vk[i,3], rownames(Vk)[i], col=2)
+# }
+#  #We can also use inbuilt R functions for this.
+# #--------------------------------------------
+# #biplot()
+```
+
+
+2. To see if we can learn more when retaining more dimensions, repeat the truncated SVD for $k=3$. Construct two-dimensional biplots for:
++ Z1 and Z2
++ Z1 and Z3
++ Z2 and Z3
+
+3. Can you give a meaningful interpretation to each dimension? 
+Interpretation is crucial, quickly write this on a piece of paper and submit.
+
+
+
+
+
+
+
