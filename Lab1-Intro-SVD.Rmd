@@ -12,46 +12,40 @@ output:
       number_sections: true
 ---
 
-
-
-
-##The purpose of the following exercises is mainly to get more familiar with SVD, and with working with vectors and matrices in R.  Perform all the  tasks  in R (i.e., Mathematical proofs are not needed)
-
-
-
-###A Few Demonstrations
-
-We start by loading the library `Matrix` which has tailor-made functions that make it fun working with Matrices.
-```{r load library}
-#Should you not have Matrix installed, use  the command
-#install.packages("Matrix") 
-library(Matrix)
+```{r setup, include=FALSE, cache=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
 ```
-Example from theory course notes page 18. We will create a matrix and compute its rank. 
-```{r creat matrix}
-# Define the matrix X
-X <- matrix(data=c(3,6,1,2,0.23,0.46,-2,-4), nrow=4, byrow=TRUE)
-X
-# Alternative way to define the matrix
-X <- matrix(data=c(3,1,0.23,-2,6,2,0.46,-4), ncol=2)
-X
-```
-Generally you can check the parameters of a function, e.g. `matrix`, in R with `?matrix`. 
 
-Note that R sees a matrix as $X$`[row,column]`, e.g., 
-```{r access rows and columns}
-X[1,] #the first row of X
-X[,1] #the first column of X
+# Introduction
+
+The purpose of the following exercises is mainly to get more familiar with SVD and its applications.
+It is recommended to perform the exercises in an [`RMarkdown`][rmarkdown] document.
+
+For a brief introduction to RMarkdown, see [Introduction to RMarkdown](./Introduction-RMarkdown.html).
+
+For an introduction to working with matrices in R, see [Working with Matrices in R](./Introduction-Matrices-R.html).
+
+
+## Libraries
+
+Packages used in this document.
+Installation code is commented, uncomment and paste this code in an R console to install the packages.
+
+```{r libraries}
+# install.packages(MASS")
+library(MASS)
 ```
-###Rank of a Matrix
-Calculating  the rank of the matrix $\mathbf X$
-```{r rank}
-# For explanation of the attributes: use the command ?rankMatrix.
-res<-rankMatrix(X)
-# To return just the rank:
-res[[1]]
-```
-###Multidimensional Scaling, MDS
+
+***
+
+
+
+
+# Multidimensional Scaling (MDS)
+
 Now lets try a more sophisticated example from the course notes --  page 46. We will perform Multidimensional Scaling (MDS) with Euclidean distances. 
 
 * We will use the US cities distances `UScitiesD` of 10 cities from the package `MASS`.
@@ -357,10 +351,4 @@ Vk
 
 3. Can you give a meaningful interpretation to each dimension? 
 Interpretation is crucial, quickly write this on a piece of paper and submit.
-
-
-
-
-
-
 

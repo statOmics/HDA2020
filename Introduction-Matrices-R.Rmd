@@ -1,0 +1,366 @@
+---
+title: "Working with matrices in R"
+author: "Adapted by Milan Malfait"
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output:
+    html_document:
+      code_download: true
+      theme: cosmo
+      toc: true
+      toc_float: true
+      highlight: tango
+      number_sections: false
+---
+
+```{r setup, include=FALSE, cache=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+***
+
+## Creating and manipulating matrices
+
+We will create a $4 \times 2$ matrix, starting from a vector of values.
+
+```{r create_matrix}
+## c() creates a vector
+values <- c(3, 6, 1, 2, 0.23, 0.46, -2, -4)
+
+## Define the matrix X, filling matrix "byrow": 4 x 2
+X <- matrix(values, nrow = 4, byrow = TRUE)
+X
+
+## Alternative way to define the matrix, `byrow = FALSE` is the default
+X <- matrix(values, ncol = 2)
+X
+
+# Creating a second matrix: 2 x 4, using the square of `values`
+Y <- matrix(values^2, nrow = 2, ncol = 4)
+Y
+
+## Check that we really have a matrix
+class(X)
+```
+Generally you can check the arguments of a function, e.g. `matrix`, in R with `?matrix`. 
+
+The `dim` function tells you the __dimensions__ of the matrix, `nrow` and `ncol` give you the number of rows and columns, respectively.
+
+```{r}
+dim(X)  # nr. of rows, nr. of columns
+nrow(X)
+ncol(X)
+
+dim(Y)
+```
+
+
+### Subsetting
+
+Note that R sees a matrix as `X[row, column]`, so you can subset `X` with
+
+```{r subset_matrix}
+X[1, ] # first row of X
+X[, 2] # second column of X
+X[1:2, ] # first 2 rows of X
+```
+
+Note that, by default, subsetting a single row or column from a matrix __returns a vector__, not a column- or row-matrix as might be expected.
+We can see this from the fact that the subset does not have dimensions anymore (an attribute only defined for matrices in R):
+
+```{r}
+dim(X[, 1]) # NULL = non-existent
+class(X[, 1]) # not matrix but numeric vector
+```
+
+This can lead to unexpected behavior when doing __matrix multiplication__ (see further below).
+To avoid this, we can set `drop = FALSE` in the subsetting brackets.
+
+```{r}
+## This creates a "column-vector"
+X[, 1, drop = FALSE]
+dim(X[, 1, drop = FALSE])
+```
+
+
+### Row- and column-binding
+
+You can also create matrices by 'binding' together vectors (of the same length) column-wise or row-wise with `cbind()` and `rbind()`, respectively.
+
+```{r}
+# Create vectors from the rows of X
+(x1 <- X[1, ])
+(x2 <- X[2, ])
+(x3 <- X[3, ])
+(x4 <- X[4, ])
+
+# Bind them back together row-wise: re-creates X
+rbind(x1, x2, x3, x4)
+
+# Bind them back together column-wise: (essentially the transpose of X)
+cbind(x1, x2, x3, x4)
+```
+
+Binding together 2 matrices also works (but be mindful of their dimensions!).
+
+```{r, error=TRUE}
+# Row-binding two matrices
+# X and Y don't have the same dimensions (4x2 vs. 2x4),
+# so binding them directly doesn't work
+rbind(X, Y)
+
+# For rbind we need the same number of columns
+rbind(X, Y[, 1:2]) # works
+
+# For cbind, same number of rows
+cbind(X[1:2, ], Y)
+```
+
+Note that R automatically creates row names or column names from the variable names when using `rbind()` and `cbind()`.
+
+To add row and columns names to an existing matrix, use `rownames()`, `colnames()` or the more general `dimnames()`.
+
+```{r}
+rownames(X) <- c("row_1", "row_2", "row_3", "row_4")
+colnames(X) <- c("col_1", "col_2")
+X
+
+## Using `NULL` removes the dimnames again
+dimnames(X) <- NULL
+X
+```
+
+
+### Diagonal elements and diagonal matrices: `diag()`
+
+```{r}
+## Get diagonal elements from X, returns vector
+diag(X)
+
+## Create diagonal matrix, vector as input, returns matrix
+diag(c(1, 2, 3 ,4))
+```
+
+### Identity matrices
+
+The `diag` function can also be used to create identity matrices with specific dimensions
+
+```{r}
+diag(1, nrow = 4, ncol = 4)  # 4 x 4
+diag(1, nrow = 2, ncol = 4)  # 2 x 4
+diag(1, nrow = 4, ncol = 2)  # 4 x 2
+```
+
+
+
+## Math operations
+
+### Element-wise operations
+
+#### Scalars and vectors
+
+Scalar operations occur element-wise for matrices.
+
+```{r}
+X # for reference
+X + 1
+X - 100
+2 * X
+X / 3
+X^2
+```
+
+Note that `^2` also occurs element-wise, *not* using matrix multiplication (see further below)!
+
+You can also do operations with vectors, though you should be careful with the dimensions.
+`R` will add the vector to each __column__ of the matrix.
+When using a vector with a different length than the number of rows (elements in a column), the vector elements will be *recycled*.
+When the longer object is not a multiple of the shorter, the operation still occurs but a *warning* is produced (technically a `message`).
+
+```{r}
+X
+v4 <- c(1, 2, 3, 4)  # vector of length 4
+X + v4
+
+v2 <- c(1, 2)  # vector of length 2, will be recycled
+X + v2
+
+v3 <- c(1, 2, 3) # vector or length 3, also recycled with warning
+X + v3
+
+v5 <- c(1, 2, 3, 4, 5) # vector or length 5, also recycled with warning
+X + v5
+```
+
+#### Two matrices
+
+Define a second matrix `Y` with same dimensions as `X`.
+
+```{r}
+# We will generate a matrix Y with 2s and 4s at random places (using `sample`)
+# Setting a seed allows reproducibility
+set.seed(1)
+Y <- matrix(sample(c(2, 4), size = nrow(X) * ncol(X), replace = TRUE), 
+            nrow = nrow(X), ncol = ncol(X))
+Y
+```
+
+Using the standard math operators occurs element-wise.
+
+```{r}
+X + Y
+X - Y
+X * Y
+X / Y
+X ^ Y
+```
+
+
+### Matrix algebra
+
+<https://www.statmethods.net/advstats/matrix.html>
+
+#### Transpose: `t()`
+
+$\mathbf{X}^T$
+
+```{r}
+t(X)
+```
+
+#### Matrix multiplication: `%*%`
+
+Note that `X` and `Y` have the same dimensions, so multiplying them straight away doesn't work (incompatible dimensions)
+
+```{r, error=TRUE}
+## This produces an error because the dimensions are not compatible
+X %*% Y
+```
+
+Instead, we can transpose `X` and compute $\mathbf{X}^T \cdot \mathbf{Y}$:
+
+```{r}
+t(X) %*% Y
+
+## `crossprod()` is a shortcut for this operation, and is slightly faster
+crossprod(X, Y)
+
+## `tcrossprod()` calculates X.Y^T
+X %*% t(Y)
+tcrossprod(X, Y)
+```
+
+The `crossprod()` and `tcrossprod()` functions also work with a single matrix as input, in which case they calculate $\mathbf{X}^T\mathbf{X}$ and $\mathbf{X}\mathbf{X}^T$, respectively:
+
+```{r}
+## X^TX
+crossprod(X)
+## XX^T
+tcrossprod(X)
+```
+
+As already mentioned before, subsetting a matrix with `[` returns a vector by default.
+Doing matrix multiplication with vectors in R can be ambiguous as R will "guess" itself whether the vector should be treated as a column- or row-vector.
+See `` ?`%*%` `` for details.
+
+The example below illustrates some potentially unexpected results
+
+```{r, error=TRUE}
+## Selecting the first column of X, we would expect this to be treated as a column
+## vector with dimensions 4 x 1...
+X[, 1]
+dim(X[, 1])
+## ...but in R vectors don't have dimensions
+
+## Mathematically, multiplicating the first column of X with X is not possible
+## (multiplying a 4x1 with a 4x2 matrix doesn't work)
+## So we would expect the following code to throw an error...
+X[, 1] %*% X
+## ...but it doesn't and instead returns the result as if X[, 1] is a row-vector
+```
+
+To avoid confusion and when you intend to use single rows or vectors from a matrix as they were single-row or single-column matrices, it's better to use `drop = FALSE` when subsetting.
+
+```{r, error=TRUE}
+X1 <- X[, 1, drop = FALSE]
+## Now X1 does have dimensions
+dim(X1)
+
+## And the following code throws an error
+X1 %*% X
+```
+
+You can also do matrix multiplication with 2 vectors, in which case again R will guess if they should be treated as column- or row-vectors.
+
+```{r}
+(a <- seq_len(3))
+(b <- a + 1)
+a %*% b
+```
+
+
+#### Inverse: `solve()`
+
+__Inverse__: $\mathbf{X}^{-1}$ (only for square matrices)
+
+```{r}
+## Create new square matrix Z
+(Z <- matrix(1:4, nrow = 2, ncol = 2))
+
+## Compute inverse
+(Z_inv <- solve(Z))
+
+## Check that it's indeed the inverse
+Z %*% Z_inv  # the 2x2 identity matrix
+```
+
+__Warning:__ DON'T USE `X^-1` to compute a matrix inverse!
+
+The notation might be confusing because of the way we mathematically describe the inverse of a matrix ($\mathbf{X}^{-1}$).
+In R, however, `X^-1` computes __element-wise__ inverses of each value.
+
+```{r}
+Z^-1
+```
+
+If you're wondering why the name "`solve`" is used for the function to compute a matrix inverse, it's because `solve` can do more than just that.
+See `?solve` for details.
+
+
+## Rank of a matrix
+
+Calculating the rank of the matrix $\mathbf X$.
+There are several ways to do this in R.
+We'll use the `qr()` function (see `?qr`).
+An alternative would be to use `rankMatrix` from the [*Matrix*](https://cran.r-project.org/package=Matrix) package: `Matrix::rankMatrix()`.
+
+```{r rank}
+## Run `qr` and access the `rank` from the results with `$`
+rank <- qr(X)$rank
+rank
+```
+
+We see that the rank of `X` is lower than its number of columns and rows, meaning the matrix is [*not* of full rank](https://en.wikipedia.org/wiki/Rank_(linear_algebra)#Main_definitions).
+
+Considering the contents of `X`, can you see why this is?
+
+__Hint__: 
+
+```{r}
+all(X[, 2] == 2 * X[, 1])
+```
+
+
+
+## Session info {-}
+
+<details><summary>Session info</summary>
+
+```{r session_info, echo=FALSE, cache=FALSE}
+Sys.time()
+sessioninfo::session_info()
+```
+
+</details>
