@@ -39,7 +39,6 @@ Installation code is commented, uncomment and paste this code in an R console to
 ```{r libraries, message=FALSE, warning=FALSE}
 # install.packages(c("tidyverse", "ggfortify"))
 library(tidyverse)
-library(ggfortify)
 ```
 
 
@@ -440,116 +439,212 @@ cbind(
 </details>
 
 
-###Exercise: employment by industry
+## Exercise: employment by industry in European countries
 
-###In this exercise we will focus on the interpretation of the biplot.
+In this exercise we will focus on the interpretation of the *biplot*.
 
-The file ```Industries.txt``` contains data on the distribution of employment between 9 industrial sectors, in 26 European countries. The dataset stems from the Cold-War era; the data are expressed as percentages. Read in the data and have a feel about it.
-```{r,echo=FALSE,results=FALSE}
-Indus <- read.table("Industries.txt", sep=" ", header=TRUE)
-#First 6 rows of data.frame are displayed
-head(Indus)
+### Data prep {-}
 
-#assign row names
-rownames(Indus) <- Indus$country
+The `industries.txt` file contains data on the distribution of employment between 9 industrial sectors, in 26 European countries. The dataset stems from the Cold-War era; the data are expressed as percentages. Read in the data and explore its contents.
 
-#delete the first column we will not need it.
-X.orig <- Indus[ , -1]
+You can read in the file with the following URL:
 
-#visualise
-head(X.orig)
-
-#Check the dimension
-dim(X.orig)
-
-#and then the rank
-rankMatrix(X.orig)[[1]]
-
-#n will be used subsequently
-n <- nrow(X.orig)
+```{r}
+industries_url <- "https://github.com/statOmics/HDA2020/raw/data/industries.txt"
 ```
 
+<details><summary>Solution</summary>
+```{r read-industries-data}
+industries <- read_delim(industries_url, delim = " ",
+                         col_types = cols())
+# Explore contents
+head(industries)
+glimpse(industries)
+summary(industries)
+```
 
-1. Perform the truncated SVD for $k=2$, and construct the biplot accordingly.
-```{r,echo=FALSE,results=FALSE}
+Create data matrix $\mathbf{X}$.
+
+```{r}
+# Create matrix without first column ("country", which will be used for rownames)
+indus_X <- as.matrix(industries[, -1])
+rownames(indus_X) <- industries$country
+
+# Check the dimensionality
+dim(indus_X)
+
+# and the rank
+qr(indus_X)$rank
+
+# n will be used subsequently
+n <- nrow(indus_X)
+```
+</details>
+
+
+### Tasks {-}
+
+##### 1. Perform a truncated SVD for $k=2$, and construct the biplot accordingly. {-}
+
+<details><summary>Solution</summary>
+```{r}
 # Centering the data matrix first
-H <- diag(n) -1/n*matrix(1, ncol=n, nrow=n)
-X <- H %*% as.matrix(X.orig)
+H <- diag(n) - 1 / n * matrix(1, ncol = n, nrow = n)
+indus_centered <- H %*% as.matrix(indus_X)
 ```
 
-```{r,echo=FALSE,results=FALSE}
-# Singular Value Decomposition is performed
-X.svd <- svd(X)
-X.svd
-k <- 3
-Uk <- X.svd$u[ , 1:k]
-Dk <- diag(X.svd$d[1:k])
+```{r}
+# Perform SVD
+indus_svd <- svd(indus_centered)
+str(indus_svd)
+
+# Extract singular vectors for k = 2 and calculate k=2 projection Zk
+k <- 2
+Uk <- indus_svd$u[ , 1:k]
+Dk <- diag(indus_svd$d[1:k])
+
+Vk <- indus_svd$v[, 1:k]
+rownames(Vk) <- colnames(indus_X)
+colnames(Vk) <- c("V1", "V2")
+
 Zk <- Uk %*% Dk
-rownames(Zk) <- Indus$country
+rownames(Zk) <- industries$country
+colnames(Zk) <- c("Z1", "Z2")
 Zk
 ```
 
-```{r,echo=FALSE,results=FALSE}
-#Prepare Vk
-Vk <- X.svd$v[ , 1:k]
-rownames(Vk) <- colnames(Indus[,-1])
-Vk
+Biplot with *ggplot2*:
+
+```{r, fig.width=8, fig.height=6}
+## Scale factor to draw Vk arrows (can be set arbitrarily)
+scale_factor <- 20
+
+## Create tibble with rownames in "country" column
+as_tibble(Zk, rownames = "country") %>%
+  ggplot(aes(Z1, Z2)) +
+  geom_point() +
+  geom_text(aes(label = country), size = 3, nudge_y = 0.5) +
+  ## Plot Singular vectors Vk
+  geom_segment(
+    data = as_tibble(Vk, rownames = "sector"),
+    aes(x = 0, y = 0, xend = V1 * scale_factor, yend = V2 * scale_factor),
+    arrow = arrow(length = unit(0.4, "cm")),
+    color = "firebrick"
+  ) +
+  geom_text(
+    data = as_tibble(Vk, rownames = "sector"),
+    aes(V1 * scale_factor, V2 * scale_factor, label = sector),
+    nudge_x = 0.5, nudge_y = ifelse(Vk[, 2] >= 0, 0.5, -0.5),
+    color = "firebrick", size = 3
+  ) +
+  theme_minimal()
 ```
 
-```{r,echo=FALSE,results=FALSE}
+Using base R:
+
+```{r, fig.width=8, fig.height=6}
 # # Constructing the biplot for Z1 and Z2
 #  # -------------------------------------
-# plot(Zk[,1:2], type="n", xlim=c(-30,60), ylim=c(-15,15),
-#       xlab="Z1", ylab="Z2")
-# text(Zk[,1:2], rownames(Zk), cex=0.9)
-# # alpha <- 1
-# alpha <- 20  # rescaling to get better visualisation
-# for(i in 1:9)
-# { arrows(0,0, alpha*Vk[i,1], alpha*Vk[i,2], length=0.2, col=2)
-#   text(alpha*Vk[i,1], alpha*Vk[i,2], rownames(Vk)[i], col=2)
-# }
+plot(Zk[,1:2], type="n", xlim=c(-30,60), ylim=c(-15,15),
+      xlab="Z1", ylab="Z2")
+text(Zk[,1:2], rownames(Zk), cex=0.9)
+# alpha <- 1
+alpha <- 20  # rescaling to get better visualisation
+for(i in 1:9) {
+  arrows(0,0, alpha*Vk[i,1], alpha*Vk[i,2], length=0.2, col=2)
+  text(alpha*Vk[i,1], alpha*Vk[i,2], rownames(Vk)[i], col=2)
+}
+```
+</details>
+
+##### 2. To see if we can learn more when retaining more dimensions, repeat the truncated SVD for $k=3$. Construct two-dimensional biplots for: {-}
+
+- Z1 and Z3
+- Z2 and Z3
+
+<details><summary>Solution</summary>
+
+No need to re-do SVD, just extract singular vectors for $k=3$ from previous SVD.
+
+```{r}
+# Extract singular vectors for k = 3 and calculate projection Zk
+k <- 3
+Uk <- indus_svd$u[ , 1:k]
+Dk <- diag(indus_svd$d[1:k])
+
+Vk <- indus_svd$v[, 1:k]
+rownames(Vk) <- colnames(indus_X)
+colnames(Vk) <- c("V1", "V2", "V3")
+
+Zk <- Uk %*% Dk
+rownames(Zk) <- industries$country
+colnames(Zk) <- c("Z1", "Z2", "Z3")
+Zk
 ```
 
-```{r,echo=FALSE,results=FALSE}
-#  # Constructing the biplot for Z1 and Z3
-# # -------------------------------------
-# plot(Zk[,c(1,3)], type="n", xlim=c(-30,60), ylim=c(-15,15),
-#      xlab="Z1", ylab="Z3")
-# text(Zk[,c(1,3)], rownames(Zk), cex=0.9)
-# # alpha <- 1
-# alpha <- 20  # rescaling to get better visualisation
-# for(i in 1:9)
-# { arrows(0,0, alpha*Vk[i,1], alpha*Vk[i,3], length=0.2, col=2)
-#    text(alpha*Vk[i,1], alpha*Vk[i,3], rownames(Vk)[i], col=2)
-# }
+Create biplot as before.
 
-```
+- Z1 *vs.* Z3
 
-```{r,echo=FALSE,results='hide'}
-#  # Constructing the biplot for Z2 and Z3
-#  # -------------------------------------
-# plot(Zk[,2:3], type="n", xlim=c(-30,60), ylim=c(-15,15),
-#       xlab="Z2", ylab="Z3")
-# text(Zk[,2:3], rownames(Zk), cex=0.9)
-# # alpha <- 1
-# alpha <- 20  # rescaling to get better visualisation
-# for(i in 1:9)
-# { arrows(0,0, alpha*Vk[i,2], alpha*Vk[i,3], length=0.2, col=2)
-#    text(alpha*Vk[i,2], alpha*Vk[i,3], rownames(Vk)[i], col=2)
-# }
-#  #We can also use inbuilt R functions for this.
-# #--------------------------------------------
-# #biplot()
+```{r, fig.width=8, fig.height=6}
+## Scale factor to draw Vk arrows (can be set arbitrarily)
+scale_factor <- 20
+
+## Create tibble with rownames in "country" column
+as_tibble(Zk, rownames = "country") %>%
+  ggplot(aes(Z1, Z3)) +
+  geom_point() +
+  geom_text(aes(label = country), size = 3, nudge_y = 0.5) +
+  ## Plot Singular vectors Vk
+  geom_segment(
+    data = as_tibble(Vk, rownames = "sector"),
+    aes(x = 0, y = 0, xend = V1 * scale_factor, yend = V3 * scale_factor),
+    arrow = arrow(length = unit(0.4, "cm")),
+    color = "firebrick"
+  ) +
+  geom_text(
+    data = as_tibble(Vk, rownames = "sector"),
+    aes(V1 * scale_factor, V3 * scale_factor, label = sector),
+    nudge_x = 0.5, nudge_y = ifelse(Vk[, 3] >= 0, 0.5, -0.5),
+    color = "firebrick", size = 3
+  ) +
+  theme_minimal()
 ```
 
 
-2. To see if we can learn more when retaining more dimensions, repeat the truncated SVD for $k=3$. Construct two-dimensional biplots for:
-+ Z1 and Z2
-+ Z1 and Z3
-+ Z2 and Z3
+- Z2 *vs.* Z3
 
-3. Can you give a meaningful interpretation to each dimension?
-Interpretation is crucial, quickly write this on a piece of paper and submit.
+```{r, fig.width=8, fig.height=6}
+# Scale factor to draw Vk arrows (can be set arbitrarily)
+scale_factor <- 20
+
+## Create tibble with rownames in "country" column
+as_tibble(Zk, rownames = "country") %>%
+  ggplot(aes(Z2, Z3)) +
+  geom_point() +
+  geom_text(aes(label = country), size = 3, nudge_y = 0.5) +
+  ## Plot Singular vectors Vk
+  geom_segment(
+    data = as_tibble(Vk, rownames = "sector"),
+    aes(x = 0, y = 0, xend = V2 * scale_factor, yend = V3 * scale_factor),
+    arrow = arrow(length = unit(0.4, "cm")),
+    color = "firebrick"
+  ) +
+  geom_text(
+    data = as_tibble(Vk, rownames = "sector"),
+    aes(V2 * scale_factor, V3 * scale_factor, label = sector),
+    nudge_x = 0.5, nudge_y = ifelse(Vk[, 3] >= 0, 0.5, -0.5),
+    color = "firebrick", size = 3
+  ) +
+  theme_minimal()
+```
+
+
+##### 3. Can you give a meaningful interpretation to each dimension? {-}
+
+
+>TO DO: add row- and column-correlations with SVD
+
 
 # Session info {-}
 
