@@ -283,10 +283,6 @@ cheese_centered <- cheese_H %*% as.matrix(cheese_mx)
 ```
 
 
->TO DO: add exercise on linear regression with SVD, using `taste` as the response
-> Compare with `lm(taste ~ Acetic + H2S + Lactic, data = cheese)`
-
-
 ### Tasks {-}
 
 *Note*: no need for mathematical derivations, just verify code-wise in R.
@@ -413,6 +409,36 @@ X_tilde
 Just at a first glance, does it seem that $\mathbf{\tilde{X}}$ is a good approximation of $\mathbf{X}$?
 
 
+##### 7. SVD and linear regression: perform a linear regression using SVD to estimate the effects of the `Acetic`, `H2S` and `Lactic` variables on the `taste`.
+
+Note: we cannot use the SVD from before as this was calculated from the complete `cheese` table, also including the `taste` column, which is the response variable of interest here.
+Instead, we need to create a new design matrix $\mathbf{X}$ containing the predictors and a separate vector $\mathbf{y}$ containing the response.
+
+```{r}
+cheese_y <- cheese$taste
+cheese_design <- cbind(Intercept = 1, cheese[c("Acetic", "H2S", "Lactic")])
+```
+
+Also perform the regression with `lm` and compare the results.
+
+<details><summary>Solution</summary>
+
+```{r}
+## Fit with lm
+lm_fit <- lm(taste ~ Acetic + H2S + Lactic, data = cheese)
+
+## Fit with SVD
+design_svd <- svd(cheese_design)
+svd_coef <- design_svd$v %*% diag(1/design_svd$d) %*% t(design_svd$u) %*% cheese_y
+
+## Compare
+cbind(
+  "lm" = coef(lm_fit),
+  "svd" = drop(svd_coef)
+)
+```
+</details>
+
 
 ###Exercise: employment by industry
 
@@ -437,7 +463,7 @@ head(X.orig)
 dim(X.orig)
 
 #and then the rank
-rankMatrix(X.orig)[[1]] 
+rankMatrix(X.orig)[[1]]
 
 #n will be used subsequently
 n <- nrow(X.orig)
@@ -473,8 +499,8 @@ Vk
 ```{r,echo=FALSE,results=FALSE}
 # # Constructing the biplot for Z1 and Z2
 #  # -------------------------------------
-# plot(Zk[,1:2], type="n", xlim=c(-30,60), ylim=c(-15,15), 
-#       xlab="Z1", ylab="Z2") 
+# plot(Zk[,1:2], type="n", xlim=c(-30,60), ylim=c(-15,15),
+#       xlab="Z1", ylab="Z2")
 # text(Zk[,1:2], rownames(Zk), cex=0.9)
 # # alpha <- 1
 # alpha <- 20  # rescaling to get better visualisation
@@ -487,8 +513,8 @@ Vk
 ```{r,echo=FALSE,results=FALSE}
 #  # Constructing the biplot for Z1 and Z3
 # # -------------------------------------
-# plot(Zk[,c(1,3)], type="n", xlim=c(-30,60), ylim=c(-15,15), 
-#      xlab="Z1", ylab="Z3") 
+# plot(Zk[,c(1,3)], type="n", xlim=c(-30,60), ylim=c(-15,15),
+#      xlab="Z1", ylab="Z3")
 # text(Zk[,c(1,3)], rownames(Zk), cex=0.9)
 # # alpha <- 1
 # alpha <- 20  # rescaling to get better visualisation
@@ -496,14 +522,14 @@ Vk
 # { arrows(0,0, alpha*Vk[i,1], alpha*Vk[i,3], length=0.2, col=2)
 #    text(alpha*Vk[i,1], alpha*Vk[i,3], rownames(Vk)[i], col=2)
 # }
- 
+
 ```
 
 ```{r,echo=FALSE,results='hide'}
 #  # Constructing the biplot for Z2 and Z3
 #  # -------------------------------------
-# plot(Zk[,2:3], type="n", xlim=c(-30,60), ylim=c(-15,15), 
-#       xlab="Z2", ylab="Z3") 
+# plot(Zk[,2:3], type="n", xlim=c(-30,60), ylim=c(-15,15),
+#       xlab="Z2", ylab="Z3")
 # text(Zk[,2:3], rownames(Zk), cex=0.9)
 # # alpha <- 1
 # alpha <- 20  # rescaling to get better visualisation
@@ -522,7 +548,7 @@ Vk
 + Z1 and Z3
 + Z2 and Z3
 
-3. Can you give a meaningful interpretation to each dimension? 
+3. Can you give a meaningful interpretation to each dimension?
 Interpretation is crucial, quickly write this on a piece of paper and submit.
 
 # Session info {-}
