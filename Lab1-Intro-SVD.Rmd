@@ -23,9 +23,8 @@ knitr::opts_chunk$set(
 
 # Introduction
 
-The purpose of the following exercises is mainly to get more familiar with SVD and its applications,
-in particular Multidimensional Scaling (MDS).
-It is recommended to perform the exercises in an [`RMarkdown`][rmarkdown] document.
+The purpose of the following exercises is mainly to get more familiar with SVD and its applications, in particular Multidimensional Scaling (MDS).
+It is recommended to perform the exercises in an `RMarkdown` document.
 
 For a brief introduction to RMarkdown, see [Introduction to RMarkdown](./Introduction-RMarkdown.html).
 
@@ -238,127 +237,180 @@ Which gives us the same result as before (which is a good check that we didn't m
 
 
 
+# Exercises
 
-###Exercise: Cheese data 
-Read in the data
-```{r CheeseData}
-Cheese <- read.csv("cheese.csv", header=TRUE)
-head(Cheese)
+## Cheese data
 
-#assigning row names
-rownames(Cheese) <-paste("case",1:dim(Cheese)[1])
-X.orig <- Cheese[ , -1]
-X.orig[,1:4]
-rankMatrix(X.orig)[[1]] 
-n <- nrow(X.orig)
+### Data prep {-}
+
+Read in the `cheese` data, which characterizes 30 cheeses on various metrics.
+
+```{r}
+cheese <- read_csv("https://github.com/statOmics/HDA2020/raw/data/cheese.csv",
+                   col_types = "idddd")
+head(cheese)
+```
+
+>__Q__: what is the *dimensionality* of this data?
+
+<details><summary>Answer</summary>
+__A__: 4, since we have 4 features (the first column is just an identifier for the observation, so we don't regard this as a feature).
+
+```{r}
+ncol(cheese) - 1
+```
+
+</details>
+
+Convert the `cheese` table to a matrix for easier calculations.
+We will drop the first column (as it's not a feature) and instead use it to create `rownames`.
+
+```{r}
+cheese_mx <- as.matrix(cheese[, -1])
+rownames(cheese_mx) <- paste("case", cheese$Case, sep = "_")
+cheese_mx
+```
+
+Check rank of `cheese_mx` and center the matrix.
+
+```{r}
+qr(cheese_mx)$rank
 
 # Centering the data matrix
-H <- diag(n) -1/n*matrix(1, ncol=n, nrow=n)
-X <- H %*% as.matrix(X.orig)
-
+n <- nrow(cheese_mx)
+cheese_H <- diag(n) - 1 / n * matrix(1, ncol = n, nrow = n)
+cheese_centered <- cheese_H %*% as.matrix(cheese_mx)
 ```
 
-1.  Earlier, we obtained the column-centered data matrix $\mathbf{X}$ after multiplying $\mathbf{X.orig}$ with
+
+>TO DO: add exercise on linear regression with SVD, using `taste` as the response
+> Compare with `lm(taste ~ Acetic + H2S + Lactic, data = cheese)`
+
+
+### Tasks {-}
+
+*Note*: no need for mathematical derivations, just verify code-wise in R.
+
+ We obtained the column-centered data matrix $\mathbf{X}$ after multiplying the original matrix with
+
 $$
-   \mathbf{H} = \mathbf{I} - \frac{1}{n} \mathbf{1}\mathbf{1}^t ,
+\mathbf{H} = \mathbf{I} - \frac{1}{n} \mathbf{1}\mathbf{1}^T
 $$
 
-+ Demonstrate that $\mathbf{X}$ is indeed column-centered (and not row-centered). 
+##### 1. Show that $\mathbf{X}$ (here: `cheese_centered`) is indeed column-centered (and not row-centered) {-}
 
-```{r demonstrate column center,echo=FALSE,results=FALSE}
+<details><summary>Solution</summary>
+```{r}
 # X is indeed column-centered:
-colMeans(X)
+round(colMeans(cheese_centered), 14) ## practically zero
 
 # but it is not row-centered:
- rowMeans(X)
+ rowMeans(cheese_centered)
 ```
+</details>
 
-+ Verify that whenever $\mathbf{X}$ is column-centered, the equality $\mathbf{HX = X}$ holds.
-```{r,echo=FALSE,results=FALSE}
-# verifying that HX = X i.e HX-X=0 matrix
-H %*% X-X
+
+##### 2. Verify that whenever $\mathbf{X}$ is column-centered, the equality $\mathbf{HX = X}$ holds {-}
+
+<details><summary>Solution</summary>
+```{r}
+# verifying that HX = X
+all.equal(cheese_H %*% cheese_centered, cheese_centered)
 ```
-+ Repeat the SVD of $\mathbf{X}$, and store the matrices $\mathbf{U}$, $\mathbf{V}$ and $\mathbf{D}$ as separate ```R```-objects.
-```{r SVD,echo=FALSE,results=FALSE}
- # The Singular Value Decomposition of X
-# =====================================
-X.svd <- svd(X)
-str(X.svd)
-U <- X.svd$u
-V <- X.svd$v
-D <- diag(X.svd$d)
+</details>
+
+
+##### 3. Perform an SVD on `cheese_centered`, and store the matrices $\mathbf{U}$, $\mathbf{V}$ and $\mathbf{\Delta}$ as separate objects {-}
+
+<details><summary>Solution</summary>
+```{r cheese_svd}
+cheese_svd <- svd(cheese_centered)
+str(cheese_svd)
+U <- cheese_svd$u
+V <- cheese_svd$v
+D <- diag(cheese_svd$d)
 ```
+</details>
   
-2. Show that $\mathbf{u_1}$ is a normalized vector; show the same for $\mathbf{u_2}$. Show that $\mathbf{u_1}$ and $\mathbf{u_2}$ are orthogonal vectors. Then show the orthonormality of all vectors $\mathbf{u_j}$ in a single calculation (using the matrix $\mathbf{U}$). Similarly, show the orthonormality of all vectors $\mathbf{v_j}$ in a single calculation (using the matrix $\mathbf{V}$). Did you obtain the result you expected? If not, explain.
-```{r orthonorlity,echo=FALSE,results=FALSE}
+
+##### 4. Show that $\mathbf{u_1}$ is a normalized vector; show the same for $\mathbf{u_2}$. Show that $\mathbf{u_1}$ and $\mathbf{u_2}$ are orthogonal vectors. Then show the orthonormality of all vectors $\mathbf{u_j}$ in a single calculation (using the matrix $\mathbf{U}$). Similarly, show the orthonormality of all vectors $\mathbf{v_j}$ in a single calculation (using the matrix $\mathbf{V}$). {-}
+
+<details><summary>Solution</summary>
+```{r}
 # Verifying orthonormality
 # ------------------------
 # The vectors u1 and u2 are orthonormal
-t(U[,1]) %*% U[,1]
-t(U[,2]) %*% U[,2]
-t(U[,1]) %*% U[,2]
+t(U[, 1]) %*% U[, 1]
+t(U[, 2]) %*% U[, 2]
+t(U[, 1]) %*% U[, 2]
 
 # Verifying that U forms an orthonormal basis in one step:
-t(U) %*% U   # computational imperfections
-round(t(U) %*% U, digits=15)
- 
- 
+t(U) %*% U # computational imperfections
+round(t(U) %*% U, digits = 15)
+
+
 # Verifying that V forms an orthonormal basis:
-t(V) %*% V   # computational imperfections
-round(t(V) %*% V, digits=15)
+t(V) %*% V # computational imperfections
+round(t(V) %*% V, digits = 15)
 ```
+</details>
 
-3.  Check that ```R``` has performed the SVD correctly, i.e. calculate the matrix $\mathbf{X}$ from the elements of the SVD. Do this in two different ways:
 
-+ via the sum definition of the SVD (course notes p. 18) 
-```{r SVD calculations,echo=FALSE,results=FALSE}
+##### 5. Check that the SVD was performed correctly, i.e. calculate the matrix $\mathbf{X}$ from the elements of the SVD. {-}
+
+<details><summary>Solution</summary>
+
+There are 2 ways to do this
+
+  - Using the sum definition of the SVD 
+    $\mathbf{X} = \sum_{j=1}^r \delta_j \mathbf{u}_j\mathbf{v}_j^T$
+  
+```{r}
 # Calculating X via the sum definition of the SVD:
 # ------------------------------------------------
-X.sum <- matrix(0, nrow=nrow(X), ncol=ncol(X))
-X.sum
-for (j in 1:ncol(U))
-{ 
-  X.sum <- X.sum + (X.svd$d[j]* U[,j] %*% t(V[,j]))
+
+## Initialize empty matrix
+X_sum <- matrix(0, nrow = nrow(U), ncol = ncol(V))
+
+## Compute sum by looping over columns
+for (j in 1:ncol(U)) {
+  X_sum <- X_sum + (diag(D)[j] * U[, j] %*% t(V[, j]))
 }
-X.sum
 ```
 
-+ via the matrix notation of the SVD (course notes. 19)
-```{r,echo=FALSE,results=FALSE}
+  - using the matrix notation of the SVD
+  
+  $\mathbf{X}=\mathbf{U}_{n\times n}\boldsymbol{\Delta}_{n\times p}\mathbf{V}^T_{p \times p}$
+  
+```{r}
 # Calculating X via the SVD matrix multiplication:
 # ------------------------------------------------
-X.mult <- U %*% D %*% t(V)
-X.mult
+X_mult <- U %*% D %*% t(V)
 ```
 
-+ Verify that the obtained results are identical to the  matrix $\mathbf{X}$.
-```{r,echo=FALSE,results=FALSE}
-round(X.sum-X,digits = 10)    # for comparison
+  - Verify that the obtained results are identical to the  matrix $\mathbf{X}$.
+  
+```{r}
+## Remove dimnames with unname for comparison
+all.equal(X_sum, unname(cheese_centered))
+all.equal(X_mult, unname(cheese_centered))
 ```
-4. Calculate the matrix $\mathbf{X_k}$, for $k = 2$. Do this again:
-+ via the sum definition of the SVD (course notes  p. 18) 
-```{r,echo=FALSE,results=FALSE}
-# Calculating Xk (for k=2)
-# ========================
-# Calculating Xk via the sum definition of the SVD:
-# -------------------------------------------------
-Xk.sum <- matrix(0, nrow=nrow(X), ncol=ncol(X))
-Xk.sum
-for (j in 1:2)
-{ 
-  Xk.sum <- Xk.sum + (X.svd$d[j]* U[,j] %*% t(V[,j]))
-}
-Xk.sum
-```
-+ via the matrix notation of the SVD (course notes p. 19)
-```{r,echo=FALSE,results=FALSE}
-# Calculating Xk via the SVD matrix multiplication:
-# -------------------------------------------------
-Xk.mult <- U[, 1:2] %*% D[1:2,1:2] %*% t(V[,1:2])
-Xk.mult
+</details>
+
+##### 6. Approximate the matrix $\mathbf{\tilde{\mathbf{X}}}$, for $k = 2$ using the truncated SVD. {-}
+
+<details><summary>Solution</summary>
+
+Using the matrix notation of the SVD $\tilde{\mathbf{X}}=\mathbf{U}_{n\times k}\boldsymbol{\Delta}_{k\times k}\mathbf{V}_{p \times k}^T$
+
+```{r}
+k <- 2
+X_tilde <- U[, 1:k] %*% D[1:k,1:k] %*% t(V[,1:k])
+X_tilde
 ```
 
-+ Compare the obtained results with the matrix $\mathbf{X}$. Just at a first glance, does it seem that $\mathbf{X_2}$ is an approximation of $\mathbf{X}$?
+- Compare the obtained results with the matrix $\mathbf{X}$ (`cheese_centered`). 
+Just at a first glance, does it seem that $\mathbf{\tilde{X}}$ is a good approximation of $\mathbf{X}$?
 
 
 
@@ -366,7 +418,7 @@ Xk.mult
 
 ###In this exercise we will focus on the interpretation of the biplot.
 
-The file ```Industries.txt``` contains data on the distribution of employment between 9 industrial sectors, in 26 European countries. The dataset stems from the Cold-War era; the data are expressed as percentages. Read in the data and have a feel about it. 
+The file ```Industries.txt``` contains data on the distribution of employment between 9 industrial sectors, in 26 European countries. The dataset stems from the Cold-War era; the data are expressed as percentages. Read in the data and have a feel about it.
 ```{r,echo=FALSE,results=FALSE}
 Indus <- read.table("Industries.txt", sep=" ", header=TRUE)
 #First 6 rows of data.frame are displayed
