@@ -125,6 +125,9 @@ We can use $\mathbf{H}$ to center our distance matrix:
 ```{r dist_mx_centered}
 (dist_mx_centered <- H %*% dist_mx)
 round(colMeans(dist_mx_centered), 8)  # verify colMeans are 0
+## Note that using `scale(X, center = TRUE, scale = FALSE)` is much more efficient
+## to center a matrix
+## Here we use the approach with H because we need it further on
 ```
 
 We will use this matrix to calculate $\mathbf{G}_X$ (Gram matrix of $\mathbf{X}$).
@@ -279,6 +282,8 @@ qr(cheese_mx)$rank
 n <- nrow(cheese_mx)
 cheese_H <- diag(n) - 1 / n * matrix(1, ncol = n, nrow = n)
 cheese_centered <- cheese_H %*% as.matrix(cheese_mx)
+## Again we use H here because we use it for some exercises later on
+## In real-life applications using the `scale` function would be more appropriate
 ```
 
 
@@ -489,8 +494,9 @@ n <- nrow(indus_X)
 <details><summary>Solution</summary>
 ```{r}
 # Centering the data matrix first
-H <- diag(n) - 1 / n * matrix(1, ncol = n, nrow = n)
-indus_centered <- H %*% as.matrix(indus_X)
+# H <- diag(n) - 1 / n * matrix(1, ncol = n, nrow = n)
+# indus_centered <- H %*% as.matrix(indus_X)
+indus_centered <- scale(indus_X, scale = FALSE)
 ```
 
 ```{r}
@@ -643,7 +649,6 @@ as_tibble(Zk, rownames = "country") %>%
 ##### 3. Can you give a meaningful interpretation to each dimension? {-}
 
 
->TO DO: add row- and column-correlations with SVD
 
 
 # Session info {-}
