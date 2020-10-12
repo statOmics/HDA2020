@@ -26,19 +26,16 @@ knitr::opts_chunk$set(
 We will create a $4 \times 2$ matrix, starting from a vector of values.
 
 ```{r create_matrix}
-## c() creates a vector
-values <- c(3, 6, 1, 2, 0.23, 0.46, -2, -4)
-
 ## Define the matrix X, filling matrix "byrow": 4 x 2
-X <- matrix(values, nrow = 4, byrow = TRUE)
+X <- matrix(c(3, 6, 1, 2, 0.23, 0.46, -2, -4), nrow = 4, byrow = TRUE)
 X
 
 ## Alternative way to define the matrix, `byrow = FALSE` is the default
-X <- matrix(values, ncol = 2)
+X <- matrix(c(3, 1, 0.23, -2, 6, 2, 0.46, -4), ncol = 2, byrow = FALSE)
 X
 
-# Creating a second matrix: 2 x 4, using the square of `values`
-Y <- matrix(values^2, nrow = 2, ncol = 4)
+# Creating a second matrix: 2 x 4, using the square of `X`
+Y <- matrix(X^2, nrow = 2, ncol = 4)
 Y
 
 ## Check that we really have a matrix
