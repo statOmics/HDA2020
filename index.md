@@ -31,13 +31,16 @@ Questions related to the course contents can be asked by posting on [UFora](http
 
 ### Topics
 
-**1. Introduction**
+#### 1. Introduction
 
   - Slides: [Intro](assets/IntroHighDim.pdf)
   - Software: [Install and Launch Statistical Software](pages/software4stats.md)
   - [Introduction](pages/intro.html)
+  - [Introduction to RMarkdown](pages/Introduction-RMarkdown.html)
+  - [Introduction to matrices in R](pages/Introduction-Matrices-R.html)
 
 
-**2. Singular value decomposition**
+#### 2. Singular value decomposition
 
   - [Singular value decomposition theory](pages/svd.html)
+  - [Lab 1: Introduction and SVD applications](pages/Lab1-Intro-SVD.html)
