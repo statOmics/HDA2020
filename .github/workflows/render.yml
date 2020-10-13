@@ -25,6 +25,11 @@ jobs:
 
       - name: Set up pandoc
         uses: r-lib/actions/setup-pandoc@master
+        
+      - name: Install X11 dependencies on MacOS
+        if: runner.os == 'macOS'
+        run: |
+          brew cask install xquartz
 
       - name: Install dependencies
         run: |
