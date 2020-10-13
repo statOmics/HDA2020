@@ -48,7 +48,7 @@ Questions related to the course contents can be asked by posting on [UFora](http
 
 #### 1. Introduction
 
-  - Slides: [Intro](assets/IntroHighDim.pdf)
+  - Slides: [Intro](slides/IntroHighDim.pdf)
   - Software: [Install and Launch Statistical Software](./software4stats.md)
   - [Introduction](./intro.html)
   - [Introduction to RMarkdown](./Introduction-RMarkdown.html)
