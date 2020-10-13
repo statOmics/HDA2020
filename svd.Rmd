@@ -58,9 +58,10 @@ library(imager)
 
 ```{r download-data, warning=FALSE, message=FALSE}
 ## Download and unzip data
+if(!dir.exists("raw-data")) dir.create("raw-data")
 download(
   "https://raw.githubusercontent.com/statOmics/HDA2020/gh-pages/assets/data/yalefaces_cropped.zip",
-  dest = "raw-data/yalefaces_cropped.zip", mode = "wb", quiet = TRUE
+  destfile = "raw-data/yalefaces_cropped.zip", mode = "wb", quiet = TRUE
 )
 unzip ("raw-data/yalefaces_cropped.zip", exdir = "./raw-data")
 
