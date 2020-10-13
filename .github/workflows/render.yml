@@ -1,0 +1,52 @@
+name: Render and Deploy
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+      
+jobs:
+  render:
+    runs-on: macOS-latest
+    
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@master
+        with:
+          r-version: ${{ matrix.config.r }}
+
+      - name: Set up pandoc
+        uses: r-lib/actions/setup-pandoc@master
+
+      - name: Install dependencies
+        run: |
+          source("install.R")
+        shell: Rscript {0}
+
+      - name: Session info
+        run: |
+          install.packages('sessioninfo', Ncpus = 2L)
+          options(width = 100)
+          pkgs <- installed.packages()[, "Package"]
+          sessioninfo::session_info(pkgs, include_base = TRUE)
+        shell: Rscript {0}
+        
+      - name: Render site
+        run: |
+          rmarkdown::render_site()
+        shell: Rscript {0}
+      
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@3.6.2
+        with:
+          ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: _site
