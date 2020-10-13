@@ -31,4 +31,4 @@ output:
       toc_float: true
       highlight: tango
       number_sections: true
-exclude: ["raw-data"]
+exclude: ["raw-data", "install.R"]
