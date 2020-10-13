@@ -1,0 +1,34 @@
+name : "HDA2020"
+title : "High Dimensional Data Analysis 2020 (HDA2020)"
+navbar:
+  title: "HDA2020"
+  type: inverse
+  left:
+    - icon: fa-home
+      href: index.html
+    - text: "Lectures"
+      icon: fa-chalkboard-teacher
+      menu:
+      - text: "1. Introduction"
+        href: intro.html
+      - text: "2. Singular Value Decomposition"
+        href: svd.html
+    - text: "Practicals"
+      icon: fa-laptop
+      menu:
+      - text: "Lab 1"
+        href: Lab1-Intro-SVD.html
+  right:
+    - icon: fa-github
+      href: https://github.com/statOmics/HDA2020
+    - text: "statOmics"
+      href: http://statomics.github.io/
+output:
+    html_document:
+      code_download: true
+      theme: cosmo
+      toc: true
+      toc_float: true
+      highlight: tango
+      number_sections: true
+exclude: ["raw-data"]
