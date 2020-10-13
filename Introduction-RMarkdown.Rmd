@@ -424,3 +424,4 @@ devtools::session_info()
 git2r::repository()
 ```
 
+# [Home](https://statomics.github.io/HDA2020/) {-}
