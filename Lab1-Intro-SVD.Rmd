@@ -37,7 +37,7 @@ Packages used in this document.
 Installation code is commented, uncomment and paste this code in an R console to install the packages.
 
 ```{r libraries, message=FALSE, warning=FALSE}
-# install.packages(c("tidyverse", "ggfortify"))
+# install.packages("tidyverse")
 library(tidyverse)
 ```
 
@@ -50,7 +50,7 @@ See [course notes](https://statomics.github.io/HDA2020/pages/svd.html#7_SVD_and_
 
 * We will use `UScitiesD` data as an example
 * Our goal is to use the distance matrix $\mathbf D_X$  without knowledge of $\mathbf X$ to represent the rows of $\mathbf X$ in a low dimensional space, say 2D or 3D. 
-* We search for $\mathbf V_k$ that orthogonally project the rows of $\mathbf X$, $\mathbf x^t_i$  onto a $k-D$ space spanned by the columns of $\mathbf V_k$. In fact we are looking for $\mathbf Z_k$, such that $\mathbf Z_k=\mathbf X \mathbf V_k$
+* We search for $\mathbf V_k$ that orthogonally projects the rows of $\mathbf X$ ($\mathbf x^T_i$) onto a $k$-dimensional space spanned by the columns of $\mathbf V_k$. In fact we are looking for $\mathbf Z_k$, such that $\mathbf Z_k=\mathbf X \mathbf V_k$
 *  But we do not know $\mathbf X$, so how do we get $\mathbf Z_k$? We will use the $\mathbf G_X$ (gram matrix) trick, mentioned in the course notes
 
 
@@ -413,7 +413,7 @@ X_tilde
 Just at a first glance, does it seem that $\mathbf{\tilde{X}}$ is a good approximation of $\mathbf{X}$?
 
 
-##### 7. SVD and linear regression: perform a linear regression using SVD to estimate the effects of the `Acetic`, `H2S` and `Lactic` variables on the `taste`.
+##### 7. SVD and linear regression: perform a linear regression using SVD to estimate the effects of the `Acetic`, `H2S` and `Lactic` variables on the `taste`. {-}
 
 Note: we cannot use the SVD from before as this was calculated from the complete `cheese` table, also including the `taste` column, which is the response variable of interest here.
 Instead, we need to create a new design matrix $\mathbf{X}$ containing the predictors and a separate vector $\mathbf{y}$ containing the response.
