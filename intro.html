@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Lieven Clement" />
+
+
+<title>1. Introduction to High Dimensional Data Analysis</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<script src="site_libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+      code.sourceCode > span { display: inline-block; line-height: 1.25; }
+  code.sourceCode > span { color: inherit; text-decoration: inherit; }
+  code.sourceCode > span:empty { height: 1.2em; }
+  .sourceCode { overflow: visible; }
+  code.sourceCode { white-space: pre; position: relative; }
+  div.sourceCode { margin: 1em 0; }
+  pre.sourceCode { margin: 0; }
+  @media screen {
+  div.sourceCode { overflow: auto; }
+  }
+  @media print {
+  code.sourceCode { white-space: pre-wrap; }
+  code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+  }
+  pre.numberSource code
+    { counter-reset: source-line 0; }
+  pre.numberSource code > span
+    { position: relative; left: -4em; counter-increment: source-line; }
+  pre.numberSource code > span > a:first-child::before
+    { content: counter(source-line);
+      position: relative; left: -1em; text-align: right; vertical-align: baseline;
+      border: none; display: inline-block;
+      -webkit-touch-callout: none; -webkit-user-select: none;
+      -khtml-user-select: none; -moz-user-select: none;
+      -ms-user-select: none; user-select: none;
+      padding: 0 4px; width: 4em;
+      color: #aaaaaa;
+    }
+  pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+  div.sourceCode
+    {  background-color: #f8f8f8; }
+  @media screen {
+  code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+  }
+  code span.al { color: #ef2929; } /* Alert */
+  code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+  code span.at { color: #c4a000; } /* Attribute */
+  code span.bn { color: #0000cf; } /* BaseN */
+  code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+  code span.ch { color: #4e9a06; } /* Char */
+  code span.cn { color: #000000; } /* Constant */
+  code span.co { color: #8f5902; font-style: italic; } /* Comment */
+  code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+  code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+  code span.dt { color: #204a87; } /* DataType */
+  code span.dv { color: #0000cf; } /* DecVal */
+  code span.er { color: #a40000; font-weight: bold; } /* Error */
+  code span.ex { } /* Extension */
+  code span.fl { color: #0000cf; } /* Float */
+  code span.fu { color: #000000; } /* Function */
+  code span.im { } /* Import */
+  code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+  code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+  code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+  code span.ot { color: #8f5902; } /* Other */
+  code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+  code span.sc { color: #000000; } /* SpecialChar */
+  code span.ss { color: #4e9a06; } /* SpecialString */
+  code span.st { color: #4e9a06; } /* String */
+  code span.va { color: #000000; } /* Variable */
+  code span.vs { color: #4e9a06; } /* VerbatimString */
+  code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+    </style>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #c4a000; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #000000; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #000000; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #000000; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">HDA2020</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fa fa-chalkboard-teacher"></span>
+     
+    Lectures
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="intro.html">1. Introduction</a>
+    </li>
+    <li>
+      <a href="svd.html">2. Singular Value Decomposition</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fa fa-laptop"></span>
+     
+    Practicals
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Lab1-Intro-SVD.html">Lab 1</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/statOmics/HDA2020">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="http://statomics.github.io/">statOmics</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">1. Introduction to High Dimensional Data Analysis</h1>
+<h4 class="author">Lieven Clement</h4>
+<h4 class="date">statOmics, Ghent University (<a href="https://statomics.github.io" class="uri">https://statomics.github.io</a>)</h4>
+
+</div>
+
+
+<div id="introduction" class="section level1">
+<h1><span class="header-section-number">1</span> Introduction</h1>
+<ul>
+<li>We live in a big data era</li>
+<li>Massive Datasets on our location, surfing behavior, consumer data, social media, …</li>
+<li>Life Sciences: advent of high throughput technologies has enabled us to measure brain activity (brain images) as well as the expression of thousands of genes, proteins, … for each subject or even single cell.</li>
+<li>Industry: process control with many sensors that follow process in real time…</li>
+<li>Data drive journalism</li>
+<li>…</li>
+</ul>
+<p>Challenge: We have to learn from high dimensional data!</p>
+<hr />
+<div id="what-are-high-dimensional-data" class="section level2">
+<h2><span class="header-section-number">1.1</span> What are high dimensional data?</h2>
+<ul>
+<li><p>We typically observe multiple variables/features (p) for each subject/experimental unit <span class="math inline">\(i=1,\ldots,n\)</span> i.e. <span class="math display">\[ \mathbf{x}_i^T=[x_{i1},\ldots,x_{ip}]\]</span></p></li>
+<li><p>Multivariate statistics have a long history, but were designed for the <span class="math inline">\(n&gt;&gt;&gt;p\)</span> case,</p></li>
+<li><p>Nowadays many high throughput technologies generate multivariate data with many variables (large <span class="math inline">\(p\)</span>) as compared to the number of independent replicates or samples (sample size <span class="math inline">\(n\)</span>), resulting in <strong>{high-dimensional data}</strong>, which is characterised by <span class="math display">\[
+   p &gt;&gt;&gt; n.
+\]</span></p></li>
+<li><p>New statistical methods for dealing with the <span class="math inline">\(p &gt;&gt;&gt; n\)</span> case have been developed in the last 20 years. Some of them are adaptations of multivariate methods.</p></li>
+</ul>
+<hr />
+<p>Issues with high-dimensional data:</p>
+<ul>
+<li><p><em>Computational problems</em>: large matrices, numerical accuracy of computers become an issue</p></li>
+<li><p><em>Classical asymptotic theory does not hold</em> for <span class="math inline">\(p\rightarrow\infty\)</span> as <span class="math inline">\(n \rightarrow \infty\)</span></p></li>
+<li><p><em>Model (or feature) selection</em> requires specialised methods to deal with the enormous number of possible models. (e.g. in linear regression with p potential predictors: <span class="math inline">\(2^p\)</span> possible models)</p></li>
+<li><p>Models that can potentially depend on large-p predictors are vulnerable to <em>huge overfitting</em>.</p></li>
+<li><p>In searching for associations between an outcome and large p potential exploratory variables, we are at risk to make <em>many false discoveries</em></p></li>
+<li><p>The <em>Curse of Dimensionality</em> may cause a prediction model to become useless. (<span class="math inline">\(n\)</span> data points become sparse in large-<span class="math inline">\(p\)</span> dimensional space)</p></li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="important-tasks-in-high-dimensional-data-analysis" class="section level1">
+<h1><span class="header-section-number">2</span> Important tasks in high dimensional data analysis?</h1>
+<div id="example-kang-et-al.-2018s-droplet-based-scrna-seq-data-of-pbmcs-cells-from-8-lupus-patients-measured-before-and-after-6h-treatment-with-inf-β-16-samples-in-total." class="section level2">
+<h2><span class="header-section-number">2.1</span> Example: Kang et al. (2018)’s droplet-based scRNA-seq data of PBMCs cells from 8 lupus patients measured before and after 6h-treatment with INF-β (16 samples in total).</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2"></a></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="co">## Packages to load and visualize the single-cell data</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="kw">library</span>(ExperimentHub)</span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="kw">library</span>(scater)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co">## Load Kang single-cell data from ExperimentHub</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a>eh &lt;-<span class="st"> </span><span class="kw">ExperimentHub</span>()</span>
+<span id="cb2-3"><a href="#cb2-3"></a>sce &lt;-<span class="st"> </span>eh[[<span class="st">&quot;EH2259&quot;</span>]]</span>
+<span id="cb2-4"><a href="#cb2-4"></a></span>
+<span id="cb2-5"><a href="#cb2-5"></a>sce</span></code></pre></div>
+<pre><code>class: SingleCellExperiment 
+dim: 35635 29065 
+metadata(0):
+assays(1): counts
+rownames(35635): MIR1302-10 FAM138A ... MT-ND6 MT-CYB
+rowData names(2): ENSEMBL SYMBOL
+colnames(29065): AAACATACAATGCC-1 AAACATACATTTCC-1 ... TTTGCATGGTTTGG-1
+  TTTGCATGTCTTAC-1
+colData names(5): ind stim cluster cell multiplets
+reducedDimNames(1): TSNE
+altExpNames(0):</code></pre>
+<ul>
+<li>Data on gene expression of 35635 genes of 29065 cells.</li>
+</ul>
+</div>
+<div id="data-exploration-and-dimensionality-reduction" class="section level2">
+<h2><span class="header-section-number">2.2</span> Data exploration and dimensionality reduction</h2>
+<ul>
+<li>Visualisation is a first essential step to learn from data</li>
+</ul>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">counts</span>(sce)[<span class="dv">18990</span><span class="op">:</span><span class="dv">19000</span>,<span class="dv">9</span><span class="op">:</span><span class="dv">20</span>]</span></code></pre></div>
+<pre><code>11 x 12 sparse Matrix of class &quot;dgCMatrix&quot;
+                                                   
+RP11-467L20.10   . .   . . .   .  .  .  . .   .   .
+MYRF             . .   . . .   .  .  .  . .   .   .
+TMEM258          . .   3 . .   .  1  1  . .   .   .
+FEN1             . .   . . .   .  .  .  . .   .   .
+FADS2            . .   . . .   .  .  .  . .   .   .
+FADS1            . .   . . .   .  .  .  . .   .   .
+FADS3            . .   . . .   .  .  .  . .   .   .
+RAB3IL1          . .   . . .   .  .  .  . .   .   .
+BEST1            1 .   . . .   .  1  .  . .   1   1
+FTH1           163 8 271 4 5 174 38 58 31 3 663 612
+AP003733.1       . .   . . .   .  .  .  . .   .   .</code></pre>
+<ul>
+<li>It is impossible to learn about the structure in the data by staring at the data matrix.</li>
+<li>We should be able to explore the data in a low dimensional projection</li>
+</ul>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="kw">plotReducedDim</span>(sce, <span class="dt">dimred=</span><span class="st">&quot;TSNE&quot;</span>, <span class="dt">colour_by=</span><span class="st">&quot;cell&quot;</span>)</span></code></pre></div>
+<p><img src="intro_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw">plotReducedDim</span>(sce, <span class="dt">dimred=</span><span class="st">&quot;TSNE&quot;</span>, <span class="dt">colour_by=</span><span class="st">&quot;stim&quot;</span>)</span></code></pre></div>
+<p><img src="intro_files/figure-html/unnamed-chunk-3-2.png" width="672" /></p>
+<ul>
+<li>Note, that we see huge effect of treatment. If I see this I am always on my guard!</li>
+<li>We contacted the authors and learned that all control cells were sequenced in a first run and all stimulated cells were on a second sequencing run. So the large effect might be an effect of batch!</li>
+</ul>
+</div>
+<div id="prediction" class="section level2">
+<h2><span class="header-section-number">2.3</span> Prediction</h2>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="kw">plotReducedDim</span>(sce, <span class="dt">dimred=</span><span class="st">&quot;TSNE&quot;</span>, <span class="dt">colour_by=</span><span class="st">&quot;cell&quot;</span>)</span></code></pre></div>
+<p><img src="intro_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<ul>
+<li><p>In single cell analysis it is key to identify cell types in scRNA-seq data sets before in-depth investigations of their functional and pathological roles.</p></li>
+<li><p>Use models that were build based on reference data sets to predict cell types in new data sets based on their gene expression pattern</p></li>
+<li><p>Problem: we have 35635 genes at our disposal to build this prediction model!</p></li>
+<li><p>Other examples</p>
+<ul>
+<li><p>Prediction of risk on mortality is used on a daily basis in intensive care units to prioritise patient care.</p></li>
+<li><p>Facebook: predict the identity of the faces of people that are on an new image that is uploaded.</p></li>
+<li><p>Netflix: Suggest movies that you would like</p></li>
+</ul></li>
+</ul>
+</div>
+<div id="large-scale-hypothesis-testing" class="section level2">
+<h2><span class="header-section-number">2.4</span> Large scale hypothesis testing</h2>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="kw">plotReducedDim</span>(sce, <span class="dt">dimred=</span><span class="st">&quot;TSNE&quot;</span>, <span class="dt">colour_by=</span><span class="st">&quot;cell&quot;</span>, <span class="dt">shape_by=</span><span class="st">&quot;stim&quot;</span>)</span></code></pre></div>
+<p><img src="intro_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<ul>
+<li>Which genes are differentially expressed between control and stimulated treatment (assess in each cell type)</li>
+<li>For which genes we see that the differential expression according to treatment is changing according to the cell type (interaction)</li>
+<li>We have to model the gene expression for each gene</li>
+</ul>
+<p><span class="math display">\[
+\left \{
+\begin{array}{lcl}
+y_{ig} &amp;\sim&amp; NB(\mu_{ig}, \phi_{g})\\
+E[y_{ig}] &amp;=&amp; \mu\\
+\log(\mu_{ig}) &amp;=&amp; \eta_{ig}\\
+\eta_{ig} &amp;=&amp; \beta_{0,g} + \sum\limits_{c=1}^C \beta_{c,g} X_{ic} + \beta_{s,g} X_{is} + \sum\limits_{c=1}^C \beta_{c:s,g} X_{ic} X_{is} + \alpha_{ig}
+\end{array} \right.
+\]</span></p>
+<p>With</p>
+<ul>
+<li><p>Cell type <span class="math inline">\(c=2\ldots C\)</span> and <span class="math inline">\(X_{ic}\)</span> is a dummy variable that <span class="math inline">\(X_{ic}=1\)</span> if cell <span class="math inline">\(i\)</span> is of cell type c and <span class="math inline">\(X_{ic}=0\)</span> otherwise. Note that cell type <span class="math inline">\(c=1\)</span> is the reference cell type</p></li>
+<li><p>Indicator <span class="math inline">\(X_{is}\)</span> indicates if cell <span class="math inline">\(i\)</span> was stimulated <span class="math inline">\(X_{is}=1\)</span> or not <span class="math inline">\(X_{is}=0\)</span>. So the control treatment is the reference treatment.</p></li>
+</ul>
+<p>Suppose we want to test if the effect of the stimulus (average difference in expression between stimulated and non stimulated cells) is different in cell type c than in the reference cell type 1?</p>
+<ul>
+<li><p><span class="math inline">\(H_0: \beta_{c:s,g} = 0\)</span></p></li>
+<li><p><span class="math inline">\(H_1: \beta_{c:s,g} \neq 0\)</span></p></li>
+<li><p>We have to assess this for 35635 genes!</p></li>
+<li><p>If we assess each test at the 5% level we can expect 0.05 * 35635 = 1782 false positives.</p></li>
+</ul>
+<p><span class="math inline">\(\rightarrow\)</span> massive multiple testing problem!</p>
+<p>Note, that we cannot differentiate between batch and treatment because of the flaw in the experimental design!</p>
+<p>Other examples</p>
+<ul>
+<li>Find regions (voxels) in the brain (on brain image) that are associated with a certain condition/treatment</li>
+<li>Evaluation of trading rules</li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="linear-regression" class="section level1">
+<h1><span class="header-section-number">3</span> Linear regression</h1>
+<ul>
+<li>Linear regression is a very important statistical tool to study the association between variables and to build prediction models.</li>
+</ul>
+<div id="scalar-form" class="section level2">
+<h2><span class="header-section-number">3.1</span> Scalar form</h2>
+<ul>
+<li>Consider a vector of predictors <span class="math inline">\(\mathbf{x}=(x_1,\ldots,x_p)\)</span> and</li>
+<li>a real-valued response <span class="math inline">\(Y\)</span></li>
+<li>then the linear regression model can be written as <span class="math display">\[
+Y=f(\mathbf{x}) +\epsilon=\beta_0+\sum\limits_{j=1}^p x_j\beta_j + \epsilon
+\]</span> with i.i.d. <span class="math inline">\(\epsilon\sim N(0,\sigma^2)\)</span></li>
+<li>We will typically work on mean centered variables: Y-{Y} and X - {X}, then the intercept is dropped from the model: <span class="math display">\[
+Y=f(\mathbf{x}) +\epsilon=\sum\limits_{j=1}^p x_j\beta_j + \epsilon
+\]</span></li>
+</ul>
+</div>
+<div id="vectormatrix-form" class="section level2">
+<h2><span class="header-section-number">3.2</span> Vector/Matrix form</h2>
+<ul>
+<li><span class="math inline">\(n\)</span> observations <span class="math inline">\((\mathbf{x}_1,y_1) \ldots (\mathbf{x}_n,y_n)\)</span> with <span class="math inline">\(\mathbf{x}_1^T=[1 x_1 \ldots x_p]\)</span></li>
+<li>Regression in matrix notation <span class="math display">\[\mathbf{Y}=\mathbf{X\beta} + \mathbf{\epsilon}\]</span> with <span class="math inline">\(\mathbf{Y}=\left[\begin{array}{c}y_1\\ \vdots\\y_n\end{array}\right]\)</span>, <span class="math inline">\(\mathbf{X}=\left[\begin{array}{cccc} 1&amp;x_{11}&amp;\ldots&amp;x_{1p}\\ \vdots&amp;\vdots&amp;&amp;\vdots\\ 1&amp;x_{n1}&amp;\ldots&amp;x_{np} \end{array}\right]\)</span> or <span class="math inline">\(\mathbf{X}=\left[\begin{array}{c} \mathbf{x}_1^T\\\vdots\\\mathbf{x}_n^T\end{array}\right]\)</span>, <span class="math inline">\(\boldsymbol{\beta}=\left[\begin{array}{c}\beta_0\\ \vdots\\ \beta_p\end{array}\right]\)</span> and <span class="math inline">\(\mathbf{\epsilon}=\left[\begin{array}{c} \epsilon_1 \\ \vdots \\ \epsilon_n\end{array}\right]\)</span></li>
+</ul>
+<p>Note, that upon centering of <span class="math inline">\(\mathbf{X}\)</span> and <span class="math inline">\(\mathbf{Y}\)</span> the 1 is dropped from each <span class="math inline">\(\mathbf{x}_i\)</span> and thus the column of 1 is dropped in <span class="math inline">\(\mathbf{X}\)</span></p>
+<hr />
+</div>
+<div id="interpretation" class="section level2">
+<h2><span class="header-section-number">3.3</span> Interpretation</h2>
+<p>From the linear regression we get <span class="math display">\[
+  E[Y \mid \mathbf{x}] = \mathbf{x}^T\boldsymbol{\beta} .
+\]</span></p>
+<ul>
+<li>Hence, the <span class="math inline">\(\beta\)</span> parameters relate the regressor <span class="math inline">\(\mathbf{x}\)</span> to the mean outcome.</li>
+<li>If we know the covariate pattern <span class="math inline">\(\mathbf{x}\)</span> we can use the model to predict <span class="math inline">\(Y\)</span>.</li>
+</ul>
+<p>Upon centering we get the following for a model with a single regressor <span class="math display">\[
+  E[Y \mid x] = \beta_1 x
+\]</span> and <span class="math display">\[
+ \beta_1 = E[Y\mid x+1] - E[Y\mid x] .
+\]</span></p>
+<p>Hence, the <span class="math inline">\(\beta_1\)</span> parameter has an interpretation as the mean increase of the outcome as the regressor increases with one unit. The parameter does not say very about individual outcomes. It is the residual variance <span class="math inline">\(\sigma^2\)</span> that determines how much individual outcomes vary about the mean outcome.</p>
+<p>The <span class="math inline">\(\beta\)</span> parameters are used to measure association, but a <span class="math inline">\(\beta \neq 0\)</span> does not necessarily mean that the model will give good predictions.</p>
+<hr />
+<ul>
+<li><p>In a later chapter we will discuss the problem of large scale hypothesis testing: testing many hypotheses in a single study (ten to hundred thousands of hypotheses).</p></li>
+<li><p>A statistical test is constructed to control the type I error rate at the significance level. However, when many hypotheses are to be tested in a single study, the probability to find false associations is no longer controlled if p-values are compared to the significance level.</p></li>
+<li><p>We will later introduce the concept of false discovery rates to overcome the problem.</p></li>
+</ul>
+</div>
+<div id="least-squares-ls" class="section level2">
+<h2><span class="header-section-number">3.4</span> Least Squares (LS)</h2>
+<ul>
+<li><p>Minimize the residual sum of squares <span class="math display">\[\begin{eqnarray*}
+RSS(\boldsymbol{\beta})&amp;=&amp;\sum\limits_{i=1}^n e^2_i\\
+&amp;=&amp;\sum\limits_{i=1}^n \left(y_i-\beta_0-\sum\limits_{j=1}^p x_{ij}\beta_j\right)^2
+\end{eqnarray*}\]</span></p></li>
+<li><p>or in matrix notation <span class="math display">\[\begin{eqnarray*}
+RSS(\boldsymbol{\beta})&amp;=&amp;(\mathbf{Y}-\mathbf{X\beta})^T(\mathbf{Y}-\mathbf{X\beta})\\
+&amp;=&amp;\Vert \mathbf{Y}-\mathbf{X\beta}\Vert^2_2
+\end{eqnarray*}\]</span> with the <span class="math inline">\(L_2\)</span>-norm of a <span class="math inline">\(p\)</span>-dim. vector <span class="math inline">\(v\)</span> <span class="math inline">\(\Vert \mathbf{v} \Vert_2=\sqrt{v_1^2+\ldots+v_p^2}\)</span> <span class="math inline">\(\rightarrow\)</span> <span class="math inline">\(\hat{\boldsymbol{\beta}}=\text{argmin}_\beta \Vert \mathbf{Y}-\mathbf{X\beta}\Vert^2\)</span></p></li>
+</ul>
+<hr />
+<div id="minimize-rss" class="section level3">
+<h3><span class="header-section-number">3.4.1</span> Minimize RSS</h3>
+<p><span class="math display">\[
+\begin{array}{ccc}
+\frac{\partial RSS}{\partial \boldsymbol{\beta}}&amp;=&amp;\mathbf{0}\\\\
+\frac{(\mathbf{Y}-\mathbf{X\beta})^T(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})}{\partial \boldsymbol{\beta}}&amp;=&amp;\mathbf{0}\\\\
+-2\mathbf{X}^T(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})&amp;=&amp;\mathbf{0}\\\\
+\mathbf{X}^T\mathbf{X\beta}&amp;=&amp;\mathbf{X}^T\mathbf{Y}\\\\
+\hat{\boldsymbol{\beta}}&amp;=&amp;(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Y}
+\end{array}
+\]</span></p>
+<p>It can be shown that the estimator is unbiased:</p>
+<p><span class="math display">\[
+E[\hat{\boldsymbol{\beta}}]=\boldsymbol{\beta}
+\]</span></p>
+<hr />
+</div>
+<div id="geometrical-interpretation" class="section level3">
+<h3><span class="header-section-number">3.4.2</span> Geometrical Interpretation</h3>
+<p>Toy Example: fit without intercept</p>
+<ul>
+<li>n=3 and p=2 <span class="math display">\[
+\mathbf{X}=\left[\begin{array}{cc}
+2&amp;0\\
+0&amp;2\\
+0&amp;0
+\end{array}\right]
+\]</span></li>
+</ul>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="kw">set.seed</span>(<span class="dv">4</span>)</span>
+<span id="cb10-2"><a href="#cb10-2"></a>x1 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">0</span>)</span>
+<span id="cb10-3"><a href="#cb10-3"></a>x2 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">0</span>)</span>
+<span id="cb10-4"><a href="#cb10-4"></a>y &lt;-<span class="st"> </span>x1 <span class="op">*</span><span class="st"> </span><span class="fl">0.5</span> <span class="op">+</span><span class="st"> </span>x2 <span class="op">*</span><span class="st"> </span><span class="fl">0.5</span> <span class="op">+</span><span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">3</span>, <span class="dv">2</span>)</span>
+<span id="cb10-5"><a href="#cb10-5"></a>fit &lt;-<span class="st"> </span><span class="kw">lm</span>(y <span class="op">~</span><span class="st"> </span><span class="dv">-1</span> <span class="op">+</span><span class="st"> </span>x1 <span class="op">+</span><span class="st"> </span>x2)</span></code></pre></div>
+<ul>
+<li><span class="math inline">\(\mathbf{Y}\)</span> is now given by</li>
+</ul>
+<p><span class="math display">\[
+\mathbf{Y}=\left[\begin{array}{c}
+1 + \epsilon_1 \\
+1 + \epsilon_2\\
+0 + \epsilon_3
+\end{array}\right]
+\]</span></p>
+<p>with the <span class="math inline">\(\epsilon_i\)</span>s some random noise.</p>
+<ul>
+<li>The actual values of <span class="math inline">\(\mathbf{Y}\)</span> are:</li>
+</ul>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="co">## True Y</span></span>
+<span id="cb11-2"><a href="#cb11-2"></a>y</span></code></pre></div>
+<pre><code>[1] 3.216755 2.457507 2.891145</code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="co">## Fitted Y</span></span>
+<span id="cb13-2"><a href="#cb13-2"></a>fit<span class="op">$</span>fitted.values</span></code></pre></div>
+<pre><code>       1        2        3 
+3.216755 2.457507 0.000000 </code></pre>
+<div id="visualise-fit" class="section level4">
+<h4><span class="header-section-number">3.4.2.1</span> Visualise fit</h4>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="co"># predict values on regular xy grid</span></span>
+<span id="cb15-2"><a href="#cb15-2"></a>x1pred &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="op">-</span><span class="dv">1</span>, <span class="dv">3</span>, <span class="dt">length.out =</span> <span class="dv">10</span>)</span>
+<span id="cb15-3"><a href="#cb15-3"></a>x2pred &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="op">-</span><span class="dv">1</span>, <span class="dv">3</span>, <span class="dt">length.out =</span> <span class="dv">10</span>)</span>
+<span id="cb15-4"><a href="#cb15-4"></a>xy &lt;-<span class="st"> </span><span class="kw">expand.grid</span>(<span class="dt">x1 =</span> x1pred,</span>
+<span id="cb15-5"><a href="#cb15-5"></a><span class="dt">x2 =</span> x2pred)</span>
+<span id="cb15-6"><a href="#cb15-6"></a>ypred &lt;-<span class="st"> </span><span class="kw">matrix</span> (<span class="dt">nrow =</span> <span class="dv">30</span>, <span class="dt">ncol =</span> <span class="dv">30</span>,</span>
+<span id="cb15-7"><a href="#cb15-7"></a><span class="dt">data =</span> <span class="kw">predict</span>(fit, <span class="dt">newdata =</span> <span class="kw">data.frame</span>(xy),</span>
+<span id="cb15-8"><a href="#cb15-8"></a><span class="dt">interval =</span> <span class="st">&quot;prediction&quot;</span>))</span>
+<span id="cb15-9"><a href="#cb15-9"></a></span>
+<span id="cb15-10"><a href="#cb15-10"></a><span class="kw">library</span>(plot3D)</span>
+<span id="cb15-11"><a href="#cb15-11"></a></span>
+<span id="cb15-12"><a href="#cb15-12"></a></span>
+<span id="cb15-13"><a href="#cb15-13"></a><span class="co"># fitted points for droplines to surface</span></span>
+<span id="cb15-14"><a href="#cb15-14"></a>th=<span class="dv">20</span></span>
+<span id="cb15-15"><a href="#cb15-15"></a>ph=<span class="dv">5</span></span>
+<span id="cb15-16"><a href="#cb15-16"></a><span class="kw">scatter3D</span>(x1,</span>
+<span id="cb15-17"><a href="#cb15-17"></a>  x2,</span>
+<span id="cb15-18"><a href="#cb15-18"></a>  y,</span>
+<span id="cb15-19"><a href="#cb15-19"></a>  <span class="dt">pch =</span> <span class="dv">16</span>,</span>
+<span id="cb15-20"><a href="#cb15-20"></a>  <span class="dt">col=</span><span class="st">&quot;darkblue&quot;</span>,</span>
+<span id="cb15-21"><a href="#cb15-21"></a>  <span class="dt">cex =</span> <span class="dv">1</span>,</span>
+<span id="cb15-22"><a href="#cb15-22"></a>  <span class="dt">theta =</span> th,</span>
+<span id="cb15-23"><a href="#cb15-23"></a>  <span class="dt">ticktype =</span> <span class="st">&quot;detailed&quot;</span>,</span>
+<span id="cb15-24"><a href="#cb15-24"></a>  <span class="dt">xlab =</span> <span class="st">&quot;x1&quot;</span>,</span>
+<span id="cb15-25"><a href="#cb15-25"></a>  <span class="dt">ylab =</span> <span class="st">&quot;x2&quot;</span>,</span>
+<span id="cb15-26"><a href="#cb15-26"></a>  <span class="dt">zlab =</span> <span class="st">&quot;y&quot;</span>,  </span>
+<span id="cb15-27"><a href="#cb15-27"></a>  <span class="dt">colvar=</span><span class="ot">FALSE</span>,</span>
+<span id="cb15-28"><a href="#cb15-28"></a>  <span class="dt">bty =</span> <span class="st">&quot;g&quot;</span>,</span>
+<span id="cb15-29"><a href="#cb15-29"></a>  <span class="dt">xlim=</span><span class="kw">c</span>(<span class="op">-</span><span class="dv">1</span>,<span class="dv">3</span>),</span>
+<span id="cb15-30"><a href="#cb15-30"></a>  <span class="dt">ylim=</span><span class="kw">c</span>(<span class="op">-</span><span class="dv">1</span>,<span class="dv">3</span>),</span>
+<span id="cb15-31"><a href="#cb15-31"></a>  <span class="dt">zlim=</span><span class="kw">c</span>(<span class="op">-</span><span class="dv">2</span>,<span class="dv">4</span>))</span>
+<span id="cb15-32"><a href="#cb15-32"></a></span>
+<span id="cb15-33"><a href="#cb15-33"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>)</span>
+<span id="cb15-34"><a href="#cb15-34"></a>  <span class="kw">lines3D</span>(</span>
+<span id="cb15-35"><a href="#cb15-35"></a>    <span class="dt">x =</span> <span class="kw">rep</span>(x1[i],<span class="dv">2</span>),</span>
+<span id="cb15-36"><a href="#cb15-36"></a>    <span class="dt">y =</span> <span class="kw">rep</span>(x2[i],<span class="dv">2</span>),</span>
+<span id="cb15-37"><a href="#cb15-37"></a>    <span class="dt">z =</span> <span class="kw">c</span>(y[i],fit<span class="op">$</span>fitted[i]),</span>
+<span id="cb15-38"><a href="#cb15-38"></a>    <span class="dt">col=</span><span class="st">&quot;darkblue&quot;</span>,</span>
+<span id="cb15-39"><a href="#cb15-39"></a>    <span class="dt">add=</span><span class="ot">TRUE</span>,</span>
+<span id="cb15-40"><a href="#cb15-40"></a>    <span class="dt">lty=</span><span class="dv">2</span>)</span>
+<span id="cb15-41"><a href="#cb15-41"></a></span>
+<span id="cb15-42"><a href="#cb15-42"></a>z.pred3D &lt;-<span class="st"> </span><span class="kw">outer</span>(</span>
+<span id="cb15-43"><a href="#cb15-43"></a>  x1pred,</span>
+<span id="cb15-44"><a href="#cb15-44"></a>  x2pred,</span>
+<span id="cb15-45"><a href="#cb15-45"></a>  <span class="cf">function</span>(x1,x2)</span>
+<span id="cb15-46"><a href="#cb15-46"></a>  {</span>
+<span id="cb15-47"><a href="#cb15-47"></a>    fit<span class="op">$</span>coef[<span class="dv">1</span>]<span class="op">*</span>x1<span class="op">+</span>fit<span class="op">$</span>coef[<span class="dv">2</span>]<span class="op">*</span>x2</span>
+<span id="cb15-48"><a href="#cb15-48"></a>  })</span>
+<span id="cb15-49"><a href="#cb15-49"></a></span>
+<span id="cb15-50"><a href="#cb15-50"></a>x.pred3D &lt;-<span class="st"> </span><span class="kw">outer</span>(</span>
+<span id="cb15-51"><a href="#cb15-51"></a>  x1pred,</span>
+<span id="cb15-52"><a href="#cb15-52"></a>  x2pred,</span>
+<span id="cb15-53"><a href="#cb15-53"></a>  <span class="cf">function</span>(x,y) x)</span>
+<span id="cb15-54"><a href="#cb15-54"></a></span>
+<span id="cb15-55"><a href="#cb15-55"></a>y.pred3D &lt;-<span class="st"> </span><span class="kw">outer</span>(</span>
+<span id="cb15-56"><a href="#cb15-56"></a>  x1pred,</span>
+<span id="cb15-57"><a href="#cb15-57"></a>  x2pred,</span>
+<span id="cb15-58"><a href="#cb15-58"></a>  <span class="cf">function</span>(x,y) y)</span>
+<span id="cb15-59"><a href="#cb15-59"></a></span>
+<span id="cb15-60"><a href="#cb15-60"></a><span class="kw">surf3D</span>(</span>
+<span id="cb15-61"><a href="#cb15-61"></a>  x.pred3D,</span>
+<span id="cb15-62"><a href="#cb15-62"></a>  y.pred3D,</span>
+<span id="cb15-63"><a href="#cb15-63"></a>  z.pred3D,</span>
+<span id="cb15-64"><a href="#cb15-64"></a>  <span class="dt">col=</span><span class="st">&quot;blue&quot;</span>,</span>
+<span id="cb15-65"><a href="#cb15-65"></a>  <span class="dt">facets=</span><span class="ot">NA</span>,</span>
+<span id="cb15-66"><a href="#cb15-66"></a>  <span class="dt">add=</span><span class="ot">TRUE</span>)</span></code></pre></div>
+<p><img src="intro_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+</div>
+<div id="projection" class="section level4">
+<h4><span class="header-section-number">3.4.2.2</span> Projection</h4>
+<ul>
+<li><p>We can also interpret the fit as the projection of the <span class="math inline">\(n\times 1\)</span> vector <span class="math inline">\(\mathbf{Y}\)</span> on the column space of the matrix <span class="math inline">\(\mathbf{X}\)</span>.</p></li>
+<li><p>So each column in <span class="math inline">\(\mathbf{X}\)</span> is also an <span class="math inline">\(n\times 1\)</span> vector.</p></li>
+<li><p>For the toy example n=3 and p=2. So the column space of X is a plane in the three dimensional space.</p></li>
+</ul>
+<p><span class="math display">\[
+\hat{\mathbf{Y}} = \mathbf{X} (\mathbf{X}^T\mathbf{X})^{-1} \mathbf{X}^T \mathbf{Y}
+\]</span></p>
+<ol style="list-style-type: decimal">
+<li>Plane spanned by column space:</li>
+</ol>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a><span class="kw">arrows3D</span>(</span>
+<span id="cb16-2"><a href="#cb16-2"></a>  <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, x1[<span class="dv">1</span>], x1[<span class="dv">2</span>], x1[<span class="dv">3</span>],</span>
+<span id="cb16-3"><a href="#cb16-3"></a>  <span class="dt">xlim =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">5</span>), <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">5</span>), <span class="dt">zlim =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">5</span>), <span class="dt">bty =</span> <span class="st">&quot;g&quot;</span>,</span>
+<span id="cb16-4"><a href="#cb16-4"></a>  <span class="dt">theta =</span> th, <span class="dt">col =</span> <span class="dv">2</span>, <span class="dt">ticktype =</span> <span class="st">&quot;detailed&quot;</span>,</span>
+<span id="cb16-5"><a href="#cb16-5"></a>  <span class="dt">xlab =</span> <span class="st">&quot;observation 1&quot;</span>, <span class="dt">ylab =</span> <span class="st">&quot;observation 2&quot;</span>, <span class="dt">zlab =</span> <span class="st">&quot;observation 3&quot;</span></span>
+<span id="cb16-6"><a href="#cb16-6"></a>)</span>
+<span id="cb16-7"><a href="#cb16-7"></a><span class="kw">text3D</span>(x1[<span class="dv">1</span>],x1[<span class="dv">2</span>],x1[<span class="dv">3</span>],<span class="dt">labels=</span><span class="st">&quot;X1&quot;</span>,<span class="dt">col=</span><span class="dv">2</span>,<span class="dt">add=</span><span class="ot">TRUE</span>)</span>
+<span id="cb16-8"><a href="#cb16-8"></a><span class="kw">arrows3D</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,x2[<span class="dv">1</span>],x2[<span class="dv">2</span>],x2[<span class="dv">3</span>],<span class="dt">add=</span><span class="ot">TRUE</span>,<span class="dt">col=</span><span class="dv">2</span>)</span>
+<span id="cb16-9"><a href="#cb16-9"></a><span class="kw">text3D</span>(x2[<span class="dv">1</span>],x2[<span class="dv">2</span>],x2[<span class="dv">3</span>],<span class="dt">labels=</span><span class="st">&quot;X2&quot;</span>,<span class="dt">col=</span><span class="dv">2</span>,<span class="dt">add=</span><span class="ot">TRUE</span>)</span></code></pre></div>
+<p><img src="intro_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<ol start="2" style="list-style-type: decimal">
+<li>Vector of Y:</li>
+</ol>
+<p>Actual values of <span class="math inline">\(\mathbf{Y}\)</span>:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a>y</span></code></pre></div>
+<pre><code>[1] 3.216755 2.457507 2.891145</code></pre>
+<p><span class="math display">\[
+\mathbf{Y}=\left[\begin{array}{c}
+3.2167549 \\
+2.4575074 \\
+2.8911446
+\end{array}\right]
+\]</span></p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a><span class="kw">arrows3D</span>(</span>
+<span id="cb19-2"><a href="#cb19-2"></a>  <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, x1[<span class="dv">1</span>], x1[<span class="dv">2</span>], x1[<span class="dv">3</span>],</span>
+<span id="cb19-3"><a href="#cb19-3"></a>  <span class="dt">xlim =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">5</span>), <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">5</span>), <span class="dt">zlim =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">5</span>), <span class="dt">bty =</span> <span class="st">&quot;g&quot;</span>,</span>
+<span id="cb19-4"><a href="#cb19-4"></a>  <span class="dt">theta =</span> th, <span class="dt">col =</span> <span class="dv">2</span>, <span class="dt">ticktype =</span> <span class="st">&quot;detailed&quot;</span>,</span>
+<span id="cb19-5"><a href="#cb19-5"></a>  <span class="dt">xlab =</span> <span class="st">&quot;observation 1&quot;</span>, <span class="dt">ylab =</span> <span class="st">&quot;observation 2&quot;</span>, <span class="dt">zlab =</span> <span class="st">&quot;observation 3&quot;</span></span>
+<span id="cb19-6"><a href="#cb19-6"></a>)</span>
+<span id="cb19-7"><a href="#cb19-7"></a><span class="kw">text3D</span>(x1[<span class="dv">1</span>],x1[<span class="dv">2</span>],x1[<span class="dv">3</span>],<span class="dt">labels=</span><span class="st">&quot;X1&quot;</span>,<span class="dt">col=</span><span class="dv">2</span>,<span class="dt">add=</span><span class="ot">TRUE</span>)</span>
+<span id="cb19-8"><a href="#cb19-8"></a><span class="kw">arrows3D</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,x2[<span class="dv">1</span>],x2[<span class="dv">2</span>],x2[<span class="dv">3</span>],<span class="dt">add=</span><span class="ot">TRUE</span>,<span class="dt">col=</span><span class="dv">2</span>)</span>
+<span id="cb19-9"><a href="#cb19-9"></a><span class="kw">text3D</span>(x2[<span class="dv">1</span>],x2[<span class="dv">2</span>],x2[<span class="dv">3</span>],<span class="dt">labels=</span><span class="st">&quot;X2&quot;</span>,<span class="dt">col=</span><span class="dv">2</span>,<span class="dt">add=</span><span class="ot">TRUE</span>)</span>
+<span id="cb19-10"><a href="#cb19-10"></a><span class="kw">arrows3D</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,y[<span class="dv">1</span>],y[<span class="dv">2</span>],y[<span class="dv">3</span>],<span class="dt">add=</span><span class="ot">TRUE</span>,<span class="dt">col=</span><span class="st">&quot;darkblue&quot;</span>)</span>
+<span id="cb19-11"><a href="#cb19-11"></a><span class="kw">text3D</span>(y[<span class="dv">1</span>],y[<span class="dv">2</span>],y[<span class="dv">3</span>],<span class="dt">labels=</span><span class="st">&quot;Y&quot;</span>,<span class="dt">col=</span><span class="st">&quot;darkblue&quot;</span>,<span class="dt">add=</span><span class="ot">TRUE</span>)</span></code></pre></div>
+<p><img src="intro_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<ol start="3" style="list-style-type: decimal">
+<li>Projection of Y onto column space</li>
+</ol>
+<p>Actual values of fitted values <span class="math inline">\(\mathbf{\hat{Y}}\)</span>:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a><span class="kw">fitted.values</span>(fit)</span></code></pre></div>
+<pre><code>       1        2        3 
+3.216755 2.457507 0.000000 </code></pre>
+<p><span class="math display">\[
+\mathbf{Y}=\left[\begin{array}{c}
+3.2167549 \\
+2.4575074 \\
+0
+\end{array}\right]
+\]</span></p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a><span class="kw">arrows3D</span>(</span>
+<span id="cb22-2"><a href="#cb22-2"></a>  <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, x1[<span class="dv">1</span>], x1[<span class="dv">2</span>], x1[<span class="dv">3</span>],</span>
+<span id="cb22-3"><a href="#cb22-3"></a>  <span class="dt">xlim =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">5</span>), <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">5</span>), <span class="dt">zlim =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">5</span>), <span class="dt">bty =</span> <span class="st">&quot;g&quot;</span>,</span>
+<span id="cb22-4"><a href="#cb22-4"></a>  <span class="dt">theta =</span> th, <span class="dt">col =</span> <span class="dv">2</span>, <span class="dt">ticktype =</span> <span class="st">&quot;detailed&quot;</span>,</span>
+<span id="cb22-5"><a href="#cb22-5"></a>  <span class="dt">xlab =</span> <span class="st">&quot;observation 1&quot;</span>, <span class="dt">ylab =</span> <span class="st">&quot;observation 2&quot;</span>, <span class="dt">zlab =</span> <span class="st">&quot;observation 3&quot;</span></span>
+<span id="cb22-6"><a href="#cb22-6"></a>)</span>
+<span id="cb22-7"><a href="#cb22-7"></a><span class="kw">text3D</span>(x1[<span class="dv">1</span>],x1[<span class="dv">2</span>],x1[<span class="dv">3</span>],<span class="dt">labels=</span><span class="st">&quot;X1&quot;</span>,<span class="dt">col=</span><span class="dv">2</span>,<span class="dt">add=</span><span class="ot">TRUE</span>)</span>
+<span id="cb22-8"><a href="#cb22-8"></a><span class="kw">arrows3D</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,x2[<span class="dv">1</span>],x2[<span class="dv">2</span>],x2[<span class="dv">3</span>],<span class="dt">add=</span><span class="ot">TRUE</span>,<span class="dt">col=</span><span class="dv">2</span>)</span>
+<span id="cb22-9"><a href="#cb22-9"></a><span class="kw">text3D</span>(x2[<span class="dv">1</span>],x2[<span class="dv">2</span>],x2[<span class="dv">3</span>],<span class="dt">labels=</span><span class="st">&quot;X2&quot;</span>,<span class="dt">col=</span><span class="dv">2</span>,<span class="dt">add=</span><span class="ot">TRUE</span>)</span>
+<span id="cb22-10"><a href="#cb22-10"></a><span class="kw">arrows3D</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,y[<span class="dv">1</span>],y[<span class="dv">2</span>],y[<span class="dv">3</span>],<span class="dt">add=</span><span class="ot">TRUE</span>,<span class="dt">col=</span><span class="st">&quot;darkblue&quot;</span>)</span>
+<span id="cb22-11"><a href="#cb22-11"></a><span class="kw">text3D</span>(y[<span class="dv">1</span>],y[<span class="dv">2</span>],y[<span class="dv">3</span>],<span class="dt">labels=</span><span class="st">&quot;Y&quot;</span>,<span class="dt">col=</span><span class="st">&quot;darkblue&quot;</span>,<span class="dt">add=</span><span class="ot">TRUE</span>)</span>
+<span id="cb22-12"><a href="#cb22-12"></a><span class="kw">arrows3D</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,fit<span class="op">$</span>fitted[<span class="dv">1</span>],fit<span class="op">$</span>fitted[<span class="dv">2</span>],fit<span class="op">$</span>fitted[<span class="dv">3</span>],<span class="dt">add=</span><span class="ot">TRUE</span>,<span class="dt">col=</span><span class="st">&quot;darkblue&quot;</span>)</span>
+<span id="cb22-13"><a href="#cb22-13"></a><span class="kw">segments3D</span>(y[<span class="dv">1</span>],y[<span class="dv">2</span>],y[<span class="dv">3</span>],fit<span class="op">$</span>fitted[<span class="dv">1</span>],fit<span class="op">$</span>fitted[<span class="dv">2</span>],fit<span class="op">$</span>fitted[<span class="dv">3</span>],<span class="dt">add=</span><span class="ot">TRUE</span>,<span class="dt">lty=</span><span class="dv">2</span>,<span class="dt">col=</span><span class="st">&quot;darkblue&quot;</span>)</span>
+<span id="cb22-14"><a href="#cb22-14"></a><span class="kw">text3D</span>(fit<span class="op">$</span>fitted[<span class="dv">1</span>],fit<span class="op">$</span>fitted[<span class="dv">2</span>],fit<span class="op">$</span>fitted[<span class="dv">3</span>],<span class="dt">labels=</span><span class="st">&quot;fit&quot;</span>,<span class="dt">col=</span><span class="st">&quot;darkblue&quot;</span>,<span class="dt">add=</span><span class="ot">TRUE</span>)</span></code></pre></div>
+<p><img src="intro_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<ul>
+<li><p>Note, that it is also clear from the equation in the derivation of the LS that the residual is orthogonal on the column space: <span class="math display">\[
+ -2 \mathbf{X}^T(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta}) = 0
+\]</span></p></li>
+<li><p>Imagine what happens when p &gt;&gt; n!!!</p></li>
+</ul>
+<p><span class="math inline">\(\rightarrow\)</span> curse of dimensionality!</p>
+</div>
+</div>
+</div>
+<div id="variance-estimator" class="section level2">
+<h2><span class="header-section-number">3.5</span> Variance Estimator?</h2>
+<p><span class="math display">\[
+\begin{array}{ccl}
+\hat{\boldsymbol{\Sigma}}_{\hat{\boldsymbol{\beta}}}
+&amp;=&amp;\text{var}\left[(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Y}\right]\\\\
+&amp;=&amp;(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\text{var}\left[\mathbf{Y}\right]\mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\\\\
+&amp;=&amp;(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T(\mathbf{I}\sigma^2)\mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}
+\\\\
+&amp;=&amp;(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{I}\quad\mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\sigma^2\\\\
+%\hat{\boldmath{\Sigma}}_{\hat{\boldsymbol{\beta}}}&amp;=&amp;(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T \text{var}\left[\mathbf{Y}\right](\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}\\
+&amp;=&amp;(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\sigma^2\\\\
+&amp;=&amp;(\mathbf{X}^T\mathbf{X})^{-1}\sigma^2
+\end{array}
+\]</span></p>
+<p>The fact that <span class="math inline">\(\hat{\boldsymbol{\beta}}\)</span> is unbiased and has a variance of <span class="math inline">\((\mathbf{X}^T\mathbf{X})^{-1}\sigma^2\)</span> will be important when assessing association!</p>
+<hr />
+</div>
+<div id="prediction-error" class="section level2">
+<h2><span class="header-section-number">3.6</span> Prediction error</h2>
+<p>Least squares estimators are unbiased and consistent, but these properties are not very important for prediction models.</p>
+<p>A prediction model is considered good if it can predict well outcomes.</p>
+<p>The <strong>prediction error</strong> for a prediction at predictor <span class="math inline">\(\mathbf{x}\)</span> is given by</p>
+<p><span class="math display">\[
+   \hat{Y}(\mathbf{x}) - Y^*,
+\]</span></p>
+<p>where</p>
+<ul>
+<li><p><span class="math inline">\(\hat{Y}(\mathbf{x})=\mathbf{x}^T\hat{\boldsymbol{\beta}}\)</span> is the prediction at <span class="math inline">\(\mathbf{x}\)</span></p></li>
+<li><p><span class="math inline">\(Y^*\)</span> is an outcome at predictor <span class="math inline">\(\mathbf{x}\)</span></p></li>
+</ul>
+<p>Since prediction is typically used to predict an outcome before it is observed, the outcome <span class="math inline">\(Y^*\)</span> is not observed yet. Hence, the prediction error cannot be computed.</p>
+<hr />
+<p>The problem of unobservable prediction errors is partly solved by the <strong>expected conditional test error</strong> (sometimes referred to as the mean squared error, MSE) <span class="math display">\[
+  \text{Err}(\mathbf{x})=E[(\hat{Y}(\mathbf{x}) - Y^*)^2].
+\]</span></p>
+<p>With (suppressing the dependence on <span class="math inline">\(\mathbf{x}\)</span>) <span class="math display">\[
+  \mu = E[\hat{Y}] \text{ and } \mu^*=E[Y^*]
+\]</span> the error can be expressed as <span class="math display">\[\begin{eqnarray*}
+  \text{Err}
+    &amp;=&amp;E\left\{\left[(\hat{Y} -\mu)-(Y-\mu^*)-(\mu^*-\mu)\right]^2\right\} \\
+    &amp;=&amp; E[(\hat{Y} -\mu)^2]+E[(Y-\mu^*)^2]+E[(\mu^*-\mu)^2] \\
+    &amp;=&amp; \text{var}[\hat{Y}] +\text{var}[Y] +\text{bias}^2
+\end{eqnarray*}\]</span></p>
+<p>The term <span class="math inline">\(\text{var}[Y]\)</span> (irreducible error) does not depend on the model and may therefore be ignored when <span class="math inline">\(\text{Err}\)</span> is used for comparing prediction models.</p>
+<hr />
+<p>In this introductory chapter we only aim to give a rough discussion on prediction errors. Later definitions will be refined and the notation will be more accurate. Also a more detailed discussion on the bias-variance trade-off will follow. For the moment it is sufficient to vaguely know that:</p>
+<ul>
+<li><p>the expected conditional test error is introduced to circumvent the problem that the prediction error cannot be observed. In later chapters we will look at estimators of the expected error.</p></li>
+<li><p>the expected conditional test error is in some literature also known as the <em>mean squared error</em> (MSE), but we do not adopt this terminology because MSE is also commonly used to refer to SSE divided by the residual degrees of freedom in a linear regression model.</p></li>
+<li><p>The identity <span class="math inline">\(\text{Err}=\text{var}[\hat{Y}] +\text{var}[Y] +\text{bias}^2\)</span> is known as the bias-variance trade-off. It shows that a good prediction model (i.e. a model resulting in a small Err), can be obtained by a model that shows a small bias as long as this bias is compensated with a large reduction of the variance or the predictions. A more detailed discussion will follow in later chapters.</p></li>
+<li><p>For prediction models with a large number of predictors we will therefore introduce penalized regression. This will induce some bias in the estimation, but will allow us to reduce the variance considerably.</p></li>
+</ul>
+</div>
+</div>
+<div id="session-info" class="section level1 unnumbered">
+<h1>Session info</h1>
+<details>
+<p><summary>Session info</summary></p>
+<pre><code>[1] &quot;2020-10-14 13:09:06 UTC&quot;</code></pre>
+<pre><code>─ Session info ───────────────────────────────────────────────────────────────
+ setting  value                       
+ version  R version 4.0.3 (2020-10-10)
+ os       macOS Catalina 10.15.7      
+ system   x86_64, darwin17.0          
+ ui       X11                         
+ language (EN)                        
+ collate  en_US.UTF-8                 
+ ctype    en_US.UTF-8                 
+ tz       UTC                         
+ date     2020-10-14                  
+
+─ Packages ───────────────────────────────────────────────────────────────────
+ package                * version  date       lib source        
+ AnnotationDbi            1.50.3   2020-07-25 [1] Bioconductor  
+ AnnotationHub          * 2.20.2   2020-08-18 [1] Bioconductor  
+ assertthat               0.2.1    2019-03-21 [1] CRAN (R 4.0.2)
+ backports                1.1.10   2020-09-15 [1] CRAN (R 4.0.2)
+ beeswarm                 0.2.3    2016-04-25 [1] CRAN (R 4.0.2)
+ Biobase                * 2.48.0   2020-04-27 [1] Bioconductor  
+ BiocFileCache          * 1.12.1   2020-08-04 [1] Bioconductor  
+ BiocGenerics           * 0.34.0   2020-04-27 [1] Bioconductor  
+ BiocManager              1.30.10  2019-11-16 [1] CRAN (R 4.0.2)
+ BiocNeighbors            1.6.0    2020-04-27 [1] Bioconductor  
+ BiocParallel             1.22.0   2020-04-27 [1] Bioconductor  
+ BiocSingular             1.4.0    2020-04-27 [1] Bioconductor  
+ BiocVersion              3.11.1   2020-04-07 [1] Bioconductor  
+ bit                      4.0.4    2020-08-04 [1] CRAN (R 4.0.2)
+ bit64                    4.0.5    2020-08-30 [1] CRAN (R 4.0.2)
+ bitops                   1.0-6    2013-08-17 [1] CRAN (R 4.0.2)
+ blob                     1.2.1    2020-01-20 [1] CRAN (R 4.0.2)
+ broom                    0.7.1    2020-10-02 [1] CRAN (R 4.0.2)
+ cellranger               1.1.0    2016-07-27 [1] CRAN (R 4.0.2)
+ cli                      2.1.0    2020-10-12 [1] CRAN (R 4.0.3)
+ colorspace               1.4-1    2019-03-18 [1] CRAN (R 4.0.2)
+ crayon                   1.3.4    2017-09-16 [1] CRAN (R 4.0.2)
+ curl                     4.3      2019-12-02 [1] CRAN (R 4.0.1)
+ DBI                      1.1.0    2019-12-15 [1] CRAN (R 4.0.2)
+ dbplyr                 * 1.4.4    2020-05-27 [1] CRAN (R 4.0.2)
+ DelayedArray           * 0.14.1   2020-07-14 [1] Bioconductor  
+ DelayedMatrixStats       1.10.1   2020-07-03 [1] Bioconductor  
+ digest                   0.6.25   2020-02-23 [1] CRAN (R 4.0.2)
+ dplyr                  * 1.0.2    2020-08-18 [1] CRAN (R 4.0.2)
+ ellipsis                 0.3.1    2020-05-15 [1] CRAN (R 4.0.2)
+ evaluate                 0.14     2019-05-28 [1] CRAN (R 4.0.1)
+ ExperimentHub          * 1.14.2   2020-08-18 [1] Bioconductor  
+ fansi                    0.4.1    2020-01-08 [1] CRAN (R 4.0.2)
+ farver                   2.0.3    2020-01-16 [1] CRAN (R 4.0.2)
+ fastmap                  1.0.1    2019-10-08 [1] CRAN (R 4.0.2)
+ forcats                * 0.5.0    2020-03-01 [1] CRAN (R 4.0.2)
+ fs                       1.5.0    2020-07-31 [1] CRAN (R 4.0.2)
+ generics                 0.0.2    2018-11-29 [1] CRAN (R 4.0.2)
+ GenomeInfoDb           * 1.24.2   2020-06-15 [1] Bioconductor  
+ GenomeInfoDbData         1.2.3    2020-10-14 [1] Bioconductor  
+ GenomicRanges          * 1.40.0   2020-04-27 [1] Bioconductor  
+ ggbeeswarm               0.6.0    2017-08-07 [1] CRAN (R 4.0.2)
+ ggplot2                * 3.3.2    2020-06-19 [1] CRAN (R 4.0.2)
+ glue                     1.4.2    2020-08-27 [1] CRAN (R 4.0.2)
+ gridExtra                2.3      2017-09-09 [1] CRAN (R 4.0.2)
+ gtable                   0.3.0    2019-03-25 [1] CRAN (R 4.0.2)
+ haven                    2.3.1    2020-06-01 [1] CRAN (R 4.0.2)
+ hms                      0.5.3    2020-01-08 [1] CRAN (R 4.0.2)
+ htmltools                0.5.0    2020-06-16 [1] CRAN (R 4.0.2)
+ httpuv                   1.5.4    2020-06-06 [1] CRAN (R 4.0.2)
+ httr                     1.4.2    2020-07-20 [1] CRAN (R 4.0.2)
+ interactiveDisplayBase   1.26.3   2020-06-02 [1] Bioconductor  
+ IRanges                * 2.22.2   2020-05-21 [1] Bioconductor  
+ irlba                    2.3.3    2019-02-05 [1] CRAN (R 4.0.2)
+ jpeg                     0.1-8.1  2019-10-24 [1] CRAN (R 4.0.2)
+ jsonlite                 1.7.1    2020-09-07 [1] CRAN (R 4.0.2)
+ knitr                    1.30     2020-09-22 [1] CRAN (R 4.0.2)
+ labeling                 0.3      2014-08-23 [1] CRAN (R 4.0.2)
+ later                    1.1.0.1  2020-06-05 [1] CRAN (R 4.0.2)
+ lattice                  0.20-41  2020-04-02 [2] CRAN (R 4.0.3)
+ lifecycle                0.2.0    2020-03-06 [1] CRAN (R 4.0.2)
+ lubridate                1.7.9    2020-06-08 [1] CRAN (R 4.0.2)
+ magrittr                 1.5      2014-11-22 [1] CRAN (R 4.0.2)
+ Matrix                   1.2-18   2019-11-27 [2] CRAN (R 4.0.3)
+ matrixStats            * 0.57.0   2020-09-25 [1] CRAN (R 4.0.2)
+ memoise                  1.1.0    2017-04-21 [1] CRAN (R 4.0.2)
+ mime                     0.9      2020-02-04 [1] CRAN (R 4.0.2)
+ misc3d                   0.9-0    2020-09-06 [1] CRAN (R 4.0.2)
+ modelr                   0.1.8    2020-05-19 [1] CRAN (R 4.0.2)
+ munsell                  0.5.0    2018-06-12 [1] CRAN (R 4.0.2)
+ muscData               * 1.2.0    2020-05-07 [1] Bioconductor  
+ pillar                   1.4.6    2020-07-10 [1] CRAN (R 4.0.2)
+ pkgconfig                2.0.3    2019-09-22 [1] CRAN (R 4.0.2)
+ plot3D                 * 1.3      2019-12-18 [1] CRAN (R 4.0.2)
+ promises                 1.1.1    2020-06-09 [1] CRAN (R 4.0.2)
+ ps                       1.4.0    2020-10-07 [1] CRAN (R 4.0.2)
+ purrr                  * 0.3.4    2020-04-17 [1] CRAN (R 4.0.2)
+ R6                       2.4.1    2019-11-12 [1] CRAN (R 4.0.2)
+ rappdirs                 0.3.1    2016-03-28 [1] CRAN (R 4.0.2)
+ Rcpp                     1.0.5    2020-07-06 [1] CRAN (R 4.0.2)
+ RCurl                    1.98-1.2 2020-04-18 [1] CRAN (R 4.0.2)
+ readr                  * 1.4.0    2020-10-05 [1] CRAN (R 4.0.2)
+ readxl                   1.3.1    2019-03-13 [1] CRAN (R 4.0.2)
+ reprex                   0.3.0    2019-05-16 [1] CRAN (R 4.0.2)
+ rlang                    0.4.8    2020-10-08 [1] CRAN (R 4.0.2)
+ rmarkdown                2.4      2020-09-30 [1] CRAN (R 4.0.3)
+ RSQLite                  2.2.1    2020-09-30 [1] CRAN (R 4.0.2)
+ rstudioapi               0.11     2020-02-07 [1] CRAN (R 4.0.2)
+ rsvd                     1.0.3    2020-02-17 [1] CRAN (R 4.0.2)
+ rvest                    0.3.6    2020-07-25 [1] CRAN (R 4.0.2)
+ S4Vectors              * 0.26.1   2020-05-16 [1] Bioconductor  
+ scales                   1.1.1    2020-05-11 [1] CRAN (R 4.0.2)
+ scater                 * 1.16.2   2020-06-26 [1] Bioconductor  
+ sessioninfo              1.1.1    2018-11-05 [1] CRAN (R 4.0.2)
+ shiny                    1.5.0    2020-06-23 [1] CRAN (R 4.0.2)
+ SingleCellExperiment   * 1.10.1   2020-04-28 [1] Bioconductor  
+ stringi                  1.5.3    2020-09-09 [1] CRAN (R 4.0.2)
+ stringr                * 1.4.0    2019-02-10 [1] CRAN (R 4.0.2)
+ SummarizedExperiment   * 1.18.2   2020-07-14 [1] Bioconductor  
+ tibble                 * 3.0.4    2020-10-12 [1] CRAN (R 4.0.3)
+ tidyr                  * 1.1.2    2020-08-27 [1] CRAN (R 4.0.2)
+ tidyselect               1.1.0    2020-05-11 [1] CRAN (R 4.0.2)
+ tidyverse              * 1.3.0    2019-11-21 [1] CRAN (R 4.0.2)
+ vctrs                    0.3.4    2020-08-29 [1] CRAN (R 4.0.2)
+ vipor                    0.4.5    2017-03-22 [1] CRAN (R 4.0.2)
+ viridis                  0.5.1    2018-03-29 [1] CRAN (R 4.0.2)
+ viridisLite              0.3.0    2018-02-01 [1] CRAN (R 4.0.1)
+ withr                    2.3.0    2020-09-22 [1] CRAN (R 4.0.2)
+ xfun                     0.18     2020-09-29 [1] CRAN (R 4.0.2)
+ xml2                     1.3.2    2020-04-23 [1] CRAN (R 4.0.2)
+ xtable                   1.8-4    2019-04-21 [1] CRAN (R 4.0.2)
+ XVector                  0.28.0   2020-04-27 [1] Bioconductor  
+ yaml                     2.2.1    2020-02-01 [1] CRAN (R 4.0.2)
+ zlibbioc                 1.34.0   2020-04-27 [1] Bioconductor  
+
+[1] /Users/runner/work/_temp/Library
+[2] /Library/Frameworks/R.framework/Versions/4.0/Resources/library</code></pre>
+</details>
+</div>
+<div id="home" class="section level1 unnumbered">
+<h1><a href="https://statomics.github.io/HDA2020/">Home</a></h1>
+</div>
+
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiMS4gSW50cm9kdWN0aW9uIHRvIEhpZ2ggRGltZW5zaW9uYWwgRGF0YSBBbmFseXNpcyIKYXV0aG9yOiAiTGlldmVuIENsZW1lbnQiCmRhdGU6ICJzdGF0T21pY3MsIEdoZW50IFVuaXZlcnNpdHkgKGh0dHBzOi8vc3RhdG9taWNzLmdpdGh1Yi5pbykiCm91dHB1dDoKICAgIGh0bWxfZG9jdW1lbnQ6CiAgICAgIGNvZGVfZG93bmxvYWQ6IHRydWUKICAgICAgdGhlbWU6IGNvc21vCiAgICAgIHRvYzogdHJ1ZQogICAgICB0b2NfZmxvYXQ6IHRydWUKICAgICAgaGlnaGxpZ2h0OiB0YW5nbwogICAgICBudW1iZXJfc2VjdGlvbnM6IHRydWUKLS0tCgojIEludHJvZHVjdGlvbgoKYGBge3Igc2V0dXAsIGluY2x1ZGU9RkFMU0V9CmtuaXRyOjpvcHRzX2NodW5rJHNldChjb21tZW50ID0gTkEsIG1lc3NhZ2UgPSBGQUxTRSwgd2FybmluZyA9IEZBTFNFKQpgYGAKCi0gV2UgbGl2ZSBpbiBhIGJpZyBkYXRhIGVyYQotIE1hc3NpdmUgRGF0YXNldHMgb24gb3VyIGxvY2F0aW9uLCBzdXJmaW5nIGJlaGF2aW9yLCBjb25zdW1lciBkYXRhLCBzb2NpYWwgbWVkaWEsIC4uLgotIExpZmUgU2NpZW5jZXM6IGFkdmVudCBvZiBoaWdoIHRocm91Z2hwdXQgdGVjaG5vbG9naWVzIGhhcyBlbmFibGVkIHVzIHRvIG1lYXN1cmUgYnJhaW4gYWN0aXZpdHkgKGJyYWluIGltYWdlcykgYXMgd2VsbCBhcyB0aGUgZXhwcmVzc2lvbiBvZiB0aG91c2FuZHMgb2YgZ2VuZXMsIHByb3RlaW5zLCAuLi4gZm9yIGVhY2ggc3ViamVjdCBvciBldmVuIHNpbmdsZSBjZWxsLgotIEluZHVzdHJ5OiBwcm9jZXNzIGNvbnRyb2wgd2l0aCBtYW55IHNlbnNvcnMgdGhhdCBmb2xsb3cgcHJvY2VzcyBpbiByZWFsIHRpbWUuLi4KLSBEYXRhIGRyaXZlIGpvdXJuYWxpc20KLSAuLi4KCkNoYWxsZW5nZTogV2UgaGF2ZSB0byBsZWFybiBmcm9tIGhpZ2ggZGltZW5zaW9uYWwgZGF0YSEKCi0tLQoKIyMgV2hhdCBhcmUgaGlnaCBkaW1lbnNpb25hbCBkYXRhPwoKLSBXZSB0eXBpY2FsbHkgb2JzZXJ2ZSBtdWx0aXBsZSB2YXJpYWJsZXMvZmVhdHVyZXMgKHApIGZvciBlYWNoIHN1YmplY3QvZXhwZXJpbWVudGFsIHVuaXQgJGk9MSxcbGRvdHMsbiQgaS5lLgpcWyBcbWF0aGJme3h9X2leVD1beF97aTF9LFxsZG90cyx4X3tpcH1dXF0KCi0gTXVsdGl2YXJpYXRlIHN0YXRpc3RpY3MgaGF2ZSBhIGxvbmcgaGlzdG9yeSwgYnV0IHdlcmUgZGVzaWduZWQgZm9yIHRoZSAkbj4+PnAkIGNhc2UsCgotIE5vd2FkYXlzIG1hbnkgaGlnaCB0aHJvdWdocHV0IHRlY2hub2xvZ2llcyBnZW5lcmF0ZSBtdWx0aXZhcmlhdGUgZGF0YSB3aXRoIG1hbnkgdmFyaWFibGVzIChsYXJnZSAkcCQpIGFzIGNvbXBhcmVkIHRvIHRoZSBudW1iZXIgb2YgaW5kZXBlbmRlbnQgcmVwbGljYXRlcyBvciBzYW1wbGVzIChzYW1wbGUgc2l6ZSAkbiQpLCByZXN1bHRpbmcgaW4gKip7aGlnaC1kaW1lbnNpb25hbCBkYXRhfSoqLCB3aGljaCBpcyBjaGFyYWN0ZXJpc2VkIGJ5CiAgXFsKICAgICBwID4+PiBuLgogIFxdCgotICBOZXcgc3RhdGlzdGljYWwgbWV0aG9kcyBmb3IgZGVhbGluZyB3aXRoIHRoZSAkcCA+Pj4gbiQgY2FzZSBoYXZlIGJlZW4gZGV2ZWxvcGVkIGluIHRoZSBsYXN0IDIwIHllYXJzLiAgU29tZSBvZiB0aGVtIGFyZSBhZGFwdGF0aW9ucyBvZiBtdWx0aXZhcmlhdGUgbWV0aG9kcy4KCi0tLQoKSXNzdWVzIHdpdGggaGlnaC1kaW1lbnNpb25hbCBkYXRhOgoKLSAqQ29tcHV0YXRpb25hbCBwcm9ibGVtcyo6IGxhcmdlIG1hdHJpY2VzLCBudW1lcmljYWwgYWNjdXJhY3kgb2YgY29tcHV0ZXJzIGJlY29tZSBhbiBpc3N1ZQotICpDbGFzc2ljYWwgYXN5bXB0b3RpYyB0aGVvcnkgZG9lcyBub3QgaG9sZCogZm9yICRwXHJpZ2h0YXJyb3dcaW5mdHkkIGFzICRuIFxyaWdodGFycm93IFxpbmZ0eSQKLSAqTW9kZWwgKG9yIGZlYXR1cmUpIHNlbGVjdGlvbiogcmVxdWlyZXMgc3BlY2lhbGlzZWQgbWV0aG9kcyB0byBkZWFsIHdpdGggdGhlIGVub3Jtb3VzIG51bWJlciBvZiBwb3NzaWJsZSBtb2RlbHMuIChlLmcuIGluIGxpbmVhciByZWdyZXNzaW9uIHdpdGggcCBwb3RlbnRpYWwgcHJlZGljdG9yczogJDJecCQgcG9zc2libGUgbW9kZWxzKQotIE1vZGVscyB0aGF0IGNhbiBwb3RlbnRpYWxseSBkZXBlbmQgb24gbGFyZ2UtcCBwcmVkaWN0b3JzIGFyZSB2dWxuZXJhYmxlIHRvICpodWdlIG92ZXJmaXR0aW5nKi4KLSBJbiBzZWFyY2hpbmcgZm9yIGFzc29jaWF0aW9ucyBiZXR3ZWVuIGFuIG91dGNvbWUgYW5kIGxhcmdlIHAgcG90ZW50aWFsIGV4cGxvcmF0b3J5IHZhcmlhYmxlcywgd2UgYXJlIGF0IHJpc2sgdG8gbWFrZSAqbWFueSBmYWxzZSBkaXNjb3ZlcmllcyoKCi0gVGhlICpDdXJzZSBvZiBEaW1lbnNpb25hbGl0eSogbWF5IGNhdXNlIGEgcHJlZGljdGlvbiBtb2RlbCB0byBiZWNvbWUgdXNlbGVzcy4gKCRuJCBkYXRhIHBvaW50cyBiZWNvbWUgc3BhcnNlIGluIGxhcmdlLSRwJCBkaW1lbnNpb25hbCBzcGFjZSkKCi0tLQoKIyBJbXBvcnRhbnQgdGFza3MgaW4gaGlnaCBkaW1lbnNpb25hbCBkYXRhIGFuYWx5c2lzPwoKIyMgRXhhbXBsZTogICBLYW5nIGV0IGFsLiAoMjAxOCnigJlzIGRyb3BsZXQtYmFzZWQgc2NSTkEtc2VxIGRhdGEgb2YgUEJNQ3MgY2VsbHMgZnJvbSA4IGx1cHVzIHBhdGllbnRzIG1lYXN1cmVkIGJlZm9yZSBhbmQgYWZ0ZXIgNmgtdHJlYXRtZW50IHdpdGggSU5GLc6yICgxNiBzYW1wbGVzIGluIHRvdGFsKS4KCmBgYHtyIGxpYnJhcmllcywgbWVzc2FnZT1GQUxTRSwgd2FybmluZz1GQUxTRX0KbGlicmFyeSh0aWR5dmVyc2UpCgojIyBQYWNrYWdlcyB0byBsb2FkIGFuZCB2aXN1YWxpemUgdGhlIHNpbmdsZS1jZWxsIGRhdGEKbGlicmFyeShFeHBlcmltZW50SHViKQpsaWJyYXJ5KHNjYXRlcikKYGBgCgpgYGB7cn0KIyMgTG9hZCBLYW5nIHNpbmdsZS1jZWxsIGRhdGEgZnJvbSBFeHBlcmltZW50SHViCmVoIDwtIEV4cGVyaW1lbnRIdWIoKQpzY2UgPC0gZWhbWyJFSDIyNTkiXV0KCnNjZQpgYGAKCi0gRGF0YSBvbiBnZW5lIGV4cHJlc3Npb24gb2YgYHIgbnJvdyhzY2UpYCBnZW5lcyBvZiBgciBuY29sKHNjZSlgIGNlbGxzLgoKCiMjIERhdGEgZXhwbG9yYXRpb24gYW5kIGRpbWVuc2lvbmFsaXR5IHJlZHVjdGlvbgoKLSBWaXN1YWxpc2F0aW9uIGlzIGEgZmlyc3QgZXNzZW50aWFsIHN0ZXAgdG8gbGVhcm4gZnJvbSBkYXRhCgoKYGBge3J9CmNvdW50cyhzY2UpWzE4OTkwOjE5MDAwLDk6MjBdCmBgYAoKLSBJdCBpcyBpbXBvc3NpYmxlIHRvIGxlYXJuIGFib3V0IHRoZSBzdHJ1Y3R1cmUgaW4gdGhlIGRhdGEgYnkgc3RhcmluZyBhdCB0aGUgZGF0YSBtYXRyaXguCi0gV2Ugc2hvdWxkIGJlIGFibGUgdG8gZXhwbG9yZSB0aGUgZGF0YSBpbiBhIGxvdyBkaW1lbnNpb25hbCBwcm9qZWN0aW9uCgpgYGB7cn0KcGxvdFJlZHVjZWREaW0oc2NlLCBkaW1yZWQ9IlRTTkUiLCBjb2xvdXJfYnk9ImNlbGwiKQpwbG90UmVkdWNlZERpbShzY2UsIGRpbXJlZD0iVFNORSIsIGNvbG91cl9ieT0ic3RpbSIpCmBgYAoKLSBOb3RlLCB0aGF0IHdlIHNlZSBodWdlIGVmZmVjdCBvZiB0cmVhdG1lbnQuIElmIEkgc2VlIHRoaXMgSSBhbSBhbHdheXMgb24gbXkgZ3VhcmQhCi0gV2UgY29udGFjdGVkIHRoZSBhdXRob3JzIGFuZCBsZWFybmVkIHRoYXQgYWxsIGNvbnRyb2wgY2VsbHMgd2VyZSBzZXF1ZW5jZWQgaW4gYSBmaXJzdCBydW4gYW5kIGFsbCBzdGltdWxhdGVkIGNlbGxzIHdlcmUgb24gYSBzZWNvbmQgc2VxdWVuY2luZyBydW4uIFNvIHRoZSBsYXJnZSBlZmZlY3QgbWlnaHQgYmUgYW4gZWZmZWN0IG9mIGJhdGNoIQoKIyMgUHJlZGljdGlvbgoKYGBge3J9CnBsb3RSZWR1Y2VkRGltKHNjZSwgZGltcmVkPSJUU05FIiwgY29sb3VyX2J5PSJjZWxsIikKYGBgCgotIEluIHNpbmdsZSBjZWxsIGFuYWx5c2lzIGl0IGlzIGtleSB0byBpZGVudGlmeSBjZWxsIHR5cGVzIGluIHNjUk5BLXNlcSBkYXRhIHNldHMgYmVmb3JlIGluLWRlcHRoIGludmVzdGlnYXRpb25zIG9mIHRoZWlyIGZ1bmN0aW9uYWwgYW5kIHBhdGhvbG9naWNhbCByb2xlcy4KCi0gVXNlIG1vZGVscyB0aGF0IHdlcmUgYnVpbGQgYmFzZWQgb24gcmVmZXJlbmNlIGRhdGEgc2V0cyB0byBwcmVkaWN0IGNlbGwgdHlwZXMgaW4gbmV3IGRhdGEgc2V0cyBiYXNlZCBvbiB0aGVpciBnZW5lIGV4cHJlc3Npb24gcGF0dGVybgoKLSBQcm9ibGVtOiB3ZSBoYXZlIGByIG5yb3coc2NlKWAgZ2VuZXMgYXQgb3VyIGRpc3Bvc2FsIHRvIGJ1aWxkIHRoaXMgcHJlZGljdGlvbiBtb2RlbCEKCi0gT3RoZXIgZXhhbXBsZXMKCiAgLSBQcmVkaWN0aW9uIG9mIHJpc2sgb24gbW9ydGFsaXR5IGlzIHVzZWQgb24gYSBkYWlseSBiYXNpcyBpbiBpbnRlbnNpdmUgY2FyZSB1bml0cyB0byBwcmlvcml0aXNlIHBhdGllbnQgY2FyZS4KCiAgLSBGYWNlYm9vazogcHJlZGljdCB0aGUgaWRlbnRpdHkgb2YgdGhlIGZhY2VzIG9mIHBlb3BsZSB0aGF0IGFyZSBvbiBhbiBuZXcgaW1hZ2UgdGhhdCBpcyB1cGxvYWRlZC4KCiAgLSBOZXRmbGl4OiBTdWdnZXN0IG1vdmllcyB0aGF0IHlvdSB3b3VsZCBsaWtlCgojIyBMYXJnZSBzY2FsZSBoeXBvdGhlc2lzIHRlc3RpbmcKCmBgYHtyfQpwbG90UmVkdWNlZERpbShzY2UsIGRpbXJlZD0iVFNORSIsIGNvbG91cl9ieT0iY2VsbCIsIHNoYXBlX2J5PSJzdGltIikKYGBgCgotIFdoaWNoIGdlbmVzIGFyZSBkaWZmZXJlbnRpYWxseSBleHByZXNzZWQgYmV0d2VlbiBjb250cm9sIGFuZCBzdGltdWxhdGVkIHRyZWF0bWVudCAgKGFzc2VzcyBpbiBlYWNoIGNlbGwgdHlwZSkKLSBGb3Igd2hpY2ggZ2VuZXMgd2Ugc2VlIHRoYXQgdGhlIGRpZmZlcmVudGlhbCBleHByZXNzaW9uIGFjY29yZGluZyB0byB0cmVhdG1lbnQgaXMgY2hhbmdpbmcgYWNjb3JkaW5nIHRvIHRoZSBjZWxsIHR5cGUgKGludGVyYWN0aW9uKQotIFdlIGhhdmUgdG8gbW9kZWwgdGhlIGdlbmUgZXhwcmVzc2lvbiBmb3IgZWFjaCBnZW5lCgokJApcbGVmdCBcewpcYmVnaW57YXJyYXl9e2xjbH0KeV97aWd9ICZcc2ltJiBOQihcbXVfe2lnfSwgXHBoaV97Z30pXFwKRVt5X3tpZ31dICY9JiBcbXVcXApcbG9nKFxtdV97aWd9KSAmPSYgXGV0YV97aWd9XFwKXGV0YV97aWd9ICY9JiBcYmV0YV97MCxnfSArIFxzdW1cbGltaXRzX3tjPTF9XkMgXGJldGFfe2MsZ30gWF97aWN9ICsgXGJldGFfe3MsZ30gWF97aXN9ICsgXHN1bVxsaW1pdHNfe2M9MX1eQyBcYmV0YV97YzpzLGd9IFhfe2ljfSBYX3tpc30gKyBcYWxwaGFfe2lnfQpcZW5ke2FycmF5fSBccmlnaHQuCiQkCgpXaXRoCgotIENlbGwgdHlwZSAkYz0yXGxkb3RzIEMkIGFuZCAkWF97aWN9JCBpcyBhIGR1bW15IHZhcmlhYmxlIHRoYXQgJFhfe2ljfT0xJCBpZiBjZWxsICRpJCBpcyBvZiBjZWxsIHR5cGUgYyBhbmQgJFhfe2ljfT0wJCBvdGhlcndpc2UuIE5vdGUgdGhhdCBjZWxsIHR5cGUgJGM9MSQgaXMgdGhlIHJlZmVyZW5jZSBjZWxsIHR5cGUKCi0gSW5kaWNhdG9yICRYX3tpc30kIGluZGljYXRlcyBpZiBjZWxsICRpJCB3YXMgc3RpbXVsYXRlZCAkWF97aXN9PTEkIG9yIG5vdCAkWF97aXN9PTAkLiBTbyB0aGUgY29udHJvbCB0cmVhdG1lbnQgaXMgdGhlIHJlZmVyZW5jZSB0cmVhdG1lbnQuCgpTdXBwb3NlIHdlIHdhbnQgdG8gdGVzdCBpZiB0aGUgZWZmZWN0IG9mIHRoZSBzdGltdWx1cyAoYXZlcmFnZSBkaWZmZXJlbmNlIGluIGV4cHJlc3Npb24gYmV0d2VlbiBzdGltdWxhdGVkIGFuZCBub24gc3RpbXVsYXRlZCBjZWxscykgaXMgZGlmZmVyZW50IGluIGNlbGwgdHlwZSBjIHRoYW4gaW4gdGhlIHJlZmVyZW5jZSBjZWxsIHR5cGUgMT8KCi0gJEhfMDogXGJldGFfe2M6cyxnfSA9IDAkCi0gJEhfMTogXGJldGFfe2M6cyxnfSBcbmVxIDAkCgoKLSBXZSBoYXZlIHRvIGFzc2VzcyB0aGlzIGZvciBgciBucm93KHNjZSlgIGdlbmVzIQotIElmIHdlIGFzc2VzcyBlYWNoIHRlc3QgYXQgdGhlIDUlIGxldmVsIHdlIGNhbiBleHBlY3QgMC4wNSAqIGByIG5yb3coc2NlKWAgPSBgciByb3VuZCgwLjA1Km5yb3coc2NlKSwwKWAgZmFsc2UgcG9zaXRpdmVzLgoKJFxyaWdodGFycm93JCBtYXNzaXZlIG11bHRpcGxlIHRlc3RpbmcgcHJvYmxlbSEKCgpOb3RlLCB0aGF0IHdlIGNhbm5vdCBkaWZmZXJlbnRpYXRlIGJldHdlZW4gYmF0Y2ggYW5kIHRyZWF0bWVudCBiZWNhdXNlIG9mIHRoZSBmbGF3IGluIHRoZSBleHBlcmltZW50YWwgZGVzaWduIQoKT3RoZXIgZXhhbXBsZXMKCi0gRmluZCByZWdpb25zICh2b3hlbHMpIGluIHRoZSBicmFpbiAob24gYnJhaW4gaW1hZ2UpIHRoYXQgYXJlIGFzc29jaWF0ZWQgd2l0aCBhIGNlcnRhaW4gY29uZGl0aW9uL3RyZWF0bWVudAotIEV2YWx1YXRpb24gb2YgdHJhZGluZyBydWxlcwoKCgotLS0KCgojIExpbmVhciByZWdyZXNzaW9uCgotIExpbmVhciByZWdyZXNzaW9uIGlzIGEgdmVyeSBpbXBvcnRhbnQgc3RhdGlzdGljYWwgdG9vbCB0byBzdHVkeSB0aGUgYXNzb2NpYXRpb24gYmV0d2VlbiB2YXJpYWJsZXMgYW5kIHRvIGJ1aWxkIHByZWRpY3Rpb24gbW9kZWxzLgoKIyMgU2NhbGFyIGZvcm0KCi0gQ29uc2lkZXIgYSB2ZWN0b3Igb2YgcHJlZGljdG9ycyAkXG1hdGhiZnt4fT0oeF8xLFxsZG90cyx4X3ApJCBhbmQKLSBhIHJlYWwtdmFsdWVkIHJlc3BvbnNlICRZJAotIHRoZW4gdGhlIGxpbmVhciByZWdyZXNzaW9uIG1vZGVsIGNhbiBiZSB3cml0dGVuIGFzClxbClk9ZihcbWF0aGJme3h9KSArXGVwc2lsb249XGJldGFfMCtcc3VtXGxpbWl0c197aj0xfV5wIHhfalxiZXRhX2ogKyBcZXBzaWxvbgpcXQp3aXRoIGkuaS5kLiAkXGVwc2lsb25cc2ltIE4oMCxcc2lnbWFeMikkCi0gV2Ugd2lsbCB0eXBpY2FsbHkgd29yayBvbiBtZWFuIGNlbnRlcmVkIHZhcmlhYmxlczogWS1cYmFye1l9IGFuZCBYIC0gXGJhcntYfSwgdGhlbiB0aGUgaW50ZXJjZXB0IGlzIGRyb3BwZWQgZnJvbSB0aGUgbW9kZWw6ClxbClk9ZihcbWF0aGJme3h9KSArXGVwc2lsb249XHN1bVxsaW1pdHNfe2o9MX1ecCB4X2pcYmV0YV9qICsgXGVwc2lsb24KXF0KCgojIyBWZWN0b3IvTWF0cml4IGZvcm0KCi0gJG4kIG9ic2VydmF0aW9ucyAkKFxtYXRoYmZ7eH1fMSx5XzEpIFxsZG90cyAoXG1hdGhiZnt4fV9uLHlfbikkIHdpdGggJFxtYXRoYmZ7eH1fMV5UPVsxIHhfMSBcbGRvdHMgeF9wXSQKLSBSZWdyZXNzaW9uIGluIG1hdHJpeCBub3RhdGlvbgpcW1xtYXRoYmZ7WX09XG1hdGhiZntYXGJldGF9ICsgXG1hdGhiZntcZXBzaWxvbn1cXQp3aXRoICRcbWF0aGJme1l9PVxsZWZ0W1xiZWdpbnthcnJheX17Y315XzFcXCBcdmRvdHNcXHlfblxlbmR7YXJyYXl9XHJpZ2h0XSQsCiRcbWF0aGJme1h9PVxsZWZ0W1xiZWdpbnthcnJheX17Y2NjY30gMSZ4X3sxMX0mXGxkb3RzJnhfezFwfVxcClx2ZG90cyZcdmRvdHMmJlx2ZG90c1xcCjEmeF97bjF9JlxsZG90cyZ4X3tucH0KXGVuZHthcnJheX1ccmlnaHRdJCBvciAkXG1hdGhiZntYfT1cbGVmdFtcYmVnaW57YXJyYXl9e2N9IFxtYXRoYmZ7eH1fMV5UXFxcdmRvdHNcXFxtYXRoYmZ7eH1fbl5UXGVuZHthcnJheX1ccmlnaHRdJCwKJFxib2xkc3ltYm9se1xiZXRhfT1cbGVmdFtcYmVnaW57YXJyYXl9e2N9XGJldGFfMFxcIFx2ZG90c1xcIFxiZXRhX3BcZW5ke2FycmF5fVxyaWdodF0kIGFuZAokXG1hdGhiZntcZXBzaWxvbn09XGxlZnRbXGJlZ2lue2FycmF5fXtjfSBcZXBzaWxvbl8xIFxcIFx2ZG90cyBcXCBcZXBzaWxvbl9uXGVuZHthcnJheX1ccmlnaHRdJAoKTm90ZSwgdGhhdCB1cG9uIGNlbnRlcmluZyBvZiAkXG1hdGhiZntYfSQgYW5kICRcbWF0aGJme1l9JCB0aGUgMSBpcyBkcm9wcGVkIGZyb20gZWFjaCAkXG1hdGhiZnt4fV9pJCBhbmQgdGh1cyB0aGUgY29sdW1uIG9mIDEgaXMgZHJvcHBlZCBpbiAkXG1hdGhiZntYfSQKCi0tLQoKIyMgSW50ZXJwcmV0YXRpb24KCkZyb20gdGhlIGxpbmVhciByZWdyZXNzaW9uIHdlIGdldApcWwogIEVbWSBcbWlkIFxtYXRoYmZ7eH1dID0gXG1hdGhiZnt4fV5UXGJvbGRzeW1ib2x7XGJldGF9IC4KXF0KCi0gSGVuY2UsIHRoZSAkXGJldGEkIHBhcmFtZXRlcnMgcmVsYXRlIHRoZSByZWdyZXNzb3IgJFxtYXRoYmZ7eH0kIHRvIHRoZSBtZWFuIG91dGNvbWUuCi0gSWYgd2Uga25vdyB0aGUgY292YXJpYXRlIHBhdHRlcm4gJFxtYXRoYmZ7eH0kIHdlIGNhbiB1c2UgdGhlIG1vZGVsIHRvIHByZWRpY3QgJFkkLgoKVXBvbiBjZW50ZXJpbmcgd2UgZ2V0IHRoZSBmb2xsb3dpbmcgZm9yIGEgbW9kZWwgd2l0aCBhIHNpbmdsZSByZWdyZXNzb3IKXFsKICBFW1kgXG1pZCB4XSA9IFxiZXRhXzEgeApcXQphbmQKXFsKIFxiZXRhXzEgPSBFW1lcbWlkIHgrMV0gLSBFW1lcbWlkIHhdIC4KXF0KCkhlbmNlLCB0aGUgJFxiZXRhXzEkIHBhcmFtZXRlciBoYXMgYW4gaW50ZXJwcmV0YXRpb24gYXMgdGhlIG1lYW4gaW5jcmVhc2Ugb2YgdGhlIG91dGNvbWUgYXMgdGhlIHJlZ3Jlc3NvciBpbmNyZWFzZXMgd2l0aCBvbmUgdW5pdC4gVGhlIHBhcmFtZXRlciBkb2VzIG5vdCBzYXkgdmVyeSBhYm91dCBpbmRpdmlkdWFsIG91dGNvbWVzLiBJdCBpcyB0aGUgcmVzaWR1YWwgdmFyaWFuY2UgJFxzaWdtYV4yJCB0aGF0IGRldGVybWluZXMgaG93IG11Y2ggaW5kaXZpZHVhbCBvdXRjb21lcyB2YXJ5IGFib3V0IHRoZSBtZWFuIG91dGNvbWUuCgpUaGUgJFxiZXRhJCBwYXJhbWV0ZXJzIGFyZSB1c2VkIHRvIG1lYXN1cmUgYXNzb2NpYXRpb24sIGJ1dCBhICRcYmV0YSBcbmVxIDAkIGRvZXMgbm90IG5lY2Vzc2FyaWx5IG1lYW4gdGhhdCB0aGUgbW9kZWwgd2lsbCBnaXZlIGdvb2QgcHJlZGljdGlvbnMuCgotLS0KCi0gSW4gYSBsYXRlciBjaGFwdGVyIHdlIHdpbGwgZGlzY3VzcyB0aGUgcHJvYmxlbSBvZiBsYXJnZSBzY2FsZSBoeXBvdGhlc2lzIHRlc3Rpbmc6IHRlc3RpbmcgbWFueSBoeXBvdGhlc2VzIGluIGEgc2luZ2xlIHN0dWR5ICh0ZW4gdG8gaHVuZHJlZCB0aG91c2FuZHMgb2YgaHlwb3RoZXNlcykuCgotIEEgc3RhdGlzdGljYWwgdGVzdCBpcyBjb25zdHJ1Y3RlZCB0byBjb250cm9sIHRoZSB0eXBlIEkgZXJyb3IgcmF0ZSBhdCB0aGUgc2lnbmlmaWNhbmNlIGxldmVsLiBIb3dldmVyLCB3aGVuIG1hbnkgaHlwb3RoZXNlcyBhcmUgdG8gYmUgdGVzdGVkIGluIGEgc2luZ2xlIHN0dWR5LCB0aGUgcHJvYmFiaWxpdHkgdG8gZmluZCBmYWxzZSBhc3NvY2lhdGlvbnMgaXMgbm8gbG9uZ2VyIGNvbnRyb2xsZWQgaWYgcC12YWx1ZXMgYXJlIGNvbXBhcmVkIHRvIHRoZSBzaWduaWZpY2FuY2UgbGV2ZWwuCgotIFdlIHdpbGwgbGF0ZXIgaW50cm9kdWNlIHRoZSBjb25jZXB0IG9mIGZhbHNlIGRpc2NvdmVyeSByYXRlcyB0byBvdmVyY29tZSB0aGUgcHJvYmxlbS4KCiMjIExlYXN0IFNxdWFyZXMgKExTKQoKLSBNaW5pbWl6ZSB0aGUgcmVzaWR1YWwgc3VtIG9mIHNxdWFyZXMKXGJlZ2lue2VxbmFycmF5Kn0KUlNTKFxib2xkc3ltYm9se1xiZXRhfSkmPSZcc3VtXGxpbWl0c197aT0xfV5uIGVeMl9pXFwKJj0mXHN1bVxsaW1pdHNfe2k9MX1ebiBcbGVmdCh5X2ktXGJldGFfMC1cc3VtXGxpbWl0c197aj0xfV5wIHhfe2lqfVxiZXRhX2pccmlnaHQpXjIKXGVuZHtlcW5hcnJheSp9CgotIG9yIGluIG1hdHJpeCBub3RhdGlvbgpcYmVnaW57ZXFuYXJyYXkqfQpSU1MoXGJvbGRzeW1ib2x7XGJldGF9KSY9JihcbWF0aGJme1l9LVxtYXRoYmZ7WFxiZXRhfSleVChcbWF0aGJme1l9LVxtYXRoYmZ7WFxiZXRhfSlcXAomPSZcVmVydCBcbWF0aGJme1l9LVxtYXRoYmZ7WFxiZXRhfVxWZXJ0XjJfMgpcZW5ke2VxbmFycmF5Kn0Kd2l0aCB0aGUgJExfMiQtbm9ybSBvZiBhICRwJC1kaW0uIHZlY3RvciAkdiQgJFxWZXJ0IFxtYXRoYmZ7dn0gXFZlcnRfMj1cc3FydHt2XzFeMitcbGRvdHMrdl9wXjJ9JAokXHJpZ2h0YXJyb3ckICRcaGF0e1xib2xkc3ltYm9se1xiZXRhfX09XHRleHR7YXJnbWlufV9cYmV0YSBcVmVydCBcbWF0aGJme1l9LVxtYXRoYmZ7WFxiZXRhfVxWZXJ0XjIkCgotLS0KCiMjIyBNaW5pbWl6ZSBSU1MKXFsKXGJlZ2lue2FycmF5fXtjY2N9ClxmcmFje1xwYXJ0aWFsIFJTU317XHBhcnRpYWwgXGJvbGRzeW1ib2x7XGJldGF9fSY9JlxtYXRoYmZ7MH1cXFxcClxmcmFjeyhcbWF0aGJme1l9LVxtYXRoYmZ7WFxiZXRhfSleVChcbWF0aGJme1l9LVxtYXRoYmZ7WH1cYm9sZHN5bWJvbHtcYmV0YX0pfXtccGFydGlhbCBcYm9sZHN5bWJvbHtcYmV0YX19Jj0mXG1hdGhiZnswfVxcXFwKLTJcbWF0aGJme1h9XlQoXG1hdGhiZntZfS1cbWF0aGJme1h9XGJvbGRzeW1ib2x7XGJldGF9KSY9JlxtYXRoYmZ7MH1cXFxcClxtYXRoYmZ7WH1eVFxtYXRoYmZ7WFxiZXRhfSY9JlxtYXRoYmZ7WH1eVFxtYXRoYmZ7WX1cXFxcClxoYXR7XGJvbGRzeW1ib2x7XGJldGF9fSY9JihcbWF0aGJme1h9XlRcbWF0aGJme1h9KV57LTF9XG1hdGhiZntYfV5UXG1hdGhiZntZfQpcZW5ke2FycmF5fQpcXQoKSXQgY2FuIGJlIHNob3duIHRoYXQgdGhlIGVzdGltYXRvciBpcyB1bmJpYXNlZDoKCiQkCkVbXGhhdHtcYm9sZHN5bWJvbHtcYmV0YX19XT1cYm9sZHN5bWJvbHtcYmV0YX0KJCQKCi0tLQoKIyMjIEdlb21ldHJpY2FsIEludGVycHJldGF0aW9uCgpUb3kgRXhhbXBsZTogZml0IHdpdGhvdXQgaW50ZXJjZXB0CgotIG49MyBhbmQgcD0yClxbClxtYXRoYmZ7WH09XGxlZnRbXGJlZ2lue2FycmF5fXtjY30KMiYwXFwKMCYyXFwKMCYwClxlbmR7YXJyYXl9XHJpZ2h0XQpcXQoKYGBge3J9CnNldC5zZWVkKDQpCngxIDwtIGMoMiwgMCwgMCkKeDIgPC0gYygwLCAyLCAwKQp5IDwtIHgxICogMC41ICsgeDIgKiAwLjUgKyBybm9ybSgzLCAyKQpmaXQgPC0gbG0oeSB+IC0xICsgeDEgKyB4MikKYGBgCgotICRcbWF0aGJme1l9JCBpcyBub3cgZ2l2ZW4gYnkKClxbClxtYXRoYmZ7WX09XGxlZnRbXGJlZ2lue2FycmF5fXtjfQoxICsgXGVwc2lsb25fMSBcXAoxICsgXGVwc2lsb25fMlxcCjAgKyBcZXBzaWxvbl8zClxlbmR7YXJyYXl9XHJpZ2h0XQpcXQoKd2l0aCB0aGUgJFxlcHNpbG9uX2kkcyBzb21lIHJhbmRvbSBub2lzZS4KCi0gVGhlIGFjdHVhbCB2YWx1ZXMgb2YgJFxtYXRoYmZ7WX0kIGFyZToKCmBgYHtyfQojIyBUcnVlIFkKeQojIyBGaXR0ZWQgWQpmaXQkZml0dGVkLnZhbHVlcwpgYGAKCiMjIyMgVmlzdWFsaXNlIGZpdAoKYGBge3J9CiMgcHJlZGljdCB2YWx1ZXMgb24gcmVndWxhciB4eSBncmlkCngxcHJlZCA8LSBzZXEoLTEsIDMsIGxlbmd0aC5vdXQgPSAxMCkKeDJwcmVkIDwtIHNlcSgtMSwgMywgbGVuZ3RoLm91dCA9IDEwKQp4eSA8LSBleHBhbmQuZ3JpZCh4MSA9IHgxcHJlZCwKeDIgPSB4MnByZWQpCnlwcmVkIDwtIG1hdHJpeCAobnJvdyA9IDMwLCBuY29sID0gMzAsCmRhdGEgPSBwcmVkaWN0KGZpdCwgbmV3ZGF0YSA9IGRhdGEuZnJhbWUoeHkpLAppbnRlcnZhbCA9ICJwcmVkaWN0aW9uIikpCgpsaWJyYXJ5KHBsb3QzRCkKCgojIGZpdHRlZCBwb2ludHMgZm9yIGRyb3BsaW5lcyB0byBzdXJmYWNlCnRoPTIwCnBoPTUKc2NhdHRlcjNEKHgxLAogIHgyLAogIHksCiAgcGNoID0gMTYsCiAgY29sPSJkYXJrYmx1ZSIsCiAgY2V4ID0gMSwKICB0aGV0YSA9IHRoLAogIHRpY2t0eXBlID0gImRldGFpbGVkIiwKICB4bGFiID0gIngxIiwKICB5bGFiID0gIngyIiwKICB6bGFiID0gInkiLCAgCiAgY29sdmFyPUZBTFNFLAogIGJ0eSA9ICJnIiwKICB4bGltPWMoLTEsMyksCiAgeWxpbT1jKC0xLDMpLAogIHpsaW09YygtMiw0KSkKCmZvciAoaSBpbiAxOjMpCiAgbGluZXMzRCgKICAgIHggPSByZXAoeDFbaV0sMiksCiAgICB5ID0gcmVwKHgyW2ldLDIpLAogICAgeiA9IGMoeVtpXSxmaXQkZml0dGVkW2ldKSwKICAgIGNvbD0iZGFya2JsdWUiLAogICAgYWRkPVRSVUUsCiAgICBsdHk9MikKCnoucHJlZDNEIDwtIG91dGVyKAogIHgxcHJlZCwKICB4MnByZWQsCiAgZnVuY3Rpb24oeDEseDIpCiAgewogICAgZml0JGNvZWZbMV0qeDErZml0JGNvZWZbMl0qeDIKICB9KQoKeC5wcmVkM0QgPC0gb3V0ZXIoCiAgeDFwcmVkLAogIHgycHJlZCwKICBmdW5jdGlvbih4LHkpIHgpCgp5LnByZWQzRCA8LSBvdXRlcigKICB4MXByZWQsCiAgeDJwcmVkLAogIGZ1bmN0aW9uKHgseSkgeSkKCnN1cmYzRCgKICB4LnByZWQzRCwKICB5LnByZWQzRCwKICB6LnByZWQzRCwKICBjb2w9ImJsdWUiLAogIGZhY2V0cz1OQSwKICBhZGQ9VFJVRSkKYGBgCgojIyMjIFByb2plY3Rpb24KCi0gV2UgY2FuIGFsc28gaW50ZXJwcmV0IHRoZSBmaXQgYXMgdGhlIHByb2plY3Rpb24gb2YgdGhlICRuXHRpbWVzIDEkIHZlY3RvciAkXG1hdGhiZntZfSQgb24gdGhlIGNvbHVtbiBzcGFjZSBvZiB0aGUgbWF0cml4ICRcbWF0aGJme1h9JC4KCi0gU28gZWFjaCBjb2x1bW4gaW4gJFxtYXRoYmZ7WH0kIGlzIGFsc28gYW4gJG5cdGltZXMgMSQgdmVjdG9yLgoKLSBGb3IgdGhlIHRveSBleGFtcGxlIG49MyBhbmQgcD0yLgpTbyB0aGUgY29sdW1uIHNwYWNlIG9mIFggaXMgYSBwbGFuZSBpbiB0aGUgdGhyZWUgZGltZW5zaW9uYWwgc3BhY2UuCgpcWwpcaGF0e1xtYXRoYmZ7WX19ID0gXG1hdGhiZntYfSAoXG1hdGhiZntYfV5UXG1hdGhiZntYfSleey0xfSBcbWF0aGJme1h9XlQgXG1hdGhiZntZfQpcXQoKMS4gUGxhbmUgc3Bhbm5lZCBieSBjb2x1bW4gc3BhY2U6CmBgYHtyfQphcnJvd3MzRCgKICAwLCAwLCAwLCB4MVsxXSwgeDFbMl0sIHgxWzNdLAogIHhsaW0gPSBjKDAsIDUpLCB5bGltID0gYygwLCA1KSwgemxpbSA9IGMoMCwgNSksIGJ0eSA9ICJnIiwKICB0aGV0YSA9IHRoLCBjb2wgPSAyLCB0aWNrdHlwZSA9ICJkZXRhaWxlZCIsCiAgeGxhYiA9ICJvYnNlcnZhdGlvbiAxIiwgeWxhYiA9ICJvYnNlcnZhdGlvbiAyIiwgemxhYiA9ICJvYnNlcnZhdGlvbiAzIgopCnRleHQzRCh4MVsxXSx4MVsyXSx4MVszXSxsYWJlbHM9IlgxIixjb2w9MixhZGQ9VFJVRSkKYXJyb3dzM0QoMCwwLDAseDJbMV0seDJbMl0seDJbM10sYWRkPVRSVUUsY29sPTIpCnRleHQzRCh4MlsxXSx4MlsyXSx4MlszXSxsYWJlbHM9IlgyIixjb2w9MixhZGQ9VFJVRSkKYGBgCgoyLiBWZWN0b3Igb2YgWToKCkFjdHVhbCB2YWx1ZXMgb2YgJFxtYXRoYmZ7WX0kOgoKYGBge3J9CnkKYGBgCgpcWwpcbWF0aGJme1l9PVxsZWZ0W1xiZWdpbnthcnJheX17Y30KYHIgeVsxXWAgXFwKYHIgeVsyXWAgXFwKYHIgeVszXWAKXGVuZHthcnJheX1ccmlnaHRdClxdCgpgYGB7cn0KYXJyb3dzM0QoCiAgMCwgMCwgMCwgeDFbMV0sIHgxWzJdLCB4MVszXSwKICB4bGltID0gYygwLCA1KSwgeWxpbSA9IGMoMCwgNSksIHpsaW0gPSBjKDAsIDUpLCBidHkgPSAiZyIsCiAgdGhldGEgPSB0aCwgY29sID0gMiwgdGlja3R5cGUgPSAiZGV0YWlsZWQiLAogIHhsYWIgPSAib2JzZXJ2YXRpb24gMSIsIHlsYWIgPSAib2JzZXJ2YXRpb24gMiIsIHpsYWIgPSAib2JzZXJ2YXRpb24gMyIKKQp0ZXh0M0QoeDFbMV0seDFbMl0seDFbM10sbGFiZWxzPSJYMSIsY29sPTIsYWRkPVRSVUUpCmFycm93czNEKDAsMCwwLHgyWzFdLHgyWzJdLHgyWzNdLGFkZD1UUlVFLGNvbD0yKQp0ZXh0M0QoeDJbMV0seDJbMl0seDJbM10sbGFiZWxzPSJYMiIsY29sPTIsYWRkPVRSVUUpCmFycm93czNEKDAsMCwwLHlbMV0seVsyXSx5WzNdLGFkZD1UUlVFLGNvbD0iZGFya2JsdWUiKQp0ZXh0M0QoeVsxXSx5WzJdLHlbM10sbGFiZWxzPSJZIixjb2w9ImRhcmtibHVlIixhZGQ9VFJVRSkKYGBgCgozLiBQcm9qZWN0aW9uIG9mIFkgb250byBjb2x1bW4gc3BhY2UKCkFjdHVhbCB2YWx1ZXMgb2YgZml0dGVkIHZhbHVlcyAkXG1hdGhiZntcaGF0e1l9fSQ6CgpgYGB7cn0KZml0dGVkLnZhbHVlcyhmaXQpCmBgYAoKXFsKXG1hdGhiZntZfT1cbGVmdFtcYmVnaW57YXJyYXl9e2N9CmByIGZpdHRlZC52YWx1ZXMoZml0KVsxXWAgXFwKYHIgZml0dGVkLnZhbHVlcyhmaXQpWzJdYCBcXApgciBmaXR0ZWQudmFsdWVzKGZpdClbM11gClxlbmR7YXJyYXl9XHJpZ2h0XQpcXQoKYGBge3J9CmFycm93czNEKAogIDAsIDAsIDAsIHgxWzFdLCB4MVsyXSwgeDFbM10sCiAgeGxpbSA9IGMoMCwgNSksIHlsaW0gPSBjKDAsIDUpLCB6bGltID0gYygwLCA1KSwgYnR5ID0gImciLAogIHRoZXRhID0gdGgsIGNvbCA9IDIsIHRpY2t0eXBlID0gImRldGFpbGVkIiwKICB4bGFiID0gIm9ic2VydmF0aW9uIDEiLCB5bGFiID0gIm9ic2VydmF0aW9uIDIiLCB6bGFiID0gIm9ic2VydmF0aW9uIDMiCikKdGV4dDNEKHgxWzFdLHgxWzJdLHgxWzNdLGxhYmVscz0iWDEiLGNvbD0yLGFkZD1UUlVFKQphcnJvd3MzRCgwLDAsMCx4MlsxXSx4MlsyXSx4MlszXSxhZGQ9VFJVRSxjb2w9MikKdGV4dDNEKHgyWzFdLHgyWzJdLHgyWzNdLGxhYmVscz0iWDIiLGNvbD0yLGFkZD1UUlVFKQphcnJvd3MzRCgwLDAsMCx5WzFdLHlbMl0seVszXSxhZGQ9VFJVRSxjb2w9ImRhcmtibHVlIikKdGV4dDNEKHlbMV0seVsyXSx5WzNdLGxhYmVscz0iWSIsY29sPSJkYXJrYmx1ZSIsYWRkPVRSVUUpCmFycm93czNEKDAsMCwwLGZpdCRmaXR0ZWRbMV0sZml0JGZpdHRlZFsyXSxmaXQkZml0dGVkWzNdLGFkZD1UUlVFLGNvbD0iZGFya2JsdWUiKQpzZWdtZW50czNEKHlbMV0seVsyXSx5WzNdLGZpdCRmaXR0ZWRbMV0sZml0JGZpdHRlZFsyXSxmaXQkZml0dGVkWzNdLGFkZD1UUlVFLGx0eT0yLGNvbD0iZGFya2JsdWUiKQp0ZXh0M0QoZml0JGZpdHRlZFsxXSxmaXQkZml0dGVkWzJdLGZpdCRmaXR0ZWRbM10sbGFiZWxzPSJmaXQiLGNvbD0iZGFya2JsdWUiLGFkZD1UUlVFKQpgYGAKCi0gTm90ZSwgdGhhdCBpdCBpcyBhbHNvIGNsZWFyIGZyb20gdGhlIGVxdWF0aW9uIGluIHRoZSBkZXJpdmF0aW9uIG9mIHRoZSBMUyB0aGF0IHRoZSByZXNpZHVhbCBpcyBvcnRob2dvbmFsIG9uIHRoZSBjb2x1bW4gc3BhY2U6ClxbCiAtMiBcbWF0aGJme1h9XlQoXG1hdGhiZntZfS1cbWF0aGJme1h9XGJvbGRzeW1ib2x7XGJldGF9KSA9IDAKXF0KCi0gSW1hZ2luZSB3aGF0IGhhcHBlbnMgd2hlbiBwID4+IG4hISEKCiRccmlnaHRhcnJvdyQgY3Vyc2Ugb2YgZGltZW5zaW9uYWxpdHkhCgojIyBWYXJpYW5jZSBFc3RpbWF0b3I/ClxbClxiZWdpbnthcnJheX17Y2NsfQpcaGF0e1xib2xkc3ltYm9se1xTaWdtYX19X3tcaGF0e1xib2xkc3ltYm9se1xiZXRhfX19CiY9Jlx0ZXh0e3Zhcn1cbGVmdFsoXG1hdGhiZntYfV5UXG1hdGhiZntYfSleey0xfVxtYXRoYmZ7WH1eVFxtYXRoYmZ7WX1ccmlnaHRdXFxcXAomPSYoXG1hdGhiZntYfV5UXG1hdGhiZntYfSleey0xfVxtYXRoYmZ7WH1eVFx0ZXh0e3Zhcn1cbGVmdFtcbWF0aGJme1l9XHJpZ2h0XVxtYXRoYmZ7WH0oXG1hdGhiZntYfV5UXG1hdGhiZntYfSleey0xfVxcXFwKJj0mKFxtYXRoYmZ7WH1eVFxtYXRoYmZ7WH0pXnstMX1cbWF0aGJme1h9XlQoXG1hdGhiZntJfVxzaWdtYV4yKVxtYXRoYmZ7WH0oXG1hdGhiZntYfV5UXG1hdGhiZntYfSleey0xfQpcXFxcCiY9JihcbWF0aGJme1h9XlRcbWF0aGJme1h9KV57LTF9XG1hdGhiZntYfV5UXG1hdGhiZntJfVxxdWFkXG1hdGhiZntYfShcbWF0aGJme1h9XlRcbWF0aGJme1h9KV57LTF9XHNpZ21hXjJcXFxcCiVcaGF0e1xib2xkbWF0aHtcU2lnbWF9fV97XGhhdHtcYm9sZHN5bWJvbHtcYmV0YX19fSY9JihcbWF0aGJme1h9XlRcbWF0aGJme1h9KV57LTF9XG1hdGhiZntYfV5UIFx0ZXh0e3Zhcn1cbGVmdFtcbWF0aGJme1l9XHJpZ2h0XShcbWF0aGJme1h9XlRcbWF0aGJme1h9KV57LTF9XG1hdGhiZntYfVxcCiY9JihcbWF0aGJme1h9XlRcbWF0aGJme1h9KV57LTF9XG1hdGhiZntYfV5UXG1hdGhiZntYfShcbWF0aGJme1h9XlRcbWF0aGJme1h9KV57LTF9XHNpZ21hXjJcXFxcCiY9JihcbWF0aGJme1h9XlRcbWF0aGJme1h9KV57LTF9XHNpZ21hXjIKXGVuZHthcnJheX0KXF0KClRoZSBmYWN0IHRoYXQgJFxoYXR7XGJvbGRzeW1ib2x7XGJldGF9fSQgaXMgdW5iaWFzZWQgYW5kIGhhcyBhIHZhcmlhbmNlIG9mICQoXG1hdGhiZntYfV5UXG1hdGhiZntYfSleey0xfVxzaWdtYV4yJCB3aWxsIGJlIGltcG9ydGFudCB3aGVuIGFzc2Vzc2luZyBhc3NvY2lhdGlvbiEKCi0tLQoKIyMgUHJlZGljdGlvbiBlcnJvcgoKTGVhc3Qgc3F1YXJlcyBlc3RpbWF0b3JzIGFyZSB1bmJpYXNlZCBhbmQgY29uc2lzdGVudCwgYnV0IHRoZXNlIHByb3BlcnRpZXMgYXJlIG5vdCB2ZXJ5IGltcG9ydGFudCBmb3IgcHJlZGljdGlvbiBtb2RlbHMuCgpBIHByZWRpY3Rpb24gbW9kZWwgaXMgY29uc2lkZXJlZCBnb29kIGlmIGl0IGNhbiBwcmVkaWN0IHdlbGwgb3V0Y29tZXMuCgpUaGUgKipwcmVkaWN0aW9uIGVycm9yKiogZm9yIGEgcHJlZGljdGlvbiBhdCBwcmVkaWN0b3IgJFxtYXRoYmZ7eH0kIGlzIGdpdmVuIGJ5CgokJAogICBcaGF0e1l9KFxtYXRoYmZ7eH0pIC0gWV4qLAokJAoKd2hlcmUKCi0gICRcaGF0e1l9KFxtYXRoYmZ7eH0pPVxtYXRoYmZ7eH1eVFxoYXR7XGJvbGRzeW1ib2x7XGJldGF9fSQgaXMgdGhlIHByZWRpY3Rpb24gYXQgJFxtYXRoYmZ7eH0kCgotICAkWV4qJCBpcyBhbiBvdXRjb21lIGF0IHByZWRpY3RvciAkXG1hdGhiZnt4fSQKCiBTaW5jZSBwcmVkaWN0aW9uIGlzIHR5cGljYWxseSB1c2VkIHRvIHByZWRpY3QgYW4gb3V0Y29tZSBiZWZvcmUgaXQgaXMgb2JzZXJ2ZWQsIHRoZSBvdXRjb21lICRZXiokIGlzIG5vdCBvYnNlcnZlZCB5ZXQuIEhlbmNlLCB0aGUgcHJlZGljdGlvbiBlcnJvciBjYW5ub3QgYmUgY29tcHV0ZWQuCgogLS0tCgogVGhlIHByb2JsZW0gb2YgdW5vYnNlcnZhYmxlIHByZWRpY3Rpb24gZXJyb3JzIGlzIHBhcnRseSBzb2x2ZWQgYnkgdGhlICoqZXhwZWN0ZWQgY29uZGl0aW9uYWwgdGVzdCBlcnJvcioqIChzb21ldGltZXMgcmVmZXJyZWQgdG8gYXMgdGhlIG1lYW4gc3F1YXJlZCBlcnJvciwgTVNFKQpcWwogIFx0ZXh0e0Vycn0oXG1hdGhiZnt4fSk9RVsoXGhhdHtZfShcbWF0aGJme3h9KSAtIFleKileMl0uClxdCgpXaXRoIChzdXBwcmVzc2luZyB0aGUgZGVwZW5kZW5jZSBvbiAkXG1hdGhiZnt4fSQpClxbCiAgXG11ID0gRVtcaGF0e1l9XSBcdGV4dHsgYW5kIH0gXG11Xio9RVtZXipdClxdCnRoZSBlcnJvciBjYW4gYmUgZXhwcmVzc2VkIGFzClxiZWdpbntlcW5hcnJheSp9CiAgXHRleHR7RXJyfQogICAgJj0mRVxsZWZ0XHtcbGVmdFsoXGhhdHtZfSAtXG11KS0oWS1cbXVeKiktKFxtdV4qLVxtdSlccmlnaHRdXjJccmlnaHRcfSBcXAogICAgJj0mIEVbKFxoYXR7WX0gLVxtdSleMl0rRVsoWS1cbXVeKileMl0rRVsoXG11XiotXG11KV4yXSBcXAogICAgJj0mIFx0ZXh0e3Zhcn1bXGhhdHtZfV0gK1x0ZXh0e3Zhcn1bWV0gK1x0ZXh0e2JpYXN9XjIKXGVuZHtlcW5hcnJheSp9CgogVGhlIHRlcm0gJFx0ZXh0e3Zhcn1bWV0kIChpcnJlZHVjaWJsZSBlcnJvcikgZG9lcyBub3QgZGVwZW5kIG9uIHRoZSBtb2RlbCBhbmQgbWF5IHRoZXJlZm9yZSBiZSBpZ25vcmVkIHdoZW4gJFx0ZXh0e0Vycn0kIGlzIHVzZWQgZm9yIGNvbXBhcmluZyBwcmVkaWN0aW9uIG1vZGVscy4KCiAtLS0KCgpJbiB0aGlzIGludHJvZHVjdG9yeSBjaGFwdGVyIHdlIG9ubHkgYWltIHRvIGdpdmUgYSByb3VnaCBkaXNjdXNzaW9uIG9uIHByZWRpY3Rpb24gZXJyb3JzLiBMYXRlciBkZWZpbml0aW9ucyB3aWxsIGJlIHJlZmluZWQgYW5kIHRoZSBub3RhdGlvbiB3aWxsIGJlIG1vcmUgYWNjdXJhdGUuIEFsc28gYSBtb3JlIGRldGFpbGVkIGRpc2N1c3Npb24gb24gdGhlIGJpYXMtdmFyaWFuY2UgdHJhZGUtb2ZmIHdpbGwgZm9sbG93LiBGb3IgdGhlIG1vbWVudCBpdCBpcyBzdWZmaWNpZW50IHRvIHZhZ3VlbHkga25vdyB0aGF0OgoKLSB0aGUgZXhwZWN0ZWQgY29uZGl0aW9uYWwgdGVzdCBlcnJvciBpcyBpbnRyb2R1Y2VkIHRvIGNpcmN1bXZlbnQgdGhlIHByb2JsZW0gdGhhdCB0aGUgcHJlZGljdGlvbiBlcnJvciBjYW5ub3QgYmUgb2JzZXJ2ZWQuIEluIGxhdGVyIGNoYXB0ZXJzIHdlIHdpbGwgbG9vayBhdCBlc3RpbWF0b3JzIG9mIHRoZSBleHBlY3RlZCBlcnJvci4KCi0gdGhlIGV4cGVjdGVkIGNvbmRpdGlvbmFsIHRlc3QgZXJyb3IgIGlzIGluIHNvbWUgbGl0ZXJhdHVyZSBhbHNvIGtub3duIGFzIHRoZSAqbWVhbiBzcXVhcmVkIGVycm9yKiAoTVNFKSwgYnV0IHdlIGRvIG5vdCBhZG9wdCB0aGlzIHRlcm1pbm9sb2d5IGJlY2F1c2UgTVNFIGlzIGFsc28gY29tbW9ubHkgdXNlZCB0byByZWZlciB0byBTU0UgZGl2aWRlZCBieSB0aGUgcmVzaWR1YWwgZGVncmVlcyBvZiBmcmVlZG9tIGluIGEgbGluZWFyIHJlZ3Jlc3Npb24gbW9kZWwuCgotIFRoZSBpZGVudGl0eSAkXHRleHR7RXJyfT1cdGV4dHt2YXJ9W1xoYXR7WX1dICtcdGV4dHt2YXJ9W1ldICtcdGV4dHtiaWFzfV4yJCBpcyBrbm93biBhcyB0aGUgYmlhcy12YXJpYW5jZSB0cmFkZS1vZmYuIEl0IHNob3dzIHRoYXQgYSBnb29kIHByZWRpY3Rpb24gbW9kZWwgKGkuZS4gYSBtb2RlbCByZXN1bHRpbmcgaW4gYSBzbWFsbCBFcnIpLCBjYW4gYmUgb2J0YWluZWQgYnkgYSBtb2RlbCB0aGF0IHNob3dzIGEgc21hbGwgYmlhcyBhcyBsb25nIGFzIHRoaXMgYmlhcyBpcyBjb21wZW5zYXRlZCB3aXRoIGEgbGFyZ2UgcmVkdWN0aW9uIG9mIHRoZSB2YXJpYW5jZSBvciB0aGUgcHJlZGljdGlvbnMuIEEgbW9yZSBkZXRhaWxlZCBkaXNjdXNzaW9uIHdpbGwgZm9sbG93IGluIGxhdGVyIGNoYXB0ZXJzLgoKLSBGb3IgcHJlZGljdGlvbiBtb2RlbHMgd2l0aCBhIGxhcmdlIG51bWJlciBvZiBwcmVkaWN0b3JzIHdlIHdpbGwgdGhlcmVmb3JlIGludHJvZHVjZSBwZW5hbGl6ZWQgcmVncmVzc2lvbi4gVGhpcyB3aWxsIGluZHVjZSBzb21lIGJpYXMgaW4gdGhlIGVzdGltYXRpb24sIGJ1dCB3aWxsIGFsbG93IHVzIHRvIHJlZHVjZSB0aGUgdmFyaWFuY2UgY29uc2lkZXJhYmx5LgoKIyBTZXNzaW9uIGluZm8gey19Cgo8ZGV0YWlscz48c3VtbWFyeT5TZXNzaW9uIGluZm88L3N1bW1hcnk+CgpgYGB7ciBzZXNzaW9uX2luZm8sIGVjaG89RkFMU0UsIGNhY2hlPUZBTFNFfQpTeXMudGltZSgpCnNlc3Npb25pbmZvOjpzZXNzaW9uX2luZm8oKQpgYGAKCjwvZGV0YWlscz4KCiMgW0hvbWVdKGh0dHBzOi8vc3RhdG9taWNzLmdpdGh1Yi5pby9IREEyMDIwLykgey19Cg==</div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("intro.Rmd");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

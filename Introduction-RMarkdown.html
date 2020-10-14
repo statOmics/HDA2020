@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Milan Malfait" />
+
+<meta name="date" content="2020-10-14" />
+
+<title>Introduction to RMarkdown</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<script src="site_libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+      code.sourceCode > span { display: inline-block; line-height: 1.25; }
+  code.sourceCode > span { color: inherit; text-decoration: inherit; }
+  code.sourceCode > span:empty { height: 1.2em; }
+  .sourceCode { overflow: visible; }
+  code.sourceCode { white-space: pre; position: relative; }
+  div.sourceCode { margin: 1em 0; }
+  pre.sourceCode { margin: 0; }
+  @media screen {
+  div.sourceCode { overflow: auto; }
+  }
+  @media print {
+  code.sourceCode { white-space: pre-wrap; }
+  code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+  }
+  pre.numberSource code
+    { counter-reset: source-line 0; }
+  pre.numberSource code > span
+    { position: relative; left: -4em; counter-increment: source-line; }
+  pre.numberSource code > span > a:first-child::before
+    { content: counter(source-line);
+      position: relative; left: -1em; text-align: right; vertical-align: baseline;
+      border: none; display: inline-block;
+      -webkit-touch-callout: none; -webkit-user-select: none;
+      -khtml-user-select: none; -moz-user-select: none;
+      -ms-user-select: none; user-select: none;
+      padding: 0 4px; width: 4em;
+      color: #aaaaaa;
+    }
+  pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+  div.sourceCode
+    {  background-color: #f8f8f8; }
+  @media screen {
+  code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+  }
+  code span.al { color: #ef2929; } /* Alert */
+  code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+  code span.at { color: #c4a000; } /* Attribute */
+  code span.bn { color: #0000cf; } /* BaseN */
+  code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+  code span.ch { color: #4e9a06; } /* Char */
+  code span.cn { color: #000000; } /* Constant */
+  code span.co { color: #8f5902; font-style: italic; } /* Comment */
+  code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+  code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+  code span.dt { color: #204a87; } /* DataType */
+  code span.dv { color: #0000cf; } /* DecVal */
+  code span.er { color: #a40000; font-weight: bold; } /* Error */
+  code span.ex { } /* Extension */
+  code span.fl { color: #0000cf; } /* Float */
+  code span.fu { color: #000000; } /* Function */
+  code span.im { } /* Import */
+  code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+  code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+  code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+  code span.ot { color: #8f5902; } /* Other */
+  code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+  code span.sc { color: #000000; } /* SpecialChar */
+  code span.ss { color: #4e9a06; } /* SpecialString */
+  code span.st { color: #4e9a06; } /* String */
+  code span.va { color: #000000; } /* Variable */
+  code span.vs { color: #4e9a06; } /* VerbatimString */
+  code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+    </style>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #c4a000; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #000000; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #000000; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #000000; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">HDA2020</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fa fa-chalkboard-teacher"></span>
+     
+    Lectures
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="intro.html">1. Introduction</a>
+    </li>
+    <li>
+      <a href="svd.html">2. Singular Value Decomposition</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fa fa-laptop"></span>
+     
+    Practicals
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Lab1-Intro-SVD.html">Lab 1</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/statOmics/HDA2020">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="http://statomics.github.io/">statOmics</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Introduction to RMarkdown</h1>
+<h4 class="author">Milan Malfait</h4>
+<h4 class="date">October 14, 2020</h4>
+
+</div>
+
+
+<div id="rmd-documents" class="section level1">
+<h1><code>.Rmd</code> documents</h1>
+<p>With RMarkdown it is easy to create documents or webpages that include text, code and plots. During the practical sessions we will work with RMarkdown, and not with <code>R</code> scripts. RMarkdown allows you to combine the code required to produce an analysis, its results, visualizations and descriptive text all in one document.</p>
+<p>For a detailed guide on RMarkdown see <a href="https://bookdown.org/yihui/rmarkdown/">R Markdown: The Definitive Guide</a>. Most of the contents discussed here come from that source.</p>
+<div id="metadata" class="section level2">
+<h2>Metadata</h2>
+<p>The markdown notebook will start with a <a href="https://en.wikipedia.org/wiki/YAML">YAML</a> header, which includes the title, names of the authors and type of RMarkdown file. We typically work with <code>html_document</code> (the default).</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb1-1"><a href="#cb1-1"></a><span class="pp">---</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Title&quot;</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="fu">author</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Author names&quot;</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="fu">date</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Date&quot;</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="fu">output</span><span class="kw">:</span><span class="at">  html_document</span></span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="pp">---</span></span></code></pre></div>
+<p>The <code>html_document</code> output specifies that your document will be converted to HTML when you “knit” or compile it.</p>
+</div>
+<div id="compiling-an-r-markdown-file" class="section level2">
+<h2>Compiling an R Markdown file</h2>
+<p>Essentially, an .Rmd file is just a plain text file used to store all your text and code needed to produce your final report. Although RStudio allows you to preview the output of your code, the output is not itself part of the .Rmd file. When you save and close your Rmd file and open it again later or send it to someone, the output will have disappeared (although also here, RStudio has some tricks to keep the output). The way to properly generate the output version of your Rmd file is by <strong>compiling</strong> it. This can be done in RStudio by pressing the <code>Knit</code> button in the toolbar, or by pressing <code>Shift + Ctrl + K</code> (Mac: <code>Shift + Cmd + K</code>). This will produce an HTML file with the same name as your Rmd and located in the same folder. You can open this file in any internet browser (you don’t need an internet connection since it’s a local file) and marvel at the nicely formatted output of your hard work. Another advantage of working with RStudio is that it will open this file automatically, either in a new window or in the “Viewer” pane (you can change this in the RStudio settings).</p>
+<p><strong>Important</strong>: saving your Rmd file does <strong>not</strong> update the corresponding HTML file automatically. In contrast, when you compile (“Knit”), your Rmd file will be saved first.</p>
+<p>While editing you generally want to save often (you don’t want to lose stuff if something goes wrong) but you don’t need to compile every time you make a minor change, unless you want to see what the output will look like.</p>
+</div>
+<div id="formatting-text" class="section level2">
+<h2>Formatting text</h2>
+<div id="bold-and-italic-text" class="section level3">
+<h3>Bold and italic text</h3>
+<p>Text in an R Markdown document (i.e. everything that is not considered code) is written in <a href="https://bookdown.org/yihui/rmarkdown/markdown-syntax.html">Markdown syntax</a>. This enables you to format text by surrounding it with special characters.</p>
+<p><em>Italic text</em> is generated by surrounding the text with a pair of either underscores (<code>_text_</code>) or asterisks (<code>*text*</code>). <strong>Bold text</strong> uses a pair of double underscores (<code>__text__</code>) or asterisks (<code>**text**</code>). <strong><em>Bold italic text</em></strong> can be achieved by using a combination of the two (<code>__*text*__</code>).</p>
+</div>
+<div id="lists" class="section level3">
+<h3>Lists</h3>
+<p>Unordered list items start with <code>*</code>, <code>-</code>, or <code>+</code>, and you can nest one list within another list by indenting the sub-list, for example:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1"></a>- <span class="st">one item</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="st">- one item</span></span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="st">- one item</span></span>
+<span id="cb2-4"><a href="#cb2-4"></a><span class="st">    * one more item</span></span>
+<span id="cb2-5"><a href="#cb2-5"></a><span class="st">    * one more item</span></span>
+<span id="cb2-6"><a href="#cb2-6"></a><span class="st">    * one more item</span></span></code></pre></div>
+<p>The output of the above syntax would be:</p>
+<ul>
+<li>one item</li>
+<li>one item</li>
+<li>one item
+<ul>
+<li>one more item</li>
+<li>one more item</li>
+<li>one more item</li>
+</ul></li>
+</ul>
+<p>A numbered list can be created by starting each item with a number:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1"></a>1. <span class="st">the first item</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="st">2. the second item</span></span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="st">3. the third item</span></span></code></pre></div>
+<p>Output:</p>
+<ol style="list-style-type: decimal">
+<li>the first item</li>
+<li>the second item</li>
+<li>the third item</li>
+</ol>
+<p><strong>Note:</strong> make sure to leave an empty line between text and a list for correct formatting.</p>
+</div>
+<div id="section-headers" class="section level3">
+<h3>Section headers</h3>
+<p>Section headers can be written using a number of # signs, where the amount of #’s specifies the level:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1"></a><span class="fu"># Main section title: first level</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a></span>
+<span id="cb4-3"><a href="#cb4-3"></a><span class="fu">## Subsection: second level</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a></span>
+<span id="cb4-5"><a href="#cb4-5"></a><span class="fu">### Sub-subsection: third level</span></span>
+<span id="cb4-6"><a href="#cb4-6"></a></span>
+<span id="cb4-7"><a href="#cb4-7"></a><span class="fu">#### Sub-sub-subsection: fourth level</span></span></code></pre></div>
+<p>The output:</p>
+</div>
+</div>
+</div>
+<div id="main-section-title-first-level" class="section level1">
+<h1>Main section title: first level</h1>
+<div id="subsection-second-level" class="section level2">
+<h2>Subsection: second level</h2>
+<div id="sub-subsection-third-level" class="section level3">
+<h3>Sub-subsection: third level</h3>
+<div id="sub-sub-subsection-fourth-level" class="section level4">
+<h4>Sub-sub-subsection: fourth level</h4>
+<p>In general it’s not recommended to go further than 4 sub-levels of sections.</p>
+<p>Note that you can also include a <a href="https://bookdown.org/yihui/rmarkdown/html-document.html#table-of-contents">table of contents</a> at the top of your file by specifying <code>toc: true</code> in the YAML header.</p>
+</div>
+</div>
+</div>
+<div id="integrating-text-and-r-code" class="section level2">
+<h2>Integrating text and R code</h2>
+<p>You can insert chunks of R code in your RMarkdown file by wrapping a code block inside <code>```{r}</code> and <code>```</code>.</p>
+<p>In RStudio this is easily done by using the <code>Insert</code> button in the toolbar or the keyboard shorcut <code>Ctrl + Alt + I</code> (<code>Cmd + Option + I</code> on macOS).</p>
+<p>For more information, see <a href="https://bookdown.org/yihui/rmarkdown/r-code.html">section 2.6</a> of <em>The Definitive Guide</em></p>
+<p>We will demonstrete the use of R-code with various examples in the sections below so that you can familiarise yourself with the syntax.</p>
+</div>
+</div>
+<div id="basic-r-stuff" class="section level1">
+<h1>Basic R stuff</h1>
+<div id="simple-calculations" class="section level2">
+<h2>Simple calculations</h2>
+<p>R can be used as a simple calculator. Executing code can be done in various ways. To execute the entire chunk of code:</p>
+<ul>
+<li>In RStudio: click the green arrow in the upper right corner of the code chunk</li>
+<li>Place your cursor inside the chunk and press <code>Shift + Ctrl + Enter</code> (Mac: <code>Shift + Cmd + Enter</code>)</li>
+</ul>
+<p>Code can also be run line by line by selecting a line with your cursor and pressing <code>Ctrl + Enter</code> (Mac: <code>Cmd + Enter</code>).</p>
+<p>Try executing the code below using both ways: line-by-line and the entire chunk.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="dv">1</span><span class="op">+</span><span class="dv">1</span></span></code></pre></div>
+<pre><code>## [1] 2</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>(<span class="dv">5-3</span>)<span class="op">+</span><span class="dv">7</span><span class="op">*</span><span class="dv">10</span><span class="op">/</span><span class="dv">2</span></span></code></pre></div>
+<pre><code>## [1] 37</code></pre>
+<p>The output should be displayed either right below the code chunk or in the R console. You can change this behaviour by selecting the settings gear in the RStudio toolbar and selecting <code>Chunk Output Inline</code> or <code>Chunk Output in Console</code>.</p>
+<p>You can also run all chunks in you Rmd file by pressing the <code>Run</code> button in the toolbar (upper right) and then select <code>Run All</code> (or using the keyboard shortcut <code>Shift + Ctrl + R</code> on Windows or <code>Shift + Cmd + R</code> on Mac). Note that this menu also provides additional ways of running R chunks, the most useful ones being:</p>
+<ul>
+<li><code>Run All Chunks Above</code>: this executes all code chunks preceding your cursor location, starting at the top and tehn running down.</li>
+<li><code>Restart R and Run All Chunks</code>: this will restart R and re-run your entire document. Note that this will <strong>remove all current objects and data from memory</strong> and re-starting R in a blank state. This means that any code that was run in the console and not saved in a code chunk will be lost. This might seem scary at first, but there are very good reasons to do this often. You can read more about this workflow <a href="https://rstats.wtf/save-source.html#restart-r-often-during-development">here</a>.</li>
+</ul>
+</div>
+<div id="commenting-r-code" class="section level2">
+<h2>Commenting R code</h2>
+<p>You can add comments to your R code by starting a line with #. This is useful to describe what your code is doing (or should be doing). Annotating your code this way is very useful to communicate both with others and your future self. Try to keep these comments clear but short. Longer descriptions should go in the main text of your RMarkdown file. Commenting also provides a way of “disabling” code without having to remove it. Note that each new line of a comment should be preceded by a #. You can easily “comment out” multiple lines by selecting them and pressing <code>Shift + Ctrl + C</code> (Mac: <code>Shift + Cmd + C</code>).</p>
+<p>Try running the chunk below and verify that it does not produce any output. What happens if you remove one of the # signs?</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="co"># This is a comment</span></span>
+<span id="cb9-2"><a href="#cb9-2"></a></span>
+<span id="cb9-3"><a href="#cb9-3"></a><span class="co"># This is a very long comment split over</span></span>
+<span id="cb9-4"><a href="#cb9-4"></a><span class="co"># multiple lines</span></span>
+<span id="cb9-5"><a href="#cb9-5"></a></span>
+<span id="cb9-6"><a href="#cb9-6"></a><span class="co"># Code inside a comment is not executed</span></span>
+<span id="cb9-7"><a href="#cb9-7"></a><span class="co"># 1+1</span></span></code></pre></div>
+</div>
+<div id="assigning-objects-to-save-results-and-perform-calculations" class="section level2">
+<h2>Assigning objects to save results and perform calculations</h2>
+<p>You can save results of function calls or calculations by assigning the value to a <em>variable</em> using the assign operator <code>&lt;-</code>.</p>
+<p>Run the code below and verify the value of <code>c</code>. You can also check the value of a variable by entering it in the Console and pressing <code>Enter</code>.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>a &lt;-<span class="st"> </span><span class="dv">2</span></span>
+<span id="cb10-2"><a href="#cb10-2"></a>b &lt;-<span class="st"> </span><span class="dv">3</span></span>
+<span id="cb10-3"><a href="#cb10-3"></a>c &lt;-<span class="st"> </span>a <span class="op">+</span><span class="st"> </span>b</span>
+<span id="cb10-4"><a href="#cb10-4"></a>c</span></code></pre></div>
+<pre><code>## [1] 5</code></pre>
+<p>Note that in principle, you can also use <code>=</code> for assignment, but this is considered to be bad practice because the equal sign is reserved for function arguments (see next section). So you should always use <code>&lt;-</code> for assignment.</p>
+<p><strong>Hint:</strong> a quick and easy way to type <code>&lt;-</code> in RStudio is by using the shortcut <code>Alt + -</code> (Mac: <code>Option + -</code>).</p>
+</div>
+<div id="functions" class="section level2">
+<h2>Functions</h2>
+<p>Functions are commands in R that perform certain tasks. They take inputs in the form of <em>arguments</em> and return their results as <em>output</em>. They are called using their name, followed by parentheses <code>()</code> in which the arguments are specified. There are many built-in functions in R. In addition, you can write your own functions or load other functins through the use of <em>packages</em> (more on that later).</p>
+<p>As an example, we can use the function <code>rnorm</code> to sample 100 draws from a Normal distribution. We assign the result (a vector of 100 random numbers) to a new variable <code>draws</code> and display the first 6 values by caling the function <code>head</code> on this new variable.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="co"># sample 100 numbers from a standard normal distribution </span></span>
+<span id="cb12-2"><a href="#cb12-2"></a><span class="co"># (mean = 0, standard deviation = 1)</span></span>
+<span id="cb12-3"><a href="#cb12-3"></a>draws &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">100</span>)</span>
+<span id="cb12-4"><a href="#cb12-4"></a><span class="kw">head</span>(draws)</span></code></pre></div>
+<pre><code>## [1]  0.3295078 -0.8204684  0.4874291  0.7383247  0.5757814 -0.3053884</code></pre>
+</div>
+<div id="getting-help-in-r" class="section level2">
+<h2>Getting help in R: <code>?</code></h2>
+<p>What if instead of drawing from the standard normal distribution we want to sample from a normal with a mean of 5 and a standard deviation of 2? Knowing that <code>rnorm</code> is the function to generate normally distributed numbers, we can get more information on it by executing <code>?rnorm</code> (usually you would do this in the Console, but for demonstration, we run it inside a code chunk here). This will open up the <em>help</em> page for the “The Normal Distribution” and all its related functions inside R, one of which is <code>rnorm</code>.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>?rnorm</span></code></pre></div>
+<p>Read through the documentation, can you figure out how to change the mean and standard deviation?</p>
+<p>The solution is to specify the <code>mean</code> and <code>sd</code> arguments.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>draws2 &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">100</span>, <span class="dt">mean =</span> <span class="dv">5</span>, <span class="dt">sd =</span> <span class="dv">2</span>)</span>
+<span id="cb15-2"><a href="#cb15-2"></a><span class="kw">head</span>(draws2)</span></code></pre></div>
+<pre><code>## [1] 3.690831 8.534575 6.433415 6.820348 5.768371 8.364352</code></pre>
+<p>Each built-in R function or functions loaded through a package has a help page. In addition, there is a wealth of information through the wonderful magic of <a href="https://www.google.com/">Google</a>. Another great place to look for answers or ask questions yourself is <a href="https://stackoverflow.com/">StackOverflow</a>.</p>
+</div>
+<div id="tidyverse" class="section level2">
+<h2>Tidyverse</h2>
+<p>The <em>tidyverse</em> is a set of packages designed to make data science in R more user-friendly. It shares a common philosophy and grammar of doing data science, which can change somewhat from how base R works (though it shouldn’t be an excuse to learn how to use base R!!!).</p>
+<p>Instead of installing each <em>tidyverse</em> package individually, you can install all of them simultaneously by simply calling</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="kw">install.packages</span>(<span class="st">&quot;tidyverse&quot;</span>)</span></code></pre></div>
+<p>Note that this code won’t be executed when compiling this report, because I specified <code>eval=FALSE</code> in the <a href="https://bookdown.org/yihui/rmarkdown/r-code.html">chunk options</a>. Instead it should be called manually, for example in an R console.</p>
+<p>For more information see</p>
+<ul>
+<li><a href="https://www.tidyverse.org/" class="uri">https://www.tidyverse.org/</a></li>
+<li><a href="https://rafalab.github.io/dsbook/tidyverse.html" class="uri">https://rafalab.github.io/dsbook/tidyverse.html</a></li>
+<li><a href="https://r4ds.had.co.nz/" class="uri">https://r4ds.had.co.nz/</a></li>
+</ul>
+</div>
+<div id="visualizations" class="section level2">
+<h2>Visualizations</h2>
+<div id="base-r" class="section level3">
+<h3>Base R</h3>
+<p>A picture often says more than words (or lines of code output) and R has a rich <a href="https://rstudio-pubs-static.s3.amazonaws.com/7953_4e3efd5b9415444ca065b1167862c349.html">visualization toolbox</a> that allows us to make powerful visualizations of our data.</p>
+<p>For example, to visually verify that the random numbers we generated earlier (which are still stored in memory under the variables <code>draws</code> and <code>draws2</code>) are indeed normally distributed, we could make a histogram of them, using the <code>hist</code> function.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a><span class="co"># draws comes from a standard normal (mean = 0, sd = 1)</span></span>
+<span id="cb18-2"><a href="#cb18-2"></a><span class="kw">hist</span>(draws)</span></code></pre></div>
+<p><img src="Introduction-RMarkdown_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a><span class="co"># draws 2 comes from a normal with mean = 5, sd = 2</span></span>
+<span id="cb19-2"><a href="#cb19-2"></a><span class="kw">hist</span>(draws2)</span></code></pre></div>
+<p><img src="Introduction-RMarkdown_files/figure-html/unnamed-chunk-8-2.png" width="672" /></p>
+<p>Note that you can customize these plots in a lot of ways. Looking at the help page of <code>hist</code> or doing a quick internet search will take you a long way!</p>
+</div>
+<div id="ggplot2" class="section level3">
+<h3>ggplot2</h3>
+<p>Although powerful, the base R visualization framework can be somewhat challenging to work with. A good alternative is the <a href="https://ggplot2.tidyverse.org/"><code>ggplot2</code> package</a>, part of the larger <code>tidyverse</code> which includes more useful packages for data manipulation and analysis. <code>ggplot2</code> uses a visualization framework based on the <a href="https://ggplot2-book.org/introduction.html#what-is-the-grammar-of-graphics"><em>grammar of graphics</em> philosophy</a>, which we won’t get further into here but which can be quite an intuitive way to think about data visualizations.</p>
+<p><code>ggplot2</code> works best with a <code>data.frame</code> as input. As an example, we’ll use the <code>mtcars</code> data, which is available by default in every R installation (for more info on this data set, see <code>?mtcars</code>). With just a few lines, we can create already quite elegant visualizations:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a><span class="kw">library</span>(ggplot2)</span>
+<span id="cb20-2"><a href="#cb20-2"></a></span>
+<span id="cb20-3"><a href="#cb20-3"></a><span class="kw">ggplot</span>(mpg, <span class="kw">aes</span>(displ, hwy, <span class="dt">colour =</span> class)) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb20-4"><a href="#cb20-4"></a><span class="st">  </span><span class="kw">geom_point</span>()</span></code></pre></div>
+<p><img src="Introduction-RMarkdown_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>You could perfectly recreate this plot with base R, but it’s going to take more lines of code and potential headaches. Still, both frameworks have their strengths and weaknesses and they are complementary in many ways, so it pays to learn both of them rather than stubbornly sticking to one.</p>
+<p>There are tons of documentation and tutorials on <code>ggplot2</code> to be found online. A good place to start is <a href="https://ggplot2.tidyverse.org/" class="uri">https://ggplot2.tidyverse.org/</a>.</p>
+</div>
+</div>
+<div id="importing-data" class="section level2">
+<h2>Importing data</h2>
+<p>See <a href="https://r4ds.had.co.nz/data-import.html" class="uri">https://r4ds.had.co.nz/data-import.html</a>.</p>
+<p>Note that both the base <code>read.csv</code> and the <em>tidyverse</em> equivalent <code>readr::read_csv()</code> can both use URLs to read in data. That way you don’t have to download the data locally on your machine or worry about different versions.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a><span class="co">## Example from HDA2020 course (https://statomics.github.io/HDA2020/)</span></span>
+<span id="cb21-2"><a href="#cb21-2"></a>uk_foods &lt;-<span class="st"> </span>readr<span class="op">::</span><span class="kw">read_csv</span>(</span>
+<span id="cb21-3"><a href="#cb21-3"></a>  <span class="dt">file =</span> <span class="st">&quot;https://raw.githubusercontent.com/statOmics/HDA2020/data/ukFoods.csv&quot;</span>,</span>
+<span id="cb21-4"><a href="#cb21-4"></a>  <span class="dt">col_names =</span> <span class="ot">TRUE</span></span>
+<span id="cb21-5"><a href="#cb21-5"></a>)</span></code></pre></div>
+<pre><code>## Warning: Missing column names filled in: &#39;X1&#39; [1]</code></pre>
+<pre><code>## 
+## [36m──[39m [1m[1mColumn specification[1m[22m [36m────────────────────────────────────────────────────────[39m
+## cols(
+##   X1 = [31mcol_character()[39m,
+##   England = [32mcol_double()[39m,
+##   Wales = [32mcol_double()[39m,
+##   Scotland = [32mcol_double()[39m,
+##   N.Ireland = [32mcol_double()[39m
+## )</code></pre>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a>uk_foods</span></code></pre></div>
+<pre><code>## [90m# A tibble: 17 x 5[39m
+##    X1                 England Wales Scotland N.Ireland
+##    [3m[90m&lt;chr&gt;[39m[23m                [3m[90m&lt;dbl&gt;[39m[23m [3m[90m&lt;dbl&gt;[39m[23m    [3m[90m&lt;dbl&gt;[39m[23m     [3m[90m&lt;dbl&gt;[39m[23m
+## [90m 1[39m Cheese                 105   103      103        66
+## [90m 2[39m Carcass_meat           245   227      242       267
+## [90m 3[39m Other_meat             685   803      750       586
+## [90m 4[39m Fish                   147   160      122        93
+## [90m 5[39m Fats_and_oils          193   235      184       209
+## [90m 6[39m Sugars                 156   175      147       139
+## [90m 7[39m Fresh_potatoes         720   874      566      [4m1[24m033
+## [90m 8[39m Fresh_Veg              253   265      171       143
+## [90m 9[39m Other_Veg              488   570      418       355
+## [90m10[39m Processed_potatoes     198   203      220       187
+## [90m11[39m Processed_Veg          360   365      337       334
+## [90m12[39m Fresh_fruit           [4m1[24m102  [4m1[24m137      957       674
+## [90m13[39m Cereals               [4m1[24m472  [4m1[24m582     [4m1[24m462      [4m1[24m494
+## [90m14[39m Beverages               57    73       53        47
+## [90m15[39m Soft_drinks           [4m1[24m374  [4m1[24m256     [4m1[24m572      [4m1[24m506
+## [90m16[39m Alcoholic_drinks       375   475      458       135
+## [90m17[39m Confectionery           54    64       62        41</code></pre>
+</div>
+<div id="summary-of-data" class="section level2">
+<h2>Summary of data</h2>
+<p>To get a quick summary of the data, you can use the <code>summary</code> function. This will return some summary statistics for the columns present in the data.</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1"></a><span class="co">## iris is a default data set available in R</span></span>
+<span id="cb26-2"><a href="#cb26-2"></a><span class="co">## To get more info, use `?iris`</span></span>
+<span id="cb26-3"><a href="#cb26-3"></a><span class="kw">summary</span>(iris)</span></code></pre></div>
+<pre><code>##   Sepal.Length    Sepal.Width     Petal.Length    Petal.Width   
+##  Min.   :4.300   Min.   :2.000   Min.   :1.000   Min.   :0.100  
+##  1st Qu.:5.100   1st Qu.:2.800   1st Qu.:1.600   1st Qu.:0.300  
+##  Median :5.800   Median :3.000   Median :4.350   Median :1.300  
+##  Mean   :5.843   Mean   :3.057   Mean   :3.758   Mean   :1.199  
+##  3rd Qu.:6.400   3rd Qu.:3.300   3rd Qu.:5.100   3rd Qu.:1.800  
+##  Max.   :7.900   Max.   :4.400   Max.   :6.900   Max.   :2.500  
+##        Species  
+##  setosa    :50  
+##  versicolor:50  
+##  virginica :50  
+##                 
+##                 
+## </code></pre>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1"></a><span class="kw">class</span>(iris)</span></code></pre></div>
+<pre><code>## [1] &quot;data.frame&quot;</code></pre>
+</div>
+<div id="subsetting-data" class="section level2">
+<h2>Subsetting data</h2>
+<p>You can select subsets of a <code>data.frame</code> by using square brackets <code>[]</code> and specifying the number(s) of the row(s) or column(s) you want to select. Alternatively, you can use the dollar sign <code>$</code> to select a column using its name.</p>
+<p>To reduce the output printed out, we will first make a subset of the <code>iris</code> data containing just the first 10 rows.</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1"></a><span class="co"># make subset of data to prevent long outputs</span></span>
+<span id="cb30-2"><a href="#cb30-2"></a>iris_sub &lt;-<span class="st"> </span>iris[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, ]</span>
+<span id="cb30-3"><a href="#cb30-3"></a>iris_sub</span></code></pre></div>
+<pre><code>##    Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+## 1           5.1         3.5          1.4         0.2  setosa
+## 2           4.9         3.0          1.4         0.2  setosa
+## 3           4.7         3.2          1.3         0.2  setosa
+## 4           4.6         3.1          1.5         0.2  setosa
+## 5           5.0         3.6          1.4         0.2  setosa
+## 6           5.4         3.9          1.7         0.4  setosa
+## 7           4.6         3.4          1.4         0.3  setosa
+## 8           5.0         3.4          1.5         0.2  setosa
+## 9           4.4         2.9          1.4         0.2  setosa
+## 10          4.9         3.1          1.5         0.1  setosa</code></pre>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1"></a><span class="co"># Select first column, single brackets returns data.frame</span></span>
+<span id="cb32-2"><a href="#cb32-2"></a>iris_sub[<span class="dv">1</span>]</span></code></pre></div>
+<pre><code>##    Sepal.Length
+## 1           5.1
+## 2           4.9
+## 3           4.7
+## 4           4.6
+## 5           5.0
+## 6           5.4
+## 7           4.6
+## 8           5.0
+## 9           4.4
+## 10          4.9</code></pre>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1"></a>iris_sub[<span class="st">&quot;Sepal.Length&quot;</span>]</span></code></pre></div>
+<pre><code>##    Sepal.Length
+## 1           5.1
+## 2           4.9
+## 3           4.7
+## 4           4.6
+## 5           5.0
+## 6           5.4
+## 7           4.6
+## 8           5.0
+## 9           4.4
+## 10          4.9</code></pre>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1"></a><span class="co"># double brackets returns vector</span></span>
+<span id="cb36-2"><a href="#cb36-2"></a>iris_sub[[<span class="dv">1</span>]]</span></code></pre></div>
+<pre><code>##  [1] 5.1 4.9 4.7 4.6 5.0 5.4 4.6 5.0 4.4 4.9</code></pre>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1"></a>iris_sub[[<span class="st">&quot;Sepal.Length&quot;</span>]]</span></code></pre></div>
+<pre><code>##  [1] 5.1 4.9 4.7 4.6 5.0 5.4 4.6 5.0 4.4 4.9</code></pre>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1"></a><span class="co"># using the dollar sign, also returns vector</span></span>
+<span id="cb40-2"><a href="#cb40-2"></a>iris_sub<span class="op">$</span>Sepal.Length</span></code></pre></div>
+<pre><code>##  [1] 5.1 4.9 4.7 4.6 5.0 5.4 4.6 5.0 4.4 4.9</code></pre>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1"></a><span class="co"># Select all columns except the first one</span></span>
+<span id="cb42-2"><a href="#cb42-2"></a>iris_sub[<span class="op">-</span><span class="dv">1</span>]</span></code></pre></div>
+<pre><code>##    Sepal.Width Petal.Length Petal.Width Species
+## 1          3.5          1.4         0.2  setosa
+## 2          3.0          1.4         0.2  setosa
+## 3          3.2          1.3         0.2  setosa
+## 4          3.1          1.5         0.2  setosa
+## 5          3.6          1.4         0.2  setosa
+## 6          3.9          1.7         0.4  setosa
+## 7          3.4          1.4         0.3  setosa
+## 8          3.4          1.5         0.2  setosa
+## 9          2.9          1.4         0.2  setosa
+## 10         3.1          1.5         0.1  setosa</code></pre>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1"></a><span class="co"># Selecting rows</span></span>
+<span id="cb44-2"><a href="#cb44-2"></a>iris_sub[<span class="dv">1</span>, ] <span class="co"># Select the first row</span></span></code></pre></div>
+<pre><code>##   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+## 1          5.1         3.5          1.4         0.2  setosa</code></pre>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1"></a>iris_sub[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>,] <span class="co"># Select the first five rows</span></span></code></pre></div>
+<pre><code>##   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+## 1          5.1         3.5          1.4         0.2  setosa
+## 2          4.9         3.0          1.4         0.2  setosa
+## 3          4.7         3.2          1.3         0.2  setosa
+## 4          4.6         3.1          1.5         0.2  setosa
+## 5          5.0         3.6          1.4         0.2  setosa</code></pre>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1"></a>iris_sub[<span class="kw">c</span>(<span class="dv">2</span>, <span class="dv">4</span>), ] <span class="co"># select the second and fourth rows</span></span></code></pre></div>
+<pre><code>##   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+## 2          4.9         3.0          1.4         0.2  setosa
+## 4          4.6         3.1          1.5         0.2  setosa</code></pre>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1"></a><span class="co"># columns and rows</span></span>
+<span id="cb50-2"><a href="#cb50-2"></a>iris_sub[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="st">&quot;Sepal.Length&quot;</span>] <span class="co"># first 5 rows of &quot;Sepal.Length&quot; column</span></span></code></pre></div>
+<pre><code>## [1] 5.1 4.9 4.7 4.6 5.0</code></pre>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1"></a>iris_sub[<span class="dv">3</span>, <span class="dv">2</span>]  <span class="co"># third row, second column</span></span></code></pre></div>
+<pre><code>## [1] 3.2</code></pre>
+</div>
+<div id="including-r-object-values-or-results-in-the-text" class="section level2">
+<h2>Including R object values or results in the text</h2>
+<p>You can add inline R code results by wrapping them inside <code>`r `</code>. This is useful for discussing the value of a result in your text. Instead of having to copy the value of a result (which is prone to error and not robust to changes), you can just call it inside the text. For example, we could calculate the mean sepal length of the iris flowers as follow:</p>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1"></a><span class="kw">mean</span>(iris<span class="op">$</span>Sepal.Length)</span></code></pre></div>
+<pre><code>## [1] 5.843333</code></pre>
+<p>We could copy the value inside our text, but a better way is by just running the code inline as <code>mean(iris$Sepal.Length)</code> surrounded by <code>`r</code> and <code>`</code>. So we could say that the iris flowers in our data have a mean length of 5.8433333.</p>
+<p>Note: to actually see the value of the inline code, place your cursor inside the backticks <code>` `r</code> and press <code>Ctrl + Enter</code> or <code>Cmd + Enter</code>. When you knit your Rmd file and build the HTML output, the inline R code will be replaced by its output value.</p>
+</div>
+<div id="including-equations" class="section level2">
+<h2>Including equations</h2>
+<p>Finally, you can include equations in your text using <a href="https://en.wikipedia.org/wiki/LaTeX">LaTeX</a> syntax and surrounding it by a pair of double dollar signs <code>$$</code>. This is useful to specify models. For example, we can write the equation of a linear model as</p>
+<pre><code>$$
+y_i = \beta_0 + \beta_1 x_i + \epsilon_i
+$$</code></pre>
+<p>Which will be converted to the following output:</p>
+<p><span class="math display">\[
+y_i = \beta_0 + \beta_1 x_i + \epsilon_i
+\]</span></p>
+<p>Note that RStudio will give you a preview of what your equation will look like in the final document.</p>
+<p>You can also include inline <span class="math inline">\(\LaTeX\)</span> equations by using a pair of single <code>$</code> signs. For example, the following sentence:</p>
+<p><code>The sample mean of $y$ is given by $\bar{y}=\sum\limits_{i=1}^{n}\frac{y_i}{n}$</code></p>
+<p>Will be converted to:</p>
+<p>The sample mean of <span class="math inline">\(y\)</span> is given by <span class="math inline">\(\bar{y}=\sum\limits_{i=1}^{n}\frac{y_i}{n}\)</span></p>
+</div>
+</div>
+<div id="useful-resources" class="section level1">
+<h1>Useful resources</h1>
+<ul>
+<li><a href="https://bookdown.org/yihui/rmarkdown/">R Markdown: The Definitive Guide</a></li>
+<li><a href="https://r4ds.had.co.nz/">R for Data Science</a> by Hadley Wickham (main author of the <code>tidyverse</code> packages)</li>
+<li><a href="https://rafalab.github.io/dsbook/">Introduction to Data Science</a> by Rafael Irizarry</li>
+<li><a href="https://rstats.wtf/">What They Forgot to Teach You About R</a>, for some useful “good practices” tips when working with R</li>
+</ul>
+</div>
+<div id="session-info" class="section level1">
+<h1>Session Info</h1>
+<p>Finally, it’s always good practice to include the <a href="">Session Info</a> for your R session in your document. That way, other persons (including your future self) looking at your document can see what versions of R and loaded packages were used, which can be quite essential for reproducibility. There are 2 options, either using the base R command <code>sessionInfo()</code> or using <a href="https://devtools.r-lib.org/reference/session_info.html">the version from the <code>devtools</code> package</a>: <code>devtools::session_info()</code>. Their outputs have slightly different formatting but the contents are essentially the same. Personally, I prefer the <code>devtools</code> version, but this is really a personal choice.</p>
+<p>You can also include the date with <code>Sys.time()</code> so you have a time stamp of when the report was compiled. If you happen to be working inside a git repository, <code>git2r::repository()</code> is a useful function that displays information about the current <code>git</code> state and the last commit.</p>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1"></a><span class="kw">Sys.time</span>()</span></code></pre></div>
+<pre><code>## [1] &quot;2020-10-14 13:09:10 UTC&quot;</code></pre>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1"></a>devtools<span class="op">::</span><span class="kw">session_info</span>()</span></code></pre></div>
+<pre><code>## ─ Session info ───────────────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 4.0.3 (2020-10-10)
+##  os       macOS Catalina 10.15.7      
+##  system   x86_64, darwin17.0          
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  ctype    en_US.UTF-8                 
+##  tz       UTC                         
+##  date     2020-10-14                  
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────
+##  package                * version  date       lib source        
+##  AnnotationDbi            1.50.3   2020-07-25 [1] Bioconductor  
+##  AnnotationHub          * 2.20.2   2020-08-18 [1] Bioconductor  
+##  assertthat               0.2.1    2019-03-21 [1] CRAN (R 4.0.2)
+##  backports                1.1.10   2020-09-15 [1] CRAN (R 4.0.2)
+##  beeswarm                 0.2.3    2016-04-25 [1] CRAN (R 4.0.2)
+##  Biobase                * 2.48.0   2020-04-27 [1] Bioconductor  
+##  BiocFileCache          * 1.12.1   2020-08-04 [1] Bioconductor  
+##  BiocGenerics           * 0.34.0   2020-04-27 [1] Bioconductor  
+##  BiocManager              1.30.10  2019-11-16 [1] CRAN (R 4.0.2)
+##  BiocNeighbors            1.6.0    2020-04-27 [1] Bioconductor  
+##  BiocParallel             1.22.0   2020-04-27 [1] Bioconductor  
+##  BiocSingular             1.4.0    2020-04-27 [1] Bioconductor  
+##  BiocVersion              3.11.1   2020-04-07 [1] Bioconductor  
+##  bit                      4.0.4    2020-08-04 [1] CRAN (R 4.0.2)
+##  bit64                    4.0.5    2020-08-30 [1] CRAN (R 4.0.2)
+##  bitops                   1.0-6    2013-08-17 [1] CRAN (R 4.0.2)
+##  blob                     1.2.1    2020-01-20 [1] CRAN (R 4.0.2)
+##  broom                    0.7.1    2020-10-02 [1] CRAN (R 4.0.2)
+##  callr                    3.5.1    2020-10-13 [1] CRAN (R 4.0.3)
+##  cellranger               1.1.0    2016-07-27 [1] CRAN (R 4.0.2)
+##  cli                      2.1.0    2020-10-12 [1] CRAN (R 4.0.3)
+##  colorspace               1.4-1    2019-03-18 [1] CRAN (R 4.0.2)
+##  crayon                   1.3.4    2017-09-16 [1] CRAN (R 4.0.2)
+##  curl                     4.3      2019-12-02 [1] CRAN (R 4.0.1)
+##  DBI                      1.1.0    2019-12-15 [1] CRAN (R 4.0.2)
+##  dbplyr                 * 1.4.4    2020-05-27 [1] CRAN (R 4.0.2)
+##  DelayedArray           * 0.14.1   2020-07-14 [1] Bioconductor  
+##  DelayedMatrixStats       1.10.1   2020-07-03 [1] Bioconductor  
+##  desc                     1.2.0    2018-05-01 [1] CRAN (R 4.0.2)
+##  devtools                 2.3.2    2020-09-18 [1] CRAN (R 4.0.2)
+##  digest                   0.6.25   2020-02-23 [1] CRAN (R 4.0.2)
+##  dplyr                  * 1.0.2    2020-08-18 [1] CRAN (R 4.0.2)
+##  ellipsis                 0.3.1    2020-05-15 [1] CRAN (R 4.0.2)
+##  evaluate                 0.14     2019-05-28 [1] CRAN (R 4.0.1)
+##  ExperimentHub          * 1.14.2   2020-08-18 [1] Bioconductor  
+##  fansi                    0.4.1    2020-01-08 [1] CRAN (R 4.0.2)
+##  farver                   2.0.3    2020-01-16 [1] CRAN (R 4.0.2)
+##  fastmap                  1.0.1    2019-10-08 [1] CRAN (R 4.0.2)
+##  forcats                * 0.5.0    2020-03-01 [1] CRAN (R 4.0.2)
+##  fs                       1.5.0    2020-07-31 [1] CRAN (R 4.0.2)
+##  generics                 0.0.2    2018-11-29 [1] CRAN (R 4.0.2)
+##  GenomeInfoDb           * 1.24.2   2020-06-15 [1] Bioconductor  
+##  GenomeInfoDbData         1.2.3    2020-10-14 [1] Bioconductor  
+##  GenomicRanges          * 1.40.0   2020-04-27 [1] Bioconductor  
+##  ggbeeswarm               0.6.0    2017-08-07 [1] CRAN (R 4.0.2)
+##  ggplot2                * 3.3.2    2020-06-19 [1] CRAN (R 4.0.2)
+##  glue                     1.4.2    2020-08-27 [1] CRAN (R 4.0.2)
+##  gridExtra                2.3      2017-09-09 [1] CRAN (R 4.0.2)
+##  gtable                   0.3.0    2019-03-25 [1] CRAN (R 4.0.2)
+##  haven                    2.3.1    2020-06-01 [1] CRAN (R 4.0.2)
+##  hms                      0.5.3    2020-01-08 [1] CRAN (R 4.0.2)
+##  htmltools                0.5.0    2020-06-16 [1] CRAN (R 4.0.2)
+##  httpuv                   1.5.4    2020-06-06 [1] CRAN (R 4.0.2)
+##  httr                     1.4.2    2020-07-20 [1] CRAN (R 4.0.2)
+##  interactiveDisplayBase   1.26.3   2020-06-02 [1] Bioconductor  
+##  IRanges                * 2.22.2   2020-05-21 [1] Bioconductor  
+##  irlba                    2.3.3    2019-02-05 [1] CRAN (R 4.0.2)
+##  jpeg                     0.1-8.1  2019-10-24 [1] CRAN (R 4.0.2)
+##  jsonlite                 1.7.1    2020-09-07 [1] CRAN (R 4.0.2)
+##  knitr                    1.30     2020-09-22 [1] CRAN (R 4.0.2)
+##  labeling                 0.3      2014-08-23 [1] CRAN (R 4.0.2)
+##  later                    1.1.0.1  2020-06-05 [1] CRAN (R 4.0.2)
+##  lattice                  0.20-41  2020-04-02 [2] CRAN (R 4.0.3)
+##  lifecycle                0.2.0    2020-03-06 [1] CRAN (R 4.0.2)
+##  lubridate                1.7.9    2020-06-08 [1] CRAN (R 4.0.2)
+##  magrittr                 1.5      2014-11-22 [1] CRAN (R 4.0.2)
+##  Matrix                   1.2-18   2019-11-27 [2] CRAN (R 4.0.3)
+##  matrixStats            * 0.57.0   2020-09-25 [1] CRAN (R 4.0.2)
+##  memoise                  1.1.0    2017-04-21 [1] CRAN (R 4.0.2)
+##  mime                     0.9      2020-02-04 [1] CRAN (R 4.0.2)
+##  misc3d                   0.9-0    2020-09-06 [1] CRAN (R 4.0.2)
+##  modelr                   0.1.8    2020-05-19 [1] CRAN (R 4.0.2)
+##  munsell                  0.5.0    2018-06-12 [1] CRAN (R 4.0.2)
+##  muscData               * 1.2.0    2020-05-07 [1] Bioconductor  
+##  pillar                   1.4.6    2020-07-10 [1] CRAN (R 4.0.2)
+##  pkgbuild                 1.1.0    2020-07-13 [1] CRAN (R 4.0.2)
+##  pkgconfig                2.0.3    2019-09-22 [1] CRAN (R 4.0.2)
+##  pkgload                  1.1.0    2020-05-29 [1] CRAN (R 4.0.2)
+##  plot3D                 * 1.3      2019-12-18 [1] CRAN (R 4.0.2)
+##  prettyunits              1.1.1    2020-01-24 [1] CRAN (R 4.0.2)
+##  processx                 3.4.4    2020-09-03 [1] CRAN (R 4.0.2)
+##  promises                 1.1.1    2020-06-09 [1] CRAN (R 4.0.2)
+##  ps                       1.4.0    2020-10-07 [1] CRAN (R 4.0.2)
+##  purrr                  * 0.3.4    2020-04-17 [1] CRAN (R 4.0.2)
+##  R6                       2.4.1    2019-11-12 [1] CRAN (R 4.0.2)
+##  rappdirs                 0.3.1    2016-03-28 [1] CRAN (R 4.0.2)
+##  Rcpp                     1.0.5    2020-07-06 [1] CRAN (R 4.0.2)
+##  RCurl                    1.98-1.2 2020-04-18 [1] CRAN (R 4.0.2)
+##  readr                  * 1.4.0    2020-10-05 [1] CRAN (R 4.0.2)
+##  readxl                   1.3.1    2019-03-13 [1] CRAN (R 4.0.2)
+##  remotes                  2.2.0    2020-07-21 [1] CRAN (R 4.0.2)
+##  reprex                   0.3.0    2019-05-16 [1] CRAN (R 4.0.2)
+##  rlang                    0.4.8    2020-10-08 [1] CRAN (R 4.0.2)
+##  rmarkdown                2.4      2020-09-30 [1] CRAN (R 4.0.3)
+##  rprojroot                1.3-2    2018-01-03 [1] CRAN (R 4.0.2)
+##  RSQLite                  2.2.1    2020-09-30 [1] CRAN (R 4.0.2)
+##  rstudioapi               0.11     2020-02-07 [1] CRAN (R 4.0.2)
+##  rsvd                     1.0.3    2020-02-17 [1] CRAN (R 4.0.2)
+##  rvest                    0.3.6    2020-07-25 [1] CRAN (R 4.0.2)
+##  S4Vectors              * 0.26.1   2020-05-16 [1] Bioconductor  
+##  scales                   1.1.1    2020-05-11 [1] CRAN (R 4.0.2)
+##  scater                 * 1.16.2   2020-06-26 [1] Bioconductor  
+##  sessioninfo              1.1.1    2018-11-05 [1] CRAN (R 4.0.2)
+##  shiny                    1.5.0    2020-06-23 [1] CRAN (R 4.0.2)
+##  SingleCellExperiment   * 1.10.1   2020-04-28 [1] Bioconductor  
+##  stringi                  1.5.3    2020-09-09 [1] CRAN (R 4.0.2)
+##  stringr                * 1.4.0    2019-02-10 [1] CRAN (R 4.0.2)
+##  SummarizedExperiment   * 1.18.2   2020-07-14 [1] Bioconductor  
+##  testthat                 2.3.2    2020-03-02 [1] CRAN (R 4.0.2)
+##  tibble                 * 3.0.4    2020-10-12 [1] CRAN (R 4.0.3)
+##  tidyr                  * 1.1.2    2020-08-27 [1] CRAN (R 4.0.2)
+##  tidyselect               1.1.0    2020-05-11 [1] CRAN (R 4.0.2)
+##  tidyverse              * 1.3.0    2019-11-21 [1] CRAN (R 4.0.2)
+##  usethis                  1.6.3    2020-09-17 [1] CRAN (R 4.0.2)
+##  utf8                     1.1.4    2018-05-24 [1] CRAN (R 4.0.2)
+##  vctrs                    0.3.4    2020-08-29 [1] CRAN (R 4.0.2)
+##  vipor                    0.4.5    2017-03-22 [1] CRAN (R 4.0.2)
+##  viridis                  0.5.1    2018-03-29 [1] CRAN (R 4.0.2)
+##  viridisLite              0.3.0    2018-02-01 [1] CRAN (R 4.0.1)
+##  withr                    2.3.0    2020-09-22 [1] CRAN (R 4.0.2)
+##  xfun                     0.18     2020-09-29 [1] CRAN (R 4.0.2)
+##  xml2                     1.3.2    2020-04-23 [1] CRAN (R 4.0.2)
+##  xtable                   1.8-4    2019-04-21 [1] CRAN (R 4.0.2)
+##  XVector                  0.28.0   2020-04-27 [1] Bioconductor  
+##  yaml                     2.2.1    2020-02-01 [1] CRAN (R 4.0.2)
+##  zlibbioc                 1.34.0   2020-04-27 [1] Bioconductor  
+## 
+## [1] /Users/runner/work/_temp/Library
+## [2] /Library/Frameworks/R.framework/Versions/4.0/Resources/library</code></pre>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1"></a><span class="co">## only use this when working inside a git repository, don&#39;t worry if you don&#39;t know what this means</span></span>
+<span id="cb61-2"><a href="#cb61-2"></a>git2r<span class="op">::</span><span class="kw">repository</span>()</span></code></pre></div>
+<pre><code>## Local:    master /Users/runner/work/HDA2020/HDA2020
+## Remote:   master @ origin (https://github.com/statOmics/HDA2020)
+## Head:     [d3b0ecc] 2020-10-14: Merge pull request #1 from milanmlft/master</code></pre>
+</div>
+<div id="home" class="section level1 unnumbered">
+<h1><a href="https://statomics.github.io/HDA2020/">Home</a></h1>
+</div>
+
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiSW50cm9kdWN0aW9uIHRvIFJNYXJrZG93biIKYXV0aG9yOiAiTWlsYW4gTWFsZmFpdCIKZGF0ZTogJ2ByIGZvcm1hdChTeXMuRGF0ZSgpLCAiJUIgJWQsICVZIilgJwpvdXRwdXQ6CiAgICBodG1sX2RvY3VtZW50OgogICAgICBjb2RlX2Rvd25sb2FkOiB0cnVlCiAgICAgIHRoZW1lOiBjb3NtbwogICAgICB0b2M6IHRydWUKICAgICAgdG9jX2Zsb2F0OiB0cnVlCiAgICAgIGhpZ2hsaWdodDogdGFuZ28KICAgICAgbnVtYmVyX3NlY3Rpb25zOiBmYWxzZQotLS0KCiMgYC5SbWRgIGRvY3VtZW50cwoKV2l0aCBSTWFya2Rvd24gaXQgaXMgZWFzeSB0byBjcmVhdGUgZG9jdW1lbnRzIG9yIHdlYnBhZ2VzIHRoYXQgaW5jbHVkZSB0ZXh0LCBjb2RlIGFuZCBwbG90cy4gRHVyaW5nIHRoZSBwcmFjdGljYWwgc2Vzc2lvbnMgd2Ugd2lsbCB3b3JrIHdpdGggUk1hcmtkb3duLCBhbmQgbm90IHdpdGggYFJgIHNjcmlwdHMuIFJNYXJrZG93biBhbGxvd3MgeW91IHRvIGNvbWJpbmUgdGhlIGNvZGUgcmVxdWlyZWQgdG8gcHJvZHVjZSBhbiBhbmFseXNpcywgaXRzIHJlc3VsdHMsIHZpc3VhbGl6YXRpb25zIGFuZCBkZXNjcmlwdGl2ZSB0ZXh0IGFsbCBpbiBvbmUgZG9jdW1lbnQuCgpGb3IgYSBkZXRhaWxlZCBndWlkZSBvbiBSTWFya2Rvd24gc2VlIFtSIE1hcmtkb3duOiBUaGUgRGVmaW5pdGl2ZSBHdWlkZV0oaHR0cHM6Ly9ib29rZG93bi5vcmcveWlodWkvcm1hcmtkb3duLykuIE1vc3Qgb2YgdGhlIGNvbnRlbnRzIGRpc2N1c3NlZCBoZXJlIGNvbWUgZnJvbSB0aGF0IHNvdXJjZS4KCiMjIE1ldGFkYXRhCgpUaGUgbWFya2Rvd24gbm90ZWJvb2sgd2lsbCBzdGFydCB3aXRoIGEgW1lBTUxdKGh0dHBzOi8vZW4ud2lraXBlZGlhLm9yZy93aWtpL1lBTUwpIGhlYWRlciwgd2hpY2ggaW5jbHVkZXMgdGhlIHRpdGxlLCBuYW1lcyBvZiB0aGUgYXV0aG9ycyBhbmQgdHlwZSBvZiBSTWFya2Rvd24gZmlsZS4gV2UgdHlwaWNhbGx5IHdvcmsgd2l0aCBgaHRtbF9kb2N1bWVudGAgKHRoZSBkZWZhdWx0KS4KCmBgYCB5YW1sCi0tLQp0aXRsZTogIlRpdGxlIgphdXRob3I6ICJBdXRob3IgbmFtZXMiCmRhdGU6ICJEYXRlIgpvdXRwdXQ6ICBodG1sX2RvY3VtZW50Ci0tLQpgYGAKClRoZSBgaHRtbF9kb2N1bWVudGAgb3V0cHV0IHNwZWNpZmllcyB0aGF0IHlvdXIgZG9jdW1lbnQgd2lsbCBiZSBjb252ZXJ0ZWQgdG8gSFRNTCB3aGVuIHlvdSAia25pdCIgb3IgY29tcGlsZSBpdC4gCgoKIyMgQ29tcGlsaW5nIGFuIFIgTWFya2Rvd24gZmlsZQoKRXNzZW50aWFsbHksIGFuIC5SbWQgZmlsZSBpcyBqdXN0IGEgcGxhaW4gdGV4dCBmaWxlIHVzZWQgdG8gc3RvcmUgYWxsIHlvdXIgdGV4dCBhbmQgY29kZSBuZWVkZWQgdG8gcHJvZHVjZSB5b3VyIGZpbmFsIHJlcG9ydC4gQWx0aG91Z2ggUlN0dWRpbyBhbGxvd3MgeW91IHRvIHByZXZpZXcgdGhlIG91dHB1dCBvZiB5b3VyIGNvZGUsIHRoZSBvdXRwdXQgaXMgbm90IGl0c2VsZiBwYXJ0IG9mIHRoZSAuUm1kIGZpbGUuIFdoZW4geW91IHNhdmUgYW5kIGNsb3NlIHlvdXIgUm1kIGZpbGUgYW5kIG9wZW4gaXQgYWdhaW4gbGF0ZXIgb3Igc2VuZCBpdCB0byBzb21lb25lLCB0aGUgb3V0cHV0IHdpbGwgaGF2ZSBkaXNhcHBlYXJlZCAoYWx0aG91Z2ggYWxzbyBoZXJlLCBSU3R1ZGlvIGhhcyBzb21lIHRyaWNrcyB0byBrZWVwIHRoZSBvdXRwdXQpLiBUaGUgd2F5IHRvIHByb3Blcmx5IGdlbmVyYXRlIHRoZSBvdXRwdXQgdmVyc2lvbiBvZiB5b3VyIFJtZCBmaWxlIGlzIGJ5IF9fY29tcGlsaW5nX18gaXQuIFRoaXMgY2FuIGJlIGRvbmUgaW4gUlN0dWRpbyBieSBwcmVzc2luZyB0aGUgYEtuaXRgIGJ1dHRvbiBpbiB0aGUgdG9vbGJhciwgb3IgYnkgcHJlc3NpbmcgYFNoaWZ0ICsgQ3RybCArIEtgIChNYWM6IGBTaGlmdCArIENtZCArIEtgKS4gVGhpcyB3aWxsIHByb2R1Y2UgYW4gSFRNTCBmaWxlIHdpdGggdGhlIHNhbWUgbmFtZSBhcyB5b3VyIFJtZCBhbmQgbG9jYXRlZCBpbiB0aGUgc2FtZSBmb2xkZXIuIFlvdSBjYW4gb3BlbiB0aGlzIGZpbGUgaW4gYW55IGludGVybmV0IGJyb3dzZXIgKHlvdSBkb24ndCBuZWVkIGFuIGludGVybmV0IGNvbm5lY3Rpb24gc2luY2UgaXQncyBhIGxvY2FsIGZpbGUpIGFuZCBtYXJ2ZWwgYXQgdGhlIG5pY2VseSBmb3JtYXR0ZWQgb3V0cHV0IG9mIHlvdXIgaGFyZCB3b3JrLiBBbm90aGVyIGFkdmFudGFnZSBvZiB3b3JraW5nIHdpdGggUlN0dWRpbyBpcyB0aGF0IGl0IHdpbGwgb3BlbiB0aGlzIGZpbGUgYXV0b21hdGljYWxseSwgZWl0aGVyIGluIGEgbmV3IHdpbmRvdyBvciBpbiB0aGUgIlZpZXdlciIgcGFuZSAoeW91IGNhbiBjaGFuZ2UgdGhpcyBpbiB0aGUgUlN0dWRpbyBzZXR0aW5ncykuCgpfX0ltcG9ydGFudF9fOiBzYXZpbmcgeW91ciBSbWQgZmlsZSBkb2VzIF9fbm90X18gdXBkYXRlIHRoZSBjb3JyZXNwb25kaW5nIEhUTUwgZmlsZSBhdXRvbWF0aWNhbGx5LiBJbiBjb250cmFzdCwgd2hlbiB5b3UgY29tcGlsZSAoIktuaXQiKSwgeW91ciBSbWQgZmlsZSB3aWxsIGJlIHNhdmVkIGZpcnN0LiAKCldoaWxlIGVkaXRpbmcgeW91IGdlbmVyYWxseSB3YW50IHRvIHNhdmUgb2Z0ZW4gKHlvdSBkb24ndCB3YW50IHRvIGxvc2Ugc3R1ZmYgaWYgc29tZXRoaW5nIGdvZXMgd3JvbmcpIGJ1dCB5b3UgZG9uJ3QgbmVlZCB0byBjb21waWxlIGV2ZXJ5IHRpbWUgeW91IG1ha2UgYSBtaW5vciBjaGFuZ2UsIHVubGVzcyB5b3UgIHdhbnQgdG8gc2VlIHdoYXQgdGhlIG91dHB1dCB3aWxsIGxvb2sgbGlrZS4KCgojIyBGb3JtYXR0aW5nIHRleHQKCiMjIyBCb2xkIGFuZCBpdGFsaWMgdGV4dAoKVGV4dCBpbiBhbiBSIE1hcmtkb3duIGRvY3VtZW50IChpLmUuIGV2ZXJ5dGhpbmcgdGhhdCBpcyBub3QgY29uc2lkZXJlZCBjb2RlKSBpcyB3cml0dGVuIGluIFtNYXJrZG93biBzeW50YXhdKGh0dHBzOi8vYm9va2Rvd24ub3JnL3lpaHVpL3JtYXJrZG93bi9tYXJrZG93bi1zeW50YXguaHRtbCkuIFRoaXMgZW5hYmxlcyB5b3UgdG8gZm9ybWF0IHRleHQgYnkgc3Vycm91bmRpbmcgaXQgd2l0aCBzcGVjaWFsIGNoYXJhY3RlcnMuCgoqSXRhbGljIHRleHQqIGlzIGdlbmVyYXRlZCBieSBzdXJyb3VuZGluZyB0aGUgdGV4dCB3aXRoIGEgcGFpciBvZiBlaXRoZXIgdW5kZXJzY29yZXMgKGBfdGV4dF9gKSBvciBhc3Rlcmlza3MgKGAqdGV4dCpgKS4gKipCb2xkIHRleHQqKiB1c2VzIGEgcGFpciBvZiBkb3VibGUgdW5kZXJzY29yZXMgKGBfX3RleHRfX2ApIG9yIGFzdGVyaXNrcyAoYCoqdGV4dCoqYCkuIF9fKkJvbGQgaXRhbGljIHRleHQqX18gY2FuIGJlIGFjaGlldmVkIGJ5IHVzaW5nIGEgY29tYmluYXRpb24gb2YgdGhlIHR3byAoYF9fKnRleHQqX19gKS4KCiMjIyBMaXN0cwoKVW5vcmRlcmVkIGxpc3QgaXRlbXMgc3RhcnQgd2l0aCBgKmAsIGAtYCwgb3IgYCtgLCBhbmQgeW91IGNhbiBuZXN0IG9uZSBsaXN0IHdpdGhpbiBhbm90aGVyIGxpc3QgYnkgaW5kZW50aW5nIHRoZSBzdWItbGlzdCwgZm9yIGV4YW1wbGU6CgpgYGBtYXJrZG93bgotIG9uZSBpdGVtCi0gb25lIGl0ZW0KLSBvbmUgaXRlbQogICAgKiBvbmUgbW9yZSBpdGVtCiAgICAqIG9uZSBtb3JlIGl0ZW0KICAgICogb25lIG1vcmUgaXRlbQpgYGAKClRoZSBvdXRwdXQgb2YgdGhlIGFib3ZlIHN5bnRheCB3b3VsZCBiZToKCi0gb25lIGl0ZW0KLSBvbmUgaXRlbQotIG9uZSBpdGVtCiAgICAqIG9uZSBtb3JlIGl0ZW0KICAgICogb25lIG1vcmUgaXRlbQogICAgKiBvbmUgbW9yZSBpdGVtCgoKQSBudW1iZXJlZCBsaXN0IGNhbiBiZSBjcmVhdGVkIGJ5IHN0YXJ0aW5nIGVhY2ggaXRlbSB3aXRoIGEgbnVtYmVyOgoKYGBgbWFya2Rvd24KMS4gdGhlIGZpcnN0IGl0ZW0KMi4gdGhlIHNlY29uZCBpdGVtCjMuIHRoZSB0aGlyZCBpdGVtCmBgYAoKT3V0cHV0OgoKMS4gdGhlIGZpcnN0IGl0ZW0KMi4gdGhlIHNlY29uZCBpdGVtCjMuIHRoZSB0aGlyZCBpdGVtCgpfX05vdGU6X18gbWFrZSBzdXJlIHRvIGxlYXZlIGFuIGVtcHR5IGxpbmUgYmV0d2VlbiB0ZXh0IGFuZCBhIGxpc3QgZm9yIGNvcnJlY3QgZm9ybWF0dGluZy4KCgojIyMgU2VjdGlvbiBoZWFkZXJzCgpTZWN0aW9uIGhlYWRlcnMgY2FuIGJlIHdyaXR0ZW4gdXNpbmcgYSBudW1iZXIgb2YgXCMgc2lnbnMsIHdoZXJlIHRoZSBhbW91bnQgb2YgXCMncyBzcGVjaWZpZXMgdGhlIGxldmVsOiAKCmBgYG1hcmtkb3duCiMgTWFpbiBzZWN0aW9uIHRpdGxlOiBmaXJzdCBsZXZlbAoKIyMgU3Vic2VjdGlvbjogc2Vjb25kIGxldmVsCgojIyMgU3ViLXN1YnNlY3Rpb246IHRoaXJkIGxldmVsCgojIyMjIFN1Yi1zdWItc3Vic2VjdGlvbjogZm91cnRoIGxldmVsCmBgYAoKVGhlIG91dHB1dDoKCiMgTWFpbiBzZWN0aW9uIHRpdGxlOiBmaXJzdCBsZXZlbAoKIyMgU3Vic2VjdGlvbjogc2Vjb25kIGxldmVsCgojIyMgU3ViLXN1YnNlY3Rpb246IHRoaXJkIGxldmVsCgojIyMjIFN1Yi1zdWItc3Vic2VjdGlvbjogZm91cnRoIGxldmVsCgpJbiBnZW5lcmFsIGl0J3Mgbm90IHJlY29tbWVuZGVkIHRvIGdvIGZ1cnRoZXIgdGhhbiA0IHN1Yi1sZXZlbHMgb2Ygc2VjdGlvbnMuCgpOb3RlIHRoYXQgeW91IGNhbiBhbHNvIGluY2x1ZGUgYSBbdGFibGUgb2YgY29udGVudHNdKGh0dHBzOi8vYm9va2Rvd24ub3JnL3lpaHVpL3JtYXJrZG93bi9odG1sLWRvY3VtZW50Lmh0bWwjdGFibGUtb2YtY29udGVudHMpIGF0IHRoZSB0b3Agb2YgeW91ciBmaWxlIGJ5IHNwZWNpZnlpbmcgYHRvYzogdHJ1ZWAgaW4gdGhlIFlBTUwgaGVhZGVyLgoKCiMjIEludGVncmF0aW5nIHRleHQgYW5kIFIgY29kZQoKWW91IGNhbiBpbnNlcnQgY2h1bmtzIG9mIFIgY29kZSBpbiB5b3VyIFJNYXJrZG93biBmaWxlIGJ5IHdyYXBwaW5nIGEgY29kZSBibG9jayBpbnNpZGUgYGBgYCBgYGB7cn0gYGBgYCBhbmQgYGBgYCBgYGAgYGBgYC4KCkluIFJTdHVkaW8gdGhpcyBpcyBlYXNpbHkgZG9uZSBieSB1c2luZyB0aGUgYEluc2VydGAgYnV0dG9uIGluIHRoZSB0b29sYmFyIG9yIHRoZSBrZXlib2FyZCBzaG9yY3V0IGBDdHJsICsgQWx0ICsgSWAgKGBDbWQgKyBPcHRpb24gKyBJYCBvbiBtYWNPUykuCgpGb3IgbW9yZSBpbmZvcm1hdGlvbiwgc2VlIFtzZWN0aW9uIDIuNl0oaHR0cHM6Ly9ib29rZG93bi5vcmcveWlodWkvcm1hcmtkb3duL3ItY29kZS5odG1sKSBvZiAqVGhlIERlZmluaXRpdmUgR3VpZGUqCgpXZSB3aWxsIGRlbW9uc3RyZXRlIHRoZSB1c2Ugb2YgUi1jb2RlIHdpdGggdmFyaW91cyBleGFtcGxlcyBpbiB0aGUgc2VjdGlvbnMgYmVsb3cgc28gdGhhdCB5b3UgY2FuIGZhbWlsaWFyaXNlIHlvdXJzZWxmIHdpdGggdGhlIHN5bnRheC4KCgojIEJhc2ljIFIgc3R1ZmYKCiMjIFNpbXBsZSBjYWxjdWxhdGlvbnMKClIgY2FuIGJlIHVzZWQgYXMgYSBzaW1wbGUgY2FsY3VsYXRvci4gRXhlY3V0aW5nIGNvZGUgY2FuIGJlIGRvbmUgaW4gdmFyaW91cyB3YXlzLiBUbyBleGVjdXRlIHRoZSBlbnRpcmUgY2h1bmsgb2YgY29kZToKCiAtIEluIFJTdHVkaW86IGNsaWNrIHRoZSBncmVlbiBhcnJvdyBpbiB0aGUgdXBwZXIgcmlnaHQgY29ybmVyIG9mIHRoZSBjb2RlIGNodW5rCiAtIFBsYWNlIHlvdXIgY3Vyc29yIGluc2lkZSB0aGUgY2h1bmsgYW5kIHByZXNzIGBTaGlmdCArIEN0cmwgKyBFbnRlcmAgKE1hYzogYFNoaWZ0ICsgQ21kICsgRW50ZXJgKQogCkNvZGUgY2FuIGFsc28gYmUgcnVuIGxpbmUgYnkgbGluZSBieSBzZWxlY3RpbmcgYSBsaW5lIHdpdGggeW91ciBjdXJzb3IgYW5kIHByZXNzaW5nIGBDdHJsICsgRW50ZXJgIChNYWM6IGBDbWQgKyBFbnRlcmApLgoKVHJ5IGV4ZWN1dGluZyB0aGUgY29kZSBiZWxvdyB1c2luZyBib3RoIHdheXM6IGxpbmUtYnktbGluZSBhbmQgdGhlIGVudGlyZSBjaHVuay4KCmBgYHtyfQoxKzEKKDUtMykrNyoxMC8yCmBgYAoKVGhlIG91dHB1dCBzaG91bGQgYmUgZGlzcGxheWVkIGVpdGhlciByaWdodCBiZWxvdyB0aGUgY29kZSBjaHVuayBvciBpbiB0aGUgUiBjb25zb2xlLiBZb3UgY2FuIGNoYW5nZSB0aGlzIGJlaGF2aW91ciBieSBzZWxlY3RpbmcgdGhlIHNldHRpbmdzIGdlYXIgaW4gdGhlIFJTdHVkaW8gdG9vbGJhciBhbmQgc2VsZWN0aW5nIGBDaHVuayBPdXRwdXQgSW5saW5lYCBvciBgQ2h1bmsgT3V0cHV0IGluIENvbnNvbGVgLgoKWW91IGNhbiBhbHNvIHJ1biBhbGwgY2h1bmtzIGluIHlvdSBSbWQgZmlsZSBieSBwcmVzc2luZyB0aGUgYFJ1bmAgYnV0dG9uIGluIHRoZSB0b29sYmFyICh1cHBlciByaWdodCkgYW5kIHRoZW4gc2VsZWN0IGBSdW4gQWxsYCAob3IgdXNpbmcgdGhlIGtleWJvYXJkIHNob3J0Y3V0IGBTaGlmdCArIEN0cmwgKyBSYCBvbiBXaW5kb3dzIG9yIGBTaGlmdCArIENtZCArIFJgIG9uIE1hYykuIE5vdGUgdGhhdCB0aGlzIG1lbnUgYWxzbyBwcm92aWRlcyBhZGRpdGlvbmFsIHdheXMgb2YgcnVubmluZyBSIGNodW5rcywgdGhlIG1vc3QgdXNlZnVsIG9uZXMgYmVpbmc6CgogICogYFJ1biBBbGwgQ2h1bmtzIEFib3ZlYDogdGhpcyBleGVjdXRlcyBhbGwgY29kZSBjaHVua3MgcHJlY2VkaW5nIHlvdXIgY3Vyc29yIGxvY2F0aW9uLCBzdGFydGluZyBhdCB0aGUgdG9wIGFuZCB0ZWhuIHJ1bm5pbmcgZG93bi4KICAqIGBSZXN0YXJ0IFIgYW5kIFJ1biBBbGwgQ2h1bmtzYDogdGhpcyB3aWxsIHJlc3RhcnQgUiBhbmQgcmUtcnVuIHlvdXIgZW50aXJlIGRvY3VtZW50LiBOb3RlIHRoYXQgdGhpcyB3aWxsIF9fcmVtb3ZlIGFsbCBjdXJyZW50IG9iamVjdHMgYW5kIGRhdGEgZnJvbSBtZW1vcnlfXyBhbmQgcmUtc3RhcnRpbmcgUiBpbiBhIGJsYW5rIHN0YXRlLiBUaGlzIG1lYW5zIHRoYXQgYW55IGNvZGUgdGhhdCB3YXMgcnVuIGluIHRoZSBjb25zb2xlIGFuZCBub3Qgc2F2ZWQgaW4gYSBjb2RlIGNodW5rIHdpbGwgYmUgbG9zdC4gVGhpcyBtaWdodCBzZWVtIHNjYXJ5IGF0IGZpcnN0LCBidXQgdGhlcmUgYXJlIHZlcnkgZ29vZCByZWFzb25zIHRvIGRvIHRoaXMgb2Z0ZW4uIFlvdSBjYW4gcmVhZCBtb3JlIGFib3V0IHRoaXMgd29ya2Zsb3cgW2hlcmVdKGh0dHBzOi8vcnN0YXRzLnd0Zi9zYXZlLXNvdXJjZS5odG1sI3Jlc3RhcnQtci1vZnRlbi1kdXJpbmctZGV2ZWxvcG1lbnQpLgoKIyMgQ29tbWVudGluZyBSIGNvZGUKCllvdSBjYW4gYWRkIGNvbW1lbnRzIHRvIHlvdXIgUiBjb2RlIGJ5IHN0YXJ0aW5nIGEgbGluZSB3aXRoIFwjLiBUaGlzIGlzIHVzZWZ1bCB0byBkZXNjcmliZSB3aGF0IHlvdXIgY29kZSBpcyBkb2luZyAob3Igc2hvdWxkIGJlIGRvaW5nKS4gQW5ub3RhdGluZyB5b3VyIGNvZGUgdGhpcyB3YXkgaXMgdmVyeSB1c2VmdWwgdG8gY29tbXVuaWNhdGUgYm90aCB3aXRoIG90aGVycyBhbmQgeW91ciBmdXR1cmUgc2VsZi4gVHJ5IHRvIGtlZXAgdGhlc2UgY29tbWVudHMgY2xlYXIgYnV0IHNob3J0LiBMb25nZXIgZGVzY3JpcHRpb25zIHNob3VsZCBnbyBpbiB0aGUgbWFpbiB0ZXh0IG9mIHlvdXIgUk1hcmtkb3duIGZpbGUuIENvbW1lbnRpbmcgYWxzbyBwcm92aWRlcyBhIHdheSBvZiAiZGlzYWJsaW5nIiBjb2RlIHdpdGhvdXQgaGF2aW5nIHRvIHJlbW92ZSBpdC4gTm90ZSB0aGF0IGVhY2ggbmV3IGxpbmUgb2YgYSBjb21tZW50IHNob3VsZCBiZSBwcmVjZWRlZCBieSBhIFwjLiBZb3UgY2FuIGVhc2lseSAiY29tbWVudCBvdXQiIG11bHRpcGxlIGxpbmVzIGJ5IHNlbGVjdGluZyB0aGVtIGFuZCBwcmVzc2luZyBgU2hpZnQgKyBDdHJsICsgQ2AgKE1hYzogYFNoaWZ0ICsgQ21kICsgQ2ApLgoKVHJ5IHJ1bm5pbmcgdGhlIGNodW5rIGJlbG93IGFuZCB2ZXJpZnkgdGhhdCBpdCBkb2VzIG5vdCBwcm9kdWNlIGFueSBvdXRwdXQuIFdoYXQgaGFwcGVucyBpZiB5b3UgcmVtb3ZlIG9uZSBvZiB0aGUgXCMgc2lnbnM/CgpgYGB7cn0KIyBUaGlzIGlzIGEgY29tbWVudAoKIyBUaGlzIGlzIGEgdmVyeSBsb25nIGNvbW1lbnQgc3BsaXQgb3ZlcgojIG11bHRpcGxlIGxpbmVzCgojIENvZGUgaW5zaWRlIGEgY29tbWVudCBpcyBub3QgZXhlY3V0ZWQKIyAxKzEKYGBgCgoKIyMgQXNzaWduaW5nIG9iamVjdHMgdG8gc2F2ZSByZXN1bHRzIGFuZCBwZXJmb3JtIGNhbGN1bGF0aW9ucwoKWW91IGNhbiBzYXZlIHJlc3VsdHMgb2YgZnVuY3Rpb24gY2FsbHMgb3IgY2FsY3VsYXRpb25zIGJ5IGFzc2lnbmluZyB0aGUgdmFsdWUgdG8gYSAqdmFyaWFibGUqIHVzaW5nIHRoZSBhc3NpZ24gb3BlcmF0b3IgYDwtYC4KClJ1biB0aGUgY29kZSBiZWxvdyBhbmQgdmVyaWZ5IHRoZSB2YWx1ZSBvZiBgY2AuIFlvdSBjYW4gYWxzbyBjaGVjayB0aGUgdmFsdWUgb2YgYSB2YXJpYWJsZSBieSBlbnRlcmluZyBpdCBpbiB0aGUgQ29uc29sZSBhbmQgcHJlc3NpbmcgYEVudGVyYC4gCgpgYGB7cn0KYSA8LSAyCmIgPC0gMwpjIDwtIGEgKyBiCmMKYGBgCgpOb3RlIHRoYXQgaW4gcHJpbmNpcGxlLCB5b3UgY2FuIGFsc28gdXNlIGA9YCBmb3IgYXNzaWdubWVudCwgYnV0IHRoaXMgaXMgY29uc2lkZXJlZCB0byBiZSBiYWQgcHJhY3RpY2UgYmVjYXVzZSB0aGUgZXF1YWwgc2lnbiBpcyByZXNlcnZlZCBmb3IgZnVuY3Rpb24gYXJndW1lbnRzIChzZWUgbmV4dCBzZWN0aW9uKS4gU28geW91IHNob3VsZCBhbHdheXMgdXNlIGA8LWAgZm9yIGFzc2lnbm1lbnQuCgoqKkhpbnQ6KiogYSBxdWljayBhbmQgZWFzeSB3YXkgdG8gdHlwZSBgPC1gIGluIFJTdHVkaW8gaXMgYnkgdXNpbmcgdGhlIHNob3J0Y3V0IGBBbHQgKyAtYCAoTWFjOiBgT3B0aW9uICsgLWApLgoKCiMjIEZ1bmN0aW9ucwoKRnVuY3Rpb25zIGFyZSBjb21tYW5kcyBpbiBSIHRoYXQgcGVyZm9ybSBjZXJ0YWluIHRhc2tzLiBUaGV5IHRha2UgaW5wdXRzIGluIHRoZSBmb3JtIG9mICphcmd1bWVudHMqIGFuZCByZXR1cm4gdGhlaXIgcmVzdWx0cyBhcyAqb3V0cHV0Ki4gVGhleSBhcmUgY2FsbGVkIHVzaW5nIHRoZWlyIG5hbWUsIGZvbGxvd2VkIGJ5IHBhcmVudGhlc2VzIGAoKWAgaW4gd2hpY2ggdGhlIGFyZ3VtZW50cyBhcmUgc3BlY2lmaWVkLiBUaGVyZSBhcmUgbWFueSBidWlsdC1pbiBmdW5jdGlvbnMgaW4gUi4gSW4gYWRkaXRpb24sIHlvdSBjYW4gd3JpdGUgeW91ciBvd24gZnVuY3Rpb25zIG9yIGxvYWQgb3RoZXIgZnVuY3RpbnMgdGhyb3VnaCB0aGUgdXNlIG9mICpwYWNrYWdlcyogKG1vcmUgb24gdGhhdCBsYXRlcikuCgpBcyBhbiBleGFtcGxlLCB3ZSBjYW4gdXNlIHRoZSBmdW5jdGlvbiBgcm5vcm1gIHRvIHNhbXBsZSAxMDAgZHJhd3MgZnJvbSBhIE5vcm1hbCBkaXN0cmlidXRpb24uIFdlIGFzc2lnbiB0aGUgcmVzdWx0IChhIHZlY3RvciBvZiAxMDAgcmFuZG9tIG51bWJlcnMpIHRvIGEgbmV3IHZhcmlhYmxlIGBkcmF3c2AgYW5kIGRpc3BsYXkgdGhlIGZpcnN0IDYgdmFsdWVzIGJ5IGNhbGluZyB0aGUgZnVuY3Rpb24gYGhlYWRgIG9uIHRoaXMgbmV3IHZhcmlhYmxlLgoKYGBge3J9CiMgc2FtcGxlIDEwMCBudW1iZXJzIGZyb20gYSBzdGFuZGFyZCBub3JtYWwgZGlzdHJpYnV0aW9uIAojIChtZWFuID0gMCwgc3RhbmRhcmQgZGV2aWF0aW9uID0gMSkKZHJhd3MgPC0gcm5vcm0oMTAwKQpoZWFkKGRyYXdzKQpgYGAKCgojIyBHZXR0aW5nIGhlbHAgaW4gUjogYD9gCgpXaGF0IGlmIGluc3RlYWQgb2YgZHJhd2luZyBmcm9tIHRoZSBzdGFuZGFyZCBub3JtYWwgZGlzdHJpYnV0aW9uIHdlIHdhbnQgdG8gc2FtcGxlIGZyb20gYSBub3JtYWwgd2l0aCBhIG1lYW4gb2YgNSBhbmQgYSBzdGFuZGFyZCBkZXZpYXRpb24gb2YgMj8gS25vd2luZyB0aGF0IGBybm9ybWAgaXMgdGhlIGZ1bmN0aW9uIHRvIGdlbmVyYXRlIG5vcm1hbGx5IGRpc3RyaWJ1dGVkIG51bWJlcnMsIHdlIGNhbiBnZXQgbW9yZSBpbmZvcm1hdGlvbiBvbiBpdCBieSBleGVjdXRpbmcgYD9ybm9ybWAgKHVzdWFsbHkgeW91IHdvdWxkIGRvIHRoaXMgaW4gdGhlIENvbnNvbGUsIGJ1dCBmb3IgZGVtb25zdHJhdGlvbiwgd2UgcnVuIGl0IGluc2lkZSBhIGNvZGUgY2h1bmsgaGVyZSkuIFRoaXMgd2lsbCBvcGVuIHVwIHRoZSAqaGVscCogcGFnZSBmb3IgdGhlICJUaGUgTm9ybWFsIERpc3RyaWJ1dGlvbiIgYW5kIGFsbCBpdHMgcmVsYXRlZCBmdW5jdGlvbnMgaW5zaWRlIFIsIG9uZSBvZiB3aGljaCBpcyBgcm5vcm1gLiAKCmBgYHtyLCBldmFsID0gRkFMU0V9Cj9ybm9ybQpgYGAKClJlYWQgdGhyb3VnaCB0aGUgZG9jdW1lbnRhdGlvbiwgY2FuIHlvdSBmaWd1cmUgb3V0IGhvdyB0byBjaGFuZ2UgdGhlIG1lYW4gYW5kIHN0YW5kYXJkIGRldmlhdGlvbj8KClRoZSBzb2x1dGlvbiBpcyB0byBzcGVjaWZ5IHRoZSBgbWVhbmAgYW5kIGBzZGAgYXJndW1lbnRzLgoKYGBge3J9CmRyYXdzMiA8LSBybm9ybSgxMDAsIG1lYW4gPSA1LCBzZCA9IDIpCmhlYWQoZHJhd3MyKQpgYGAKCkVhY2ggYnVpbHQtaW4gUiBmdW5jdGlvbiBvciBmdW5jdGlvbnMgbG9hZGVkIHRocm91Z2ggYSBwYWNrYWdlIGhhcyBhIGhlbHAgcGFnZS4gSW4gYWRkaXRpb24sIHRoZXJlIGlzIGEgd2VhbHRoIG9mIGluZm9ybWF0aW9uIHRocm91Z2ggdGhlIHdvbmRlcmZ1bCBtYWdpYyBvZiBbR29vZ2xlXShodHRwczovL3d3dy5nb29nbGUuY29tLykuIEFub3RoZXIgZ3JlYXQgcGxhY2UgdG8gbG9vayBmb3IgYW5zd2VycyBvciBhc2sgcXVlc3Rpb25zIHlvdXJzZWxmIGlzIFtTdGFja092ZXJmbG93XShodHRwczovL3N0YWNrb3ZlcmZsb3cuY29tLykuCgoKIyMgVGlkeXZlcnNlCgpUaGUgKnRpZHl2ZXJzZSogaXMgYSBzZXQgb2YgcGFja2FnZXMgZGVzaWduZWQgdG8gbWFrZSBkYXRhIHNjaWVuY2UgaW4gUiBtb3JlIHVzZXItZnJpZW5kbHkuCkl0IHNoYXJlcyBhIGNvbW1vbiBwaGlsb3NvcGh5IGFuZCBncmFtbWFyIG9mIGRvaW5nIGRhdGEgc2NpZW5jZSwgd2hpY2ggY2FuIGNoYW5nZSBzb21ld2hhdCBmcm9tIGhvdyBiYXNlIFIgd29ya3MgKHRob3VnaCBpdCBzaG91bGRuJ3QgYmUgYW4gZXhjdXNlIHRvIGxlYXJuIGhvdyB0byB1c2UgYmFzZSBSISEhKS4KCkluc3RlYWQgb2YgaW5zdGFsbGluZyBlYWNoICp0aWR5dmVyc2UqIHBhY2thZ2UgaW5kaXZpZHVhbGx5LCB5b3UgY2FuIGluc3RhbGwgYWxsIG9mIHRoZW0gc2ltdWx0YW5lb3VzbHkgYnkgc2ltcGx5IGNhbGxpbmcKCmBgYHtyLCBldmFsPUZBTFNFfSAKaW5zdGFsbC5wYWNrYWdlcygidGlkeXZlcnNlIikKYGBgCgpOb3RlIHRoYXQgdGhpcyBjb2RlIHdvbid0IGJlIGV4ZWN1dGVkIHdoZW4gY29tcGlsaW5nIHRoaXMgcmVwb3J0LCBiZWNhdXNlIEkgc3BlY2lmaWVkIGBldmFsPUZBTFNFYCBpbiB0aGUgW2NodW5rIG9wdGlvbnNdKGh0dHBzOi8vYm9va2Rvd24ub3JnL3lpaHVpL3JtYXJrZG93bi9yLWNvZGUuaHRtbCkuCkluc3RlYWQgaXQgc2hvdWxkIGJlIGNhbGxlZCBtYW51YWxseSwgZm9yIGV4YW1wbGUgaW4gYW4gUiBjb25zb2xlLgoKCkZvciBtb3JlIGluZm9ybWF0aW9uIHNlZSAKCi0gPGh0dHBzOi8vd3d3LnRpZHl2ZXJzZS5vcmcvPgotIDxodHRwczovL3JhZmFsYWIuZ2l0aHViLmlvL2RzYm9vay90aWR5dmVyc2UuaHRtbD4KLSA8aHR0cHM6Ly9yNGRzLmhhZC5jby5uei8+CgoKCiMjIFZpc3VhbGl6YXRpb25zCgojIyMgQmFzZSBSCgpBIHBpY3R1cmUgb2Z0ZW4gc2F5cyBtb3JlIHRoYW4gd29yZHMgKG9yIGxpbmVzIG9mIGNvZGUgb3V0cHV0KSBhbmQgUiBoYXMgYSByaWNoIFt2aXN1YWxpemF0aW9uIHRvb2xib3hdKGh0dHBzOi8vcnN0dWRpby1wdWJzLXN0YXRpYy5zMy5hbWF6b25hd3MuY29tLzc5NTNfNGUzZWZkNWI5NDE1NDQ0Y2EwNjViMTE2Nzg2MmMzNDkuaHRtbCkgdGhhdCBhbGxvd3MgdXMgdG8gbWFrZSBwb3dlcmZ1bCB2aXN1YWxpemF0aW9ucyBvZiBvdXIgZGF0YS4gCgpGb3IgZXhhbXBsZSwgdG8gdmlzdWFsbHkgdmVyaWZ5IHRoYXQgdGhlIHJhbmRvbSBudW1iZXJzIHdlIGdlbmVyYXRlZCBlYXJsaWVyICh3aGljaCBhcmUgc3RpbGwgc3RvcmVkIGluIG1lbW9yeSB1bmRlciB0aGUgdmFyaWFibGVzIGBkcmF3c2AgYW5kIGBkcmF3czJgKSBhcmUgaW5kZWVkIG5vcm1hbGx5IGRpc3RyaWJ1dGVkLCB3ZSBjb3VsZCBtYWtlIGEgaGlzdG9ncmFtIG9mIHRoZW0sIHVzaW5nIHRoZSBgaGlzdGAgZnVuY3Rpb24uCgpgYGB7cn0KIyBkcmF3cyBjb21lcyBmcm9tIGEgc3RhbmRhcmQgbm9ybWFsIChtZWFuID0gMCwgc2QgPSAxKQpoaXN0KGRyYXdzKQoKIyBkcmF3cyAyIGNvbWVzIGZyb20gYSBub3JtYWwgd2l0aCBtZWFuID0gNSwgc2QgPSAyCmhpc3QoZHJhd3MyKQpgYGAKCk5vdGUgdGhhdCB5b3UgY2FuIGN1c3RvbWl6ZSB0aGVzZSBwbG90cyBpbiBhIGxvdCBvZiB3YXlzLiBMb29raW5nIGF0IHRoZSBoZWxwIHBhZ2Ugb2YgYGhpc3RgIG9yIGRvaW5nIGEgcXVpY2sgaW50ZXJuZXQgc2VhcmNoIHdpbGwgdGFrZSB5b3UgYSBsb25nIHdheSEKCgojIyMgZ2dwbG90MgoKQWx0aG91Z2ggcG93ZXJmdWwsIHRoZSBiYXNlIFIgdmlzdWFsaXphdGlvbiBmcmFtZXdvcmsgY2FuIGJlIHNvbWV3aGF0IGNoYWxsZW5naW5nIHRvIHdvcmsgd2l0aC4KQSBnb29kIGFsdGVybmF0aXZlIGlzIHRoZSBbYGdncGxvdDJgIHBhY2thZ2VdKGh0dHBzOi8vZ2dwbG90Mi50aWR5dmVyc2Uub3JnLyksIHBhcnQgb2YgdGhlIGxhcmdlciBgdGlkeXZlcnNlYCB3aGljaCBpbmNsdWRlcyBtb3JlIHVzZWZ1bCBwYWNrYWdlcyBmb3IgZGF0YSBtYW5pcHVsYXRpb24gYW5kIGFuYWx5c2lzLgpgZ2dwbG90MmAgdXNlcyBhIHZpc3VhbGl6YXRpb24gZnJhbWV3b3JrIGJhc2VkIG9uIHRoZSBbKmdyYW1tYXIgb2YgZ3JhcGhpY3MqIHBoaWxvc29waHldKGh0dHBzOi8vZ2dwbG90Mi1ib29rLm9yZy9pbnRyb2R1Y3Rpb24uaHRtbCN3aGF0LWlzLXRoZS1ncmFtbWFyLW9mLWdyYXBoaWNzKSwgd2hpY2ggd2Ugd29uJ3QgZ2V0IGZ1cnRoZXIgaW50byBoZXJlIGJ1dCB3aGljaCBjYW4gYmUgcXVpdGUgYW4gaW50dWl0aXZlIHdheSB0byB0aGluayBhYm91dCBkYXRhIHZpc3VhbGl6YXRpb25zLgoKYGdncGxvdDJgIHdvcmtzIGJlc3Qgd2l0aCBhIGBkYXRhLmZyYW1lYCBhcyBpbnB1dC4KQXMgYW4gZXhhbXBsZSwgd2UnbGwgdXNlIHRoZSBgbXRjYXJzYCBkYXRhLCB3aGljaCBpcyBhdmFpbGFibGUgYnkgZGVmYXVsdCBpbiBldmVyeSBSIGluc3RhbGxhdGlvbiAoZm9yIG1vcmUgaW5mbyBvbiB0aGlzIGRhdGEgc2V0LCBzZWUgYD9tdGNhcnNgKS4KV2l0aCBqdXN0IGEgZmV3IGxpbmVzLCB3ZSBjYW4gY3JlYXRlIGFscmVhZHkgcXVpdGUgZWxlZ2FudCB2aXN1YWxpemF0aW9uczoKCmBgYHtyfQpsaWJyYXJ5KGdncGxvdDIpCgpnZ3Bsb3QobXBnLCBhZXMoZGlzcGwsIGh3eSwgY29sb3VyID0gY2xhc3MpKSArIAogIGdlb21fcG9pbnQoKQpgYGAKCllvdSBjb3VsZCBwZXJmZWN0bHkgcmVjcmVhdGUgdGhpcyBwbG90IHdpdGggYmFzZSBSLCBidXQgaXQncyBnb2luZyB0byB0YWtlIG1vcmUgbGluZXMgb2YgY29kZSBhbmQgcG90ZW50aWFsIGhlYWRhY2hlcy4KU3RpbGwsIGJvdGggZnJhbWV3b3JrcyBoYXZlIHRoZWlyIHN0cmVuZ3RocyBhbmQgd2Vha25lc3NlcyBhbmQgdGhleSBhcmUgY29tcGxlbWVudGFyeSBpbiBtYW55IHdheXMsIHNvIGl0IHBheXMgdG8gbGVhcm4gYm90aCBvZiB0aGVtIHJhdGhlciB0aGFuIHN0dWJib3JubHkgc3RpY2tpbmcgdG8gb25lLgoKVGhlcmUgYXJlIHRvbnMgb2YgZG9jdW1lbnRhdGlvbiBhbmQgdHV0b3JpYWxzIG9uIGBnZ3Bsb3QyYCB0byBiZSBmb3VuZCBvbmxpbmUuCkEgZ29vZCBwbGFjZSB0byBzdGFydCBpcyA8aHR0cHM6Ly9nZ3Bsb3QyLnRpZHl2ZXJzZS5vcmcvPi4KCgojIyBJbXBvcnRpbmcgZGF0YQoKU2VlIDxodHRwczovL3I0ZHMuaGFkLmNvLm56L2RhdGEtaW1wb3J0Lmh0bWw+LgoKTm90ZSB0aGF0IGJvdGggdGhlIGJhc2UgYHJlYWQuY3N2YCBhbmQgdGhlICp0aWR5dmVyc2UqIGVxdWl2YWxlbnQgYHJlYWRyOjpyZWFkX2NzdigpYCBjYW4gYm90aCB1c2UgVVJMcyB0byByZWFkIGluIGRhdGEuClRoYXQgd2F5IHlvdSBkb24ndCBoYXZlIHRvIGRvd25sb2FkIHRoZSBkYXRhIGxvY2FsbHkgb24geW91ciBtYWNoaW5lIG9yIHdvcnJ5IGFib3V0IGRpZmZlcmVudCB2ZXJzaW9ucy4KCmBgYHtyfQojIyBFeGFtcGxlIGZyb20gSERBMjAyMCBjb3Vyc2UgKGh0dHBzOi8vc3RhdG9taWNzLmdpdGh1Yi5pby9IREEyMDIwLykKdWtfZm9vZHMgPC0gcmVhZHI6OnJlYWRfY3N2KAogIGZpbGUgPSAiaHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3N0YXRPbWljcy9IREEyMDIwL2RhdGEvdWtGb29kcy5jc3YiLAogIGNvbF9uYW1lcyA9IFRSVUUKKQp1a19mb29kcwpgYGAKCgoKIyMgU3VtbWFyeSBvZiBkYXRhCgpUbyBnZXQgYSBxdWljayBzdW1tYXJ5IG9mIHRoZSBkYXRhLCB5b3UgY2FuIHVzZSB0aGUgYHN1bW1hcnlgIGZ1bmN0aW9uLiBUaGlzIHdpbGwgcmV0dXJuIHNvbWUgc3VtbWFyeSBzdGF0aXN0aWNzIGZvciB0aGUgY29sdW1ucyBwcmVzZW50IGluIHRoZSBkYXRhLgoKYGBge3J9CiMjIGlyaXMgaXMgYSBkZWZhdWx0IGRhdGEgc2V0IGF2YWlsYWJsZSBpbiBSCiMjIFRvIGdldCBtb3JlIGluZm8sIHVzZSBgP2lyaXNgCnN1bW1hcnkoaXJpcykKY2xhc3MoaXJpcykKYGBgCgoKIyMgU3Vic2V0dGluZyBkYXRhCgpZb3UgY2FuIHNlbGVjdCBzdWJzZXRzIG9mIGEgYGRhdGEuZnJhbWVgIGJ5IHVzaW5nIHNxdWFyZSBicmFja2V0cyBgW11gIGFuZCBzcGVjaWZ5aW5nIHRoZSBudW1iZXIocykgb2YgdGhlIHJvdyhzKSBvciBjb2x1bW4ocykgeW91IHdhbnQgdG8gc2VsZWN0LiBBbHRlcm5hdGl2ZWx5LCB5b3UgY2FuIHVzZSB0aGUgZG9sbGFyIHNpZ24gYCRgIHRvIHNlbGVjdCBhIGNvbHVtbiB1c2luZyBpdHMgbmFtZS4KClRvIHJlZHVjZSB0aGUgb3V0cHV0IHByaW50ZWQgb3V0LCB3ZSB3aWxsIGZpcnN0IG1ha2UgYSBzdWJzZXQgb2YgdGhlIGBpcmlzYCBkYXRhIGNvbnRhaW5pbmcganVzdCB0aGUgZmlyc3QgMTAgcm93cy4KCmBgYHtyfQojIG1ha2Ugc3Vic2V0IG9mIGRhdGEgdG8gcHJldmVudCBsb25nIG91dHB1dHMKaXJpc19zdWIgPC0gaXJpc1sxOjEwLCBdCmlyaXNfc3ViCgojIFNlbGVjdCBmaXJzdCBjb2x1bW4sIHNpbmdsZSBicmFja2V0cyByZXR1cm5zIGRhdGEuZnJhbWUKaXJpc19zdWJbMV0KaXJpc19zdWJbIlNlcGFsLkxlbmd0aCJdCiMgZG91YmxlIGJyYWNrZXRzIHJldHVybnMgdmVjdG9yCmlyaXNfc3ViW1sxXV0KaXJpc19zdWJbWyJTZXBhbC5MZW5ndGgiXV0KIyB1c2luZyB0aGUgZG9sbGFyIHNpZ24sIGFsc28gcmV0dXJucyB2ZWN0b3IKaXJpc19zdWIkU2VwYWwuTGVuZ3RoCgojIFNlbGVjdCBhbGwgY29sdW1ucyBleGNlcHQgdGhlIGZpcnN0IG9uZQppcmlzX3N1YlstMV0KCiMgU2VsZWN0aW5nIHJvd3MKaXJpc19zdWJbMSwgXSAjIFNlbGVjdCB0aGUgZmlyc3Qgcm93CmlyaXNfc3ViWzE6NSxdICMgU2VsZWN0IHRoZSBmaXJzdCBmaXZlIHJvd3MKaXJpc19zdWJbYygyLCA0KSwgXSAjIHNlbGVjdCB0aGUgc2Vjb25kIGFuZCBmb3VydGggcm93cwoKIyBjb2x1bW5zIGFuZCByb3dzCmlyaXNfc3ViWzE6NSwgIlNlcGFsLkxlbmd0aCJdICMgZmlyc3QgNSByb3dzIG9mICJTZXBhbC5MZW5ndGgiIGNvbHVtbgppcmlzX3N1YlszLCAyXSAgIyB0aGlyZCByb3csIHNlY29uZCBjb2x1bW4KYGBgCgoKIyMgSW5jbHVkaW5nIFIgb2JqZWN0IHZhbHVlcyBvciByZXN1bHRzIGluIHRoZSB0ZXh0CgpZb3UgY2FuIGFkZCBpbmxpbmUgUiBjb2RlIHJlc3VsdHMgYnkgd3JhcHBpbmcgdGhlbSBpbnNpZGUgYGAgYHIgYCBgYC4gVGhpcyBpcyB1c2VmdWwgZm9yIGRpc2N1c3NpbmcgdGhlIHZhbHVlIG9mIGEgcmVzdWx0IGluIHlvdXIgdGV4dC4gSW5zdGVhZCBvZiBoYXZpbmcgdG8gY29weSB0aGUgdmFsdWUgb2YgYSByZXN1bHQgKHdoaWNoIGlzIHByb25lIHRvIGVycm9yIGFuZCBub3Qgcm9idXN0IHRvIGNoYW5nZXMpLCB5b3UgY2FuIGp1c3QgY2FsbCBpdCBpbnNpZGUgdGhlIHRleHQuIEZvciBleGFtcGxlLCB3ZSBjb3VsZCBjYWxjdWxhdGUgdGhlIG1lYW4gc2VwYWwgbGVuZ3RoIG9mIHRoZSBpcmlzIGZsb3dlcnMgYXMgZm9sbG93OgoKYGBge3J9Cm1lYW4oaXJpcyRTZXBhbC5MZW5ndGgpCmBgYAoKV2UgY291bGQgY29weSB0aGUgdmFsdWUgaW5zaWRlIG91ciB0ZXh0LCBidXQgYSBiZXR0ZXIgd2F5IGlzIGJ5IGp1c3QgcnVubmluZyB0aGUgY29kZSBpbmxpbmUgYXMgYG1lYW4oaXJpcyRTZXBhbC5MZW5ndGgpYCBzdXJyb3VuZGVkIGJ5IGBgIGByIGBgIGFuZCBgYCBgIGBgLiBTbyB3ZSBjb3VsZCBzYXkgdGhhdCB0aGUgaXJpcyBmbG93ZXJzIGluIG91ciBkYXRhIGhhdmUgYSBtZWFuIGxlbmd0aCBvZiBgciBtZWFuKGlyaXMkU2VwYWwuTGVuZ3RoKWAuCgpOb3RlOiB0byBhY3R1YWxseSBzZWUgdGhlIHZhbHVlIG9mIHRoZSBpbmxpbmUgY29kZSwgcGxhY2UgeW91ciBjdXJzb3IgaW5zaWRlIHRoZSBiYWNrdGlja3MgYGAgYCBgciBgYCBhbmQgcHJlc3MgYEN0cmwgKyBFbnRlcmAgb3IgYENtZCArIEVudGVyYC4gV2hlbiB5b3Uga25pdCB5b3VyIFJtZCBmaWxlIGFuZCBidWlsZCB0aGUgSFRNTCBvdXRwdXQsIHRoZSBpbmxpbmUgUiBjb2RlIHdpbGwgYmUgcmVwbGFjZWQgYnkgaXRzIG91dHB1dCB2YWx1ZS4KCgojIyBJbmNsdWRpbmcgZXF1YXRpb25zCgpGaW5hbGx5LCB5b3UgY2FuIGluY2x1ZGUgZXF1YXRpb25zIGluIHlvdXIgdGV4dCB1c2luZyBbTGFUZVhdKGh0dHBzOi8vZW4ud2lraXBlZGlhLm9yZy93aWtpL0xhVGVYKSBzeW50YXggYW5kIHN1cnJvdW5kaW5nIGl0IGJ5ICBhIHBhaXIgb2YgZG91YmxlIGRvbGxhciBzaWducyBgJCRgLiBUaGlzIGlzIHVzZWZ1bCB0byBzcGVjaWZ5IG1vZGVscy4gRm9yIGV4YW1wbGUsIHdlIGNhbiB3cml0ZSB0aGUgZXF1YXRpb24gb2YgYSBsaW5lYXIgbW9kZWwgYXMKCmBgYAokJAp5X2kgPSBcYmV0YV8wICsgXGJldGFfMSB4X2kgKyBcZXBzaWxvbl9pCiQkCmBgYAoKV2hpY2ggd2lsbCBiZSBjb252ZXJ0ZWQgdG8gdGhlIGZvbGxvd2luZyBvdXRwdXQ6CgokJAp5X2kgPSBcYmV0YV8wICsgXGJldGFfMSB4X2kgKyBcZXBzaWxvbl9pCiQkCgpOb3RlIHRoYXQgUlN0dWRpbyB3aWxsIGdpdmUgeW91IGEgcHJldmlldyBvZiB3aGF0IHlvdXIgZXF1YXRpb24gd2lsbCBsb29rIGxpa2UgaW4gdGhlIGZpbmFsIGRvY3VtZW50LgoKWW91IGNhbiBhbHNvIGluY2x1ZGUgaW5saW5lICRcTGFUZVgkIGVxdWF0aW9ucyBieSB1c2luZyBhIHBhaXIgb2Ygc2luZ2xlIGAkYCBzaWducy4gRm9yIGV4YW1wbGUsIHRoZSBmb2xsb3dpbmcgc2VudGVuY2U6CgpgVGhlIHNhbXBsZSBtZWFuIG9mICR5JCBpcyBnaXZlbiBieSAkXGJhcnt5fT1cc3VtXGxpbWl0c197aT0xfV57bn1cZnJhY3t5X2l9e259JGAKCldpbGwgYmUgY29udmVydGVkIHRvOgoKVGhlIHNhbXBsZSBtZWFuIG9mICR5JCBpcyBnaXZlbiBieSAkXGJhcnt5fT1cc3VtXGxpbWl0c197aT0xfV57bn1cZnJhY3t5X2l9e259JAoKCgojIFVzZWZ1bCByZXNvdXJjZXMKCi0gW1IgTWFya2Rvd246IFRoZSBEZWZpbml0aXZlIEd1aWRlXShodHRwczovL2Jvb2tkb3duLm9yZy95aWh1aS9ybWFya2Rvd24vKQotIFtSIGZvciBEYXRhIFNjaWVuY2VdKGh0dHBzOi8vcjRkcy5oYWQuY28ubnovKSBieSBIYWRsZXkgV2lja2hhbSAobWFpbiBhdXRob3Igb2YgdGhlIGB0aWR5dmVyc2VgIHBhY2thZ2VzKQotIFtJbnRyb2R1Y3Rpb24gdG8gRGF0YSBTY2llbmNlXShodHRwczovL3JhZmFsYWIuZ2l0aHViLmlvL2RzYm9vay8pIGJ5IFJhZmFlbCBJcml6YXJyeQotIFtXaGF0IFRoZXkgRm9yZ290IHRvIFRlYWNoIFlvdSBBYm91dCBSXShodHRwczovL3JzdGF0cy53dGYvKSwgZm9yIHNvbWUgdXNlZnVsICJnb29kIHByYWN0aWNlcyIgdGlwcyB3aGVuIHdvcmtpbmcgd2l0aCBSCgoKCiMgU2Vzc2lvbiBJbmZvCgpGaW5hbGx5LCBpdCdzIGFsd2F5cyBnb29kIHByYWN0aWNlIHRvIGluY2x1ZGUgdGhlIFtTZXNzaW9uIEluZm9dKCkgZm9yIHlvdXIgUiBzZXNzaW9uIGluIHlvdXIgZG9jdW1lbnQuClRoYXQgd2F5LCBvdGhlciBwZXJzb25zIChpbmNsdWRpbmcgeW91ciBmdXR1cmUgc2VsZikgbG9va2luZyBhdCB5b3VyIGRvY3VtZW50IGNhbiBzZWUgd2hhdCB2ZXJzaW9ucyBvZiBSIGFuZCBsb2FkZWQgcGFja2FnZXMgd2VyZSB1c2VkLCB3aGljaCBjYW4gYmUgcXVpdGUgZXNzZW50aWFsIGZvciByZXByb2R1Y2liaWxpdHkuClRoZXJlIGFyZSAyIG9wdGlvbnMsIGVpdGhlciB1c2luZyB0aGUgYmFzZSBSIGNvbW1hbmQgYHNlc3Npb25JbmZvKClgIG9yIHVzaW5nIFt0aGUgdmVyc2lvbiBmcm9tIHRoZSBgZGV2dG9vbHNgIHBhY2thZ2VdKGh0dHBzOi8vZGV2dG9vbHMuci1saWIub3JnL3JlZmVyZW5jZS9zZXNzaW9uX2luZm8uaHRtbCk6IGBkZXZ0b29sczo6c2Vzc2lvbl9pbmZvKClgLgpUaGVpciBvdXRwdXRzIGhhdmUgc2xpZ2h0bHkgZGlmZmVyZW50IGZvcm1hdHRpbmcgYnV0IHRoZSBjb250ZW50cyBhcmUgZXNzZW50aWFsbHkgdGhlIHNhbWUuClBlcnNvbmFsbHksIEkgcHJlZmVyIHRoZSBgZGV2dG9vbHNgIHZlcnNpb24sIGJ1dCB0aGlzIGlzIHJlYWxseSBhIHBlcnNvbmFsIGNob2ljZS4KCllvdSBjYW4gYWxzbyBpbmNsdWRlIHRoZSBkYXRlIHdpdGggYFN5cy50aW1lKClgIHNvIHlvdSBoYXZlIGEgdGltZSBzdGFtcCBvZiB3aGVuIHRoZSByZXBvcnQgd2FzIGNvbXBpbGVkLgpJZiB5b3UgaGFwcGVuIHRvIGJlIHdvcmtpbmcgaW5zaWRlIGEgZ2l0IHJlcG9zaXRvcnksIGBnaXQycjo6cmVwb3NpdG9yeSgpYCBpcyBhIHVzZWZ1bCBmdW5jdGlvbiB0aGF0IGRpc3BsYXlzIGluZm9ybWF0aW9uIGFib3V0IHRoZSBjdXJyZW50IGBnaXRgIHN0YXRlIGFuZCB0aGUgbGFzdCBjb21taXQuIAoKYGBge3Igc2Vzc2lvbl9pbmZvLCBjYWNoZT1GQUxTRX0KU3lzLnRpbWUoKQpkZXZ0b29sczo6c2Vzc2lvbl9pbmZvKCkKCiMjIG9ubHkgdXNlIHRoaXMgd2hlbiB3b3JraW5nIGluc2lkZSBhIGdpdCByZXBvc2l0b3J5LCBkb24ndCB3b3JyeSBpZiB5b3UgZG9uJ3Qga25vdyB3aGF0IHRoaXMgbWVhbnMKZ2l0MnI6OnJlcG9zaXRvcnkoKQpgYGAKCiMgW0hvbWVdKGh0dHBzOi8vc3RhdG9taWNzLmdpdGh1Yi5pby9IREEyMDIwLykgey19Cg==</div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("Introduction-RMarkdown.Rmd");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
