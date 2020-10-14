@@ -1,6 +1,6 @@
 # HDA2020
 
-![Render and Deploy](https://github.com/statOmics/HDA2020/workflows/Render%20and%20Deploy/badge.svg)
+[![Render and Deploy](https://github.com/statOmics/HDA2020/workflows/Render%20and%20Deploy/badge.svg)](https://github.com/statOmics/HDA2020/actions)
 
 Course site for High Dimensional Data Analysis for the Master of statistical data analysis at Ghent University.
 
