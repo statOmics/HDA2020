@@ -250,7 +250,7 @@ Read in the `cheese` data, which characterizes 30 cheeses on various metrics.
 ```{r}
 cheese <- read_csv("https://github.com/statOmics/HDA2020/raw/data/cheese.csv",
                    col_types = "idddd")
-head(cheese)
+cheese
 ```
 
 >__Q__: what is the *dimensionality* of this data?
@@ -463,7 +463,7 @@ industries_url <- "https://github.com/statOmics/HDA2020/raw/data/industries.txt"
 industries <- read_delim(industries_url, delim = " ",
                          col_types = cols())
 # Explore contents
-head(industries)
+industries
 glimpse(industries)
 summary(industries)
 ```
