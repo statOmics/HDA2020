@@ -11,3 +11,4 @@ _site/
 ## data
 raw-data/
 faceSvd.rds
+doc/
