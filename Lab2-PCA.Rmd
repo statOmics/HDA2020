@@ -4,23 +4,44 @@ author: "Adapted by Milan Malfait"
 date: "20 Oct 2020"
 ---
 
+```{r setup, include=FALSE, cache=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
 
+***
 
+# Introduction
 
-##The first part of this lab  demonstrates the influence of standardizing the data (i.e. working on the correlation matrix vs. working on the covariance matrix). Pay attention to what the output looks like and how it links to the biplot.)
+The first part of this lab demonstrates the influence of standardizing the data (i.e. working on the correlation matrix vs. working on the covariance matrix). Pay attention to what the output looks like and how it links to the biplot.)
 
-
-
-
-We will load a dataset (`trees` dataset in `R`) that contains  the height of a tree, the girth  and the volume of the tree. 
-We will start by converting the volume to a categorical variable/factor. A tree has a large volume  if its volume is bigger than 20 cubic feet, and small  volume otherwise. 
+We will load the `trees` dataset (from base `R`, see `?trees` for more info) that contains  the height of a tree (in *feet*), the girth (or diameter in *inches*) and the volume (in *cubic feet*) of the tree. 
+For the purpose of this exercise, we will convert the continuous *volume* variable to a categorical variable (a `factor` in R lingo).
+A tree will be considered large if its volume is bigger than 20 cubic feet, and small otherwise. 
 
 ```{r}
-#The data is read 
+# Load data
 data(trees)
-tree.girth<-trees[,1]
-tree.height<-trees[,2]
-tree.vol<-as.factor(ifelse(trees[,3]>20,"large","small"))
+
+# Convert volume to factor
+trees$vol_fac <- as.factor(ifelse(trees$Volume > 20, "large", "small"))
+
+# Preview data
+head(trees)
+summary(trees)
+```
+
+Now suppose that the height was actually measured in __miles__ instead of feet.
+
+```{r}
+tree_height_miles <- trees$Height / 5280
+tree_girth <- trees$Girth
+
+# Create matrix using Height and Girth variables
+tree_mx <- cbind(tree_height_miles, tree_girth)
+head(tree_mx)
 ```
 Now suppose that the height was actually measured in miles instead of feet.
 ```{r}
