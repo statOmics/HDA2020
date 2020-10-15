@@ -1,14 +1,7 @@
 ---
 title: "Analysis of High Dimensional Data - Lab 2"
-author: "Adapted by Chamberlain Mbah"
-date: "7 March 2018"
-output:
-  html_document:
-    df_print: paged
-  pdf_document: default
-mainfont: Arial
-header-includes: \usepackage{amsmath,amsfonts,graphicx,color}
-fontsize: 14pt
+author: "Adapted by Milan Malfait"
+date: "20 Oct 2020"
 ---
 
 
