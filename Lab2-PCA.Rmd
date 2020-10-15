@@ -13,13 +13,23 @@ knitr::opts_chunk$set(
 
 ***
 
+```{r libraries, warning=FALSE, message=FALSE}
+library(tidyverse)
+```
+
+
 # Introduction
 
 The first part of this lab demonstrates the influence of standardizing the data (i.e. working on the correlation matrix vs. working on the covariance matrix). Pay attention to what the output looks like and how it links to the biplot.)
 
+
+# PCA demonstration
+
+## Data prep
+
 We will load the `trees` dataset (from base `R`, see `?trees` for more info) that contains  the height of a tree (in *feet*), the girth (or diameter in *inches*) and the volume (in *cubic feet*) of the tree. 
 For the purpose of this exercise, we will convert the continuous *volume* variable to a categorical variable (a `factor` in R lingo).
-A tree will be considered large if its volume is bigger than 20 cubic feet, and small otherwise. 
+A tree will be considered large if its volume is bigger than 20 cubic feet, and small otherwise.
 
 ```{r}
 # Load data
@@ -44,6 +54,9 @@ tree_mx <- cbind(tree_height_miles, tree_girth)
 head(tree_mx)
 ```
 
+
+## Run PCA
+
 We run PCA on the *height (in miles)* and *girth* variables and inspect the results.
 
 ```{r}
@@ -62,6 +75,91 @@ The __loadings__ of the PCA are stored in the `$rotation` slot of the `prcomp` r
 tree_pca$rotation
 tree_pca$sdev
 ```
+
+Remember that the Principal Components are __linear combinations__ of the original variables.
+The loadings tell you what the contribution of each variable is to the PC.
+Here we see that the first PC is completely dominated by the girth variable, while the second component is basically (the negative) height variable.
+Since the PCs are ordered by the amount of variance they retain from the original data, we would conclude that most of the variance in the data comes from the girth variable.
+
+>Q: Is this something you would have expected? (Think about the units we are using here!)
+
+The result from `prcomp` also contains an `$x` slot, which contains the projected values of the original data matrix onto the principal components (also called the *PC scores*).
+This is what we will use later to construct the PCA plot.
+
+
+### Link between PCA and SVD of the covariance matrix {-}
+
+Note that these quantities are directly related to the SVD of the covariance matrix $\mathbf{X^TX}$!
+The PC loadings are nothing more than the right singular vectors, while the standard deviations are the square roots of the singular values.
+
+__Note__ though that the signs of the loadings and singular vectors are rather arbitrary and can be swapped.
+So to compare the different calculations, we will use the `abs()`olute values.
+
+```{r}
+## Calculate covariance matrix of trees and its SVD
+tree_cov <- cov(tree_mx)
+tree_cov_svd <- svd(tree_cov)
+
+## Check equality of PCA loadings and V
+all.equal(unname(abs(tree_pca$rotation)), abs(tree_cov_svd$v))
+
+## Check equality of PCA sdev and sqrt of singular values
+all.equal(tree_pca$sdev, sqrt(tree_cov_svd$d))
+```
+
+
+## Visualize PCA with biplot
+
+Create biplot with `biplot` function.
+
+```{r}
+biplot(
+  tree_pca,
+  xlabs = trees$vol_fac,
+  col = c("grey", "red"),
+)
+```
+
+We see that trees high in volume tend to have a high tree girth, but the height does not give any information on tree volume. 
+This is likely wrong and the consequence of the two very different unit measures, we used (*miles* and *feet*).
+
+We could use the same units, or we could standardize the variables by dividing by their standard deviations.
+Both will lead to a more balanced picture of the variability.
+Of course in this case one can argue that the variables should have the same unit but not be standardized, which may be a valid argument, were it not that we are measuring two different things (the height and the diameter). 
+So even if we used the same units, it is recommended to also standardize the variables.
+
+Imagine if we would be measuring the mass ($kg$) of the tree and the girth ($m$) of the tree, the scale on which both should be measured is no longer clear, since niether kilograms can be converted to meters nor meters converted to kilograms. In this case we have a clear argument to work on the standardized variables.
+
+
+## Redo PCA on standardized variables
+
+We will leave the *height* on the *miles* scale, but now we will standardize the variables before performing the PCA.
+I.e. in addition to *centering* the matrix (subtracting the column means), we also divide it by its column standard deviations.
+Note that these operations can be done in one go with the `prcomp` function by specifying `center = TRUE` and `scale. = TRUE` (note the `.`!).
+
+```{r}
+## Compute PCA on centered and scaled matrix
+tree_pca <- prcomp(tree_mx, center = TRUE, scale. = TRUE)
+summary(tree_pca)
+tree_pca$rotation
+tree_pca$sdev
+```
+
+The biplot:
+
+```{r}
+biplot(
+  tree_pca,
+  xlabs = trees$vol_fac,
+  col = c("grey", "red")
+)
+```
+
+We now get a much more realistic result, where the loadings are more equally distributed between the *hight 
+
+Note that we would get the exact same result (apart maybe from the signs) if we used *height* on the original *feet* scale.
+Since the conversion is just a multiplication by a constant, scaling the column by its standard deviation will give the same result.
+
 
 # Session info {-}
 
