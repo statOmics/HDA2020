@@ -43,15 +43,24 @@ tree_girth <- trees$Girth
 tree_mx <- cbind(tree_height_miles, tree_girth)
 head(tree_mx)
 ```
-Now suppose that the height was actually measured in miles instead of feet.
-```{r}
-tree.height<-tree.height/5280
-tree<-cbind(tree.height,tree.girth)
-#do the PCA
-head(tree)
 
-tree.pca<-princomp(tree)
-summary(tree.pca)
+We run PCA on the *height (in miles)* and *girth* variables and inspect the results.
+
+```{r}
+# Run PCA with prcomp function, which uses SVD internally (see ?prcomp)
+# Note that prcomp centers the matrix internally by default but does not scale it
+# (center = TRUE, scale. = FALSE)
+tree_pca <- prcomp(tree_mx)
+summary(tree_pca)
+```
+
+__Note:__ The first component explains almost 100% of the variability in the data.
+
+The __loadings__ of the PCA are stored in the `$rotation` slot of the `prcomp` result, while the `$sdev` slot contains the standard deviations of the principal components.
+
+```{r}
+tree_pca$rotation
+tree_pca$sdev
 ```
 
 # Session info {-}
