@@ -1,0 +1,46 @@
+---
+title: "Analysis of High Dimensional Data - Lab 2"
+author: "Adapted by Chamberlain Mbah"
+date: "7 March 2018"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+mainfont: Arial
+header-includes: \usepackage{amsmath,amsfonts,graphicx,color}
+fontsize: 14pt
+---
+
+
+
+
+##The first part of this lab  demonstrates the influence of standardizing the data (i.e. working on the correlation matrix vs. working on the covariance matrix). Pay attention to what the output looks like and how it links to the biplot.)
+
+
+
+
+We will load a dataset (`trees` dataset in `R`) that contains  the height of a tree, the girth  and the volume of the tree. 
+We will start by converting the volume to a categorical variable/factor. A tree has a large volume  if its volume is bigger than 20 cubic feet, and small  volume otherwise. 
+
+```{r}
+#The data is read 
+data(trees)
+tree.girth<-trees[,1]
+tree.height<-trees[,2]
+tree.vol<-as.factor(ifelse(trees[,3]>20,"large","small"))
+```
+Now suppose that the height was actually measured in miles instead of feet.
+```{r}
+tree.height<-tree.height/5280
+tree<-cbind(tree.height,tree.girth)
+#do the PCA
+head(tree)
+
+tree.pca<-princomp(tree)
+summary(tree.pca)
+```
+
+
+
+
+
