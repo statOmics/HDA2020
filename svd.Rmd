@@ -1195,7 +1195,7 @@ Or in other words: The n points $\mathbf{z}_{k,i}$ in the k-dimensional subspace
     2. The truncated SVD of the squared and symmetric Gram matrix
     \[\mathbf{U}_k\boldsymbol{\Delta}_k^\prime\mathbf{U}_k^T\]
     3. from which also can obtain
-    \[\mathbf{Z}_k=\mathbf{U}_k\boldsymbol{\Delta}_k,\] with $\boldsymbol{\Delta}_k= \mathbf{\Delta}_k^{\prime-\frac{1}{2}}$
+    \[\mathbf{Z}_k=\mathbf{U}_k\boldsymbol{\Delta}_k,\] with $\boldsymbol{\Delta}_k= \mathbf{\Delta}_k^{\prime \frac{1}{2}}$
 
 ## Example
 
