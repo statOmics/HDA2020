@@ -16,6 +16,12 @@ knitr::opts_chunk$set(
 ```{r libraries, warning=FALSE, message=FALSE}
 library(tidyverse)
 theme_set(theme_light())
+
+## ggbiplot package to create ggplot-based biplots
+## install with:
+# install.pacages("remotes")
+# remotes:: install_github("vqv/ggbiplot")
+library(ggbiplot)
 ```
 
 
@@ -28,7 +34,7 @@ The first part of this lab demonstrates the influence of standardizing the data 
 
 ## Data prep
 
-We will load the `trees` dataset (from base `R`, see `?trees` for more info) that contains  the height of a tree (in *feet*), the girth (or diameter in *inches*) and the volume (in *cubic feet*) of the tree. 
+We will load the `trees` dataset (from base `R`, see `?trees` for more info) that contains  the height of a tree (in *feet*), the girth (or diameter in *inches*) and the volume (in *cubic feet*) of the tree.
 For the purpose of this exercise, we will convert the continuous *volume* variable to a categorical variable (a `factor` in R lingo).
 A tree will be considered large if its volume is bigger than 25 cubic feet, and small otherwise.
 
@@ -51,7 +57,7 @@ Now suppose that the height was actually measured in __miles__ instead of feet.
 trees$height_miles <- trees$Height / 5280
 
 # Create matrix using height_miles and Girth variables
-tree_mx <- cbind(trees$height_miles, trees$Girth)
+tree_mx <- cbind("height_miles" = trees$height_miles, "girth" = trees$Girth)
 head(tree_mx)
 ```
 
@@ -60,15 +66,43 @@ Here we plot the height (in miles) vs. the girth for each tree and size the dots
 We also use a color aesthetic to distinguish "large" and "small" trees.
 
 ```{r trees-plot}
-ggplot(trees) +
+trees_plot <- ggplot(trees) +
   geom_point(aes(Girth, height_miles, size = Volume, col = vol_fac),
              alpha = 0.6) +
   labs(x = "Girth (inches)", y = "Height (miles)",
-       color = "Volume class") +
+       color = "Volume class")
+
+trees_plot +
   ggtitle("Visualizing the original trees data")
+
 ```
 
 Pay attention to the units on the axis and the (very) different orders of the units.
+
+>Q: looking at this plot, can you make a guess in which direction the largest variation lies, i.e. in which direction the first principal component would lie?
+
+To help with visualization of the PCs later on, we also make the plot using the __centered and scaled__ data.
+The `scale` function can be used for this, so that all variables have mean 0 and unit variance.
+
+
+```{r}
+## Center and scale data
+trees_scaled <- scale(tree_mx, center = TRUE, scale = TRUE)
+
+trees_scaled_plot <- trees_scaled %>% 
+  ## Convert to data.frame and re-add Volume columns for plotting
+  data.frame(Volume = trees$Volume, vol_fac = trees$vol_fac) %>% 
+  ggplot() +
+  geom_point(aes(girth, height_miles, size = Volume, col = vol_fac),
+             alpha = 0.6) +
+  labs(x = "Girth (inches), standardized", y = "Height (miles), standardized", 
+       color = "") + 
+  coord_equal(xlim = c(-2.3, 2.3), ylim = c(-2.3, 2.3))
+
+trees_scaled_plot +
+  ggtitle("Visualizing the scaled trees data")
+```
+
 
 
 ## Run PCA
@@ -93,51 +127,63 @@ tree_pca$sdev
 ```
 
 Remember that the Principal Components are __linear combinations__ of the original variables.
-The loadings tell you what the contribution of each variable is to the PC.
+The loadings tell you what the contribution (or weight) of each variable is to the PC.
 Here we see that the first PC is completely dominated by the girth variable, while the second component is basically (the negative) height variable.
 Since the PCs are ordered by the amount of variance they retain from the original data, we would conclude that most of the variance in the data comes from the girth variable.
 
->Q: Is this something you would have expected? (Think about the units we are using here!)
+>Q: Is this in line with what you expected from the original plot? Why not? (Think about the units we are using here!)
 
 The result from `prcomp` also contains an `$x` slot, which contains the projected values of the original data matrix onto the principal components (also called the *PC scores*).
-This is what we will use later to construct the PCA plot.
+This is what we will use to construct the PCA plot.
 
 
-### Link between PCA and SVD of the covariance matrix {-}
+### Visualize Principal Components
 
-Note that these quantities are directly related to the SVD of the covariance matrix $\mathbf{X^TX}$!
-The PC loadings are nothing more than the right singular vectors, while the standard deviations are the square roots of the singular values.
+Scale the PC loadings by their standard deviations (singular values) to project them back to the original data space.
+We also transpose the `rotation` matrix so that the variables are in columns and PCs in the rows, so that we can overlay them on the original trees plot.
 
-__Note__ though that the signs of the loadings and singular vectors are rather arbitrary and can be swapped.
-So to compare the different calculations, we will use the `abs()`olute values.
+```{r tree-plot-PC-loadings}
+## Transpose the loadings so that the PCs are in the rows, for plotting
+pc_loadings <- t(tree_pca$rotation)
 
-```{r}
-## Calculate covariance matrix of trees and its SVD
-tree_cov <- cov(tree_mx)
-tree_cov_svd <- svd(tree_cov)
-
-## Check equality of PCA loadings and V
-all.equal(unname(abs(tree_pca$rotation)), abs(tree_cov_svd$v))
-
-## Check equality of PCA sdev and sqrt of singular values
-all.equal(tree_pca$sdev, sqrt(tree_cov_svd$d))
+## Reuse plot from before and add PCs
+trees_scaled_plot +
+  geom_segment(
+    data = data.frame(pc_loadings),
+    aes(x = 0, xend = girth, y = 0, yend = height_miles),
+    arrow = arrow(length=unit(0.1,"cm"))
+  ) +
+  geom_text(
+    data = data.frame(pc_loadings),
+    aes(x = girth, y = height_miles, label = rownames(pc_loadings)),
+    vjust = "outward", hjust = "outward"
+  )
 ```
 
+From this plot we see that the PCs are not in the directions we expected.
+PC1 should point in the direction of greatest variability.
 
-## Visualize PCA with biplot
 
-Create biplot with `biplot` function.
+### Visualize PCA with biplot
 
-```{r}
-biplot(
-  tree_pca,
-  xlabs = trees$vol_fac,
-  col = c("grey", "red"),
-)
+```{r tree-pca-biplot}
+ggbiplot(tree_pca, groups = trees$vol_fac, alpha = 0) +
+  ## Add points layer to color and size points
+  geom_point(aes(col = trees$vol_fac, size = trees$Volume), alpha = 0.6) +
+  labs(size = "Volume", col = "")
 ```
 
 We see that trees high in volume tend to have a high tree girth, but the height does not give any information on tree volume. 
-This is likely wrong and the consequence of the two very different unit measures, we used (*miles* and *feet*).
+This is likely wrong, since we know that the height of a tree should have at least some influence on its volume.
+The problem here is that because of the 2 very different unit measures (*miles* and *inches*), the influence of the girth is inflated just because the order of the scale is much larger.
+
+This is also reflected in the variances of these variables:
+
+```{r}
+round(diag(cov(tree_mx)), 8)
+```
+
+We see that the variance of the *girth* variable is several orders of magnitude larger than that of the height (again, because of the different units) and this is reflected in the PCA.
 
 We could use the same units, or we could standardize the variables by dividing by their standard deviations.
 Both will lead to a more balanced picture of the variability.
@@ -155,26 +201,55 @@ Note that these operations can be done in one go with the `prcomp` function by s
 
 ```{r}
 ## Compute PCA on centered and scaled matrix
-tree_pca <- prcomp(tree_mx, center = TRUE, scale. = TRUE)
-summary(tree_pca)
-tree_pca$rotation
-tree_pca$sdev
+tree_pca_scaled <- prcomp(tree_mx, center = TRUE, scale. = TRUE)
+summary(tree_pca_scaled)
+tree_pca_scaled$rotation
+tree_pca_scaled$sdev
 ```
+
+We will again plot the original data, but this time using the __scaled and centered__ values, and overlay the plot with the PCs.
+
+```{r}
+pc_scaled_loadings <- t(tree_pca_scaled$rotation)
+
+## Reuse plot from before and add PCs
+trees_scaled_plot +
+  geom_segment(
+    data = data.frame(pc_scaled_loadings),
+    aes(x = 0, xend = girth, y = 0, yend = height_miles),
+    arrow = arrow(length=unit(0.2,"cm"))
+  ) +
+  geom_text(
+    data = data.frame(pc_scaled_loadings),
+    aes(x = girth, y = height_miles, label = rownames(pc_scaled_loadings)),
+    nudge_x = 0.1, nudge_y = 0.2
+  )
+```
+
+This is more in line with our expectations.
+PC1 point in the direction of greatest variability, with PC2 orthogonal and pointing in the direction of second greatest variabilty.
+
+Also note from the lengths of the PC vectors that the contributions of height and girth are equal to both PCs.
+
 
 The biplot:
 
-```{r}
-biplot(
-  tree_pca,
-  xlabs = trees$vol_fac,
-  col = c("grey", "red")
-)
+```{r tree-scaled-pca-biplot}
+ggbiplot(tree_pca_scaled, groups = trees$vol_fac, alpha = 0) +
+  ## Add points layer to color and size points
+  geom_point(aes(col = trees$vol_fac, size = trees$Volume), alpha = 0.6) +
+  labs(size = "Volume", col = "")
 ```
 
-We now get a much more realistic result, where the loadings are more equally distributed between the *hight 
+We now get a much more realistic result, where the *height* and *girth* variables have more equal contributions to the PCs.
+
+PC1 can be interpreted as separating small and large volume trees.
+A potential explanation of PC2 would be the separation between trees that have a similar volume but differ in their height-to-girth ratios, i.e. short wide trees and long thin trees.
 
 Note that we would get the exact same result (apart maybe from the signs) if we used *height* on the original *feet* scale.
 Since the conversion is just a multiplication by a constant, scaling the column by its standard deviation will give the same result.
+(You can verify this for yourself by redoing the PCA using the original height column from `trees`, without converting it to miles.)
+
 
 
 # Session info {-}
