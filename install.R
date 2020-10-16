@@ -9,3 +9,5 @@ BiocManager::install(c(
 ), Ncpus = 2L)
 
 remotes::install_github("hadley/emo")
+remotes::install_github("vqv/ggbiplot")
+
