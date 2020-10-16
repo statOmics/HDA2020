@@ -2,6 +2,9 @@
 title: "Analysis of High Dimensional Data - Lab 2"
 author: "Adapted by Milan Malfait"
 date: "20 Oct 2020"
+output:
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE, cache=FALSE}
@@ -249,6 +252,171 @@ A potential explanation of PC2 would be the separation between trees that have a
 Note that we would get the exact same result (apart maybe from the signs) if we used *height* on the original *feet* scale.
 Since the conversion is just a multiplication by a constant, scaling the column by its standard deviation will give the same result.
 (You can verify this for yourself by redoing the PCA using the original height column from `trees`, without converting it to miles.)
+
+
+
+# Exercises
+
+## Heavy metals near the Schelde
+
+### Data prep {-}
+
+At the department of analytical and physical chemistry, researchers wanted to investigate the pollution of grasslands in the vicinity of the river Schelde.
+Concentrations of 8 heavy metals were measured on 19 different locations, each time at a depth of 5 cm and at a depth of 20 cm; the data set is called heavymetals.
+Vicinity to the river was 0 (far) or 1 (close).
+
+Read in the data as follows:
+
+```{r load-heavymetals-data, collapse=FALSE}
+heavymetals_url <- "https://github.com/statOmics/HDA2020/raw/data/heavymetals.csv"
+
+heavymetals <- read_csv(heavymetals_url,
+  col_types = cols(
+    location = col_integer(),
+    river = col_logical(),
+    .default = col_double()
+  )
+)
+
+## Recode the "river" variable
+heavymetals$river <- ifelse(heavymetals$river, "close", "far")
+
+heavymetals
+dim(heavymetals)
+```
+
+Note that there are 2 columns per heavy metal, one for the measurement at 5 cm depth and one at 20 cm depth.
+
+
+### Tasks {-}
+
+##### 1. Conduct a PCA using *standardized variables*. How many PCs would you retain? Motivate the answer/interpret. {-}
+
+Think about which columns you need from the original data!
+
+<details><summary>Solution</summary>
+
+First do the PCA, excluding the `location` and `river` columns.
+
+```{r heavymetals-pca}
+## Remove 'location' and 'river' columns when creating matrix
+heavymetals_mx <- select(heavymetals, -location, -river) %>%
+  as.matrix()
+
+## Run PCA on centered and scaled data
+heavymetals_pca <- prcomp(heavymetals_mx, center = TRUE, scale. = TRUE)
+summary(heavymetals_pca)
+```
+
+To choose the number of PCs to retain, we look at the proportion of variance that each PC explains.
+This can be visualized using what is known as a *scree plot*.
+
+```{r heavymetals-pca-screeplot}
+## Calculate total variance by summing the PC variances (sdev's squared)
+tot_var <- sum(heavymetals_pca$sdev^2)
+
+## Create data.frame of the proportion of variance explained by each PC
+heavymetals_prop_var <- data.frame(
+  PC = 1:ncol(heavymetals_pca$x),
+  var = heavymetals_pca$sdev^2
+) %>% 
+  ## Using `mutate` to calculate prop. var and cum. prop. var
+  mutate(
+    prop_var = var / tot_var,
+    cum_prop_var = cumsum(var / tot_var)
+  )
+
+head(heavymetals_prop_var)
+
+## Plot the proportion of variance explained by each PC
+ggplot(heavymetals_prop_var, aes(PC, prop_var)) +
+  geom_point() +
+  geom_line() +
+  geom_vline(xintercept = 2.5, col = "firebrick") +
+  scale_x_continuous(breaks = 1:ncol(heavymetals_pca$x)) +
+  labs(y = "Proportion of variance") +
+  ggtitle("Proportion of variance explained by each PC",
+          subtitle = "Heavy metals data")
+
+## Plot the cumulative proportion of variance explained by each PC
+ggplot(heavymetals_prop_var, aes(PC, cum_prop_var)) +
+  geom_point() +
+  geom_line() +
+  geom_vline(xintercept = 2.5, col = "firebrick") +
+  scale_x_continuous(breaks = 1:ncol(heavymetals_pca$x)) +
+  labs(y = "Proportion of variance") +
+  ggtitle("Cumulative proportion of variance explained by each PC",
+          subtitle = "Heavy metals data")
+```
+
+We decide to keep the first 2 PCs (indicated by the red vertical line), as this coincides with the "elbow" in the scree plot.
+This leaves us with 88% of the total variance from the original data, which is not bad at all given that we went from 16 to only 2 dimensions!
+Other common cutoffs are to keep e.g. 90%, 95% or 99% of the original variance.
+Which would give us 3, 4 or 7 PCs respectively.
+However, for the purpose of this exercise, the first 2 will be enough.
+
+</details>
+
+##### 2. Make a biplot using the retained PCs and interpret. Is there a relationhsip between vicinity to the river and polution with certain metals?  {-}
+
+__Hint__: Try to color or label the data points by their vicinity to the river (using the `river` variable) to aid with interpretation. 
+
+<details><summary>Solution</summary>
+
+Making the biplot for the first 2 PCs.
+
+```{r heavymetals-pca-biplot}
+ggbiplot(heavymetals_pca, groups = heavymetals$river) +
+  labs(color = "Vicinity to river") +
+  ggtitle("Biplot for the heavy metals PCA")
+```
+
+The distinction that is immediately clear is that the levels of Manganese (Mn) seem to be higher in the areas far from the river (at both depths), compared to all other metals.
+
+We can also see this from the loadings, where Mn20 is the only measurement that is negatively correlated with PC1, while Mn5 is barely correlated with PC1.
+
+A potential hypothesis would be that as we move farther away from the river, the concentration of Mn increases with depth.
+
+```{r}
+heavymetals_pca$rotation[, 1:2]
+```
+
+</details>
+
+##### 3. Calculate the loadings and scores of the PCA using the SVD (function `svd`). Verify that the loadings and scores obtained using the SVD approach are equal to those obtained using the `prcomp` function. {-}
+
+<details><summary>Solution</summary>
+
+First perform the SVD.
+Remember to __center and scale__ the data matrix!
+
+```{r heavymetals-SVD}
+heavymetals_scaled <- scale(heavymetals_mx)
+heavymetals_svd <- svd(heavymetals_scaled)
+```
+
+Now compare the PC loadings with the right singular vectors $\mathbf{V}$ and the scores with the projections $\mathbf{Z_k} = \mathbf{XV_k}$.
+
+Note that it is possible that the signs are opposite, therefore we take the absolute values for the comparison.
+
+```{r}
+# remove dimnames for comparison
+heavymetals_loadings <- abs(unname(heavymetals_pca$rotation))
+heavymetals_V <- abs(heavymetals_svd$v)
+
+## Compare loadings with singular vectors
+all.equal(heavymetals_loadings, heavymetals_V)
+
+## Calculate projections
+heavymetals_Zk <- abs(heavymetals_scaled %*% heavymetals_svd$v)
+heavymetals_scores <- abs(unname(heavymetals_pca$x))
+
+all.equal(heavymetals_Zk, heavymetals_scores)
+```
+
+This again shows that PCA is nothing more than an SVD on the (centered and scaled) data matrix!
+
+</details>
 
 
 
