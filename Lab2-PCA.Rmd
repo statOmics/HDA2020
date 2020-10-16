@@ -10,7 +10,9 @@ output:
 ```{r setup, include=FALSE, cache=FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  fig.align = "center",
+  out.width = "100%"
 )
 ```
 
@@ -415,6 +417,140 @@ all.equal(heavymetals_Zk, heavymetals_scores)
 ```
 
 This again shows that PCA is nothing more than an SVD on the (centered and scaled) data matrix!
+
+</details>
+
+
+
+## Employment by industry in European countries
+
+Using the same data as in [Lab 1](./Lab1-Intro-SVD.html#32_Exercise:_employment_by_industry_in_European_countries).
+
+### Data prep {-}
+
+The `industries.txt` file contains data on the distribution of employment between 9 industrial sectors, in 26 European countries. The dataset stems from the Cold-War era; the data are expressed as percentages. Read in the data and explore its contents.
+
+```{r read-industries-data}
+industries_url <- "https://github.com/statOmics/HDA2020/raw/data/industries.txt"
+
+industries <- read_delim(industries_url, delim = " ", col_types = cols())
+
+# Explore contents
+industries
+summary(industries)
+```
+
+
+### Tasks {-}
+
+##### 1. Perform a PCA. How many PCs would you retain? Explain. {-}
+
+<details><summary>Solution</summary>
+
+Perform the PCA on the centered and scaled data matrix, after removing the `country` column.
+
+```{r industries-pca}
+industries_pca <- prcomp(industries[, -1], scale. = TRUE)
+summary(industries_pca)
+```
+
+```{r industries-pca-screeplot}
+## Calculate total variance by summing the PC variances (sdev's squared)
+tot_var <- sum(industries_pca$sdev^2)
+
+## Create data.frame of the proportion of variance explained by each PC
+industries_prop_var <- data.frame(
+  PC = 1:ncol(industries_pca$x),
+  var = industries_pca$sdev^2
+) %>% 
+  ## Using `mutate` to calculate prop. var and cum. prop. var
+  mutate(
+    prop_var = var / tot_var,
+    cum_prop_var = cumsum(var / tot_var)
+  )
+
+industries_prop_var
+
+## Plot the proportion of variance explained by each PC
+ggplot(industries_prop_var, aes(PC, prop_var)) +
+  geom_point() +
+  geom_line() +
+  geom_vline(xintercept = 5.5, col = "firebrick") +
+  scale_x_continuous(breaks = 1:ncol(industries_pca$x)) +
+  labs(y = "Proportion of variance") +
+  ggtitle("Proportion of variance explained by each PC",
+          subtitle = "Industries data")
+
+## Plot the cumulative proportion of variance explained by each PC
+ggplot(industries_prop_var, aes(PC, cum_prop_var)) +
+  geom_point() +
+  geom_line() +
+  geom_vline(xintercept = 5.5, col = "firebrick") +
+  scale_x_continuous(breaks = 1:ncol(industries_pca$x)) +
+  labs(y = "Proportion of variance") +
+  ggtitle("Cumulative proportion of variance explained by each PC",
+          subtitle = "Industries data")
+```
+
+In this case, retaining the first 5-7 PCs would be more appropriate.
+
+</details>
+
+##### 2. What could you say about e.g. Denmark based on the biplot? {-}
+
+<details><summary>Solution</summary>
+
+Construct the biplot.
+We don't really have a grouping variable to color the points, but we can add labels with the country names.
+
+```{r industries-pca-biplot}
+ggbiplot(industries_pca, labels = industries$country, labels.size = 2) +
+  ggtitle("Biplot for the industries PCA") +
+  xlim(c(-3.4, 3.4)) +
+  ylim(c(-2.2, 2.2))
+```
+
+The biplot shows how the work forces of the countries are distributed among the different industries.
+
+The employment in Denmark seems to be mainly concentrated in the finance, services and social sectors.
+
+</details>
+
+##### 3. Try to interpret the first 2 PCs. {-}
+
+<details><summary>Solution</summary>
+
+We can use the biplot and loadings to interpret the PCs.
+The biplot is given above, while the loadings can be accessed from the `$rotation` slot:
+
+```{r}
+industries_pca$rotation[, 1:2]
+```
+
+The first PC seems to be largely driven by the *agriculture* industry,
+i.e. it is separating countries mostly based on their employment in agriculture ()
+Thus, countries situated on the positive side of PC1 will likely have a *higher-than-average* employment in agriculture.
+On the other hand, countries on the negative side of PC1 are less agriculture-based economies and have higher employments in e.g. the social sector.
+
+Indeed, if we rank the countries by their agriculture employment, we largely recover the order of the countries along PC1, with Turkey clearly being the most agriculture-focused (remember that this data is from the Cold War era)!
+
+```{r}
+## Show ranking of agriculture industry
+industries %>% 
+  select(country, agriculture, social.sector, mining, finance) %>% 
+  arrange(desc(agriculture))
+```
+
+We could say that the first PC separates agriculture-based economies from non-agriculture-based.
+The fact that most other industries are negatively correlated with the first PC, seems to indicate that countries either have a large agriculture industry or distribute their work force more equally among the other industries.
+
+The 2 main exceptions are the mining and finance industries, which are (almost) perpendicular to PC1.
+
+The second PC is mostly driven by the difference between more services-based (on the negative side) and more industry-based (positive PC) economies.
+With the main drivers being the *mining* and *finance* sectors.
+
+Keep in mind however that these 2 PCs "only" explain 38.7% and 23.7% of the total variance, respectively.
+So there are likely still many patterns we are missing.
 
 </details>
 
