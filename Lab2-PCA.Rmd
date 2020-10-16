@@ -24,8 +24,8 @@ theme_set(theme_light())
 
 ## ggbiplot package to create ggplot-based biplots
 ## install with:
-# install.pacages("remotes")
-# remotes:: install_github("vqv/ggbiplot")
+# install.packages("remotes")
+# remotes::install_github("vqv/ggbiplot")
 library(ggbiplot)
 ```
 
