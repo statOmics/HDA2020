@@ -15,6 +15,7 @@ knitr::opts_chunk$set(
 
 ```{r libraries, warning=FALSE, message=FALSE}
 library(tidyverse)
+theme_set(theme_light())
 ```
 
 
@@ -29,14 +30,14 @@ The first part of this lab demonstrates the influence of standardizing the data 
 
 We will load the `trees` dataset (from base `R`, see `?trees` for more info) that contains  the height of a tree (in *feet*), the girth (or diameter in *inches*) and the volume (in *cubic feet*) of the tree. 
 For the purpose of this exercise, we will convert the continuous *volume* variable to a categorical variable (a `factor` in R lingo).
-A tree will be considered large if its volume is bigger than 20 cubic feet, and small otherwise.
+A tree will be considered large if its volume is bigger than 25 cubic feet, and small otherwise.
 
 ```{r}
 # Load data
 data(trees)
 
 # Convert volume to factor
-trees$vol_fac <- as.factor(ifelse(trees$Volume > 20, "large", "small"))
+trees$vol_fac <- as.factor(ifelse(trees$Volume > 25, "large", "small"))
 
 # Preview data
 head(trees)
@@ -46,13 +47,28 @@ summary(trees)
 Now suppose that the height was actually measured in __miles__ instead of feet.
 
 ```{r}
-tree_height_miles <- trees$Height / 5280
-tree_girth <- trees$Girth
+## Create new column in trees with height in miles
+trees$height_miles <- trees$Height / 5280
 
-# Create matrix using Height and Girth variables
-tree_mx <- cbind(tree_height_miles, tree_girth)
+# Create matrix using height_miles and Girth variables
+tree_mx <- cbind(trees$height_miles, trees$Girth)
 head(tree_mx)
 ```
+
+Always good to visualize the data.
+Here we plot the height (in miles) vs. the girth for each tree and size the dots according to their volume.
+We also use a color aesthetic to distinguish "large" and "small" trees.
+
+```{r trees-plot}
+ggplot(trees) +
+  geom_point(aes(Girth, height_miles, size = Volume, col = vol_fac),
+             alpha = 0.6) +
+  labs(x = "Girth (inches)", y = "Height (miles)",
+       color = "Volume class") +
+  ggtitle("Visualizing the original trees data")
+```
+
+Pay attention to the units on the axis and the (very) different orders of the units.
 
 
 ## Run PCA
