@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Adapted by Milan Malfait" />
+
+<meta name="date" content="2020-10-20" />
+
+<title>Analysis of High Dimensional Data - Lab 2</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<script src="site_libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+      code.sourceCode > span { display: inline-block; line-height: 1.25; }
+  code.sourceCode > span { color: inherit; text-decoration: inherit; }
+  code.sourceCode > span:empty { height: 1.2em; }
+  .sourceCode { overflow: visible; }
+  code.sourceCode { white-space: pre; position: relative; }
+  div.sourceCode { margin: 1em 0; }
+  pre.sourceCode { margin: 0; }
+  @media screen {
+  div.sourceCode { overflow: auto; }
+  }
+  @media print {
+  code.sourceCode { white-space: pre-wrap; }
+  code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+  }
+  pre.numberSource code
+    { counter-reset: source-line 0; }
+  pre.numberSource code > span
+    { position: relative; left: -4em; counter-increment: source-line; }
+  pre.numberSource code > span > a:first-child::before
+    { content: counter(source-line);
+      position: relative; left: -1em; text-align: right; vertical-align: baseline;
+      border: none; display: inline-block;
+      -webkit-touch-callout: none; -webkit-user-select: none;
+      -khtml-user-select: none; -moz-user-select: none;
+      -ms-user-select: none; user-select: none;
+      padding: 0 4px; width: 4em;
+      color: #aaaaaa;
+    }
+  pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+  div.sourceCode
+    {  background-color: #f8f8f8; }
+  @media screen {
+  code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+  }
+  code span.al { color: #ef2929; } /* Alert */
+  code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+  code span.at { color: #c4a000; } /* Attribute */
+  code span.bn { color: #0000cf; } /* BaseN */
+  code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+  code span.ch { color: #4e9a06; } /* Char */
+  code span.cn { color: #000000; } /* Constant */
+  code span.co { color: #8f5902; font-style: italic; } /* Comment */
+  code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+  code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+  code span.dt { color: #204a87; } /* DataType */
+  code span.dv { color: #0000cf; } /* DecVal */
+  code span.er { color: #a40000; font-weight: bold; } /* Error */
+  code span.ex { } /* Extension */
+  code span.fl { color: #0000cf; } /* Float */
+  code span.fu { color: #000000; } /* Function */
+  code span.im { } /* Import */
+  code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+  code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+  code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+  code span.ot { color: #8f5902; } /* Other */
+  code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+  code span.sc { color: #000000; } /* SpecialChar */
+  code span.ss { color: #4e9a06; } /* SpecialString */
+  code span.st { color: #4e9a06; } /* String */
+  code span.va { color: #000000; } /* Variable */
+  code span.vs { color: #4e9a06; } /* VerbatimString */
+  code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+    </style>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #c4a000; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #000000; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #000000; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #000000; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">HDA2020</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fa fa-chalkboard-teacher"></span>
+     
+    Lectures
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="intro.html">1. Introduction</a>
+    </li>
+    <li>
+      <a href="svd.html">2. Singular Value Decomposition</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fa fa-laptop"></span>
+     
+    Practicals
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Lab1-Intro-SVD.html">Lab 1</a>
+    </li>
+    <li>
+      <a href="Lab2-PCA.html">Lab 2</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/statOmics/HDA2020">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="http://statomics.github.io/">statOmics</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Analysis of High Dimensional Data - Lab 2</h1>
+<h4 class="author">Adapted by Milan Malfait</h4>
+<h4 class="date">20 Oct 2020</h4>
+
+</div>
+
+
+<hr />
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="kw">theme_set</span>(<span class="kw">theme_light</span>())</span>
+<span id="cb1-3"><a href="#cb1-3"></a></span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="co">## ggbiplot package to create ggplot-based biplots</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="co">## install with:</span></span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="co"># install.packages(&quot;remotes&quot;)</span></span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="co"># remotes::install_github(&quot;vqv/ggbiplot&quot;)</span></span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="kw">library</span>(ggbiplot)</span></code></pre></div>
+<div id="introduction" class="section level1">
+<h1><span class="header-section-number">1</span> Introduction</h1>
+<p>The first part of this lab demonstrates the influence of standardizing the data (i.e. working on the correlation matrix vs. working on the covariance matrix). Pay attention to what the output looks like and how it links to the biplot.)</p>
+</div>
+<div id="pca-demonstration" class="section level1">
+<h1><span class="header-section-number">2</span> PCA demonstration</h1>
+<div id="data-prep" class="section level2">
+<h2><span class="header-section-number">2.1</span> Data prep</h2>
+<p>We will load the <code>trees</code> dataset (from base <code>R</code>, see <code>?trees</code> for more info) that contains the height of a tree (in <em>feet</em>), the girth (or diameter in <em>inches</em>) and the volume (in <em>cubic feet</em>) of the tree. For the purpose of this exercise, we will convert the continuous <em>volume</em> variable to a categorical variable (a <code>factor</code> in R lingo). A tree will be considered large if its volume is bigger than 25 cubic feet, and small otherwise.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co"># Load data</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="kw">data</span>(trees)</span>
+<span id="cb2-3"><a href="#cb2-3"></a></span>
+<span id="cb2-4"><a href="#cb2-4"></a><span class="co"># Convert volume to factor</span></span>
+<span id="cb2-5"><a href="#cb2-5"></a>trees<span class="op">$</span>vol_fac &lt;-<span class="st"> </span><span class="kw">as.factor</span>(<span class="kw">ifelse</span>(trees<span class="op">$</span>Volume <span class="op">&gt;</span><span class="st"> </span><span class="dv">25</span>, <span class="st">&quot;large&quot;</span>, <span class="st">&quot;small&quot;</span>))</span>
+<span id="cb2-6"><a href="#cb2-6"></a></span>
+<span id="cb2-7"><a href="#cb2-7"></a><span class="co"># Preview data</span></span>
+<span id="cb2-8"><a href="#cb2-8"></a><span class="kw">head</span>(trees)</span></code></pre></div>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Girth"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Height"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Volume"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["vol_fac"],"name":[4],"type":["fctr"],"align":["left"]}],"data":[{"1":"8.3","2":"70","3":"10.3","4":"small","_rn_":"1"},{"1":"8.6","2":"65","3":"10.3","4":"small","_rn_":"2"},{"1":"8.8","2":"63","3":"10.2","4":"small","_rn_":"3"},{"1":"10.5","2":"72","3":"16.4","4":"small","_rn_":"4"},{"1":"10.7","2":"81","3":"18.8","4":"small","_rn_":"5"},{"1":"10.8","2":"83","3":"19.7","4":"small","_rn_":"6"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">summary</span>(trees)</span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="co">#&gt;      Girth           Height       Volume       vol_fac  </span></span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="co">#&gt;  Min.   : 8.30   Min.   :63   Min.   :10.20   large:14  </span></span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="co">#&gt;  1st Qu.:11.05   1st Qu.:72   1st Qu.:19.40   small:17  </span></span>
+<span id="cb3-5"><a href="#cb3-5"></a><span class="co">#&gt;  Median :12.90   Median :76   Median :24.20             </span></span>
+<span id="cb3-6"><a href="#cb3-6"></a><span class="co">#&gt;  Mean   :13.25   Mean   :76   Mean   :30.17             </span></span>
+<span id="cb3-7"><a href="#cb3-7"></a><span class="co">#&gt;  3rd Qu.:15.25   3rd Qu.:80   3rd Qu.:37.30             </span></span>
+<span id="cb3-8"><a href="#cb3-8"></a><span class="co">#&gt;  Max.   :20.60   Max.   :87   Max.   :77.00</span></span></code></pre></div>
+<p>Now suppose that the height was actually measured in <strong>miles</strong> instead of feet.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="co">## Create new column in trees with height in miles</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a>trees<span class="op">$</span>height_miles &lt;-<span class="st"> </span>trees<span class="op">$</span>Height <span class="op">/</span><span class="st"> </span><span class="dv">5280</span></span>
+<span id="cb4-3"><a href="#cb4-3"></a></span>
+<span id="cb4-4"><a href="#cb4-4"></a><span class="co"># Create matrix using height_miles and Girth variables</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a>tree_mx &lt;-<span class="st"> </span><span class="kw">cbind</span>(<span class="st">&quot;height_miles&quot;</span> =<span class="st"> </span>trees<span class="op">$</span>height_miles, <span class="st">&quot;girth&quot;</span> =<span class="st"> </span>trees<span class="op">$</span>Girth)</span>
+<span id="cb4-6"><a href="#cb4-6"></a><span class="kw">head</span>(tree_mx)</span>
+<span id="cb4-7"><a href="#cb4-7"></a><span class="co">#&gt;      height_miles girth</span></span>
+<span id="cb4-8"><a href="#cb4-8"></a><span class="co">#&gt; [1,]   0.01325758   8.3</span></span>
+<span id="cb4-9"><a href="#cb4-9"></a><span class="co">#&gt; [2,]   0.01231061   8.6</span></span>
+<span id="cb4-10"><a href="#cb4-10"></a><span class="co">#&gt; [3,]   0.01193182   8.8</span></span>
+<span id="cb4-11"><a href="#cb4-11"></a><span class="co">#&gt; [4,]   0.01363636  10.5</span></span>
+<span id="cb4-12"><a href="#cb4-12"></a><span class="co">#&gt; [5,]   0.01534091  10.7</span></span>
+<span id="cb4-13"><a href="#cb4-13"></a><span class="co">#&gt; [6,]   0.01571970  10.8</span></span></code></pre></div>
+<p>Always good to visualize the data. Here we plot the height (in miles) vs. the girth for each tree and size the dots according to their volume. We also use a color aesthetic to distinguish “large” and “small” trees.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>trees_plot &lt;-<span class="st"> </span><span class="kw">ggplot</span>(trees) <span class="op">+</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(Girth, height_miles, <span class="dt">size =</span> Volume, <span class="dt">col =</span> vol_fac),</span>
+<span id="cb5-3"><a href="#cb5-3"></a>             <span class="dt">alpha =</span> <span class="fl">0.6</span>) <span class="op">+</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Girth (inches)&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;Height (miles)&quot;</span>,</span>
+<span id="cb5-5"><a href="#cb5-5"></a>       <span class="dt">color =</span> <span class="st">&quot;Volume class&quot;</span>)</span>
+<span id="cb5-6"><a href="#cb5-6"></a></span>
+<span id="cb5-7"><a href="#cb5-7"></a>trees_plot <span class="op">+</span></span>
+<span id="cb5-8"><a href="#cb5-8"></a><span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;Visualizing the original trees data&quot;</span>)</span></code></pre></div>
+<p><img src="Lab2-PCA_files/figure-html/trees-plot-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>Pay attention to the units on the axis and the (very) different orders of the units.</p>
+<blockquote>
+<p>Q: looking at this plot, can you make a guess in which direction the largest variation lies, i.e. in which direction the first principal component would lie?</p>
+</blockquote>
+<p>To help with visualization of the PCs later on, we also make the plot using the <strong>centered and scaled</strong> data. The <code>scale</code> function can be used for this, so that all variables have mean 0 and unit variance.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co">## Center and scale data</span></span>
+<span id="cb6-2"><a href="#cb6-2"></a>trees_scaled &lt;-<span class="st"> </span><span class="kw">scale</span>(tree_mx, <span class="dt">center =</span> <span class="ot">TRUE</span>, <span class="dt">scale =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb6-3"><a href="#cb6-3"></a></span>
+<span id="cb6-4"><a href="#cb6-4"></a>trees_scaled_plot &lt;-<span class="st"> </span>trees_scaled <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb6-5"><a href="#cb6-5"></a><span class="st">  </span><span class="co">## Convert to data.frame and re-add Volume columns for plotting</span></span>
+<span id="cb6-6"><a href="#cb6-6"></a><span class="st">  </span><span class="kw">data.frame</span>(<span class="dt">Volume =</span> trees<span class="op">$</span>Volume, <span class="dt">vol_fac =</span> trees<span class="op">$</span>vol_fac) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb6-7"><a href="#cb6-7"></a><span class="st">  </span><span class="kw">ggplot</span>() <span class="op">+</span></span>
+<span id="cb6-8"><a href="#cb6-8"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(girth, height_miles, <span class="dt">size =</span> Volume, <span class="dt">col =</span> vol_fac),</span>
+<span id="cb6-9"><a href="#cb6-9"></a>             <span class="dt">alpha =</span> <span class="fl">0.6</span>) <span class="op">+</span></span>
+<span id="cb6-10"><a href="#cb6-10"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Girth (inches), standardized&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;Height (miles), standardized&quot;</span>, </span>
+<span id="cb6-11"><a href="#cb6-11"></a>       <span class="dt">color =</span> <span class="st">&quot;&quot;</span>) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb6-12"><a href="#cb6-12"></a><span class="st">  </span><span class="kw">coord_equal</span>(<span class="dt">xlim =</span> <span class="kw">c</span>(<span class="op">-</span><span class="fl">2.3</span>, <span class="fl">2.3</span>), <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="op">-</span><span class="fl">2.3</span>, <span class="fl">2.3</span>))</span>
+<span id="cb6-13"><a href="#cb6-13"></a></span>
+<span id="cb6-14"><a href="#cb6-14"></a>trees_scaled_plot <span class="op">+</span></span>
+<span id="cb6-15"><a href="#cb6-15"></a><span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;Visualizing the scaled trees data&quot;</span>)</span></code></pre></div>
+<p><img src="Lab2-PCA_files/figure-html/unnamed-chunk-3-1.png" width="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="run-pca" class="section level2">
+<h2><span class="header-section-number">2.2</span> Run PCA</h2>
+<p>We run PCA on the <em>height (in miles)</em> and <em>girth</em> variables and inspect the results.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># Run PCA with prcomp function, which uses SVD internally (see ?prcomp)</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a><span class="co"># Note that prcomp centers the matrix internally by default but does not scale it</span></span>
+<span id="cb7-3"><a href="#cb7-3"></a><span class="co"># (center = TRUE, scale. = FALSE)</span></span>
+<span id="cb7-4"><a href="#cb7-4"></a>tree_pca &lt;-<span class="st"> </span><span class="kw">prcomp</span>(tree_mx)</span>
+<span id="cb7-5"><a href="#cb7-5"></a><span class="kw">summary</span>(tree_pca)</span>
+<span id="cb7-6"><a href="#cb7-6"></a><span class="co">#&gt; Importance of components:</span></span>
+<span id="cb7-7"><a href="#cb7-7"></a><span class="co">#&gt;                          PC1      PC2</span></span>
+<span id="cb7-8"><a href="#cb7-8"></a><span class="co">#&gt; Standard deviation     3.138 0.001031</span></span>
+<span id="cb7-9"><a href="#cb7-9"></a><span class="co">#&gt; Proportion of Variance 1.000 0.000000</span></span>
+<span id="cb7-10"><a href="#cb7-10"></a><span class="co">#&gt; Cumulative Proportion  1.000 1.000000</span></span></code></pre></div>
+<p><strong>Note:</strong> The first component explains almost 100% of the variability in the data.</p>
+<p>The <strong>loadings</strong> of the PCA are stored in the <code>$rotation</code> slot of the <code>prcomp</code> result, while the <code>$sdev</code> slot contains the standard deviations of the principal components.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>tree_pca<span class="op">$</span>rotation</span>
+<span id="cb8-2"><a href="#cb8-2"></a><span class="co">#&gt;                       PC1           PC2</span></span>
+<span id="cb8-3"><a href="#cb8-3"></a><span class="co">#&gt; height_miles 0.0001996911 -0.9999999801</span></span>
+<span id="cb8-4"><a href="#cb8-4"></a><span class="co">#&gt; girth        0.9999999801  0.0001996911</span></span>
+<span id="cb8-5"><a href="#cb8-5"></a>tree_pca<span class="op">$</span>sdev</span>
+<span id="cb8-6"><a href="#cb8-6"></a><span class="co">#&gt; [1] 3.138138679 0.001031321</span></span></code></pre></div>
+<p>Remember that the Principal Components are <strong>linear combinations</strong> of the original variables. The loadings tell you what the contribution (or weight) of each variable is to the PC. Here we see that the first PC is completely dominated by the girth variable, while the second component is basically (the negative) height variable. Since the PCs are ordered by the amount of variance they retain from the original data, we would conclude that most of the variance in the data comes from the girth variable.</p>
+<blockquote>
+<p>Q: Is this in line with what you expected from the original plot? Why not? (Think about the units we are using here!)</p>
+</blockquote>
+<p>The result from <code>prcomp</code> also contains an <code>$x</code> slot, which contains the projected values of the original data matrix onto the principal components (also called the <em>PC scores</em>). This is what we will use to construct the PCA plot.</p>
+<div id="visualize-principal-components" class="section level3">
+<h3><span class="header-section-number">2.2.1</span> Visualize Principal Components</h3>
+<p>Scale the PC loadings by their standard deviations (singular values) to project them back to the original data space. We also transpose the <code>rotation</code> matrix so that the variables are in columns and PCs in the rows, so that we can overlay them on the original trees plot.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="co">## Transpose the loadings so that the PCs are in the rows, for plotting</span></span>
+<span id="cb9-2"><a href="#cb9-2"></a>pc_loadings &lt;-<span class="st"> </span><span class="kw">t</span>(tree_pca<span class="op">$</span>rotation)</span>
+<span id="cb9-3"><a href="#cb9-3"></a></span>
+<span id="cb9-4"><a href="#cb9-4"></a><span class="co">## Reuse plot from before and add PCs</span></span>
+<span id="cb9-5"><a href="#cb9-5"></a>trees_scaled_plot <span class="op">+</span></span>
+<span id="cb9-6"><a href="#cb9-6"></a><span class="st">  </span><span class="kw">geom_segment</span>(</span>
+<span id="cb9-7"><a href="#cb9-7"></a>    <span class="dt">data =</span> <span class="kw">data.frame</span>(pc_loadings),</span>
+<span id="cb9-8"><a href="#cb9-8"></a>    <span class="kw">aes</span>(<span class="dt">x =</span> <span class="dv">0</span>, <span class="dt">xend =</span> girth, <span class="dt">y =</span> <span class="dv">0</span>, <span class="dt">yend =</span> height_miles),</span>
+<span id="cb9-9"><a href="#cb9-9"></a>    <span class="dt">arrow =</span> <span class="kw">arrow</span>(<span class="dt">length=</span><span class="kw">unit</span>(<span class="fl">0.1</span>,<span class="st">&quot;cm&quot;</span>))</span>
+<span id="cb9-10"><a href="#cb9-10"></a>  ) <span class="op">+</span></span>
+<span id="cb9-11"><a href="#cb9-11"></a><span class="st">  </span><span class="kw">geom_text</span>(</span>
+<span id="cb9-12"><a href="#cb9-12"></a>    <span class="dt">data =</span> <span class="kw">data.frame</span>(pc_loadings),</span>
+<span id="cb9-13"><a href="#cb9-13"></a>    <span class="kw">aes</span>(<span class="dt">x =</span> girth, <span class="dt">y =</span> height_miles, <span class="dt">label =</span> <span class="kw">rownames</span>(pc_loadings)),</span>
+<span id="cb9-14"><a href="#cb9-14"></a>    <span class="dt">vjust =</span> <span class="st">&quot;outward&quot;</span>, <span class="dt">hjust =</span> <span class="st">&quot;outward&quot;</span></span>
+<span id="cb9-15"><a href="#cb9-15"></a>  )</span></code></pre></div>
+<p><img src="Lab2-PCA_files/figure-html/tree-plot-PC-loadings-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>From this plot we see that the PCs are not in the directions we expected. PC1 should point in the direction of greatest variability.</p>
+</div>
+<div id="visualize-pca-with-biplot" class="section level3">
+<h3><span class="header-section-number">2.2.2</span> Visualize PCA with biplot</h3>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="kw">ggbiplot</span>(tree_pca, <span class="dt">groups =</span> trees<span class="op">$</span>vol_fac, <span class="dt">alpha =</span> <span class="dv">0</span>) <span class="op">+</span></span>
+<span id="cb10-2"><a href="#cb10-2"></a><span class="st">  </span><span class="co">## Add points layer to color and size points</span></span>
+<span id="cb10-3"><a href="#cb10-3"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">col =</span> trees<span class="op">$</span>vol_fac, <span class="dt">size =</span> trees<span class="op">$</span>Volume), <span class="dt">alpha =</span> <span class="fl">0.6</span>) <span class="op">+</span></span>
+<span id="cb10-4"><a href="#cb10-4"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">size =</span> <span class="st">&quot;Volume&quot;</span>, <span class="dt">col =</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
+<p><img src="Lab2-PCA_files/figure-html/tree-pca-biplot-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>We see that trees high in volume tend to have a high tree girth, but the height does not give any information on tree volume. This is likely wrong, since we know that the height of a tree should have at least some influence on its volume. The problem here is that because of the 2 very different unit measures (<em>miles</em> and <em>inches</em>), the influence of the girth is inflated just because the order of the scale is much larger.</p>
+<p>This is also reflected in the variances of these variables:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="kw">round</span>(<span class="kw">diag</span>(<span class="kw">cov</span>(tree_mx)), <span class="dv">8</span>)</span>
+<span id="cb11-2"><a href="#cb11-2"></a><span class="co">#&gt; height_miles        girth </span></span>
+<span id="cb11-3"><a href="#cb11-3"></a><span class="co">#&gt;   0.00000146   9.84791398</span></span></code></pre></div>
+<p>We see that the variance of the <em>girth</em> variable is several orders of magnitude larger than that of the height (again, because of the different units) and this is reflected in the PCA.</p>
+<p>We could use the same units, or we could standardize the variables by dividing by their standard deviations. Both will lead to a more balanced picture of the variability. Of course in this case one can argue that the variables should have the same unit but not be standardized, which may be a valid argument, were it not that we are measuring two different things (the height and the diameter). So even if we used the same units, it is recommended to also standardize the variables.</p>
+<p>Imagine if we would be measuring the mass (<span class="math inline">\(kg\)</span>) of the tree and the girth (<span class="math inline">\(m\)</span>) of the tree, the scale on which both should be measured is no longer clear, since niether kilograms can be converted to meters nor meters converted to kilograms. In this case we have a clear argument to work on the standardized variables.</p>
+</div>
+</div>
+<div id="redo-pca-on-standardized-variables" class="section level2">
+<h2><span class="header-section-number">2.3</span> Redo PCA on standardized variables</h2>
+<p>We will leave the <em>height</em> on the <em>miles</em> scale, but now we will standardize the variables before performing the PCA. I.e. in addition to <em>centering</em> the matrix (subtracting the column means), we also divide it by its column standard deviations. Note that these operations can be done in one go with the <code>prcomp</code> function by specifying <code>center = TRUE</code> and <code>scale. = TRUE</code> (note the <code>.</code>!).</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="co">## Compute PCA on centered and scaled matrix</span></span>
+<span id="cb12-2"><a href="#cb12-2"></a>tree_pca_scaled &lt;-<span class="st"> </span><span class="kw">prcomp</span>(tree_mx, <span class="dt">center =</span> <span class="ot">TRUE</span>, <span class="dt">scale. =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb12-3"><a href="#cb12-3"></a><span class="kw">summary</span>(tree_pca_scaled)</span>
+<span id="cb12-4"><a href="#cb12-4"></a><span class="co">#&gt; Importance of components:</span></span>
+<span id="cb12-5"><a href="#cb12-5"></a><span class="co">#&gt;                           PC1    PC2</span></span>
+<span id="cb12-6"><a href="#cb12-6"></a><span class="co">#&gt; Standard deviation     1.2326 0.6933</span></span>
+<span id="cb12-7"><a href="#cb12-7"></a><span class="co">#&gt; Proportion of Variance 0.7596 0.2404</span></span>
+<span id="cb12-8"><a href="#cb12-8"></a><span class="co">#&gt; Cumulative Proportion  0.7596 1.0000</span></span>
+<span id="cb12-9"><a href="#cb12-9"></a>tree_pca_scaled<span class="op">$</span>rotation</span>
+<span id="cb12-10"><a href="#cb12-10"></a><span class="co">#&gt;                    PC1        PC2</span></span>
+<span id="cb12-11"><a href="#cb12-11"></a><span class="co">#&gt; height_miles 0.7071068 -0.7071068</span></span>
+<span id="cb12-12"><a href="#cb12-12"></a><span class="co">#&gt; girth        0.7071068  0.7071068</span></span>
+<span id="cb12-13"><a href="#cb12-13"></a>tree_pca_scaled<span class="op">$</span>sdev</span>
+<span id="cb12-14"><a href="#cb12-14"></a><span class="co">#&gt; [1] 1.2325908 0.6933397</span></span></code></pre></div>
+<p>We will again plot the original data, but this time using the <strong>scaled and centered</strong> values, and overlay the plot with the PCs.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>pc_scaled_loadings &lt;-<span class="st"> </span><span class="kw">t</span>(tree_pca_scaled<span class="op">$</span>rotation)</span>
+<span id="cb13-2"><a href="#cb13-2"></a></span>
+<span id="cb13-3"><a href="#cb13-3"></a><span class="co">## Reuse plot from before and add PCs</span></span>
+<span id="cb13-4"><a href="#cb13-4"></a>trees_scaled_plot <span class="op">+</span></span>
+<span id="cb13-5"><a href="#cb13-5"></a><span class="st">  </span><span class="kw">geom_segment</span>(</span>
+<span id="cb13-6"><a href="#cb13-6"></a>    <span class="dt">data =</span> <span class="kw">data.frame</span>(pc_scaled_loadings),</span>
+<span id="cb13-7"><a href="#cb13-7"></a>    <span class="kw">aes</span>(<span class="dt">x =</span> <span class="dv">0</span>, <span class="dt">xend =</span> girth, <span class="dt">y =</span> <span class="dv">0</span>, <span class="dt">yend =</span> height_miles),</span>
+<span id="cb13-8"><a href="#cb13-8"></a>    <span class="dt">arrow =</span> <span class="kw">arrow</span>(<span class="dt">length=</span><span class="kw">unit</span>(<span class="fl">0.2</span>,<span class="st">&quot;cm&quot;</span>))</span>
+<span id="cb13-9"><a href="#cb13-9"></a>  ) <span class="op">+</span></span>
+<span id="cb13-10"><a href="#cb13-10"></a><span class="st">  </span><span class="kw">geom_text</span>(</span>
+<span id="cb13-11"><a href="#cb13-11"></a>    <span class="dt">data =</span> <span class="kw">data.frame</span>(pc_scaled_loadings),</span>
+<span id="cb13-12"><a href="#cb13-12"></a>    <span class="kw">aes</span>(<span class="dt">x =</span> girth, <span class="dt">y =</span> height_miles, <span class="dt">label =</span> <span class="kw">rownames</span>(pc_scaled_loadings)),</span>
+<span id="cb13-13"><a href="#cb13-13"></a>    <span class="dt">nudge_x =</span> <span class="fl">0.1</span>, <span class="dt">nudge_y =</span> <span class="fl">0.2</span></span>
+<span id="cb13-14"><a href="#cb13-14"></a>  )</span></code></pre></div>
+<p><img src="Lab2-PCA_files/figure-html/unnamed-chunk-8-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>This is more in line with our expectations. PC1 point in the direction of greatest variability, with PC2 orthogonal and pointing in the direction of second greatest variabilty.</p>
+<p>Also note from the lengths of the PC vectors that the contributions of height and girth are equal to both PCs.</p>
+<p>The biplot:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="kw">ggbiplot</span>(tree_pca_scaled, <span class="dt">groups =</span> trees<span class="op">$</span>vol_fac, <span class="dt">alpha =</span> <span class="dv">0</span>) <span class="op">+</span></span>
+<span id="cb14-2"><a href="#cb14-2"></a><span class="st">  </span><span class="co">## Add points layer to color and size points</span></span>
+<span id="cb14-3"><a href="#cb14-3"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">col =</span> trees<span class="op">$</span>vol_fac, <span class="dt">size =</span> trees<span class="op">$</span>Volume), <span class="dt">alpha =</span> <span class="fl">0.6</span>) <span class="op">+</span></span>
+<span id="cb14-4"><a href="#cb14-4"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">size =</span> <span class="st">&quot;Volume&quot;</span>, <span class="dt">col =</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
+<p><img src="Lab2-PCA_files/figure-html/tree-scaled-pca-biplot-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>We now get a much more realistic result, where the <em>height</em> and <em>girth</em> variables have more equal contributions to the PCs.</p>
+<p>PC1 can be interpreted as separating small and large volume trees. A potential explanation of PC2 would be the separation between trees that have a similar volume but differ in their height-to-girth ratios, i.e. short wide trees and long thin trees.</p>
+<p>Note that we would get the exact same result (apart maybe from the signs) if we used <em>height</em> on the original <em>feet</em> scale. Since the conversion is just a multiplication by a constant, scaling the column by its standard deviation will give the same result. (You can verify this for yourself by redoing the PCA using the original height column from <code>trees</code>, without converting it to miles.)</p>
+</div>
+</div>
+<div id="exercises" class="section level1">
+<h1><span class="header-section-number">3</span> Exercises</h1>
+<div id="heavy-metals-near-the-schelde" class="section level2">
+<h2><span class="header-section-number">3.1</span> Heavy metals near the Schelde</h2>
+<div id="data-prep-1" class="section level3 unnumbered">
+<h3>Data prep</h3>
+<p>At the department of analytical and physical chemistry, researchers wanted to investigate the pollution of grasslands in the vicinity of the river Schelde. Concentrations of 8 heavy metals were measured on 19 different locations, each time at a depth of 5 cm and at a depth of 20 cm; the data set is called heavymetals. Vicinity to the river was 0 (far) or 1 (close).</p>
+<p>Read in the data as follows:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>heavymetals_url &lt;-<span class="st"> &quot;https://github.com/statOmics/HDA2020/raw/data/heavymetals.csv&quot;</span></span>
+<span id="cb15-2"><a href="#cb15-2"></a></span>
+<span id="cb15-3"><a href="#cb15-3"></a>heavymetals &lt;-<span class="st"> </span><span class="kw">read_csv</span>(heavymetals_url,</span>
+<span id="cb15-4"><a href="#cb15-4"></a>  <span class="dt">col_types =</span> <span class="kw">cols</span>(</span>
+<span id="cb15-5"><a href="#cb15-5"></a>    <span class="dt">location =</span> <span class="kw">col_integer</span>(),</span>
+<span id="cb15-6"><a href="#cb15-6"></a>    <span class="dt">river =</span> <span class="kw">col_logical</span>(),</span>
+<span id="cb15-7"><a href="#cb15-7"></a>    <span class="dt">.default =</span> <span class="kw">col_double</span>()</span>
+<span id="cb15-8"><a href="#cb15-8"></a>  )</span>
+<span id="cb15-9"><a href="#cb15-9"></a>)</span>
+<span id="cb15-10"><a href="#cb15-10"></a></span>
+<span id="cb15-11"><a href="#cb15-11"></a><span class="co">## Recode the &quot;river&quot; variable</span></span>
+<span id="cb15-12"><a href="#cb15-12"></a>heavymetals<span class="op">$</span>river &lt;-<span class="st"> </span><span class="kw">ifelse</span>(heavymetals<span class="op">$</span>river, <span class="st">&quot;close&quot;</span>, <span class="st">&quot;far&quot;</span>)</span>
+<span id="cb15-13"><a href="#cb15-13"></a></span>
+<span id="cb15-14"><a href="#cb15-14"></a>heavymetals</span></code></pre></div>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["location"],"name":[1],"type":["int"],"align":["right"]},{"label":["Cd5"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Cd20"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Cr5"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Cr20"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["Cu5"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["Cu20"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["Fe5"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["Fe20"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["Mn5"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["Mn20"],"name":[11],"type":["dbl"],"align":["right"]},{"label":["Ni5"],"name":[12],"type":["dbl"],"align":["right"]},{"label":["Ni20"],"name":[13],"type":["dbl"],"align":["right"]},{"label":["Pb5"],"name":[14],"type":["dbl"],"align":["right"]},{"label":["Pb20"],"name":[15],"type":["dbl"],"align":["right"]},{"label":["Zn5"],"name":[16],"type":["dbl"],"align":["right"]},{"label":["Zn20"],"name":[17],"type":["dbl"],"align":["right"]},{"label":["river"],"name":[18],"type":["chr"],"align":["left"]}],"data":[{"1":"1","2":"11.985549","3":"10.248267","4":"222.6264","5":"201.70411","6":"53.07369","7":"47.12797","8":"21082.42","9":"21115.64","10":"560.6947","11":"539.5100","12":"26.56467","13":"28.18578","14":"125.56169","15":"110.01663","16":"669.7809","17":"566.8739","18":"close"},{"1":"2","2":"18.879780","3":"21.305590","4":"380.8352","5":"472.99684","6":"87.10535","7":"98.22006","8":"26086.57","9":"27674.42","10":"585.1739","11":"439.7220","12":"30.23035","13":"31.93281","14":"228.32679","15":"249.61578","16":"1308.6743","17":"1500.2075","18":"close"},{"1":"3","2":"18.596573","3":"25.293862","4":"367.9316","5":"471.08007","6":"85.19597","7":"99.34696","8":"26505.51","9":"28401.95","10":"496.1380","11":"492.5562","12":"29.31519","13":"32.59391","14":"242.45428","15":"271.70865","16":"1338.8758","17":"1579.7562","18":"close"},{"1":"4","2":"29.266197","3":"28.375580","4":"509.7210","5":"536.50892","6":"81.33271","7":"107.37870","8":"26227.87","9":"31017.35","10":"507.9277","11":"445.9943","12":"29.81537","13":"35.30271","14":"220.86275","15":"283.04297","16":"1311.1743","17":"1696.8871","18":"close"},{"1":"5","2":"27.338299","3":"16.642950","4":"459.4522","5":"374.88307","6":"80.17195","7":"89.43576","8":"26673.33","9":"25223.07","10":"492.9521","11":"375.1916","12":"30.20944","13":"30.45378","14":"240.26792","15":"256.05533","16":"1356.3598","17":"1399.9071","18":"close"},{"1":"6","2":"26.754830","3":"16.872317","4":"446.9164","5":"284.42600","6":"75.38131","7":"90.20572","8":"27968.35","9":"28081.93","10":"646.2482","11":"519.3165","12":"32.63791","13":"33.31600","14":"216.51083","15":"268.10021","16":"1217.5930","17":"1247.8162","18":"close"},{"1":"7","2":"11.548973","3":"7.609503","4":"230.0818","5":"163.21621","6":"65.51117","7":"52.95518","8":"23758.23","9":"24895.19","10":"488.3403","11":"537.3528","12":"27.50150","13":"28.15083","14":"155.99441","15":"131.08405","16":"815.9884","17":"580.0426","18":"close"},{"1":"8","2":"17.179219","3":"21.849109","4":"395.0488","5":"489.85391","6":"91.93017","7":"107.53452","8":"28797.24","9":"30719.77","10":"532.7157","11":"501.3108","12":"31.76529","13":"34.90394","14":"232.54632","15":"283.72023","16":"1329.7470","17":"1656.1937","18":"close"},{"1":"9","2":"39.296271","3":"26.904142","4":"975.0546","5":"650.84050","6":"99.04384","7":"116.65499","8":"35077.03","9":"33646.19","10":"683.7433","11":"513.3080","12":"37.15136","13":"37.86172","14":"255.22714","15":"305.49330","16":"1654.5990","17":"1771.6964","18":"close"},{"1":"10","2":"33.078424","3":"15.413639","4":"693.1379","5":"340.65207","6":"101.80054","7":"103.67347","8":"32274.35","9":"27464.41","10":"517.5853","11":"482.9268","12":"35.32560","13":"32.34196","14":"298.29949","15":"308.11349","16":"1901.8439","17":"1452.4971","18":"close"},{"1":"11","2":"6.025691","3":"6.669548","4":"130.4749","5":"142.14971","6":"31.31797","7":"34.49430","8":"17239.35","9":"17701.78","10":"570.2983","11":"574.1755","12":"19.54255","13":"21.29522","14":"74.04669","15":"83.98861","16":"345.4588","17":"386.6180","18":"far"},{"1":"12","2":"18.786014","3":"8.640800","4":"384.9590","5":"200.85500","6":"70.54322","7":"51.86600","8":"28172.60","9":"24931.33","10":"750.8904","11":"582.5500","12":"29.43778","13":"28.38950","14":"194.00760","15":"135.62000","16":"1024.9100","17":"606.7100","18":"far"},{"1":"13","2":"11.140970","3":"6.368913","4":"235.0636","5":"146.69533","6":"51.67892","7":"38.86111","8":"23737.33","9":"23093.02","10":"534.2837","11":"520.5979","12":"28.19243","13":"27.44826","14":"146.21498","15":"106.96930","16":"668.7661","17":"434.7465","18":"far"},{"1":"14","2":"4.869685","3":"3.532557","4":"118.4342","5":"92.62302","6":"33.22111","7":"25.55361","8":"21606.80","9":"25633.13","10":"563.2516","11":"699.2398","12":"25.27164","13":"27.79606","14":"82.46223","15":"65.77015","16":"323.4784","17":"241.3849","18":"far"},{"1":"15","2":"5.575173","3":"19.845155","4":"124.4373","5":"100.48102","6":"32.20866","7":"26.33616","8":"19375.48","9":"19469.80","10":"440.3721","11":"464.0460","12":"23.44553","13":"23.39211","14":"95.35361","15":"78.96503","16":"368.7073","17":"281.4119","18":"far"},{"1":"16","2":"9.117976","3":"6.556471","4":"186.8250","5":"141.16237","6":"46.04302","7":"38.48612","8":"26650.03","9":"25138.14","10":"561.3135","11":"621.4999","12":"30.49157","13":"28.06870","14":"132.47829","15":"108.52806","16":"569.7508","17":"431.9553","18":"far"},{"1":"17","2":"16.317868","3":"10.160500","4":"309.2241","5":"196.85500","6":"66.06039","7":"50.70850","8":"27213.95","9":"25112.00","10":"632.5467","11":"623.7700","12":"32.36776","13":"29.77600","14":"195.13049","15":"145.42000","16":"921.7745","17":"639.3400","18":"far"},{"1":"18","2":"9.269442","3":"5.417358","4":"180.3484","5":"116.94314","6":"43.98123","7":"31.59838","8":"22358.66","9":"21950.63","10":"551.4425","11":"556.1507","12":"27.40042","13":"25.61757","14":"131.76600","15":"88.06935","16":"574.9027","17":"356.8335","18":"far"},{"1":"19","2":"23.604106","3":"10.588875","4":"426.6221","5":"209.51487","6":"79.50164","7":"63.06590","8":"30781.75","9":"25662.81","10":"627.9179","11":"546.5369","12":"33.74514","13":"29.87649","14":"226.45271","15":"173.39196","16":"1190.1724","17":"738.3789","18":"close"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a><span class="kw">dim</span>(heavymetals)</span></code></pre></div>
+<pre><code>#&gt; [1] 19 18</code></pre>
+<p>Note that there are 2 columns per heavy metal, one for the measurement at 5 cm depth and one at 20 cm depth.</p>
+</div>
+<div id="tasks" class="section level3 unnumbered">
+<h3>Tasks</h3>
+<div id="conduct-a-pca-using-standardized-variables.-how-many-pcs-would-you-retain-motivate-the-answerinterpret." class="section level5 unnumbered">
+<h5>1. Conduct a PCA using <em>standardized variables</em>. How many PCs would you retain? Motivate the answer/interpret.</h5>
+<p>Think about which columns you need from the original data!</p>
+<details>
+<p><summary>Solution</summary></p>
+<p>First do the PCA, excluding the <code>location</code> and <code>river</code> columns.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a><span class="co">## Remove &#39;location&#39; and &#39;river&#39; columns when creating matrix</span></span>
+<span id="cb18-2"><a href="#cb18-2"></a>heavymetals_mx &lt;-<span class="st"> </span><span class="kw">select</span>(heavymetals, <span class="op">-</span>location, <span class="op">-</span>river) <span class="op">%&gt;%</span></span>
+<span id="cb18-3"><a href="#cb18-3"></a><span class="st">  </span><span class="kw">as.matrix</span>()</span>
+<span id="cb18-4"><a href="#cb18-4"></a></span>
+<span id="cb18-5"><a href="#cb18-5"></a><span class="co">## Run PCA on centered and scaled data</span></span>
+<span id="cb18-6"><a href="#cb18-6"></a>heavymetals_pca &lt;-<span class="st"> </span><span class="kw">prcomp</span>(heavymetals_mx, <span class="dt">center =</span> <span class="ot">TRUE</span>, <span class="dt">scale. =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb18-7"><a href="#cb18-7"></a><span class="kw">summary</span>(heavymetals_pca)</span>
+<span id="cb18-8"><a href="#cb18-8"></a><span class="co">#&gt; Importance of components:</span></span>
+<span id="cb18-9"><a href="#cb18-9"></a><span class="co">#&gt;                           PC1    PC2     PC3     PC4     PC5    PC6     PC7</span></span>
+<span id="cb18-10"><a href="#cb18-10"></a><span class="co">#&gt; Standard deviation     3.4784 1.4209 0.83048 0.71075 0.50170 0.4020 0.31765</span></span>
+<span id="cb18-11"><a href="#cb18-11"></a><span class="co">#&gt; Proportion of Variance 0.7562 0.1262 0.04311 0.03157 0.01573 0.0101 0.00631</span></span>
+<span id="cb18-12"><a href="#cb18-12"></a><span class="co">#&gt; Cumulative Proportion  0.7562 0.8824 0.92549 0.95706 0.97279 0.9829 0.98920</span></span>
+<span id="cb18-13"><a href="#cb18-13"></a><span class="co">#&gt;                            PC8     PC9    PC10   PC11    PC12    PC13    PC14</span></span>
+<span id="cb18-14"><a href="#cb18-14"></a><span class="co">#&gt; Standard deviation     0.26517 0.19480 0.18158 0.1324 0.08871 0.06573 0.04041</span></span>
+<span id="cb18-15"><a href="#cb18-15"></a><span class="co">#&gt; Proportion of Variance 0.00439 0.00237 0.00206 0.0011 0.00049 0.00027 0.00010</span></span>
+<span id="cb18-16"><a href="#cb18-16"></a><span class="co">#&gt; Cumulative Proportion  0.99359 0.99597 0.99803 0.9991 0.99961 0.99988 0.99999</span></span>
+<span id="cb18-17"><a href="#cb18-17"></a><span class="co">#&gt;                           PC15     PC16</span></span>
+<span id="cb18-18"><a href="#cb18-18"></a><span class="co">#&gt; Standard deviation     0.01510 0.003029</span></span>
+<span id="cb18-19"><a href="#cb18-19"></a><span class="co">#&gt; Proportion of Variance 0.00001 0.000000</span></span>
+<span id="cb18-20"><a href="#cb18-20"></a><span class="co">#&gt; Cumulative Proportion  1.00000 1.000000</span></span></code></pre></div>
+<p>To choose the number of PCs to retain, we look at the proportion of variance that each PC explains. This can be visualized using what is known as a <em>scree plot</em>.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a><span class="co">## Calculate total variance by summing the PC variances (sdev&#39;s squared)</span></span>
+<span id="cb19-2"><a href="#cb19-2"></a>tot_var &lt;-<span class="st"> </span><span class="kw">sum</span>(heavymetals_pca<span class="op">$</span>sdev<span class="op">^</span><span class="dv">2</span>)</span>
+<span id="cb19-3"><a href="#cb19-3"></a></span>
+<span id="cb19-4"><a href="#cb19-4"></a><span class="co">## Create data.frame of the proportion of variance explained by each PC</span></span>
+<span id="cb19-5"><a href="#cb19-5"></a>heavymetals_prop_var &lt;-<span class="st"> </span><span class="kw">data.frame</span>(</span>
+<span id="cb19-6"><a href="#cb19-6"></a>  <span class="dt">PC =</span> <span class="dv">1</span><span class="op">:</span><span class="kw">ncol</span>(heavymetals_pca<span class="op">$</span>x),</span>
+<span id="cb19-7"><a href="#cb19-7"></a>  <span class="dt">var =</span> heavymetals_pca<span class="op">$</span>sdev<span class="op">^</span><span class="dv">2</span></span>
+<span id="cb19-8"><a href="#cb19-8"></a>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb19-9"><a href="#cb19-9"></a><span class="st">  </span><span class="co">## Using `mutate` to calculate prop. var and cum. prop. var</span></span>
+<span id="cb19-10"><a href="#cb19-10"></a><span class="st">  </span><span class="kw">mutate</span>(</span>
+<span id="cb19-11"><a href="#cb19-11"></a>    <span class="dt">prop_var =</span> var <span class="op">/</span><span class="st"> </span>tot_var,</span>
+<span id="cb19-12"><a href="#cb19-12"></a>    <span class="dt">cum_prop_var =</span> <span class="kw">cumsum</span>(var <span class="op">/</span><span class="st"> </span>tot_var)</span>
+<span id="cb19-13"><a href="#cb19-13"></a>  )</span>
+<span id="cb19-14"><a href="#cb19-14"></a></span>
+<span id="cb19-15"><a href="#cb19-15"></a><span class="kw">head</span>(heavymetals_prop_var)</span></code></pre></div>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["PC"],"name":[1],"type":["int"],"align":["right"]},{"label":["var"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["prop_var"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["cum_prop_var"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"12.0990592","3":"0.75619120","4":"0.7561912","_rn_":"1"},{"1":"2","2":"2.0190598","3":"0.12619123","4":"0.8823824","_rn_":"2"},{"1":"3","2":"0.6897008","3":"0.04310630","4":"0.9254887","_rn_":"3"},{"1":"4","2":"0.5051614","3":"0.03157259","4":"0.9570613","_rn_":"4"},{"1":"5","2":"0.2517061","3":"0.01573163","4":"0.9727930","_rn_":"5"},{"1":"6","2":"0.1615962","3":"0.01009976","4":"0.9828927","_rn_":"6"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a></span>
+<span id="cb20-2"><a href="#cb20-2"></a><span class="co">## Plot the proportion of variance explained by each PC</span></span>
+<span id="cb20-3"><a href="#cb20-3"></a><span class="kw">ggplot</span>(heavymetals_prop_var, <span class="kw">aes</span>(PC, prop_var)) <span class="op">+</span></span>
+<span id="cb20-4"><a href="#cb20-4"></a><span class="st">  </span><span class="kw">geom_point</span>() <span class="op">+</span></span>
+<span id="cb20-5"><a href="#cb20-5"></a><span class="st">  </span><span class="kw">geom_line</span>() <span class="op">+</span></span>
+<span id="cb20-6"><a href="#cb20-6"></a><span class="st">  </span><span class="kw">geom_vline</span>(<span class="dt">xintercept =</span> <span class="fl">2.5</span>, <span class="dt">col =</span> <span class="st">&quot;firebrick&quot;</span>) <span class="op">+</span></span>
+<span id="cb20-7"><a href="#cb20-7"></a><span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">breaks =</span> <span class="dv">1</span><span class="op">:</span><span class="kw">ncol</span>(heavymetals_pca<span class="op">$</span>x)) <span class="op">+</span></span>
+<span id="cb20-8"><a href="#cb20-8"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;Proportion of variance&quot;</span>) <span class="op">+</span></span>
+<span id="cb20-9"><a href="#cb20-9"></a><span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;Proportion of variance explained by each PC&quot;</span>,</span>
+<span id="cb20-10"><a href="#cb20-10"></a>          <span class="dt">subtitle =</span> <span class="st">&quot;Heavy metals data&quot;</span>)</span></code></pre></div>
+<p><img src="Lab2-PCA_files/figure-html/heavymetals-pca-screeplot-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a></span>
+<span id="cb21-2"><a href="#cb21-2"></a><span class="co">## Plot the cumulative proportion of variance explained by each PC</span></span>
+<span id="cb21-3"><a href="#cb21-3"></a><span class="kw">ggplot</span>(heavymetals_prop_var, <span class="kw">aes</span>(PC, cum_prop_var)) <span class="op">+</span></span>
+<span id="cb21-4"><a href="#cb21-4"></a><span class="st">  </span><span class="kw">geom_point</span>() <span class="op">+</span></span>
+<span id="cb21-5"><a href="#cb21-5"></a><span class="st">  </span><span class="kw">geom_line</span>() <span class="op">+</span></span>
+<span id="cb21-6"><a href="#cb21-6"></a><span class="st">  </span><span class="kw">geom_vline</span>(<span class="dt">xintercept =</span> <span class="fl">2.5</span>, <span class="dt">col =</span> <span class="st">&quot;firebrick&quot;</span>) <span class="op">+</span></span>
+<span id="cb21-7"><a href="#cb21-7"></a><span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">breaks =</span> <span class="dv">1</span><span class="op">:</span><span class="kw">ncol</span>(heavymetals_pca<span class="op">$</span>x)) <span class="op">+</span></span>
+<span id="cb21-8"><a href="#cb21-8"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;Proportion of variance&quot;</span>) <span class="op">+</span></span>
+<span id="cb21-9"><a href="#cb21-9"></a><span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;Cumulative proportion of variance explained by each PC&quot;</span>,</span>
+<span id="cb21-10"><a href="#cb21-10"></a>          <span class="dt">subtitle =</span> <span class="st">&quot;Heavy metals data&quot;</span>)</span></code></pre></div>
+<p><img src="Lab2-PCA_files/figure-html/heavymetals-pca-screeplot-2.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>We decide to keep the first 2 PCs (indicated by the red vertical line), as this coincides with the “elbow” in the scree plot. This leaves us with 88% of the total variance from the original data, which is not bad at all given that we went from 16 to only 2 dimensions! Other common cutoffs are to keep e.g. 90%, 95% or 99% of the original variance. Which would give us 3, 4 or 7 PCs respectively. However, for the purpose of this exercise, the first 2 will be enough.</p>
+</details>
+</div>
+<div id="make-a-biplot-using-the-retained-pcs-and-interpret.-is-there-a-relationhsip-between-vicinity-to-the-river-and-polution-with-certain-metals" class="section level5 unnumbered">
+<h5>2. Make a biplot using the retained PCs and interpret. Is there a relationhsip between vicinity to the river and polution with certain metals?</h5>
+<p><strong>Hint</strong>: Try to color or label the data points by their vicinity to the river (using the <code>river</code> variable) to aid with interpretation.</p>
+<details>
+<p><summary>Solution</summary></p>
+<p>Making the biplot for the first 2 PCs.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a><span class="kw">ggbiplot</span>(heavymetals_pca, <span class="dt">groups =</span> heavymetals<span class="op">$</span>river) <span class="op">+</span></span>
+<span id="cb22-2"><a href="#cb22-2"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">color =</span> <span class="st">&quot;Vicinity to river&quot;</span>) <span class="op">+</span></span>
+<span id="cb22-3"><a href="#cb22-3"></a><span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;Biplot for the heavy metals PCA&quot;</span>)</span></code></pre></div>
+<p><img src="Lab2-PCA_files/figure-html/heavymetals-pca-biplot-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>The distinction that is immediately clear is that the levels of Manganese (Mn) seem to be higher in the areas far from the river (at both depths), compared to all other metals.</p>
+<p>We can also see this from the loadings, where Mn20 is the only measurement that is negatively correlated with PC1, while Mn5 is barely correlated with PC1.</p>
+<p>A potential hypothesis would be that as we move farther away from the river, the concentration of Mn increases with depth.</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a>heavymetals_pca<span class="op">$</span>rotation[, <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>]</span>
+<span id="cb23-2"><a href="#cb23-2"></a><span class="co">#&gt;              PC1         PC2</span></span>
+<span id="cb23-3"><a href="#cb23-3"></a><span class="co">#&gt; Cd5   0.26720624  0.08778802</span></span>
+<span id="cb23-4"><a href="#cb23-4"></a><span class="co">#&gt; Cd20  0.22392129 -0.32389630</span></span>
+<span id="cb23-5"><a href="#cb23-5"></a><span class="co">#&gt; Cr5   0.26244938  0.13211704</span></span>
+<span id="cb23-6"><a href="#cb23-6"></a><span class="co">#&gt; Cr20  0.26172408 -0.15414563</span></span>
+<span id="cb23-7"><a href="#cb23-7"></a><span class="co">#&gt; Cu5   0.27742726  0.03099257</span></span>
+<span id="cb23-8"><a href="#cb23-8"></a><span class="co">#&gt; Cu20  0.27837188 -0.12633948</span></span>
+<span id="cb23-9"><a href="#cb23-9"></a><span class="co">#&gt; Fe5   0.24752720  0.30864106</span></span>
+<span id="cb23-10"><a href="#cb23-10"></a><span class="co">#&gt; Fe20  0.25426152  0.10817270</span></span>
+<span id="cb23-11"><a href="#cb23-11"></a><span class="co">#&gt; Mn5   0.05295412  0.58384522</span></span>
+<span id="cb23-12"><a href="#cb23-12"></a><span class="co">#&gt; Mn20 -0.15735932  0.49103123</span></span>
+<span id="cb23-13"><a href="#cb23-13"></a><span class="co">#&gt; Ni5   0.23967596  0.30017207</span></span>
+<span id="cb23-14"><a href="#cb23-14"></a><span class="co">#&gt; Ni20  0.26890893  0.06795434</span></span>
+<span id="cb23-15"><a href="#cb23-15"></a><span class="co">#&gt; Pb5   0.27211702  0.03660204</span></span>
+<span id="cb23-16"><a href="#cb23-16"></a><span class="co">#&gt; Pb20  0.27863288 -0.11559441</span></span>
+<span id="cb23-17"><a href="#cb23-17"></a><span class="co">#&gt; Zn5   0.27807226  0.01288582</span></span>
+<span id="cb23-18"><a href="#cb23-18"></a><span class="co">#&gt; Zn20  0.27271722 -0.17524279</span></span></code></pre></div>
+</details>
+</div>
+<div id="calculate-the-loadings-and-scores-of-the-pca-using-the-svd-function-svd.-verify-that-the-loadings-and-scores-obtained-using-the-svd-approach-are-equal-to-those-obtained-using-the-prcomp-function." class="section level5 unnumbered">
+<h5>3. Calculate the loadings and scores of the PCA using the SVD (function <code>svd</code>). Verify that the loadings and scores obtained using the SVD approach are equal to those obtained using the <code>prcomp</code> function.</h5>
+<details>
+<p><summary>Solution</summary></p>
+<p>First perform the SVD. Remember to <strong>center and scale</strong> the data matrix!</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a>heavymetals_scaled &lt;-<span class="st"> </span><span class="kw">scale</span>(heavymetals_mx)</span>
+<span id="cb24-2"><a href="#cb24-2"></a>heavymetals_svd &lt;-<span class="st"> </span><span class="kw">svd</span>(heavymetals_scaled)</span></code></pre></div>
+<p>Now compare the PC loadings with the right singular vectors <span class="math inline">\(\mathbf{V}\)</span> and the scores with the projections <span class="math inline">\(\mathbf{Z_k} = \mathbf{XV_k}\)</span>.</p>
+<p>Note that it is possible that the signs are opposite, therefore we take the absolute values for the comparison.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a><span class="co"># remove dimnames for comparison</span></span>
+<span id="cb25-2"><a href="#cb25-2"></a>heavymetals_loadings &lt;-<span class="st"> </span><span class="kw">abs</span>(<span class="kw">unname</span>(heavymetals_pca<span class="op">$</span>rotation))</span>
+<span id="cb25-3"><a href="#cb25-3"></a>heavymetals_V &lt;-<span class="st"> </span><span class="kw">abs</span>(heavymetals_svd<span class="op">$</span>v)</span>
+<span id="cb25-4"><a href="#cb25-4"></a></span>
+<span id="cb25-5"><a href="#cb25-5"></a><span class="co">## Compare loadings with singular vectors</span></span>
+<span id="cb25-6"><a href="#cb25-6"></a><span class="kw">all.equal</span>(heavymetals_loadings, heavymetals_V)</span>
+<span id="cb25-7"><a href="#cb25-7"></a><span class="co">#&gt; [1] TRUE</span></span>
+<span id="cb25-8"><a href="#cb25-8"></a></span>
+<span id="cb25-9"><a href="#cb25-9"></a><span class="co">## Calculate projections</span></span>
+<span id="cb25-10"><a href="#cb25-10"></a>heavymetals_Zk &lt;-<span class="st"> </span><span class="kw">abs</span>(heavymetals_scaled <span class="op">%*%</span><span class="st"> </span>heavymetals_svd<span class="op">$</span>v)</span>
+<span id="cb25-11"><a href="#cb25-11"></a>heavymetals_scores &lt;-<span class="st"> </span><span class="kw">abs</span>(<span class="kw">unname</span>(heavymetals_pca<span class="op">$</span>x))</span>
+<span id="cb25-12"><a href="#cb25-12"></a></span>
+<span id="cb25-13"><a href="#cb25-13"></a><span class="kw">all.equal</span>(heavymetals_Zk, heavymetals_scores)</span>
+<span id="cb25-14"><a href="#cb25-14"></a><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+<p>This again shows that PCA is nothing more than an SVD on the (centered and scaled) data matrix!</p>
+</details>
+</div>
+</div>
+</div>
+<div id="employment-by-industry-in-european-countries" class="section level2">
+<h2><span class="header-section-number">3.2</span> Employment by industry in European countries</h2>
+<p>Using the same data as in <a href="./Lab1-Intro-SVD.html#32_Exercise:_employment_by_industry_in_European_countries">Lab 1</a>.</p>
+<div id="data-prep-2" class="section level3 unnumbered">
+<h3>Data prep</h3>
+<p>The <code>industries.txt</code> file contains data on the distribution of employment between 9 industrial sectors, in 26 European countries. The dataset stems from the Cold-War era; the data are expressed as percentages. Read in the data and explore its contents.</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1"></a>industries_url &lt;-<span class="st"> &quot;https://github.com/statOmics/HDA2020/raw/data/industries.txt&quot;</span></span>
+<span id="cb26-2"><a href="#cb26-2"></a></span>
+<span id="cb26-3"><a href="#cb26-3"></a>industries &lt;-<span class="st"> </span><span class="kw">read_delim</span>(industries_url, <span class="dt">delim =</span> <span class="st">&quot; &quot;</span>, <span class="dt">col_types =</span> <span class="kw">cols</span>())</span>
+<span id="cb26-4"><a href="#cb26-4"></a></span>
+<span id="cb26-5"><a href="#cb26-5"></a><span class="co"># Explore contents</span></span>
+<span id="cb26-6"><a href="#cb26-6"></a>industries</span></code></pre></div>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["country"],"name":[1],"type":["chr"],"align":["left"]},{"label":["agriculture"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["mining"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["manufacturing"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["power.supply"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["construction"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["services"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["finance"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["social.sector"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["transport"],"name":[10],"type":["dbl"],"align":["right"]}],"data":[{"1":"Belgium","2":"3.3","3":"0.9","4":"27.6","5":"0.9","6":"8.2","7":"19.1","8":"6.2","9":"26.6","10":"7.2"},{"1":"Denmark","2":"9.2","3":"0.1","4":"21.8","5":"0.6","6":"8.3","7":"14.6","8":"6.5","9":"32.2","10":"7.1"},{"1":"France","2":"10.8","3":"0.8","4":"27.5","5":"0.9","6":"8.9","7":"16.8","8":"6.0","9":"22.6","10":"5.7"},{"1":"W. Germany","2":"6.7","3":"1.3","4":"35.8","5":"0.9","6":"7.3","7":"14.4","8":"5.0","9":"22.3","10":"6.1"},{"1":"Ireland","2":"23.2","3":"1.0","4":"20.7","5":"1.3","6":"7.5","7":"16.8","8":"2.8","9":"20.8","10":"6.1"},{"1":"Italy","2":"15.9","3":"0.6","4":"27.6","5":"0.5","6":"10.0","7":"18.1","8":"1.6","9":"20.1","10":"5.7"},{"1":"Luxembourg","2":"7.7","3":"3.1","4":"30.8","5":"0.8","6":"9.2","7":"18.5","8":"4.6","9":"19.2","10":"6.2"},{"1":"Netherlands","2":"6.3","3":"0.1","4":"22.5","5":"1.0","6":"9.9","7":"18.0","8":"6.8","9":"28.5","10":"6.8"},{"1":"UK","2":"2.7","3":"1.4","4":"30.2","5":"1.4","6":"6.9","7":"16.9","8":"5.7","9":"28.3","10":"6.4"},{"1":"Austria","2":"12.7","3":"1.1","4":"30.2","5":"1.4","6":"9.0","7":"16.8","8":"4.9","9":"16.8","10":"7.0"},{"1":"Finland","2":"13.0","3":"0.4","4":"25.9","5":"1.3","6":"7.4","7":"14.7","8":"5.5","9":"24.3","10":"7.6"},{"1":"Greece","2":"41.4","3":"0.6","4":"17.6","5":"0.6","6":"8.1","7":"11.5","8":"2.4","9":"11.0","10":"6.7"},{"1":"Norway","2":"9.0","3":"0.5","4":"22.4","5":"0.8","6":"8.6","7":"16.9","8":"4.7","9":"27.6","10":"9.4"},{"1":"Portugal","2":"27.8","3":"0.3","4":"24.5","5":"0.6","6":"8.4","7":"13.3","8":"2.7","9":"16.7","10":"5.7"},{"1":"Spain","2":"22.9","3":"0.8","4":"28.5","5":"0.7","6":"11.5","7":"9.7","8":"8.5","9":"11.8","10":"5.5"},{"1":"Sweden","2":"6.1","3":"0.4","4":"25.9","5":"0.8","6":"7.2","7":"14.4","8":"6.0","9":"32.4","10":"6.8"},{"1":"Switzerland","2":"7.7","3":"0.2","4":"37.8","5":"0.8","6":"9.5","7":"17.5","8":"5.3","9":"15.4","10":"5.7"},{"1":"Turkey","2":"66.8","3":"0.7","4":"7.9","5":"0.1","6":"2.8","7":"5.2","8":"1.1","9":"11.9","10":"3.2"},{"1":"Bulgaria","2":"23.6","3":"1.9","4":"32.3","5":"0.6","6":"7.9","7":"8.0","8":"0.7","9":"18.2","10":"6.7"},{"1":"Czechoslovakia","2":"16.5","3":"2.9","4":"35.5","5":"1.2","6":"8.7","7":"9.2","8":"0.9","9":"17.9","10":"7.0"},{"1":"E. Germany","2":"4.2","3":"2.9","4":"41.2","5":"1.3","6":"7.6","7":"11.2","8":"1.2","9":"22.1","10":"8.4"},{"1":"Hungary","2":"21.7","3":"3.1","4":"29.6","5":"1.9","6":"8.2","7":"9.4","8":"0.9","9":"17.2","10":"8.0"},{"1":"Poland","2":"31.1","3":"2.5","4":"25.7","5":"0.9","6":"8.4","7":"7.5","8":"0.9","9":"16.1","10":"6.9"},{"1":"Romania","2":"34.7","3":"2.1","4":"30.1","5":"0.6","6":"8.7","7":"5.9","8":"1.3","9":"11.7","10":"5.0"},{"1":"USSR","2":"23.7","3":"1.4","4":"25.8","5":"0.6","6":"9.2","7":"6.1","8":"0.5","9":"23.6","10":"9.3"},{"1":"Yugoslavia","2":"48.7","3":"1.5","4":"16.8","5":"1.1","6":"4.9","7":"6.4","8":"11.3","9":"5.3","10":"4.0"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a><span class="kw">summary</span>(industries)</span>
+<span id="cb27-2"><a href="#cb27-2"></a><span class="co">#&gt;    country           agriculture        mining      manufacturing  </span></span>
+<span id="cb27-3"><a href="#cb27-3"></a><span class="co">#&gt;  Length:26          Min.   : 2.70   Min.   :0.100   Min.   : 7.90  </span></span>
+<span id="cb27-4"><a href="#cb27-4"></a><span class="co">#&gt;  Class :character   1st Qu.: 7.70   1st Qu.:0.525   1st Qu.:23.00  </span></span>
+<span id="cb27-5"><a href="#cb27-5"></a><span class="co">#&gt;  Mode  :character   Median :14.45   Median :0.950   Median :27.55  </span></span>
+<span id="cb27-6"><a href="#cb27-6"></a><span class="co">#&gt;                     Mean   :19.13   Mean   :1.254   Mean   :27.01  </span></span>
+<span id="cb27-7"><a href="#cb27-7"></a><span class="co">#&gt;                     3rd Qu.:23.68   3rd Qu.:1.800   3rd Qu.:30.20  </span></span>
+<span id="cb27-8"><a href="#cb27-8"></a><span class="co">#&gt;                     Max.   :66.80   Max.   :3.100   Max.   :41.20  </span></span>
+<span id="cb27-9"><a href="#cb27-9"></a><span class="co">#&gt;   power.supply     construction       services        finance      </span></span>
+<span id="cb27-10"><a href="#cb27-10"></a><span class="co">#&gt;  Min.   :0.1000   Min.   : 2.800   Min.   : 5.20   Min.   : 0.500  </span></span>
+<span id="cb27-11"><a href="#cb27-11"></a><span class="co">#&gt;  1st Qu.:0.6000   1st Qu.: 7.525   1st Qu.: 9.25   1st Qu.: 1.225  </span></span>
+<span id="cb27-12"><a href="#cb27-12"></a><span class="co">#&gt;  Median :0.8500   Median : 8.350   Median :14.40   Median : 4.650  </span></span>
+<span id="cb27-13"><a href="#cb27-13"></a><span class="co">#&gt;  Mean   :0.9077   Mean   : 8.165   Mean   :12.96   Mean   : 4.000  </span></span>
+<span id="cb27-14"><a href="#cb27-14"></a><span class="co">#&gt;  3rd Qu.:1.1750   3rd Qu.: 8.975   3rd Qu.:16.88   3rd Qu.: 5.925  </span></span>
+<span id="cb27-15"><a href="#cb27-15"></a><span class="co">#&gt;  Max.   :1.9000   Max.   :11.500   Max.   :19.10   Max.   :11.300  </span></span>
+<span id="cb27-16"><a href="#cb27-16"></a><span class="co">#&gt;  social.sector     transport    </span></span>
+<span id="cb27-17"><a href="#cb27-17"></a><span class="co">#&gt;  Min.   : 5.30   Min.   :3.200  </span></span>
+<span id="cb27-18"><a href="#cb27-18"></a><span class="co">#&gt;  1st Qu.:16.25   1st Qu.:5.700  </span></span>
+<span id="cb27-19"><a href="#cb27-19"></a><span class="co">#&gt;  Median :19.65   Median :6.700  </span></span>
+<span id="cb27-20"><a href="#cb27-20"></a><span class="co">#&gt;  Mean   :20.02   Mean   :6.546  </span></span>
+<span id="cb27-21"><a href="#cb27-21"></a><span class="co">#&gt;  3rd Qu.:24.12   3rd Qu.:7.075  </span></span>
+<span id="cb27-22"><a href="#cb27-22"></a><span class="co">#&gt;  Max.   :32.40   Max.   :9.400</span></span></code></pre></div>
+</div>
+<div id="tasks-1" class="section level3 unnumbered">
+<h3>Tasks</h3>
+<div id="perform-a-pca.-how-many-pcs-would-you-retain-explain." class="section level5 unnumbered">
+<h5>1. Perform a PCA. How many PCs would you retain? Explain.</h5>
+<details>
+<p><summary>Solution</summary></p>
+<p>Perform the PCA on the centered and scaled data matrix, after removing the <code>country</code> column.</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1"></a>industries_pca &lt;-<span class="st"> </span><span class="kw">prcomp</span>(industries[, <span class="dv">-1</span>], <span class="dt">scale. =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb28-2"><a href="#cb28-2"></a><span class="kw">summary</span>(industries_pca)</span>
+<span id="cb28-3"><a href="#cb28-3"></a><span class="co">#&gt; Importance of components:</span></span>
+<span id="cb28-4"><a href="#cb28-4"></a><span class="co">#&gt;                           PC1    PC2    PC3    PC4     PC5    PC6     PC7</span></span>
+<span id="cb28-5"><a href="#cb28-5"></a><span class="co">#&gt; Standard deviation     1.8674 1.4595 1.0483 0.9972 0.73703 0.6192 0.47514</span></span>
+<span id="cb28-6"><a href="#cb28-6"></a><span class="co">#&gt; Proportion of Variance 0.3875 0.2367 0.1221 0.1105 0.06036 0.0426 0.02508</span></span>
+<span id="cb28-7"><a href="#cb28-7"></a><span class="co">#&gt; Cumulative Proportion  0.3875 0.6241 0.7462 0.8568 0.91711 0.9597 0.98480</span></span>
+<span id="cb28-8"><a href="#cb28-8"></a><span class="co">#&gt;                           PC8      PC9</span></span>
+<span id="cb28-9"><a href="#cb28-9"></a><span class="co">#&gt; Standard deviation     0.3699 0.006755</span></span>
+<span id="cb28-10"><a href="#cb28-10"></a><span class="co">#&gt; Proportion of Variance 0.0152 0.000010</span></span>
+<span id="cb28-11"><a href="#cb28-11"></a><span class="co">#&gt; Cumulative Proportion  1.0000 1.000000</span></span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1"></a><span class="co">## Calculate total variance by summing the PC variances (sdev&#39;s squared)</span></span>
+<span id="cb29-2"><a href="#cb29-2"></a>tot_var &lt;-<span class="st"> </span><span class="kw">sum</span>(industries_pca<span class="op">$</span>sdev<span class="op">^</span><span class="dv">2</span>)</span>
+<span id="cb29-3"><a href="#cb29-3"></a></span>
+<span id="cb29-4"><a href="#cb29-4"></a><span class="co">## Create data.frame of the proportion of variance explained by each PC</span></span>
+<span id="cb29-5"><a href="#cb29-5"></a>industries_prop_var &lt;-<span class="st"> </span><span class="kw">data.frame</span>(</span>
+<span id="cb29-6"><a href="#cb29-6"></a>  <span class="dt">PC =</span> <span class="dv">1</span><span class="op">:</span><span class="kw">ncol</span>(industries_pca<span class="op">$</span>x),</span>
+<span id="cb29-7"><a href="#cb29-7"></a>  <span class="dt">var =</span> industries_pca<span class="op">$</span>sdev<span class="op">^</span><span class="dv">2</span></span>
+<span id="cb29-8"><a href="#cb29-8"></a>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb29-9"><a href="#cb29-9"></a><span class="st">  </span><span class="co">## Using `mutate` to calculate prop. var and cum. prop. var</span></span>
+<span id="cb29-10"><a href="#cb29-10"></a><span class="st">  </span><span class="kw">mutate</span>(</span>
+<span id="cb29-11"><a href="#cb29-11"></a>    <span class="dt">prop_var =</span> var <span class="op">/</span><span class="st"> </span>tot_var,</span>
+<span id="cb29-12"><a href="#cb29-12"></a>    <span class="dt">cum_prop_var =</span> <span class="kw">cumsum</span>(var <span class="op">/</span><span class="st"> </span>tot_var)</span>
+<span id="cb29-13"><a href="#cb29-13"></a>  )</span>
+<span id="cb29-14"><a href="#cb29-14"></a></span>
+<span id="cb29-15"><a href="#cb29-15"></a>industries_prop_var</span></code></pre></div>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["PC"],"name":[1],"type":["int"],"align":["right"]},{"label":["var"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["prop_var"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["cum_prop_var"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"3.4871512725","3":"3.874613e-01","4":"0.3874613"},{"1":"2","2":"2.1301731410","3":"2.366859e-01","4":"0.6241472"},{"1":"3","2":"1.0989576113","3":"1.221064e-01","4":"0.7462536"},{"1":"4","2":"0.9944829778","3":"1.104981e-01","4":"0.8567517"},{"1":"5","2":"0.5432177255","3":"6.035753e-02","4":"0.9171092"},{"1":"6","2":"0.3834276658","3":"4.260307e-02","4":"0.9597123"},{"1":"7","2":"0.2257540553","3":"2.508378e-02","4":"0.9847960"},{"1":"8","2":"0.1367899257","3":"1.519888e-02","4":"0.9999949"},{"1":"9","2":"0.0000456251","3":"5.069456e-06","4":"1.0000000"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1"></a></span>
+<span id="cb30-2"><a href="#cb30-2"></a><span class="co">## Plot the proportion of variance explained by each PC</span></span>
+<span id="cb30-3"><a href="#cb30-3"></a><span class="kw">ggplot</span>(industries_prop_var, <span class="kw">aes</span>(PC, prop_var)) <span class="op">+</span></span>
+<span id="cb30-4"><a href="#cb30-4"></a><span class="st">  </span><span class="kw">geom_point</span>() <span class="op">+</span></span>
+<span id="cb30-5"><a href="#cb30-5"></a><span class="st">  </span><span class="kw">geom_line</span>() <span class="op">+</span></span>
+<span id="cb30-6"><a href="#cb30-6"></a><span class="st">  </span><span class="kw">geom_vline</span>(<span class="dt">xintercept =</span> <span class="fl">5.5</span>, <span class="dt">col =</span> <span class="st">&quot;firebrick&quot;</span>) <span class="op">+</span></span>
+<span id="cb30-7"><a href="#cb30-7"></a><span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">breaks =</span> <span class="dv">1</span><span class="op">:</span><span class="kw">ncol</span>(industries_pca<span class="op">$</span>x)) <span class="op">+</span></span>
+<span id="cb30-8"><a href="#cb30-8"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;Proportion of variance&quot;</span>) <span class="op">+</span></span>
+<span id="cb30-9"><a href="#cb30-9"></a><span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;Proportion of variance explained by each PC&quot;</span>,</span>
+<span id="cb30-10"><a href="#cb30-10"></a>          <span class="dt">subtitle =</span> <span class="st">&quot;Industries data&quot;</span>)</span></code></pre></div>
+<p><img src="Lab2-PCA_files/figure-html/industries-pca-screeplot-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1"></a></span>
+<span id="cb31-2"><a href="#cb31-2"></a><span class="co">## Plot the cumulative proportion of variance explained by each PC</span></span>
+<span id="cb31-3"><a href="#cb31-3"></a><span class="kw">ggplot</span>(industries_prop_var, <span class="kw">aes</span>(PC, cum_prop_var)) <span class="op">+</span></span>
+<span id="cb31-4"><a href="#cb31-4"></a><span class="st">  </span><span class="kw">geom_point</span>() <span class="op">+</span></span>
+<span id="cb31-5"><a href="#cb31-5"></a><span class="st">  </span><span class="kw">geom_line</span>() <span class="op">+</span></span>
+<span id="cb31-6"><a href="#cb31-6"></a><span class="st">  </span><span class="kw">geom_vline</span>(<span class="dt">xintercept =</span> <span class="fl">5.5</span>, <span class="dt">col =</span> <span class="st">&quot;firebrick&quot;</span>) <span class="op">+</span></span>
+<span id="cb31-7"><a href="#cb31-7"></a><span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">breaks =</span> <span class="dv">1</span><span class="op">:</span><span class="kw">ncol</span>(industries_pca<span class="op">$</span>x)) <span class="op">+</span></span>
+<span id="cb31-8"><a href="#cb31-8"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;Proportion of variance&quot;</span>) <span class="op">+</span></span>
+<span id="cb31-9"><a href="#cb31-9"></a><span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;Cumulative proportion of variance explained by each PC&quot;</span>,</span>
+<span id="cb31-10"><a href="#cb31-10"></a>          <span class="dt">subtitle =</span> <span class="st">&quot;Industries data&quot;</span>)</span></code></pre></div>
+<p><img src="Lab2-PCA_files/figure-html/industries-pca-screeplot-2.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>In this case, retaining the first 5-7 PCs would be more appropriate.</p>
+</details>
+</div>
+<div id="what-could-you-say-about-e.g.-denmark-based-on-the-biplot" class="section level5 unnumbered">
+<h5>2. What could you say about e.g. Denmark based on the biplot?</h5>
+<details>
+<p><summary>Solution</summary></p>
+<p>Construct the biplot. We don’t really have a grouping variable to color the points, but we can add labels with the country names.</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1"></a><span class="kw">ggbiplot</span>(industries_pca, <span class="dt">labels =</span> industries<span class="op">$</span>country, <span class="dt">labels.size =</span> <span class="dv">2</span>) <span class="op">+</span></span>
+<span id="cb32-2"><a href="#cb32-2"></a><span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;Biplot for the industries PCA&quot;</span>) <span class="op">+</span></span>
+<span id="cb32-3"><a href="#cb32-3"></a><span class="st">  </span><span class="kw">xlim</span>(<span class="kw">c</span>(<span class="op">-</span><span class="fl">3.4</span>, <span class="fl">3.4</span>)) <span class="op">+</span></span>
+<span id="cb32-4"><a href="#cb32-4"></a><span class="st">  </span><span class="kw">ylim</span>(<span class="kw">c</span>(<span class="op">-</span><span class="fl">2.2</span>, <span class="fl">2.2</span>))</span></code></pre></div>
+<p><img src="Lab2-PCA_files/figure-html/industries-pca-biplot-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>The biplot shows how the work forces of the countries are distributed among the different industries.</p>
+<p>The employment in Denmark seems to be mainly concentrated in the finance, services and social sectors.</p>
+</details>
+</div>
+<div id="try-to-interpret-the-first-2-pcs." class="section level5 unnumbered">
+<h5>3. Try to interpret the first 2 PCs.</h5>
+<details>
+<p><summary>Solution</summary></p>
+<p>We can use the biplot and loadings to interpret the PCs. The biplot is given above, while the loadings can be accessed from the <code>$rotation</code> slot:</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1"></a>industries_pca<span class="op">$</span>rotation[, <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>]</span>
+<span id="cb33-2"><a href="#cb33-2"></a><span class="co">#&gt;                        PC1         PC2</span></span>
+<span id="cb33-3"><a href="#cb33-3"></a><span class="co">#&gt; agriculture    0.523790989  0.05359389</span></span>
+<span id="cb33-4"><a href="#cb33-4"></a><span class="co">#&gt; mining         0.001323458  0.61780714</span></span>
+<span id="cb33-5"><a href="#cb33-5"></a><span class="co">#&gt; manufacturing -0.347495131  0.35505360</span></span>
+<span id="cb33-6"><a href="#cb33-6"></a><span class="co">#&gt; power.supply  -0.255716182  0.26109606</span></span>
+<span id="cb33-7"><a href="#cb33-7"></a><span class="co">#&gt; construction  -0.325179319  0.05128845</span></span>
+<span id="cb33-8"><a href="#cb33-8"></a><span class="co">#&gt; services      -0.378919663 -0.35017206</span></span>
+<span id="cb33-9"><a href="#cb33-9"></a><span class="co">#&gt; finance       -0.074373583 -0.45369785</span></span>
+<span id="cb33-10"><a href="#cb33-10"></a><span class="co">#&gt; social.sector -0.387408806 -0.22152120</span></span>
+<span id="cb33-11"><a href="#cb33-11"></a><span class="co">#&gt; transport     -0.366822713  0.20259185</span></span></code></pre></div>
+<p>The first PC seems to be largely driven by the <em>agriculture</em> industry, i.e. it is separating countries mostly based on their employment in agriculture () Thus, countries situated on the positive side of PC1 will likely have a <em>higher-than-average</em> employment in agriculture. On the other hand, countries on the negative side of PC1 are less agriculture-based economies and have higher employments in e.g. the social sector.</p>
+<p>Indeed, if we rank the countries by their agriculture employment, we largely recover the order of the countries along PC1, with Turkey clearly being the most agriculture-focused (remember that this data is from the Cold War era)!</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1"></a><span class="co">## Show ranking of agriculture industry</span></span>
+<span id="cb34-2"><a href="#cb34-2"></a>industries <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb34-3"><a href="#cb34-3"></a><span class="st">  </span><span class="kw">select</span>(country, agriculture, social.sector, mining, finance) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb34-4"><a href="#cb34-4"></a><span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(agriculture))</span></code></pre></div>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["country"],"name":[1],"type":["chr"],"align":["left"]},{"label":["agriculture"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["social.sector"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["mining"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["finance"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"Turkey","2":"66.8","3":"11.9","4":"0.7","5":"1.1"},{"1":"Yugoslavia","2":"48.7","3":"5.3","4":"1.5","5":"11.3"},{"1":"Greece","2":"41.4","3":"11.0","4":"0.6","5":"2.4"},{"1":"Romania","2":"34.7","3":"11.7","4":"2.1","5":"1.3"},{"1":"Poland","2":"31.1","3":"16.1","4":"2.5","5":"0.9"},{"1":"Portugal","2":"27.8","3":"16.7","4":"0.3","5":"2.7"},{"1":"USSR","2":"23.7","3":"23.6","4":"1.4","5":"0.5"},{"1":"Bulgaria","2":"23.6","3":"18.2","4":"1.9","5":"0.7"},{"1":"Ireland","2":"23.2","3":"20.8","4":"1.0","5":"2.8"},{"1":"Spain","2":"22.9","3":"11.8","4":"0.8","5":"8.5"},{"1":"Hungary","2":"21.7","3":"17.2","4":"3.1","5":"0.9"},{"1":"Czechoslovakia","2":"16.5","3":"17.9","4":"2.9","5":"0.9"},{"1":"Italy","2":"15.9","3":"20.1","4":"0.6","5":"1.6"},{"1":"Finland","2":"13.0","3":"24.3","4":"0.4","5":"5.5"},{"1":"Austria","2":"12.7","3":"16.8","4":"1.1","5":"4.9"},{"1":"France","2":"10.8","3":"22.6","4":"0.8","5":"6.0"},{"1":"Denmark","2":"9.2","3":"32.2","4":"0.1","5":"6.5"},{"1":"Norway","2":"9.0","3":"27.6","4":"0.5","5":"4.7"},{"1":"Luxembourg","2":"7.7","3":"19.2","4":"3.1","5":"4.6"},{"1":"Switzerland","2":"7.7","3":"15.4","4":"0.2","5":"5.3"},{"1":"W. Germany","2":"6.7","3":"22.3","4":"1.3","5":"5.0"},{"1":"Netherlands","2":"6.3","3":"28.5","4":"0.1","5":"6.8"},{"1":"Sweden","2":"6.1","3":"32.4","4":"0.4","5":"6.0"},{"1":"E. Germany","2":"4.2","3":"22.1","4":"2.9","5":"1.2"},{"1":"Belgium","2":"3.3","3":"26.6","4":"0.9","5":"6.2"},{"1":"UK","2":"2.7","3":"28.3","4":"1.4","5":"5.7"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p>We could say that the first PC separates agriculture-based economies from non-agriculture-based. The fact that most other industries are negatively correlated with the first PC, seems to indicate that countries either have a large agriculture industry or distribute their work force more equally among the other industries.</p>
+<p>The 2 main exceptions are the mining and finance industries, which are (almost) perpendicular to PC1.</p>
+<p>The second PC is mostly driven by the difference between more services-based (on the negative side) and more industry-based (positive PC) economies. With the main drivers being the <em>mining</em> and <em>finance</em> sectors.</p>
+<p>Keep in mind however that these 2 PCs “only” explain 38.7% and 23.7% of the total variance, respectively. So there are likely still many patterns we are missing.</p>
+</details>
+</div>
+</div>
+</div>
+</div>
+<div id="session-info" class="section level1 unnumbered">
+<h1>Session info</h1>
+<details>
+<p><summary>Session info</summary></p>
+<pre><code>#&gt; [1] &quot;2020-10-16 16:40:26 UTC&quot;
+#&gt; ─ Session info ───────────────────────────────────────────────────────────────
+#&gt;  setting  value                       
+#&gt;  version  R version 4.0.3 (2020-10-10)
+#&gt;  os       macOS Catalina 10.15.7      
+#&gt;  system   x86_64, darwin17.0          
+#&gt;  ui       X11                         
+#&gt;  language (EN)                        
+#&gt;  collate  en_US.UTF-8                 
+#&gt;  ctype    en_US.UTF-8                 
+#&gt;  tz       UTC                         
+#&gt;  date     2020-10-16                  
+#&gt; 
+#&gt; ─ Packages ───────────────────────────────────────────────────────────────────
+#&gt;  package                * version  date       lib source                       
+#&gt;  AnnotationDbi            1.50.3   2020-07-25 [1] Bioconductor                 
+#&gt;  AnnotationHub          * 2.20.2   2020-08-18 [1] Bioconductor                 
+#&gt;  assertthat               0.2.1    2019-03-21 [1] CRAN (R 4.0.2)               
+#&gt;  backports                1.1.10   2020-09-15 [1] CRAN (R 4.0.2)               
+#&gt;  beeswarm                 0.2.3    2016-04-25 [1] CRAN (R 4.0.2)               
+#&gt;  Biobase                * 2.48.0   2020-04-27 [1] Bioconductor                 
+#&gt;  BiocFileCache          * 1.12.1   2020-08-04 [1] Bioconductor                 
+#&gt;  BiocGenerics           * 0.34.0   2020-04-27 [1] Bioconductor                 
+#&gt;  BiocManager              1.30.10  2019-11-16 [1] CRAN (R 4.0.2)               
+#&gt;  BiocNeighbors            1.6.0    2020-04-27 [1] Bioconductor                 
+#&gt;  BiocParallel             1.22.0   2020-04-27 [1] Bioconductor                 
+#&gt;  BiocSingular             1.4.0    2020-04-27 [1] Bioconductor                 
+#&gt;  BiocVersion              3.11.1   2020-04-07 [1] Bioconductor                 
+#&gt;  bit                      4.0.4    2020-08-04 [1] CRAN (R 4.0.2)               
+#&gt;  bit64                    4.0.5    2020-08-30 [1] CRAN (R 4.0.2)               
+#&gt;  bitops                   1.0-6    2013-08-17 [1] CRAN (R 4.0.2)               
+#&gt;  blob                     1.2.1    2020-01-20 [1] CRAN (R 4.0.2)               
+#&gt;  broom                    0.7.1    2020-10-02 [1] CRAN (R 4.0.2)               
+#&gt;  callr                    3.5.1    2020-10-13 [1] CRAN (R 4.0.2)               
+#&gt;  cellranger               1.1.0    2016-07-27 [1] CRAN (R 4.0.2)               
+#&gt;  cli                      2.1.0    2020-10-12 [1] CRAN (R 4.0.2)               
+#&gt;  colorspace               1.4-1    2019-03-18 [1] CRAN (R 4.0.2)               
+#&gt;  crayon                   1.3.4    2017-09-16 [1] CRAN (R 4.0.2)               
+#&gt;  curl                     4.3      2019-12-02 [1] CRAN (R 4.0.1)               
+#&gt;  DBI                      1.1.0    2019-12-15 [1] CRAN (R 4.0.2)               
+#&gt;  dbplyr                 * 1.4.4    2020-05-27 [1] CRAN (R 4.0.2)               
+#&gt;  DelayedArray           * 0.14.1   2020-07-14 [1] Bioconductor                 
+#&gt;  DelayedMatrixStats       1.10.1   2020-07-03 [1] Bioconductor                 
+#&gt;  desc                     1.2.0    2018-05-01 [1] CRAN (R 4.0.2)               
+#&gt;  devtools                 2.3.2    2020-09-18 [1] CRAN (R 4.0.2)               
+#&gt;  digest                   0.6.25   2020-02-23 [1] CRAN (R 4.0.2)               
+#&gt;  dplyr                  * 1.0.2    2020-08-18 [1] CRAN (R 4.0.2)               
+#&gt;  ellipsis                 0.3.1    2020-05-15 [1] CRAN (R 4.0.2)               
+#&gt;  evaluate                 0.14     2019-05-28 [1] CRAN (R 4.0.1)               
+#&gt;  ExperimentHub          * 1.14.2   2020-08-18 [1] Bioconductor                 
+#&gt;  fansi                    0.4.1    2020-01-08 [1] CRAN (R 4.0.2)               
+#&gt;  farver                   2.0.3    2020-01-16 [1] CRAN (R 4.0.2)               
+#&gt;  fastmap                  1.0.1    2019-10-08 [1] CRAN (R 4.0.2)               
+#&gt;  forcats                * 0.5.0    2020-03-01 [1] CRAN (R 4.0.2)               
+#&gt;  fs                       1.5.0    2020-07-31 [1] CRAN (R 4.0.2)               
+#&gt;  generics                 0.0.2    2018-11-29 [1] CRAN (R 4.0.2)               
+#&gt;  GenomeInfoDb           * 1.24.2   2020-06-15 [1] Bioconductor                 
+#&gt;  GenomeInfoDbData         1.2.3    2020-10-16 [1] Bioconductor                 
+#&gt;  GenomicRanges          * 1.40.0   2020-04-27 [1] Bioconductor                 
+#&gt;  ggbeeswarm               0.6.0    2017-08-07 [1] CRAN (R 4.0.2)               
+#&gt;  ggbiplot               * 0.55     2020-10-16 [1] Github (vqv/ggbiplot@7325e88)
+#&gt;  ggplot2                * 3.3.2    2020-06-19 [1] CRAN (R 4.0.2)               
+#&gt;  git2r                    0.27.1   2020-05-03 [1] CRAN (R 4.0.2)               
+#&gt;  glue                     1.4.2    2020-08-27 [1] CRAN (R 4.0.2)               
+#&gt;  gridExtra                2.3      2017-09-09 [1] CRAN (R 4.0.2)               
+#&gt;  gtable                   0.3.0    2019-03-25 [1] CRAN (R 4.0.2)               
+#&gt;  haven                    2.3.1    2020-06-01 [1] CRAN (R 4.0.2)               
+#&gt;  hms                      0.5.3    2020-01-08 [1] CRAN (R 4.0.2)               
+#&gt;  htmltools                0.5.0    2020-06-16 [1] CRAN (R 4.0.2)               
+#&gt;  httpuv                   1.5.4    2020-06-06 [1] CRAN (R 4.0.2)               
+#&gt;  httr                     1.4.2    2020-07-20 [1] CRAN (R 4.0.2)               
+#&gt;  interactiveDisplayBase   1.26.3   2020-06-02 [1] Bioconductor                 
+#&gt;  IRanges                * 2.22.2   2020-05-21 [1] Bioconductor                 
+#&gt;  irlba                    2.3.3    2019-02-05 [1] CRAN (R 4.0.2)               
+#&gt;  jpeg                     0.1-8.1  2019-10-24 [1] CRAN (R 4.0.2)               
+#&gt;  jsonlite                 1.7.1    2020-09-07 [1] CRAN (R 4.0.2)               
+#&gt;  knitr                    1.30     2020-09-22 [1] CRAN (R 4.0.2)               
+#&gt;  labeling                 0.3      2014-08-23 [1] CRAN (R 4.0.2)               
+#&gt;  later                    1.1.0.1  2020-06-05 [1] CRAN (R 4.0.2)               
+#&gt;  lattice                  0.20-41  2020-04-02 [2] CRAN (R 4.0.3)               
+#&gt;  lifecycle                0.2.0    2020-03-06 [1] CRAN (R 4.0.2)               
+#&gt;  lubridate                1.7.9    2020-06-08 [1] CRAN (R 4.0.2)               
+#&gt;  magrittr                 1.5      2014-11-22 [1] CRAN (R 4.0.2)               
+#&gt;  Matrix                   1.2-18   2019-11-27 [2] CRAN (R 4.0.3)               
+#&gt;  matrixStats            * 0.57.0   2020-09-25 [1] CRAN (R 4.0.2)               
+#&gt;  memoise                  1.1.0    2017-04-21 [1] CRAN (R 4.0.2)               
+#&gt;  mime                     0.9      2020-02-04 [1] CRAN (R 4.0.2)               
+#&gt;  misc3d                   0.9-0    2020-09-06 [1] CRAN (R 4.0.2)               
+#&gt;  modelr                   0.1.8    2020-05-19 [1] CRAN (R 4.0.2)               
+#&gt;  munsell                  0.5.0    2018-06-12 [1] CRAN (R 4.0.2)               
+#&gt;  muscData               * 1.2.0    2020-05-07 [1] Bioconductor                 
+#&gt;  pillar                   1.4.6    2020-07-10 [1] CRAN (R 4.0.2)               
+#&gt;  pkgbuild                 1.1.0    2020-07-13 [1] CRAN (R 4.0.2)               
+#&gt;  pkgconfig                2.0.3    2019-09-22 [1] CRAN (R 4.0.2)               
+#&gt;  pkgload                  1.1.0    2020-05-29 [1] CRAN (R 4.0.2)               
+#&gt;  plot3D                 * 1.3      2019-12-18 [1] CRAN (R 4.0.2)               
+#&gt;  plyr                   * 1.8.6    2020-03-03 [1] CRAN (R 4.0.2)               
+#&gt;  prettyunits              1.1.1    2020-01-24 [1] CRAN (R 4.0.2)               
+#&gt;  processx                 3.4.4    2020-09-03 [1] CRAN (R 4.0.2)               
+#&gt;  promises                 1.1.1    2020-06-09 [1] CRAN (R 4.0.2)               
+#&gt;  ps                       1.4.0    2020-10-07 [1] CRAN (R 4.0.2)               
+#&gt;  purrr                  * 0.3.4    2020-04-17 [1] CRAN (R 4.0.2)               
+#&gt;  R6                       2.4.1    2019-11-12 [1] CRAN (R 4.0.2)               
+#&gt;  rappdirs                 0.3.1    2016-03-28 [1] CRAN (R 4.0.2)               
+#&gt;  Rcpp                     1.0.5    2020-07-06 [1] CRAN (R 4.0.2)               
+#&gt;  RCurl                    1.98-1.2 2020-04-18 [1] CRAN (R 4.0.2)               
+#&gt;  readr                  * 1.4.0    2020-10-05 [1] CRAN (R 4.0.2)               
+#&gt;  readxl                   1.3.1    2019-03-13 [1] CRAN (R 4.0.2)               
+#&gt;  remotes                  2.2.0    2020-07-21 [1] CRAN (R 4.0.2)               
+#&gt;  reprex                   0.3.0    2019-05-16 [1] CRAN (R 4.0.2)               
+#&gt;  rlang                    0.4.8    2020-10-08 [1] CRAN (R 4.0.2)               
+#&gt;  rmarkdown                2.4      2020-09-30 [1] CRAN (R 4.0.3)               
+#&gt;  rprojroot                1.3-2    2018-01-03 [1] CRAN (R 4.0.2)               
+#&gt;  RSQLite                  2.2.1    2020-09-30 [1] CRAN (R 4.0.2)               
+#&gt;  rstudioapi               0.11     2020-02-07 [1] CRAN (R 4.0.2)               
+#&gt;  rsvd                     1.0.3    2020-02-17 [1] CRAN (R 4.0.2)               
+#&gt;  rvest                    0.3.6    2020-07-25 [1] CRAN (R 4.0.2)               
+#&gt;  S4Vectors              * 0.26.1   2020-05-16 [1] Bioconductor                 
+#&gt;  scales                 * 1.1.1    2020-05-11 [1] CRAN (R 4.0.2)               
+#&gt;  scater                 * 1.16.2   2020-06-26 [1] Bioconductor                 
+#&gt;  sessioninfo              1.1.1    2018-11-05 [1] CRAN (R 4.0.2)               
+#&gt;  shiny                    1.5.0    2020-06-23 [1] CRAN (R 4.0.2)               
+#&gt;  SingleCellExperiment   * 1.10.1   2020-04-28 [1] Bioconductor                 
+#&gt;  stringi                  1.5.3    2020-09-09 [1] CRAN (R 4.0.2)               
+#&gt;  stringr                * 1.4.0    2019-02-10 [1] CRAN (R 4.0.2)               
+#&gt;  SummarizedExperiment   * 1.18.2   2020-07-14 [1] Bioconductor                 
+#&gt;  testthat                 2.3.2    2020-03-02 [1] CRAN (R 4.0.2)               
+#&gt;  tibble                 * 3.0.4    2020-10-12 [1] CRAN (R 4.0.2)               
+#&gt;  tidyr                  * 1.1.2    2020-08-27 [1] CRAN (R 4.0.2)               
+#&gt;  tidyselect               1.1.0    2020-05-11 [1] CRAN (R 4.0.2)               
+#&gt;  tidyverse              * 1.3.0    2019-11-21 [1] CRAN (R 4.0.2)               
+#&gt;  usethis                  1.6.3    2020-09-17 [1] CRAN (R 4.0.2)               
+#&gt;  utf8                     1.1.4    2018-05-24 [1] CRAN (R 4.0.2)               
+#&gt;  vctrs                    0.3.4    2020-08-29 [1] CRAN (R 4.0.2)               
+#&gt;  vipor                    0.4.5    2017-03-22 [1] CRAN (R 4.0.2)               
+#&gt;  viridis                  0.5.1    2018-03-29 [1] CRAN (R 4.0.2)               
+#&gt;  viridisLite              0.3.0    2018-02-01 [1] CRAN (R 4.0.1)               
+#&gt;  withr                    2.3.0    2020-09-22 [1] CRAN (R 4.0.2)               
+#&gt;  xfun                     0.18     2020-09-29 [1] CRAN (R 4.0.2)               
+#&gt;  xml2                     1.3.2    2020-04-23 [1] CRAN (R 4.0.2)               
+#&gt;  xtable                   1.8-4    2019-04-21 [1] CRAN (R 4.0.2)               
+#&gt;  XVector                  0.28.0   2020-04-27 [1] Bioconductor                 
+#&gt;  yaml                     2.2.1    2020-02-01 [1] CRAN (R 4.0.2)               
+#&gt;  zlibbioc                 1.34.0   2020-04-27 [1] Bioconductor                 
+#&gt; 
+#&gt; [1] /Users/runner/work/_temp/Library
+#&gt; [2] /Library/Frameworks/R.framework/Versions/4.0/Resources/library</code></pre>
+</details>
+</div>
+<div id="home" class="section level1 unnumbered">
+<h1><a href="https://statomics.github.io/HDA2020/">Home</a></h1>
+</div>
+
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiQW5hbHlzaXMgb2YgSGlnaCBEaW1lbnNpb25hbCBEYXRhIC0gTGFiIDIiCmF1dGhvcjogIkFkYXB0ZWQgYnkgTWlsYW4gTWFsZmFpdCIKZGF0ZTogIjIwIE9jdCAyMDIwIgpvdXRwdXQ6CiAgaHRtbF9kb2N1bWVudDoKICAgIGRmX3ByaW50OiBwYWdlZAotLS0KCmBgYHtyIHNldHVwLCBpbmNsdWRlPUZBTFNFLCBjYWNoZT1GQUxTRX0Ka25pdHI6Om9wdHNfY2h1bmskc2V0KAogIGNvbGxhcHNlID0gVFJVRSwKICBjb21tZW50ID0gIiM+IiwKICBmaWcuYWxpZ24gPSAiY2VudGVyIiwKICBvdXQud2lkdGggPSAiMTAwJSIKKQpgYGAKCioqKgoKYGBge3IgbGlicmFyaWVzLCB3YXJuaW5nPUZBTFNFLCBtZXNzYWdlPUZBTFNFfQpsaWJyYXJ5KHRpZHl2ZXJzZSkKdGhlbWVfc2V0KHRoZW1lX2xpZ2h0KCkpCgojIyBnZ2JpcGxvdCBwYWNrYWdlIHRvIGNyZWF0ZSBnZ3Bsb3QtYmFzZWQgYmlwbG90cwojIyBpbnN0YWxsIHdpdGg6CiMgaW5zdGFsbC5wYWNrYWdlcygicmVtb3RlcyIpCiMgcmVtb3Rlczo6aW5zdGFsbF9naXRodWIoInZxdi9nZ2JpcGxvdCIpCmxpYnJhcnkoZ2diaXBsb3QpCmBgYAoKCiMgSW50cm9kdWN0aW9uCgpUaGUgZmlyc3QgcGFydCBvZiB0aGlzIGxhYiBkZW1vbnN0cmF0ZXMgdGhlIGluZmx1ZW5jZSBvZiBzdGFuZGFyZGl6aW5nIHRoZSBkYXRhIChpLmUuIHdvcmtpbmcgb24gdGhlIGNvcnJlbGF0aW9uIG1hdHJpeCB2cy4gd29ya2luZyBvbiB0aGUgY292YXJpYW5jZSBtYXRyaXgpLiBQYXkgYXR0ZW50aW9uIHRvIHdoYXQgdGhlIG91dHB1dCBsb29rcyBsaWtlIGFuZCBob3cgaXQgbGlua3MgdG8gdGhlIGJpcGxvdC4pCgoKIyBQQ0EgZGVtb25zdHJhdGlvbgoKIyMgRGF0YSBwcmVwCgpXZSB3aWxsIGxvYWQgdGhlIGB0cmVlc2AgZGF0YXNldCAoZnJvbSBiYXNlIGBSYCwgc2VlIGA/dHJlZXNgIGZvciBtb3JlIGluZm8pIHRoYXQgY29udGFpbnMgIHRoZSBoZWlnaHQgb2YgYSB0cmVlIChpbiAqZmVldCopLCB0aGUgZ2lydGggKG9yIGRpYW1ldGVyIGluICppbmNoZXMqKSBhbmQgdGhlIHZvbHVtZSAoaW4gKmN1YmljIGZlZXQqKSBvZiB0aGUgdHJlZS4KRm9yIHRoZSBwdXJwb3NlIG9mIHRoaXMgZXhlcmNpc2UsIHdlIHdpbGwgY29udmVydCB0aGUgY29udGludW91cyAqdm9sdW1lKiB2YXJpYWJsZSB0byBhIGNhdGVnb3JpY2FsIHZhcmlhYmxlIChhIGBmYWN0b3JgIGluIFIgbGluZ28pLgpBIHRyZWUgd2lsbCBiZSBjb25zaWRlcmVkIGxhcmdlIGlmIGl0cyB2b2x1bWUgaXMgYmlnZ2VyIHRoYW4gMjUgY3ViaWMgZmVldCwgYW5kIHNtYWxsIG90aGVyd2lzZS4KCmBgYHtyfQojIExvYWQgZGF0YQpkYXRhKHRyZWVzKQoKIyBDb252ZXJ0IHZvbHVtZSB0byBmYWN0b3IKdHJlZXMkdm9sX2ZhYyA8LSBhcy5mYWN0b3IoaWZlbHNlKHRyZWVzJFZvbHVtZSA+IDI1LCAibGFyZ2UiLCAic21hbGwiKSkKCiMgUHJldmlldyBkYXRhCmhlYWQodHJlZXMpCnN1bW1hcnkodHJlZXMpCmBgYAoKTm93IHN1cHBvc2UgdGhhdCB0aGUgaGVpZ2h0IHdhcyBhY3R1YWxseSBtZWFzdXJlZCBpbiBfX21pbGVzX18gaW5zdGVhZCBvZiBmZWV0LgoKYGBge3J9CiMjIENyZWF0ZSBuZXcgY29sdW1uIGluIHRyZWVzIHdpdGggaGVpZ2h0IGluIG1pbGVzCnRyZWVzJGhlaWdodF9taWxlcyA8LSB0cmVlcyRIZWlnaHQgLyA1MjgwCgojIENyZWF0ZSBtYXRyaXggdXNpbmcgaGVpZ2h0X21pbGVzIGFuZCBHaXJ0aCB2YXJpYWJsZXMKdHJlZV9teCA8LSBjYmluZCgiaGVpZ2h0X21pbGVzIiA9IHRyZWVzJGhlaWdodF9taWxlcywgImdpcnRoIiA9IHRyZWVzJEdpcnRoKQpoZWFkKHRyZWVfbXgpCmBgYAoKQWx3YXlzIGdvb2QgdG8gdmlzdWFsaXplIHRoZSBkYXRhLgpIZXJlIHdlIHBsb3QgdGhlIGhlaWdodCAoaW4gbWlsZXMpIHZzLiB0aGUgZ2lydGggZm9yIGVhY2ggdHJlZSBhbmQgc2l6ZSB0aGUgZG90cyBhY2NvcmRpbmcgdG8gdGhlaXIgdm9sdW1lLgpXZSBhbHNvIHVzZSBhIGNvbG9yIGFlc3RoZXRpYyB0byBkaXN0aW5ndWlzaCAibGFyZ2UiIGFuZCAic21hbGwiIHRyZWVzLgoKYGBge3IgdHJlZXMtcGxvdH0KdHJlZXNfcGxvdCA8LSBnZ3Bsb3QodHJlZXMpICsKICBnZW9tX3BvaW50KGFlcyhHaXJ0aCwgaGVpZ2h0X21pbGVzLCBzaXplID0gVm9sdW1lLCBjb2wgPSB2b2xfZmFjKSwKICAgICAgICAgICAgIGFscGhhID0gMC42KSArCiAgbGFicyh4ID0gIkdpcnRoIChpbmNoZXMpIiwgeSA9ICJIZWlnaHQgKG1pbGVzKSIsCiAgICAgICBjb2xvciA9ICJWb2x1bWUgY2xhc3MiKQoKdHJlZXNfcGxvdCArCiAgZ2d0aXRsZSgiVmlzdWFsaXppbmcgdGhlIG9yaWdpbmFsIHRyZWVzIGRhdGEiKQoKYGBgCgpQYXkgYXR0ZW50aW9uIHRvIHRoZSB1bml0cyBvbiB0aGUgYXhpcyBhbmQgdGhlICh2ZXJ5KSBkaWZmZXJlbnQgb3JkZXJzIG9mIHRoZSB1bml0cy4KCj5ROiBsb29raW5nIGF0IHRoaXMgcGxvdCwgY2FuIHlvdSBtYWtlIGEgZ3Vlc3MgaW4gd2hpY2ggZGlyZWN0aW9uIHRoZSBsYXJnZXN0IHZhcmlhdGlvbiBsaWVzLCBpLmUuIGluIHdoaWNoIGRpcmVjdGlvbiB0aGUgZmlyc3QgcHJpbmNpcGFsIGNvbXBvbmVudCB3b3VsZCBsaWU/CgpUbyBoZWxwIHdpdGggdmlzdWFsaXphdGlvbiBvZiB0aGUgUENzIGxhdGVyIG9uLCB3ZSBhbHNvIG1ha2UgdGhlIHBsb3QgdXNpbmcgdGhlIF9fY2VudGVyZWQgYW5kIHNjYWxlZF9fIGRhdGEuClRoZSBgc2NhbGVgIGZ1bmN0aW9uIGNhbiBiZSB1c2VkIGZvciB0aGlzLCBzbyB0aGF0IGFsbCB2YXJpYWJsZXMgaGF2ZSBtZWFuIDAgYW5kIHVuaXQgdmFyaWFuY2UuCgoKYGBge3J9CiMjIENlbnRlciBhbmQgc2NhbGUgZGF0YQp0cmVlc19zY2FsZWQgPC0gc2NhbGUodHJlZV9teCwgY2VudGVyID0gVFJVRSwgc2NhbGUgPSBUUlVFKQoKdHJlZXNfc2NhbGVkX3Bsb3QgPC0gdHJlZXNfc2NhbGVkICU+JSAKICAjIyBDb252ZXJ0IHRvIGRhdGEuZnJhbWUgYW5kIHJlLWFkZCBWb2x1bWUgY29sdW1ucyBmb3IgcGxvdHRpbmcKICBkYXRhLmZyYW1lKFZvbHVtZSA9IHRyZWVzJFZvbHVtZSwgdm9sX2ZhYyA9IHRyZWVzJHZvbF9mYWMpICU+JSAKICBnZ3Bsb3QoKSArCiAgZ2VvbV9wb2ludChhZXMoZ2lydGgsIGhlaWdodF9taWxlcywgc2l6ZSA9IFZvbHVtZSwgY29sID0gdm9sX2ZhYyksCiAgICAgICAgICAgICBhbHBoYSA9IDAuNikgKwogIGxhYnMoeCA9ICJHaXJ0aCAoaW5jaGVzKSwgc3RhbmRhcmRpemVkIiwgeSA9ICJIZWlnaHQgKG1pbGVzKSwgc3RhbmRhcmRpemVkIiwgCiAgICAgICBjb2xvciA9ICIiKSArIAogIGNvb3JkX2VxdWFsKHhsaW0gPSBjKC0yLjMsIDIuMyksIHlsaW0gPSBjKC0yLjMsIDIuMykpCgp0cmVlc19zY2FsZWRfcGxvdCArCiAgZ2d0aXRsZSgiVmlzdWFsaXppbmcgdGhlIHNjYWxlZCB0cmVlcyBkYXRhIikKYGBgCgoKCiMjIFJ1biBQQ0EKCldlIHJ1biBQQ0Egb24gdGhlICpoZWlnaHQgKGluIG1pbGVzKSogYW5kICpnaXJ0aCogdmFyaWFibGVzIGFuZCBpbnNwZWN0IHRoZSByZXN1bHRzLgoKYGBge3J9CiMgUnVuIFBDQSB3aXRoIHByY29tcCBmdW5jdGlvbiwgd2hpY2ggdXNlcyBTVkQgaW50ZXJuYWxseSAoc2VlID9wcmNvbXApCiMgTm90ZSB0aGF0IHByY29tcCBjZW50ZXJzIHRoZSBtYXRyaXggaW50ZXJuYWxseSBieSBkZWZhdWx0IGJ1dCBkb2VzIG5vdCBzY2FsZSBpdAojIChjZW50ZXIgPSBUUlVFLCBzY2FsZS4gPSBGQUxTRSkKdHJlZV9wY2EgPC0gcHJjb21wKHRyZWVfbXgpCnN1bW1hcnkodHJlZV9wY2EpCmBgYAoKX19Ob3RlOl9fIFRoZSBmaXJzdCBjb21wb25lbnQgZXhwbGFpbnMgYWxtb3N0IDEwMCUgb2YgdGhlIHZhcmlhYmlsaXR5IGluIHRoZSBkYXRhLgoKVGhlIF9fbG9hZGluZ3NfXyBvZiB0aGUgUENBIGFyZSBzdG9yZWQgaW4gdGhlIGAkcm90YXRpb25gIHNsb3Qgb2YgdGhlIGBwcmNvbXBgIHJlc3VsdCwgd2hpbGUgdGhlIGAkc2RldmAgc2xvdCBjb250YWlucyB0aGUgc3RhbmRhcmQgZGV2aWF0aW9ucyBvZiB0aGUgcHJpbmNpcGFsIGNvbXBvbmVudHMuCgpgYGB7cn0KdHJlZV9wY2Ekcm90YXRpb24KdHJlZV9wY2Ekc2RldgpgYGAKClJlbWVtYmVyIHRoYXQgdGhlIFByaW5jaXBhbCBDb21wb25lbnRzIGFyZSBfX2xpbmVhciBjb21iaW5hdGlvbnNfXyBvZiB0aGUgb3JpZ2luYWwgdmFyaWFibGVzLgpUaGUgbG9hZGluZ3MgdGVsbCB5b3Ugd2hhdCB0aGUgY29udHJpYnV0aW9uIChvciB3ZWlnaHQpIG9mIGVhY2ggdmFyaWFibGUgaXMgdG8gdGhlIFBDLgpIZXJlIHdlIHNlZSB0aGF0IHRoZSBmaXJzdCBQQyBpcyBjb21wbGV0ZWx5IGRvbWluYXRlZCBieSB0aGUgZ2lydGggdmFyaWFibGUsIHdoaWxlIHRoZSBzZWNvbmQgY29tcG9uZW50IGlzIGJhc2ljYWxseSAodGhlIG5lZ2F0aXZlKSBoZWlnaHQgdmFyaWFibGUuClNpbmNlIHRoZSBQQ3MgYXJlIG9yZGVyZWQgYnkgdGhlIGFtb3VudCBvZiB2YXJpYW5jZSB0aGV5IHJldGFpbiBmcm9tIHRoZSBvcmlnaW5hbCBkYXRhLCB3ZSB3b3VsZCBjb25jbHVkZSB0aGF0IG1vc3Qgb2YgdGhlIHZhcmlhbmNlIGluIHRoZSBkYXRhIGNvbWVzIGZyb20gdGhlIGdpcnRoIHZhcmlhYmxlLgoKPlE6IElzIHRoaXMgaW4gbGluZSB3aXRoIHdoYXQgeW91IGV4cGVjdGVkIGZyb20gdGhlIG9yaWdpbmFsIHBsb3Q/IFdoeSBub3Q/IChUaGluayBhYm91dCB0aGUgdW5pdHMgd2UgYXJlIHVzaW5nIGhlcmUhKQoKVGhlIHJlc3VsdCBmcm9tIGBwcmNvbXBgIGFsc28gY29udGFpbnMgYW4gYCR4YCBzbG90LCB3aGljaCBjb250YWlucyB0aGUgcHJvamVjdGVkIHZhbHVlcyBvZiB0aGUgb3JpZ2luYWwgZGF0YSBtYXRyaXggb250byB0aGUgcHJpbmNpcGFsIGNvbXBvbmVudHMgKGFsc28gY2FsbGVkIHRoZSAqUEMgc2NvcmVzKikuClRoaXMgaXMgd2hhdCB3ZSB3aWxsIHVzZSB0byBjb25zdHJ1Y3QgdGhlIFBDQSBwbG90LgoKCiMjIyBWaXN1YWxpemUgUHJpbmNpcGFsIENvbXBvbmVudHMKClNjYWxlIHRoZSBQQyBsb2FkaW5ncyBieSB0aGVpciBzdGFuZGFyZCBkZXZpYXRpb25zIChzaW5ndWxhciB2YWx1ZXMpIHRvIHByb2plY3QgdGhlbSBiYWNrIHRvIHRoZSBvcmlnaW5hbCBkYXRhIHNwYWNlLgpXZSBhbHNvIHRyYW5zcG9zZSB0aGUgYHJvdGF0aW9uYCBtYXRyaXggc28gdGhhdCB0aGUgdmFyaWFibGVzIGFyZSBpbiBjb2x1bW5zIGFuZCBQQ3MgaW4gdGhlIHJvd3MsIHNvIHRoYXQgd2UgY2FuIG92ZXJsYXkgdGhlbSBvbiB0aGUgb3JpZ2luYWwgdHJlZXMgcGxvdC4KCmBgYHtyIHRyZWUtcGxvdC1QQy1sb2FkaW5nc30KIyMgVHJhbnNwb3NlIHRoZSBsb2FkaW5ncyBzbyB0aGF0IHRoZSBQQ3MgYXJlIGluIHRoZSByb3dzLCBmb3IgcGxvdHRpbmcKcGNfbG9hZGluZ3MgPC0gdCh0cmVlX3BjYSRyb3RhdGlvbikKCiMjIFJldXNlIHBsb3QgZnJvbSBiZWZvcmUgYW5kIGFkZCBQQ3MKdHJlZXNfc2NhbGVkX3Bsb3QgKwogIGdlb21fc2VnbWVudCgKICAgIGRhdGEgPSBkYXRhLmZyYW1lKHBjX2xvYWRpbmdzKSwKICAgIGFlcyh4ID0gMCwgeGVuZCA9IGdpcnRoLCB5ID0gMCwgeWVuZCA9IGhlaWdodF9taWxlcyksCiAgICBhcnJvdyA9IGFycm93KGxlbmd0aD11bml0KDAuMSwiY20iKSkKICApICsKICBnZW9tX3RleHQoCiAgICBkYXRhID0gZGF0YS5mcmFtZShwY19sb2FkaW5ncyksCiAgICBhZXMoeCA9IGdpcnRoLCB5ID0gaGVpZ2h0X21pbGVzLCBsYWJlbCA9IHJvd25hbWVzKHBjX2xvYWRpbmdzKSksCiAgICB2anVzdCA9ICJvdXR3YXJkIiwgaGp1c3QgPSAib3V0d2FyZCIKICApCmBgYAoKRnJvbSB0aGlzIHBsb3Qgd2Ugc2VlIHRoYXQgdGhlIFBDcyBhcmUgbm90IGluIHRoZSBkaXJlY3Rpb25zIHdlIGV4cGVjdGVkLgpQQzEgc2hvdWxkIHBvaW50IGluIHRoZSBkaXJlY3Rpb24gb2YgZ3JlYXRlc3QgdmFyaWFiaWxpdHkuCgoKIyMjIFZpc3VhbGl6ZSBQQ0Egd2l0aCBiaXBsb3QKCmBgYHtyIHRyZWUtcGNhLWJpcGxvdH0KZ2diaXBsb3QodHJlZV9wY2EsIGdyb3VwcyA9IHRyZWVzJHZvbF9mYWMsIGFscGhhID0gMCkgKwogICMjIEFkZCBwb2ludHMgbGF5ZXIgdG8gY29sb3IgYW5kIHNpemUgcG9pbnRzCiAgZ2VvbV9wb2ludChhZXMoY29sID0gdHJlZXMkdm9sX2ZhYywgc2l6ZSA9IHRyZWVzJFZvbHVtZSksIGFscGhhID0gMC42KSArCiAgbGFicyhzaXplID0gIlZvbHVtZSIsIGNvbCA9ICIiKQpgYGAKCldlIHNlZSB0aGF0IHRyZWVzIGhpZ2ggaW4gdm9sdW1lIHRlbmQgdG8gaGF2ZSBhIGhpZ2ggdHJlZSBnaXJ0aCwgYnV0IHRoZSBoZWlnaHQgZG9lcyBub3QgZ2l2ZSBhbnkgaW5mb3JtYXRpb24gb24gdHJlZSB2b2x1bWUuIApUaGlzIGlzIGxpa2VseSB3cm9uZywgc2luY2Ugd2Uga25vdyB0aGF0IHRoZSBoZWlnaHQgb2YgYSB0cmVlIHNob3VsZCBoYXZlIGF0IGxlYXN0IHNvbWUgaW5mbHVlbmNlIG9uIGl0cyB2b2x1bWUuClRoZSBwcm9ibGVtIGhlcmUgaXMgdGhhdCBiZWNhdXNlIG9mIHRoZSAyIHZlcnkgZGlmZmVyZW50IHVuaXQgbWVhc3VyZXMgKCptaWxlcyogYW5kICppbmNoZXMqKSwgdGhlIGluZmx1ZW5jZSBvZiB0aGUgZ2lydGggaXMgaW5mbGF0ZWQganVzdCBiZWNhdXNlIHRoZSBvcmRlciBvZiB0aGUgc2NhbGUgaXMgbXVjaCBsYXJnZXIuCgpUaGlzIGlzIGFsc28gcmVmbGVjdGVkIGluIHRoZSB2YXJpYW5jZXMgb2YgdGhlc2UgdmFyaWFibGVzOgoKYGBge3J9CnJvdW5kKGRpYWcoY292KHRyZWVfbXgpKSwgOCkKYGBgCgpXZSBzZWUgdGhhdCB0aGUgdmFyaWFuY2Ugb2YgdGhlICpnaXJ0aCogdmFyaWFibGUgaXMgc2V2ZXJhbCBvcmRlcnMgb2YgbWFnbml0dWRlIGxhcmdlciB0aGFuIHRoYXQgb2YgdGhlIGhlaWdodCAoYWdhaW4sIGJlY2F1c2Ugb2YgdGhlIGRpZmZlcmVudCB1bml0cykgYW5kIHRoaXMgaXMgcmVmbGVjdGVkIGluIHRoZSBQQ0EuCgpXZSBjb3VsZCB1c2UgdGhlIHNhbWUgdW5pdHMsIG9yIHdlIGNvdWxkIHN0YW5kYXJkaXplIHRoZSB2YXJpYWJsZXMgYnkgZGl2aWRpbmcgYnkgdGhlaXIgc3RhbmRhcmQgZGV2aWF0aW9ucy4KQm90aCB3aWxsIGxlYWQgdG8gYSBtb3JlIGJhbGFuY2VkIHBpY3R1cmUgb2YgdGhlIHZhcmlhYmlsaXR5LgpPZiBjb3Vyc2UgaW4gdGhpcyBjYXNlIG9uZSBjYW4gYXJndWUgdGhhdCB0aGUgdmFyaWFibGVzIHNob3VsZCBoYXZlIHRoZSBzYW1lIHVuaXQgYnV0IG5vdCBiZSBzdGFuZGFyZGl6ZWQsIHdoaWNoIG1heSBiZSBhIHZhbGlkIGFyZ3VtZW50LCB3ZXJlIGl0IG5vdCB0aGF0IHdlIGFyZSBtZWFzdXJpbmcgdHdvIGRpZmZlcmVudCB0aGluZ3MgKHRoZSBoZWlnaHQgYW5kIHRoZSBkaWFtZXRlcikuIApTbyBldmVuIGlmIHdlIHVzZWQgdGhlIHNhbWUgdW5pdHMsIGl0IGlzIHJlY29tbWVuZGVkIHRvIGFsc28gc3RhbmRhcmRpemUgdGhlIHZhcmlhYmxlcy4KCkltYWdpbmUgaWYgd2Ugd291bGQgYmUgbWVhc3VyaW5nIHRoZSBtYXNzICgka2ckKSBvZiB0aGUgdHJlZSBhbmQgdGhlIGdpcnRoICgkbSQpIG9mIHRoZSB0cmVlLCB0aGUgc2NhbGUgb24gd2hpY2ggYm90aCBzaG91bGQgYmUgbWVhc3VyZWQgaXMgbm8gbG9uZ2VyIGNsZWFyLCBzaW5jZSBuaWV0aGVyIGtpbG9ncmFtcyBjYW4gYmUgY29udmVydGVkIHRvIG1ldGVycyBub3IgbWV0ZXJzIGNvbnZlcnRlZCB0byBraWxvZ3JhbXMuIEluIHRoaXMgY2FzZSB3ZSBoYXZlIGEgY2xlYXIgYXJndW1lbnQgdG8gd29yayBvbiB0aGUgc3RhbmRhcmRpemVkIHZhcmlhYmxlcy4KCgojIyBSZWRvIFBDQSBvbiBzdGFuZGFyZGl6ZWQgdmFyaWFibGVzCgpXZSB3aWxsIGxlYXZlIHRoZSAqaGVpZ2h0KiBvbiB0aGUgKm1pbGVzKiBzY2FsZSwgYnV0IG5vdyB3ZSB3aWxsIHN0YW5kYXJkaXplIHRoZSB2YXJpYWJsZXMgYmVmb3JlIHBlcmZvcm1pbmcgdGhlIFBDQS4KSS5lLiBpbiBhZGRpdGlvbiB0byAqY2VudGVyaW5nKiB0aGUgbWF0cml4IChzdWJ0cmFjdGluZyB0aGUgY29sdW1uIG1lYW5zKSwgd2UgYWxzbyBkaXZpZGUgaXQgYnkgaXRzIGNvbHVtbiBzdGFuZGFyZCBkZXZpYXRpb25zLgpOb3RlIHRoYXQgdGhlc2Ugb3BlcmF0aW9ucyBjYW4gYmUgZG9uZSBpbiBvbmUgZ28gd2l0aCB0aGUgYHByY29tcGAgZnVuY3Rpb24gYnkgc3BlY2lmeWluZyBgY2VudGVyID0gVFJVRWAgYW5kIGBzY2FsZS4gPSBUUlVFYCAobm90ZSB0aGUgYC5gISkuCgpgYGB7cn0KIyMgQ29tcHV0ZSBQQ0Egb24gY2VudGVyZWQgYW5kIHNjYWxlZCBtYXRyaXgKdHJlZV9wY2Ffc2NhbGVkIDwtIHByY29tcCh0cmVlX214LCBjZW50ZXIgPSBUUlVFLCBzY2FsZS4gPSBUUlVFKQpzdW1tYXJ5KHRyZWVfcGNhX3NjYWxlZCkKdHJlZV9wY2Ffc2NhbGVkJHJvdGF0aW9uCnRyZWVfcGNhX3NjYWxlZCRzZGV2CmBgYAoKV2Ugd2lsbCBhZ2FpbiBwbG90IHRoZSBvcmlnaW5hbCBkYXRhLCBidXQgdGhpcyB0aW1lIHVzaW5nIHRoZSBfX3NjYWxlZCBhbmQgY2VudGVyZWRfXyB2YWx1ZXMsIGFuZCBvdmVybGF5IHRoZSBwbG90IHdpdGggdGhlIFBDcy4KCmBgYHtyfQpwY19zY2FsZWRfbG9hZGluZ3MgPC0gdCh0cmVlX3BjYV9zY2FsZWQkcm90YXRpb24pCgojIyBSZXVzZSBwbG90IGZyb20gYmVmb3JlIGFuZCBhZGQgUENzCnRyZWVzX3NjYWxlZF9wbG90ICsKICBnZW9tX3NlZ21lbnQoCiAgICBkYXRhID0gZGF0YS5mcmFtZShwY19zY2FsZWRfbG9hZGluZ3MpLAogICAgYWVzKHggPSAwLCB4ZW5kID0gZ2lydGgsIHkgPSAwLCB5ZW5kID0gaGVpZ2h0X21pbGVzKSwKICAgIGFycm93ID0gYXJyb3cobGVuZ3RoPXVuaXQoMC4yLCJjbSIpKQogICkgKwogIGdlb21fdGV4dCgKICAgIGRhdGEgPSBkYXRhLmZyYW1lKHBjX3NjYWxlZF9sb2FkaW5ncyksCiAgICBhZXMoeCA9IGdpcnRoLCB5ID0gaGVpZ2h0X21pbGVzLCBsYWJlbCA9IHJvd25hbWVzKHBjX3NjYWxlZF9sb2FkaW5ncykpLAogICAgbnVkZ2VfeCA9IDAuMSwgbnVkZ2VfeSA9IDAuMgogICkKYGBgCgpUaGlzIGlzIG1vcmUgaW4gbGluZSB3aXRoIG91ciBleHBlY3RhdGlvbnMuClBDMSBwb2ludCBpbiB0aGUgZGlyZWN0aW9uIG9mIGdyZWF0ZXN0IHZhcmlhYmlsaXR5LCB3aXRoIFBDMiBvcnRob2dvbmFsIGFuZCBwb2ludGluZyBpbiB0aGUgZGlyZWN0aW9uIG9mIHNlY29uZCBncmVhdGVzdCB2YXJpYWJpbHR5LgoKQWxzbyBub3RlIGZyb20gdGhlIGxlbmd0aHMgb2YgdGhlIFBDIHZlY3RvcnMgdGhhdCB0aGUgY29udHJpYnV0aW9ucyBvZiBoZWlnaHQgYW5kIGdpcnRoIGFyZSBlcXVhbCB0byBib3RoIFBDcy4KCgpUaGUgYmlwbG90OgoKYGBge3IgdHJlZS1zY2FsZWQtcGNhLWJpcGxvdH0KZ2diaXBsb3QodHJlZV9wY2Ffc2NhbGVkLCBncm91cHMgPSB0cmVlcyR2b2xfZmFjLCBhbHBoYSA9IDApICsKICAjIyBBZGQgcG9pbnRzIGxheWVyIHRvIGNvbG9yIGFuZCBzaXplIHBvaW50cwogIGdlb21fcG9pbnQoYWVzKGNvbCA9IHRyZWVzJHZvbF9mYWMsIHNpemUgPSB0cmVlcyRWb2x1bWUpLCBhbHBoYSA9IDAuNikgKwogIGxhYnMoc2l6ZSA9ICJWb2x1bWUiLCBjb2wgPSAiIikKYGBgCgpXZSBub3cgZ2V0IGEgbXVjaCBtb3JlIHJlYWxpc3RpYyByZXN1bHQsIHdoZXJlIHRoZSAqaGVpZ2h0KiBhbmQgKmdpcnRoKiB2YXJpYWJsZXMgaGF2ZSBtb3JlIGVxdWFsIGNvbnRyaWJ1dGlvbnMgdG8gdGhlIFBDcy4KClBDMSBjYW4gYmUgaW50ZXJwcmV0ZWQgYXMgc2VwYXJhdGluZyBzbWFsbCBhbmQgbGFyZ2Ugdm9sdW1lIHRyZWVzLgpBIHBvdGVudGlhbCBleHBsYW5hdGlvbiBvZiBQQzIgd291bGQgYmUgdGhlIHNlcGFyYXRpb24gYmV0d2VlbiB0cmVlcyB0aGF0IGhhdmUgYSBzaW1pbGFyIHZvbHVtZSBidXQgZGlmZmVyIGluIHRoZWlyIGhlaWdodC10by1naXJ0aCByYXRpb3MsIGkuZS4gc2hvcnQgd2lkZSB0cmVlcyBhbmQgbG9uZyB0aGluIHRyZWVzLgoKTm90ZSB0aGF0IHdlIHdvdWxkIGdldCB0aGUgZXhhY3Qgc2FtZSByZXN1bHQgKGFwYXJ0IG1heWJlIGZyb20gdGhlIHNpZ25zKSBpZiB3ZSB1c2VkICpoZWlnaHQqIG9uIHRoZSBvcmlnaW5hbCAqZmVldCogc2NhbGUuClNpbmNlIHRoZSBjb252ZXJzaW9uIGlzIGp1c3QgYSBtdWx0aXBsaWNhdGlvbiBieSBhIGNvbnN0YW50LCBzY2FsaW5nIHRoZSBjb2x1bW4gYnkgaXRzIHN0YW5kYXJkIGRldmlhdGlvbiB3aWxsIGdpdmUgdGhlIHNhbWUgcmVzdWx0LgooWW91IGNhbiB2ZXJpZnkgdGhpcyBmb3IgeW91cnNlbGYgYnkgcmVkb2luZyB0aGUgUENBIHVzaW5nIHRoZSBvcmlnaW5hbCBoZWlnaHQgY29sdW1uIGZyb20gYHRyZWVzYCwgd2l0aG91dCBjb252ZXJ0aW5nIGl0IHRvIG1pbGVzLikKCgoKIyBFeGVyY2lzZXMKCiMjIEhlYXZ5IG1ldGFscyBuZWFyIHRoZSBTY2hlbGRlCgojIyMgRGF0YSBwcmVwIHstfQoKQXQgdGhlIGRlcGFydG1lbnQgb2YgYW5hbHl0aWNhbCBhbmQgcGh5c2ljYWwgY2hlbWlzdHJ5LCByZXNlYXJjaGVycyB3YW50ZWQgdG8gaW52ZXN0aWdhdGUgdGhlIHBvbGx1dGlvbiBvZiBncmFzc2xhbmRzIGluIHRoZSB2aWNpbml0eSBvZiB0aGUgcml2ZXIgU2NoZWxkZS4KQ29uY2VudHJhdGlvbnMgb2YgOCBoZWF2eSBtZXRhbHMgd2VyZSBtZWFzdXJlZCBvbiAxOSBkaWZmZXJlbnQgbG9jYXRpb25zLCBlYWNoIHRpbWUgYXQgYSBkZXB0aCBvZiA1IGNtIGFuZCBhdCBhIGRlcHRoIG9mIDIwIGNtOyB0aGUgZGF0YSBzZXQgaXMgY2FsbGVkIGhlYXZ5bWV0YWxzLgpWaWNpbml0eSB0byB0aGUgcml2ZXIgd2FzIDAgKGZhcikgb3IgMSAoY2xvc2UpLgoKUmVhZCBpbiB0aGUgZGF0YSBhcyBmb2xsb3dzOgoKYGBge3IgbG9hZC1oZWF2eW1ldGFscy1kYXRhLCBjb2xsYXBzZT1GQUxTRX0KaGVhdnltZXRhbHNfdXJsIDwtICJodHRwczovL2dpdGh1Yi5jb20vc3RhdE9taWNzL0hEQTIwMjAvcmF3L2RhdGEvaGVhdnltZXRhbHMuY3N2IgoKaGVhdnltZXRhbHMgPC0gcmVhZF9jc3YoaGVhdnltZXRhbHNfdXJsLAogIGNvbF90eXBlcyA9IGNvbHMoCiAgICBsb2NhdGlvbiA9IGNvbF9pbnRlZ2VyKCksCiAgICByaXZlciA9IGNvbF9sb2dpY2FsKCksCiAgICAuZGVmYXVsdCA9IGNvbF9kb3VibGUoKQogICkKKQoKIyMgUmVjb2RlIHRoZSAicml2ZXIiIHZhcmlhYmxlCmhlYXZ5bWV0YWxzJHJpdmVyIDwtIGlmZWxzZShoZWF2eW1ldGFscyRyaXZlciwgImNsb3NlIiwgImZhciIpCgpoZWF2eW1ldGFscwpkaW0oaGVhdnltZXRhbHMpCmBgYAoKTm90ZSB0aGF0IHRoZXJlIGFyZSAyIGNvbHVtbnMgcGVyIGhlYXZ5IG1ldGFsLCBvbmUgZm9yIHRoZSBtZWFzdXJlbWVudCBhdCA1IGNtIGRlcHRoIGFuZCBvbmUgYXQgMjAgY20gZGVwdGguCgoKIyMjIFRhc2tzIHstfQoKIyMjIyMgMS4gQ29uZHVjdCBhIFBDQSB1c2luZyAqc3RhbmRhcmRpemVkIHZhcmlhYmxlcyouIEhvdyBtYW55IFBDcyB3b3VsZCB5b3UgcmV0YWluPyBNb3RpdmF0ZSB0aGUgYW5zd2VyL2ludGVycHJldC4gey19CgpUaGluayBhYm91dCB3aGljaCBjb2x1bW5zIHlvdSBuZWVkIGZyb20gdGhlIG9yaWdpbmFsIGRhdGEhCgo8ZGV0YWlscz48c3VtbWFyeT5Tb2x1dGlvbjwvc3VtbWFyeT4KCkZpcnN0IGRvIHRoZSBQQ0EsIGV4Y2x1ZGluZyB0aGUgYGxvY2F0aW9uYCBhbmQgYHJpdmVyYCBjb2x1bW5zLgoKYGBge3IgaGVhdnltZXRhbHMtcGNhfQojIyBSZW1vdmUgJ2xvY2F0aW9uJyBhbmQgJ3JpdmVyJyBjb2x1bW5zIHdoZW4gY3JlYXRpbmcgbWF0cml4CmhlYXZ5bWV0YWxzX214IDwtIHNlbGVjdChoZWF2eW1ldGFscywgLWxvY2F0aW9uLCAtcml2ZXIpICU+JQogIGFzLm1hdHJpeCgpCgojIyBSdW4gUENBIG9uIGNlbnRlcmVkIGFuZCBzY2FsZWQgZGF0YQpoZWF2eW1ldGFsc19wY2EgPC0gcHJjb21wKGhlYXZ5bWV0YWxzX214LCBjZW50ZXIgPSBUUlVFLCBzY2FsZS4gPSBUUlVFKQpzdW1tYXJ5KGhlYXZ5bWV0YWxzX3BjYSkKYGBgCgpUbyBjaG9vc2UgdGhlIG51bWJlciBvZiBQQ3MgdG8gcmV0YWluLCB3ZSBsb29rIGF0IHRoZSBwcm9wb3J0aW9uIG9mIHZhcmlhbmNlIHRoYXQgZWFjaCBQQyBleHBsYWlucy4KVGhpcyBjYW4gYmUgdmlzdWFsaXplZCB1c2luZyB3aGF0IGlzIGtub3duIGFzIGEgKnNjcmVlIHBsb3QqLgoKYGBge3IgaGVhdnltZXRhbHMtcGNhLXNjcmVlcGxvdH0KIyMgQ2FsY3VsYXRlIHRvdGFsIHZhcmlhbmNlIGJ5IHN1bW1pbmcgdGhlIFBDIHZhcmlhbmNlcyAoc2RldidzIHNxdWFyZWQpCnRvdF92YXIgPC0gc3VtKGhlYXZ5bWV0YWxzX3BjYSRzZGV2XjIpCgojIyBDcmVhdGUgZGF0YS5mcmFtZSBvZiB0aGUgcHJvcG9ydGlvbiBvZiB2YXJpYW5jZSBleHBsYWluZWQgYnkgZWFjaCBQQwpoZWF2eW1ldGFsc19wcm9wX3ZhciA8LSBkYXRhLmZyYW1lKAogIFBDID0gMTpuY29sKGhlYXZ5bWV0YWxzX3BjYSR4KSwKICB2YXIgPSBoZWF2eW1ldGFsc19wY2Ekc2Rldl4yCikgJT4lIAogICMjIFVzaW5nIGBtdXRhdGVgIHRvIGNhbGN1bGF0ZSBwcm9wLiB2YXIgYW5kIGN1bS4gcHJvcC4gdmFyCiAgbXV0YXRlKAogICAgcHJvcF92YXIgPSB2YXIgLyB0b3RfdmFyLAogICAgY3VtX3Byb3BfdmFyID0gY3Vtc3VtKHZhciAvIHRvdF92YXIpCiAgKQoKaGVhZChoZWF2eW1ldGFsc19wcm9wX3ZhcikKCiMjIFBsb3QgdGhlIHByb3BvcnRpb24gb2YgdmFyaWFuY2UgZXhwbGFpbmVkIGJ5IGVhY2ggUEMKZ2dwbG90KGhlYXZ5bWV0YWxzX3Byb3BfdmFyLCBhZXMoUEMsIHByb3BfdmFyKSkgKwogIGdlb21fcG9pbnQoKSArCiAgZ2VvbV9saW5lKCkgKwogIGdlb21fdmxpbmUoeGludGVyY2VwdCA9IDIuNSwgY29sID0gImZpcmVicmljayIpICsKICBzY2FsZV94X2NvbnRpbnVvdXMoYnJlYWtzID0gMTpuY29sKGhlYXZ5bWV0YWxzX3BjYSR4KSkgKwogIGxhYnMoeSA9ICJQcm9wb3J0aW9uIG9mIHZhcmlhbmNlIikgKwogIGdndGl0bGUoIlByb3BvcnRpb24gb2YgdmFyaWFuY2UgZXhwbGFpbmVkIGJ5IGVhY2ggUEMiLAogICAgICAgICAgc3VidGl0bGUgPSAiSGVhdnkgbWV0YWxzIGRhdGEiKQoKIyMgUGxvdCB0aGUgY3VtdWxhdGl2ZSBwcm9wb3J0aW9uIG9mIHZhcmlhbmNlIGV4cGxhaW5lZCBieSBlYWNoIFBDCmdncGxvdChoZWF2eW1ldGFsc19wcm9wX3ZhciwgYWVzKFBDLCBjdW1fcHJvcF92YXIpKSArCiAgZ2VvbV9wb2ludCgpICsKICBnZW9tX2xpbmUoKSArCiAgZ2VvbV92bGluZSh4aW50ZXJjZXB0ID0gMi41LCBjb2wgPSAiZmlyZWJyaWNrIikgKwogIHNjYWxlX3hfY29udGludW91cyhicmVha3MgPSAxOm5jb2woaGVhdnltZXRhbHNfcGNhJHgpKSArCiAgbGFicyh5ID0gIlByb3BvcnRpb24gb2YgdmFyaWFuY2UiKSArCiAgZ2d0aXRsZSgiQ3VtdWxhdGl2ZSBwcm9wb3J0aW9uIG9mIHZhcmlhbmNlIGV4cGxhaW5lZCBieSBlYWNoIFBDIiwKICAgICAgICAgIHN1YnRpdGxlID0gIkhlYXZ5IG1ldGFscyBkYXRhIikKYGBgCgpXZSBkZWNpZGUgdG8ga2VlcCB0aGUgZmlyc3QgMiBQQ3MgKGluZGljYXRlZCBieSB0aGUgcmVkIHZlcnRpY2FsIGxpbmUpLCBhcyB0aGlzIGNvaW5jaWRlcyB3aXRoIHRoZSAiZWxib3ciIGluIHRoZSBzY3JlZSBwbG90LgpUaGlzIGxlYXZlcyB1cyB3aXRoIDg4JSBvZiB0aGUgdG90YWwgdmFyaWFuY2UgZnJvbSB0aGUgb3JpZ2luYWwgZGF0YSwgd2hpY2ggaXMgbm90IGJhZCBhdCBhbGwgZ2l2ZW4gdGhhdCB3ZSB3ZW50IGZyb20gMTYgdG8gb25seSAyIGRpbWVuc2lvbnMhCk90aGVyIGNvbW1vbiBjdXRvZmZzIGFyZSB0byBrZWVwIGUuZy4gOTAlLCA5NSUgb3IgOTklIG9mIHRoZSBvcmlnaW5hbCB2YXJpYW5jZS4KV2hpY2ggd291bGQgZ2l2ZSB1cyAzLCA0IG9yIDcgUENzIHJlc3BlY3RpdmVseS4KSG93ZXZlciwgZm9yIHRoZSBwdXJwb3NlIG9mIHRoaXMgZXhlcmNpc2UsIHRoZSBmaXJzdCAyIHdpbGwgYmUgZW5vdWdoLgoKPC9kZXRhaWxzPgoKIyMjIyMgMi4gTWFrZSBhIGJpcGxvdCB1c2luZyB0aGUgcmV0YWluZWQgUENzIGFuZCBpbnRlcnByZXQuIElzIHRoZXJlIGEgcmVsYXRpb25oc2lwIGJldHdlZW4gdmljaW5pdHkgdG8gdGhlIHJpdmVyIGFuZCBwb2x1dGlvbiB3aXRoIGNlcnRhaW4gbWV0YWxzPyAgey19CgpfX0hpbnRfXzogVHJ5IHRvIGNvbG9yIG9yIGxhYmVsIHRoZSBkYXRhIHBvaW50cyBieSB0aGVpciB2aWNpbml0eSB0byB0aGUgcml2ZXIgKHVzaW5nIHRoZSBgcml2ZXJgIHZhcmlhYmxlKSB0byBhaWQgd2l0aCBpbnRlcnByZXRhdGlvbi4gCgo8ZGV0YWlscz48c3VtbWFyeT5Tb2x1dGlvbjwvc3VtbWFyeT4KCk1ha2luZyB0aGUgYmlwbG90IGZvciB0aGUgZmlyc3QgMiBQQ3MuCgpgYGB7ciBoZWF2eW1ldGFscy1wY2EtYmlwbG90fQpnZ2JpcGxvdChoZWF2eW1ldGFsc19wY2EsIGdyb3VwcyA9IGhlYXZ5bWV0YWxzJHJpdmVyKSArCiAgbGFicyhjb2xvciA9ICJWaWNpbml0eSB0byByaXZlciIpICsKICBnZ3RpdGxlKCJCaXBsb3QgZm9yIHRoZSBoZWF2eSBtZXRhbHMgUENBIikKYGBgCgpUaGUgZGlzdGluY3Rpb24gdGhhdCBpcyBpbW1lZGlhdGVseSBjbGVhciBpcyB0aGF0IHRoZSBsZXZlbHMgb2YgTWFuZ2FuZXNlIChNbikgc2VlbSB0byBiZSBoaWdoZXIgaW4gdGhlIGFyZWFzIGZhciBmcm9tIHRoZSByaXZlciAoYXQgYm90aCBkZXB0aHMpLCBjb21wYXJlZCB0byBhbGwgb3RoZXIgbWV0YWxzLgoKV2UgY2FuIGFsc28gc2VlIHRoaXMgZnJvbSB0aGUgbG9hZGluZ3MsIHdoZXJlIE1uMjAgaXMgdGhlIG9ubHkgbWVhc3VyZW1lbnQgdGhhdCBpcyBuZWdhdGl2ZWx5IGNvcnJlbGF0ZWQgd2l0aCBQQzEsIHdoaWxlIE1uNSBpcyBiYXJlbHkgY29ycmVsYXRlZCB3aXRoIFBDMS4KCkEgcG90ZW50aWFsIGh5cG90aGVzaXMgd291bGQgYmUgdGhhdCBhcyB3ZSBtb3ZlIGZhcnRoZXIgYXdheSBmcm9tIHRoZSByaXZlciwgdGhlIGNvbmNlbnRyYXRpb24gb2YgTW4gaW5jcmVhc2VzIHdpdGggZGVwdGguCgpgYGB7cn0KaGVhdnltZXRhbHNfcGNhJHJvdGF0aW9uWywgMToyXQpgYGAKCjwvZGV0YWlscz4KCiMjIyMjIDMuIENhbGN1bGF0ZSB0aGUgbG9hZGluZ3MgYW5kIHNjb3JlcyBvZiB0aGUgUENBIHVzaW5nIHRoZSBTVkQgKGZ1bmN0aW9uIGBzdmRgKS4gVmVyaWZ5IHRoYXQgdGhlIGxvYWRpbmdzIGFuZCBzY29yZXMgb2J0YWluZWQgdXNpbmcgdGhlIFNWRCBhcHByb2FjaCBhcmUgZXF1YWwgdG8gdGhvc2Ugb2J0YWluZWQgdXNpbmcgdGhlIGBwcmNvbXBgIGZ1bmN0aW9uLiB7LX0KCjxkZXRhaWxzPjxzdW1tYXJ5PlNvbHV0aW9uPC9zdW1tYXJ5PgoKRmlyc3QgcGVyZm9ybSB0aGUgU1ZELgpSZW1lbWJlciB0byBfX2NlbnRlciBhbmQgc2NhbGVfXyB0aGUgZGF0YSBtYXRyaXghCgpgYGB7ciBoZWF2eW1ldGFscy1TVkR9CmhlYXZ5bWV0YWxzX3NjYWxlZCA8LSBzY2FsZShoZWF2eW1ldGFsc19teCkKaGVhdnltZXRhbHNfc3ZkIDwtIHN2ZChoZWF2eW1ldGFsc19zY2FsZWQpCmBgYAoKTm93IGNvbXBhcmUgdGhlIFBDIGxvYWRpbmdzIHdpdGggdGhlIHJpZ2h0IHNpbmd1bGFyIHZlY3RvcnMgJFxtYXRoYmZ7Vn0kIGFuZCB0aGUgc2NvcmVzIHdpdGggdGhlIHByb2plY3Rpb25zICRcbWF0aGJme1pfa30gPSBcbWF0aGJme1hWX2t9JC4KCk5vdGUgdGhhdCBpdCBpcyBwb3NzaWJsZSB0aGF0IHRoZSBzaWducyBhcmUgb3Bwb3NpdGUsIHRoZXJlZm9yZSB3ZSB0YWtlIHRoZSBhYnNvbHV0ZSB2YWx1ZXMgZm9yIHRoZSBjb21wYXJpc29uLgoKYGBge3J9CiMgcmVtb3ZlIGRpbW5hbWVzIGZvciBjb21wYXJpc29uCmhlYXZ5bWV0YWxzX2xvYWRpbmdzIDwtIGFicyh1bm5hbWUoaGVhdnltZXRhbHNfcGNhJHJvdGF0aW9uKSkKaGVhdnltZXRhbHNfViA8LSBhYnMoaGVhdnltZXRhbHNfc3ZkJHYpCgojIyBDb21wYXJlIGxvYWRpbmdzIHdpdGggc2luZ3VsYXIgdmVjdG9ycwphbGwuZXF1YWwoaGVhdnltZXRhbHNfbG9hZGluZ3MsIGhlYXZ5bWV0YWxzX1YpCgojIyBDYWxjdWxhdGUgcHJvamVjdGlvbnMKaGVhdnltZXRhbHNfWmsgPC0gYWJzKGhlYXZ5bWV0YWxzX3NjYWxlZCAlKiUgaGVhdnltZXRhbHNfc3ZkJHYpCmhlYXZ5bWV0YWxzX3Njb3JlcyA8LSBhYnModW5uYW1lKGhlYXZ5bWV0YWxzX3BjYSR4KSkKCmFsbC5lcXVhbChoZWF2eW1ldGFsc19aaywgaGVhdnltZXRhbHNfc2NvcmVzKQpgYGAKClRoaXMgYWdhaW4gc2hvd3MgdGhhdCBQQ0EgaXMgbm90aGluZyBtb3JlIHRoYW4gYW4gU1ZEIG9uIHRoZSAoY2VudGVyZWQgYW5kIHNjYWxlZCkgZGF0YSBtYXRyaXghCgo8L2RldGFpbHM+CgoKCiMjIEVtcGxveW1lbnQgYnkgaW5kdXN0cnkgaW4gRXVyb3BlYW4gY291bnRyaWVzCgpVc2luZyB0aGUgc2FtZSBkYXRhIGFzIGluIFtMYWIgMV0oLi9MYWIxLUludHJvLVNWRC5odG1sIzMyX0V4ZXJjaXNlOl9lbXBsb3ltZW50X2J5X2luZHVzdHJ5X2luX0V1cm9wZWFuX2NvdW50cmllcykuCgojIyMgRGF0YSBwcmVwIHstfQoKVGhlIGBpbmR1c3RyaWVzLnR4dGAgZmlsZSBjb250YWlucyBkYXRhIG9uIHRoZSBkaXN0cmlidXRpb24gb2YgZW1wbG95bWVudCBiZXR3ZWVuIDkgaW5kdXN0cmlhbCBzZWN0b3JzLCBpbiAyNiBFdXJvcGVhbiBjb3VudHJpZXMuIFRoZSBkYXRhc2V0IHN0ZW1zIGZyb20gdGhlIENvbGQtV2FyIGVyYTsgdGhlIGRhdGEgYXJlIGV4cHJlc3NlZCBhcyBwZXJjZW50YWdlcy4gUmVhZCBpbiB0aGUgZGF0YSBhbmQgZXhwbG9yZSBpdHMgY29udGVudHMuCgpgYGB7ciByZWFkLWluZHVzdHJpZXMtZGF0YX0KaW5kdXN0cmllc191cmwgPC0gImh0dHBzOi8vZ2l0aHViLmNvbS9zdGF0T21pY3MvSERBMjAyMC9yYXcvZGF0YS9pbmR1c3RyaWVzLnR4dCIKCmluZHVzdHJpZXMgPC0gcmVhZF9kZWxpbShpbmR1c3RyaWVzX3VybCwgZGVsaW0gPSAiICIsIGNvbF90eXBlcyA9IGNvbHMoKSkKCiMgRXhwbG9yZSBjb250ZW50cwppbmR1c3RyaWVzCnN1bW1hcnkoaW5kdXN0cmllcykKYGBgCgoKIyMjIFRhc2tzIHstfQoKIyMjIyMgMS4gUGVyZm9ybSBhIFBDQS4gSG93IG1hbnkgUENzIHdvdWxkIHlvdSByZXRhaW4/IEV4cGxhaW4uIHstfQoKPGRldGFpbHM+PHN1bW1hcnk+U29sdXRpb248L3N1bW1hcnk+CgpQZXJmb3JtIHRoZSBQQ0Egb24gdGhlIGNlbnRlcmVkIGFuZCBzY2FsZWQgZGF0YSBtYXRyaXgsIGFmdGVyIHJlbW92aW5nIHRoZSBgY291bnRyeWAgY29sdW1uLgoKYGBge3IgaW5kdXN0cmllcy1wY2F9CmluZHVzdHJpZXNfcGNhIDwtIHByY29tcChpbmR1c3RyaWVzWywgLTFdLCBzY2FsZS4gPSBUUlVFKQpzdW1tYXJ5KGluZHVzdHJpZXNfcGNhKQpgYGAKCmBgYHtyIGluZHVzdHJpZXMtcGNhLXNjcmVlcGxvdH0KIyMgQ2FsY3VsYXRlIHRvdGFsIHZhcmlhbmNlIGJ5IHN1bW1pbmcgdGhlIFBDIHZhcmlhbmNlcyAoc2RldidzIHNxdWFyZWQpCnRvdF92YXIgPC0gc3VtKGluZHVzdHJpZXNfcGNhJHNkZXZeMikKCiMjIENyZWF0ZSBkYXRhLmZyYW1lIG9mIHRoZSBwcm9wb3J0aW9uIG9mIHZhcmlhbmNlIGV4cGxhaW5lZCBieSBlYWNoIFBDCmluZHVzdHJpZXNfcHJvcF92YXIgPC0gZGF0YS5mcmFtZSgKICBQQyA9IDE6bmNvbChpbmR1c3RyaWVzX3BjYSR4KSwKICB2YXIgPSBpbmR1c3RyaWVzX3BjYSRzZGV2XjIKKSAlPiUgCiAgIyMgVXNpbmcgYG11dGF0ZWAgdG8gY2FsY3VsYXRlIHByb3AuIHZhciBhbmQgY3VtLiBwcm9wLiB2YXIKICBtdXRhdGUoCiAgICBwcm9wX3ZhciA9IHZhciAvIHRvdF92YXIsCiAgICBjdW1fcHJvcF92YXIgPSBjdW1zdW0odmFyIC8gdG90X3ZhcikKICApCgppbmR1c3RyaWVzX3Byb3BfdmFyCgojIyBQbG90IHRoZSBwcm9wb3J0aW9uIG9mIHZhcmlhbmNlIGV4cGxhaW5lZCBieSBlYWNoIFBDCmdncGxvdChpbmR1c3RyaWVzX3Byb3BfdmFyLCBhZXMoUEMsIHByb3BfdmFyKSkgKwogIGdlb21fcG9pbnQoKSArCiAgZ2VvbV9saW5lKCkgKwogIGdlb21fdmxpbmUoeGludGVyY2VwdCA9IDUuNSwgY29sID0gImZpcmVicmljayIpICsKICBzY2FsZV94X2NvbnRpbnVvdXMoYnJlYWtzID0gMTpuY29sKGluZHVzdHJpZXNfcGNhJHgpKSArCiAgbGFicyh5ID0gIlByb3BvcnRpb24gb2YgdmFyaWFuY2UiKSArCiAgZ2d0aXRsZSgiUHJvcG9ydGlvbiBvZiB2YXJpYW5jZSBleHBsYWluZWQgYnkgZWFjaCBQQyIsCiAgICAgICAgICBzdWJ0aXRsZSA9ICJJbmR1c3RyaWVzIGRhdGEiKQoKIyMgUGxvdCB0aGUgY3VtdWxhdGl2ZSBwcm9wb3J0aW9uIG9mIHZhcmlhbmNlIGV4cGxhaW5lZCBieSBlYWNoIFBDCmdncGxvdChpbmR1c3RyaWVzX3Byb3BfdmFyLCBhZXMoUEMsIGN1bV9wcm9wX3ZhcikpICsKICBnZW9tX3BvaW50KCkgKwogIGdlb21fbGluZSgpICsKICBnZW9tX3ZsaW5lKHhpbnRlcmNlcHQgPSA1LjUsIGNvbCA9ICJmaXJlYnJpY2siKSArCiAgc2NhbGVfeF9jb250aW51b3VzKGJyZWFrcyA9IDE6bmNvbChpbmR1c3RyaWVzX3BjYSR4KSkgKwogIGxhYnMoeSA9ICJQcm9wb3J0aW9uIG9mIHZhcmlhbmNlIikgKwogIGdndGl0bGUoIkN1bXVsYXRpdmUgcHJvcG9ydGlvbiBvZiB2YXJpYW5jZSBleHBsYWluZWQgYnkgZWFjaCBQQyIsCiAgICAgICAgICBzdWJ0aXRsZSA9ICJJbmR1c3RyaWVzIGRhdGEiKQpgYGAKCkluIHRoaXMgY2FzZSwgcmV0YWluaW5nIHRoZSBmaXJzdCA1LTcgUENzIHdvdWxkIGJlIG1vcmUgYXBwcm9wcmlhdGUuCgo8L2RldGFpbHM+CgojIyMjIyAyLiBXaGF0IGNvdWxkIHlvdSBzYXkgYWJvdXQgZS5nLiBEZW5tYXJrIGJhc2VkIG9uIHRoZSBiaXBsb3Q/IHstfQoKPGRldGFpbHM+PHN1bW1hcnk+U29sdXRpb248L3N1bW1hcnk+CgpDb25zdHJ1Y3QgdGhlIGJpcGxvdC4KV2UgZG9uJ3QgcmVhbGx5IGhhdmUgYSBncm91cGluZyB2YXJpYWJsZSB0byBjb2xvciB0aGUgcG9pbnRzLCBidXQgd2UgY2FuIGFkZCBsYWJlbHMgd2l0aCB0aGUgY291bnRyeSBuYW1lcy4KCmBgYHtyIGluZHVzdHJpZXMtcGNhLWJpcGxvdH0KZ2diaXBsb3QoaW5kdXN0cmllc19wY2EsIGxhYmVscyA9IGluZHVzdHJpZXMkY291bnRyeSwgbGFiZWxzLnNpemUgPSAyKSArCiAgZ2d0aXRsZSgiQmlwbG90IGZvciB0aGUgaW5kdXN0cmllcyBQQ0EiKSArCiAgeGxpbShjKC0zLjQsIDMuNCkpICsKICB5bGltKGMoLTIuMiwgMi4yKSkKYGBgCgpUaGUgYmlwbG90IHNob3dzIGhvdyB0aGUgd29yayBmb3JjZXMgb2YgdGhlIGNvdW50cmllcyBhcmUgZGlzdHJpYnV0ZWQgYW1vbmcgdGhlIGRpZmZlcmVudCBpbmR1c3RyaWVzLgoKVGhlIGVtcGxveW1lbnQgaW4gRGVubWFyayBzZWVtcyB0byBiZSBtYWlubHkgY29uY2VudHJhdGVkIGluIHRoZSBmaW5hbmNlLCBzZXJ2aWNlcyBhbmQgc29jaWFsIHNlY3RvcnMuCgo8L2RldGFpbHM+CgojIyMjIyAzLiBUcnkgdG8gaW50ZXJwcmV0IHRoZSBmaXJzdCAyIFBDcy4gey19Cgo8ZGV0YWlscz48c3VtbWFyeT5Tb2x1dGlvbjwvc3VtbWFyeT4KCldlIGNhbiB1c2UgdGhlIGJpcGxvdCBhbmQgbG9hZGluZ3MgdG8gaW50ZXJwcmV0IHRoZSBQQ3MuClRoZSBiaXBsb3QgaXMgZ2l2ZW4gYWJvdmUsIHdoaWxlIHRoZSBsb2FkaW5ncyBjYW4gYmUgYWNjZXNzZWQgZnJvbSB0aGUgYCRyb3RhdGlvbmAgc2xvdDoKCmBgYHtyfQppbmR1c3RyaWVzX3BjYSRyb3RhdGlvblssIDE6Ml0KYGBgCgpUaGUgZmlyc3QgUEMgc2VlbXMgdG8gYmUgbGFyZ2VseSBkcml2ZW4gYnkgdGhlICphZ3JpY3VsdHVyZSogaW5kdXN0cnksCmkuZS4gaXQgaXMgc2VwYXJhdGluZyBjb3VudHJpZXMgbW9zdGx5IGJhc2VkIG9uIHRoZWlyIGVtcGxveW1lbnQgaW4gYWdyaWN1bHR1cmUgKCkKVGh1cywgY291bnRyaWVzIHNpdHVhdGVkIG9uIHRoZSBwb3NpdGl2ZSBzaWRlIG9mIFBDMSB3aWxsIGxpa2VseSBoYXZlIGEgKmhpZ2hlci10aGFuLWF2ZXJhZ2UqIGVtcGxveW1lbnQgaW4gYWdyaWN1bHR1cmUuCk9uIHRoZSBvdGhlciBoYW5kLCBjb3VudHJpZXMgb24gdGhlIG5lZ2F0aXZlIHNpZGUgb2YgUEMxIGFyZSBsZXNzIGFncmljdWx0dXJlLWJhc2VkIGVjb25vbWllcyBhbmQgaGF2ZSBoaWdoZXIgZW1wbG95bWVudHMgaW4gZS5nLiB0aGUgc29jaWFsIHNlY3Rvci4KCkluZGVlZCwgaWYgd2UgcmFuayB0aGUgY291bnRyaWVzIGJ5IHRoZWlyIGFncmljdWx0dXJlIGVtcGxveW1lbnQsIHdlIGxhcmdlbHkgcmVjb3ZlciB0aGUgb3JkZXIgb2YgdGhlIGNvdW50cmllcyBhbG9uZyBQQzEsIHdpdGggVHVya2V5IGNsZWFybHkgYmVpbmcgdGhlIG1vc3QgYWdyaWN1bHR1cmUtZm9jdXNlZCAocmVtZW1iZXIgdGhhdCB0aGlzIGRhdGEgaXMgZnJvbSB0aGUgQ29sZCBXYXIgZXJhKSEKCmBgYHtyfQojIyBTaG93IHJhbmtpbmcgb2YgYWdyaWN1bHR1cmUgaW5kdXN0cnkKaW5kdXN0cmllcyAlPiUgCiAgc2VsZWN0KGNvdW50cnksIGFncmljdWx0dXJlLCBzb2NpYWwuc2VjdG9yLCBtaW5pbmcsIGZpbmFuY2UpICU+JSAKICBhcnJhbmdlKGRlc2MoYWdyaWN1bHR1cmUpKQpgYGAKCldlIGNvdWxkIHNheSB0aGF0IHRoZSBmaXJzdCBQQyBzZXBhcmF0ZXMgYWdyaWN1bHR1cmUtYmFzZWQgZWNvbm9taWVzIGZyb20gbm9uLWFncmljdWx0dXJlLWJhc2VkLgpUaGUgZmFjdCB0aGF0IG1vc3Qgb3RoZXIgaW5kdXN0cmllcyBhcmUgbmVnYXRpdmVseSBjb3JyZWxhdGVkIHdpdGggdGhlIGZpcnN0IFBDLCBzZWVtcyB0byBpbmRpY2F0ZSB0aGF0IGNvdW50cmllcyBlaXRoZXIgaGF2ZSBhIGxhcmdlIGFncmljdWx0dXJlIGluZHVzdHJ5IG9yIGRpc3RyaWJ1dGUgdGhlaXIgd29yayBmb3JjZSBtb3JlIGVxdWFsbHkgYW1vbmcgdGhlIG90aGVyIGluZHVzdHJpZXMuCgpUaGUgMiBtYWluIGV4Y2VwdGlvbnMgYXJlIHRoZSBtaW5pbmcgYW5kIGZpbmFuY2UgaW5kdXN0cmllcywgd2hpY2ggYXJlIChhbG1vc3QpIHBlcnBlbmRpY3VsYXIgdG8gUEMxLgoKVGhlIHNlY29uZCBQQyBpcyBtb3N0bHkgZHJpdmVuIGJ5IHRoZSBkaWZmZXJlbmNlIGJldHdlZW4gbW9yZSBzZXJ2aWNlcy1iYXNlZCAob24gdGhlIG5lZ2F0aXZlIHNpZGUpIGFuZCBtb3JlIGluZHVzdHJ5LWJhc2VkIChwb3NpdGl2ZSBQQykgZWNvbm9taWVzLgpXaXRoIHRoZSBtYWluIGRyaXZlcnMgYmVpbmcgdGhlICptaW5pbmcqIGFuZCAqZmluYW5jZSogc2VjdG9ycy4KCktlZXAgaW4gbWluZCBob3dldmVyIHRoYXQgdGhlc2UgMiBQQ3MgIm9ubHkiIGV4cGxhaW4gMzguNyUgYW5kIDIzLjclIG9mIHRoZSB0b3RhbCB2YXJpYW5jZSwgcmVzcGVjdGl2ZWx5LgpTbyB0aGVyZSBhcmUgbGlrZWx5IHN0aWxsIG1hbnkgcGF0dGVybnMgd2UgYXJlIG1pc3NpbmcuCgo8L2RldGFpbHM+CgoKCiMgU2Vzc2lvbiBpbmZvIHstfQoKPGRldGFpbHM+PHN1bW1hcnk+U2Vzc2lvbiBpbmZvPC9zdW1tYXJ5PgoKYGBge3Igc2Vzc2lvbl9pbmZvLCBlY2hvPUZBTFNFLCBjYWNoZT1GQUxTRX0KU3lzLnRpbWUoKQpzZXNzaW9uaW5mbzo6c2Vzc2lvbl9pbmZvKCkKYGBgCgo8L2RldGFpbHM+CgojIFtIb21lXShodHRwczovL3N0YXRvbWljcy5naXRodWIuaW8vSERBMjAyMC8pIHstfQo=</div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("Lab2-PCA.Rmd");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
