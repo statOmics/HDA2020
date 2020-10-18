@@ -1051,8 +1051,11 @@ If we now think about the fit:
 ### Fit with lm
 
 ```{r}
-prostate<-read_csv("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/prostate.csv")
-lm1 <- lm(lpsa~lcavol + lweight + svi ,prostate)
+prostate <- read_csv(
+  "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/prostate.csv",
+  col_types = cols()
+)
+lm1 <- lm(lpsa ~ lcavol + lweight + svi, prostate)
 ```
 
 ### Fit with SVD
@@ -1076,8 +1079,10 @@ In this section we will use a dataset on food consumption in the UK. The data or
 
 ```{r}
 uk <- read_csv(
-"https://raw.githubusercontent.com/statOmics/HDA2020/data/ukFoods.csv")
-knitr::kable(uk, caption="The full UK foods data table")
+  "https://raw.githubusercontent.com/statOmics/HDA2020/data/ukFoods.csv",
+  col_types = cols()
+)
+knitr::kable(uk, caption = "The full UK foods data table")
 ```
 
 Note, that here the matrix is displayed with the p variables in the rows and the n experimental units (countries) in the columns.
@@ -1997,7 +2002,9 @@ The first 121 rows consist of data for the cancer patients.
 ```{r}
 ovarian <- read_csv(
   "https://raw.githubusercontent.com/statOmics/HDA2020/data/ovarian.csv",
-  col_names=FALSE)
+  col_names = FALSE,
+  col_types = cols()
+)
 grid.arrange(
   qplot(1:4000,
     ovarian[1,] %>% unlist,

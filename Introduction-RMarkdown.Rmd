@@ -302,7 +302,8 @@ That way you don't have to download the data locally on your machine or worry ab
 ## Example from HDA2020 course (https://statomics.github.io/HDA2020/)
 uk_foods <- readr::read_csv(
   file = "https://raw.githubusercontent.com/statOmics/HDA2020/data/ukFoods.csv",
-  col_names = TRUE
+  col_names = TRUE,
+  col_types = cols()
 )
 uk_foods
 ```
