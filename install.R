@@ -5,7 +5,8 @@ BiocManager::install(c(
   "tidyverse", "devtools", "rmarkdown", "knitr",
   "plot3D", "git2r", "downloader", "imager",
   "pixmap", "gridExtra", "ggmap",
-  "ExperimentHub", "scater"
+  "ExperimentHub", "scater",
+  "CCA"
 ), Ncpus = 2L)
 
 remotes::install_github("hadley/emo")

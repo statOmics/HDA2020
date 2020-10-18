@@ -60,3 +60,8 @@ Questions related to the course contents can be asked by posting on [UFora](http
   - [Singular value decomposition theory](./svd.html)
   - [Lab 1: Introduction and SVD applications](./Lab1-Intro-SVD.html)
   - [Lab 2: PCA](./Lab2-PCA.html)
+  
+
+### Homework assignments
+
+- [Homework: Canonical Correlation Analysis](./HW-CCA.html)
