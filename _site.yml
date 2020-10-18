@@ -33,4 +33,5 @@ output:
       toc_float: true
       highlight: tango
       number_sections: true
+      df_print: paged
 exclude: ["raw-data", "install.R"]
