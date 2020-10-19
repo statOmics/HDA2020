@@ -82,19 +82,20 @@ centered so that the intercept is 0.
 We are presented with the usual regression model:
 
 $$
-Y_i=\beta_i X_{i1}+\dots+\beta_pX_{ip}+\epsilon_i   \text{ Or } {\boldsymbol{Y}}={\boldsymbol{X}}{\boldsymbol{\beta}} +{\boldsymbol{\epsilon}}
+Y_i=\beta_i X_{i1}+\dots+\beta_pX_{ip}+\epsilon_i \\ 
+\text{ Or } \mathbf{Y}={\mathbf{X}}{\boldsymbol{\beta}} +{\boldsymbol{\epsilon}}
 $$
 
 Our goal is to get the least squares estimator of
 ${\boldsymbol{\beta}}$, given by
 
 $$
-\hat{{\boldsymbol{\beta}}}= ({\boldsymbol{X}}^T{\boldsymbol{X}})^{-1}{\boldsymbol{X}}^T{\boldsymbol{Y}}
+\hat{{\boldsymbol{\beta}}}= (\mathbf{X}^T{\mathbf{X}})^{-1}{\mathbf{X}}^T{\mathbf{Y}}
 $$
 
 in which the $p \times p$ matrix
-$({\boldsymbol{X}}^T{\boldsymbol{X}})^{-1}$ is crucial!
-To be able to calculate the inverse of ${\boldsymbol{X}}^T \boldsymbol{X}$,
+$({\mathbf{X}}^T{\mathbf{X}})^{-1}$ is crucial!
+To be able to calculate the inverse of ${\mathbf{X}}^T \mathbf{X}$,
 it has to be of full rank $p$, which would be 200 in this case.
 Let's check this:
 
@@ -110,8 +111,8 @@ solve(XtX)
 ```
 
 We realize we cannot compute
-$({\boldsymbol{X}}^T{\boldsymbol{X}})^{-1}$ because the rank of
-$({\boldsymbol{X}}^T{\boldsymbol{X}})$ is less than $p$ hence we can’t
+$({\mathbf{X}}^T{\mathbf{X}})^{-1}$ because the rank of
+$({\mathbf{X}}^T{\mathbf{X}})$ is less than $p$ hence we can’t
 get $\hat{{\boldsymbol{\beta}}}$ by means of least squares! 
 This is generally referred to as the __[singularity](https://www.statistics.com/glossary/singularity/) problem__.
 
@@ -119,11 +120,11 @@ This is generally referred to as the __[singularity](https://www.statistics.com/
 # Principal component regression
 
 A first way to deal with this singularity, is to bypass it using 
-principal components. Since rank(${\boldsymbol{X^TX}}$) = n = 199, 
+principal components. Since rank(${\mathbf{X^TX}}$) = n = 199, 
 PCA will give 199 components, each being a linear combination of 
 $p = 200$ variables. These 199 PCs contain all information present in 
-the original ${\boldsymbol{X}}$ data. We could as well use an
-approximation of ${\boldsymbol{X}}$, i.e using just a few ($k<120$) PCs.
+the original ${\mathbf{X}}$ data. We could as well use an
+approximation of ${\mathbf{X}}$, i.e using just a few ($k<120$) PCs.
 So we use PCA as a method for reducing the dimension while retaining
 as much as the variation between the observations. Once we have these
 PCs, we can use them as variables in a standard regression.
@@ -223,7 +224,7 @@ that has the smallest prediction error.
 
 Ridge regression, lasso regression and elastic nets are all closely
 related techniques, based on the same idea: add a penalty term to 
-the estimating function so $({\boldsymbol{X}}^T{\boldsymbol{X}})$
+the estimating function so $({\mathbf{X}}^T{\mathbf{X}})$
 becomes full rank again and is invertible. Two different penalty 
 terms or regularization methods can be used:
 
@@ -232,7 +233,7 @@ term will add a penalty based on the absolute value of the
 magnitude of the coefficients. This is used by the lasso regression
  
 $$
- \hat{\boldsymbol{\beta}}^{\text{lasso}} = \text{argmin}_{\boldsymbol{\beta}}\displaystyle({(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})^{t}(\mathbf{Y}-\mathbf{X}\boldsymbol{beta})+{\gamma_1\|\boldsymbol{\beta}\|_{1}}}\displaystyle)
+ \hat{\boldsymbol{\beta}}^{\text{lasso}} = \text{argmin}_{\boldsymbol{\beta}}\displaystyle({(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})^{t}(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})+{\gamma_1\|\boldsymbol{\beta}\|_{1}}}\displaystyle)
 $$
 
 2. L2 regularization: this regularization adds a term ${\gamma_2\|\boldsymbol{\beta}\|_{2}^{2}}$ to the estimating equation.
@@ -240,25 +241,26 @@ The penalty term is based on the square of the magnitude of the
 coefficients. This is used by ridge regression.
 
 $$
- \hat{\boldsymbol{\beta}}^{\text{ridge}} = \text{argmin}_{\boldsymbol{\beta}}\displaystyle({(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})^{t}(\mathbf{Y}-\mathbf{X}\boldsymbol{beta})+{\gamma_2\|\boldsymbol{\beta}\|_{2}^{2}}}\displaystyle)
+ \hat{\boldsymbol{\beta}}^{\text{ridge}} = \text{argmin}_{\boldsymbol{\beta}}\displaystyle({(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})^{t}(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})+{\gamma_2\|\boldsymbol{\beta}\|_{2}^{2}}}\displaystyle)
 $$
 
 Elastic nets combine both types of regularizations. It does so by 
 introducing a $\alpha$ mixing parameter that gives essentially combines
 the L1 and L2 norms in a weighted average.
+
 $$
- \hat{\boldsymbol{\beta}}^{\text{ridge}} = \text{argmin}_{\boldsymbol{\beta}}\displaystyle({(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})^{t}(\mathbf{Y}-\mathbf{X}\boldsymbol{beta})+{\alpha \gamma_1\|\boldsymbol{\beta}\|_{1}}+ {(1 - \alpha)\gamma_2\|\boldsymbol{\beta}\|_{2}^{2}}}\displaystyle)
+ \hat{\boldsymbol{\beta}}^{\text{ridge}} = \text{argmin}_{\boldsymbol{\beta}}\displaystyle({(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})^{T}(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})+{\alpha \gamma_1\|\boldsymbol{\beta}\|_{1}}+ {(1 - \alpha)\gamma_2\|\boldsymbol{\beta}\|_{2}^{2}}}\displaystyle)
 $$
 
 ## Verification of ridge regression
 
 In least square regression the minimization of the estimation function
-$|{\boldsymbol{Y-X\beta}}\|^{2}_{2}$ leads to the solution ${\boldsymbol{\hat{\beta}=(X^TX)^{-1}X^TY}}$. 
+$|{\mathbf{Y} - \mathbf{X} \boldsymbol{\beta}}\|^{2}_{2}$ leads to the solution ${\boldsymbol{\hat{\beta}}=(\mathbf{X^TX})^{-1}\mathbf{X^TY}}$. 
 
 For the penalized least square criterion used by ridge regression, 
 you minimize $\|{\boldsymbol{Y-X\beta\|^{2}_{2}}}+\gamma{\boldsymbol{\|\beta\|^{2}_{2}}}$ which leads to following solution:
 
-$${\boldsymbol{\hat{\beta}=(X^TX}}+\gamma{\boldsymbol{I}})^{-1}{\boldsymbol{X^TY}}$$
+$${\boldsymbol{\hat{\beta}}=(\mathbf{X^TX}}+\gamma{\boldsymbol{I}})^{-1}{\mathbf{X^TY}}$$
 
 ### Exercises
 
@@ -288,7 +290,7 @@ InvtXX_gammaI<-solve(tXX_gammaI)
 ```
 
 3.  Finally compute
-    ${\boldsymbol{\hat{\beta}=(X^TX}}+\gamma{\mathbf{I}})^{-1}{\mathbf{X^TY}}$.
+    ${\boldsymbol{\hat{\beta}}=(\mathbf{X^TX}}+\gamma{\boldsymbol{I}})^{-1}{\mathbf{X^TY}}$.
 
 ```{r}
 #3)Beta
@@ -298,7 +300,7 @@ hatbeta<-InvtXX_gammaI%*%t(X)%*%Y
 If we perform SVD on ${\mathbf{X}}$ we get
     ${\mathbf{X}}={\mathbf{UDV^T}}={\mathbf{ZV^T}}$.
     Replacing ${\mathbf{X}}$ with ${\mathbf{ZV^T}}$ gives
-    ${\boldsymbol{\hat{\beta}=V(Z^TZ}}+\gamma{\mathbf{I}})^{-1}{\mathbf{Z^TY}}$
+    ${\boldsymbol{\hat{\beta}}=\mathbf{V(Z^TZ}}+\gamma{\mathbf{I}})^{-1}{\mathbf{Z^TY}}$
     
 ```{r}
 
