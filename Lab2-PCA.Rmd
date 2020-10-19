@@ -101,11 +101,11 @@ trees_scaled_plot <- trees_scaled %>%
   geom_point(aes(girth, height_miles, size = Volume, col = vol_fac),
              alpha = 0.6) +
   labs(x = "Girth (inches), standardized", y = "Height (miles), standardized", 
-       color = "") + 
-  coord_equal(xlim = c(-2.3, 2.3), ylim = c(-2.3, 2.3))
+       color = "")
 
 trees_scaled_plot +
-  ggtitle("Visualizing the scaled trees data")
+  ggtitle("Visualizing the scaled trees data") + 
+  coord_equal(xlim = c(-2.3, 2.3), ylim = c(-2.3, 2.3))
 ```
 
 
@@ -149,7 +149,7 @@ We also transpose the `rotation` matrix so that the variables are in columns and
 
 ```{r tree-plot-PC-loadings}
 ## Transpose the loadings so that the PCs are in the rows, for plotting
-pc_loadings <- t(tree_pca$rotation)
+pc_loadings <- t(tree_pca$rotation) * tree_pca$sdev
 
 ## Reuse plot from before and add PCs
 trees_scaled_plot +
@@ -161,8 +161,10 @@ trees_scaled_plot +
   geom_text(
     data = data.frame(pc_loadings),
     aes(x = girth, y = height_miles, label = rownames(pc_loadings)),
-    vjust = "outward", hjust = "outward"
-  )
+    vjust = 1.5
+  ) +
+  ggtitle("Trees data overlayed with PCs",
+          subtitle = "Based on PCA on non-standardized data")
 ```
 
 From this plot we see that the PCs are not in the directions we expected.
@@ -175,7 +177,9 @@ PC1 should point in the direction of greatest variability.
 ggbiplot(tree_pca, groups = trees$vol_fac, alpha = 0) +
   ## Add points layer to color and size points
   geom_point(aes(col = trees$vol_fac, size = trees$Volume), alpha = 0.6) +
-  labs(size = "Volume", col = "")
+  labs(size = "Volume", col = "") +
+  theme(aspect.ratio = 0.6) +
+  ggtitle("Biplot for the PCA on non-standardized data")
 ```
 
 We see that trees high in volume tend to have a high tree girth, but the height does not give any information on tree volume. 
@@ -215,7 +219,7 @@ tree_pca_scaled$sdev
 We will again plot the original data, but this time using the __scaled and centered__ values, and overlay the plot with the PCs.
 
 ```{r}
-pc_scaled_loadings <- t(tree_pca_scaled$rotation)
+pc_scaled_loadings <- t(tree_pca_scaled$rotation) * tree_pca_scaled$sdev
 
 ## Reuse plot from before and add PCs
 trees_scaled_plot +
@@ -228,7 +232,10 @@ trees_scaled_plot +
     data = data.frame(pc_scaled_loadings),
     aes(x = girth, y = height_miles, label = rownames(pc_scaled_loadings)),
     nudge_x = 0.1, nudge_y = 0.2
-  )
+  ) +
+  coord_equal(xlim = c(-2.3, 2.3), ylim = c(-2.1, 2.1)) +
+  ggtitle("Trees data overlayed with PCs",
+          subtitle = "Based on PCA on standardized data")
 ```
 
 This is more in line with our expectations.
@@ -243,7 +250,9 @@ The biplot:
 ggbiplot(tree_pca_scaled, groups = trees$vol_fac, alpha = 0) +
   ## Add points layer to color and size points
   geom_point(aes(col = trees$vol_fac, size = trees$Volume), alpha = 0.6) +
-  labs(size = "Volume", col = "")
+  labs(size = "Volume", col = "") +
+  theme(aspect.ratio = 0.5) +
+  ggtitle("Biplot for the PCA on standardized data")
 ```
 
 We now get a much more realistic result, where the *height* and *girth* variables have more equal contributions to the PCs.
