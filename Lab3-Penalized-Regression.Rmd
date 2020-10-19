@@ -615,7 +615,7 @@ table(testY_bin)
 
 #### 2. Construct a prediction model using PC regression on the training dataset and select the optimum number of PCs using 5 folds cross validation with the misclassification (at cutoff $c=0.5$ ) error and the AUC as evaluation measures. Use the binary `trainY` as your response variable. {-}
     
-```{r}
+```{r, message=FALSE}
 K <- 5 # set K 
 set.seed(1) # Use this if you want the exact same results
 nPC <- 40 # max number of PCs, choose as you want with the 
@@ -636,6 +636,9 @@ for (i in seq_len(nPC)) {
 	         cost = auc,K=K)$delta[1]
 	  )
 	# You use auc(), which is a function of the pROC package
+	# It's possible that the code above produces a lot of messages
+	# You can specify `message = FALSE` in the code chunk options to suppress
+	# them (if you're working in RMarkdown)
 }
 ```
 
