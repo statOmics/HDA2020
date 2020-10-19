@@ -124,54 +124,50 @@ This is generally referred to as the __[singularity](https://www.statistics.com/
 
 # Principal component regression
 
-A first way to deal with this singularity, is to bypass it using 
-principal components. Since rank(${\mathbf{X^TX}}$) = n = 199, 
-PCA will give 199 components, each being a linear combination of 
-$p = 200$ variables. These 199 PCs contain all information present in 
-the original ${\mathbf{X}}$ data. We could as well use an
-approximation of ${\mathbf{X}}$, i.e using just a few ($k<120$) PCs.
-So we use PCA as a method for reducing the dimension while retaining
-as much as the variation between the observations. Once we have these
-PCs, we can use them as variables in a standard regression.
+A first way to deal with this singularity, is to bypass it using principal components.
+Since $\min(n,p) = n = 120$, 
+PCA will give `r min(dim(X))` components, each being a linear combination of the 
+$p$ = `r ncol(X)` variables.
+These `r min(dim(X))` PCs contain all information present in the original data.
+We could as well use an approximation of ${\mathbf{X}}$, i.e using just a few ($k<120$) PCs.
+So we use PCA as a method for reducing the dimensions while retaining
+as much variation between the observations as possible.
+Once we have these PCs, we can use them as variables in a linear regression model.
 
 ## Classic linear regression on PCs
 
-In the previous labs, we've seen how one can use singular value 
-decomposition for this. Let us take an arbitrary cutoff of $k = 4$
-for illustrative purposes.
+We first compute the PCA on the data with `prcomp`.
+We will use an arbitrary cutoff of $k = 4$ PCs to illustrate the process of performing regression on the PCs.
 
-```{r PC based on SVD}
-X.svd<-  svd(X)
-k  <-  4                   # Lets abitrary take k=4
-Uk <- X.svd$u[ ,1:k]
-Dk <- diag(X.svd$d[1: k])  # the loadings matrix
-Zk <- Uk%*%Dk              # the scores matrix
+```{r PC-regression}
+k <- 4 # Arbitrarily chosen k=4
+pca <- prcomp(X)
+Vk <- pca$rotation[, 1:k] # the loadings matrix
+Zk <- pca$x[, 1:k] # the scores matrix
 
 # Use the scores in classic linear regression
-pcr.mod1 <- glm(Y~Zk)
-summary(pcr.mod1)
+pcr_model1 <- lm(Y ~ Zk)
+summary(pcr_model1)
 ```
 
 As $\mathbf{X}$ and $\mathbf{Y}$ are centered, the intercept is 
-approximately 0. We introduce the function `glm()` for carrying out
-generalized linear models, as we will use it later on for logistic
-regression. Note that in this particular case we just fit a linear
-regression, so `lm()` will essentially give the same result.
+approximately 0.
 
 The output shows that PC1 and PC4 have a $\beta$ estimate that 
-differs significantly from 0, but the results can't be readily 
-interpreted. 
+differs significantly from 0 (at $p < 0.05$), but the results can't be readily 
+interpreted, since we have no immediate interpretation of the PCs.
+
 
 ## Using a binary response/outcome variable
 
 Instead of predicting the actual gene expression levels, researchers are
 often more interested in whether or not an expression level crosses a
-certain treshold, indicating that the gene has been turned on. We can
-easily construct such a dataset for the TRIM32 outcome. We define 
-"success" as having a value above the median, and "failure" as a value
-below the median
+certain threshold, indicating that the gene has been turned on.
+We can easily construct such a dataset for the TRIM32 outcome.
+We define "success" (1) as having a value above the median, and "failure" (0) as a value below the median.
+Discretizing a continuous variable like this is also sometimes called __dichotomization__.
 
-```{r transform Y to binary}
+```{r binarize-Y}
 Ybin <- ifelse( Y > median(Y), 1, 0)
 table(Ybin)
 ```
@@ -180,50 +176,51 @@ The `ifelse()` function is a vectorized function that translates a
 logical vector into another one based on its values. See also
 `?ifelse` for more information.
 
-Now we can use the `glm()` function again, but this time with the
-argument `family='binomial'`. By doing so, we tell `glm()` that we
-want to carry out a logistic regression (i.e. that the link function
-for the regression should be the logit function).
+Note that now we cannot use an ordinary linear regression model anymore, because our response variable is no longer (approximately) normal (it can only take on values 0 and 1!).
+Instead, we will use __logistic regression__, which models the response variable $Y$ with a *binomial* distribution and uses a *logit* link-function between the response and the linear predictor.
+Logistic regression belongs to the class of __Generalized Linear Models (GLM)__ (in fact, standard linear regression is also a special case of GLM) and is implemented in R in the `glm` function.
+The type of GLM fitted by `glm` is controlled with the `family` argument.
+For logistic regression, we specify `family = "binomial"` (by default, this argument is set to `"gaussian"`, which is equivalent to `lm`, see `?glm` for details).
 
-```{r carry out logistic regression}
-pcr.bin.mod1 <- glm(Ybin~Zk, family = "binomial")
-summary(pcr.bin.mod1)
+```{r pc-logistic-regression}
+pcr_logistic_model <- glm(Ybin ~ Zk, family = "binomial")
+summary(pcr_logistic_model)
 ```
+
 
 ## Using the package `pls`
 
 PCR can also be performed using the `pcr()` function from the
-package `pls`. When using this function, you have to keep a 
-few things in mind.
+package *[pls](https://CRAN.R-project.org/package=pls)*
+__directly on the data__ (so without having to first perform the PCA manually).
+When using this function, you have to keep a few things in mind:
 
-  1. the number of components is passed with the argument `ncomp`
+  1. the number of components (PCs) to use is passed with the argument `ncomp`
   2. the function allows you to scale (set `scale = TRUE`) and
-  center (set `center = TRUE`) the predictors first.
+  center (set `center = TRUE`) the predictors first (in the example here, $\mathbf{X}$ has already been centered and scaled).
   
 You can use the function `pcr()` in much the same way as you would
 use `lm()`. The resulting fit can easily be examined using the 
 function `summary()`, but the output looks quite different from
-the usual.
+what you would get from `lm`.
 
-```{r carry out PCR with pcr}
-suppressMessages(library(pls))
+```{r PC-regression-pls-package}
 # X is already scaled and centered, so that's not needed.
-pcr.mod2 <- pcr(Y ~ X , ncomp = 4)
-summary(pcr.mod2)
-
+pcr_model2 <- pcr(Y ~ X, ncomp = 4)
+summary(pcr_model2)
 ```
 
 First of all the output shows you the data dimensions and the fitting
 method used. In this case, that is PC calculation based on SVD. The
 `summary()` function also provides the percentage of variance
 explained in the predictors and in the response using different numbers
-of components. For example, the first PC only captures 61.22$\%$ of all
-the variance, or information in the predictors and it explains $62.9\%$
+of components. For example, the first PC only captures 61.22% of all
+the variance, or information in the predictors and it explains 62.9%
 of the variance in the outcome. Note that for both methods the choice of
 the number of principal components was arbitrary chosen to be 4.
 
 At a later stage, we will look at how to choose the number of components
-that has the smallest prediction error.
+that has the __smallest prediction error__.
 
 
 # Ridges, Lassos and Elastic Nets
