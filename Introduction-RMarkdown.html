@@ -929,7 +929,7 @@ y_i = \beta_0 + \beta_1 x_i + \epsilon_i
 <p>Finally, it’s always good practice to include the <a href="">Session Info</a> for your R session in your document. That way, other persons (including your future self) looking at your document can see what versions of R and loaded packages were used, which can be quite essential for reproducibility. There are 2 options, either using the base R command <code>sessionInfo()</code> or using <a href="https://devtools.r-lib.org/reference/session_info.html">the version from the <code>devtools</code> package</a>: <code>devtools::session_info()</code>. Their outputs have slightly different formatting but the contents are essentially the same. Personally, I prefer the <code>devtools</code> version, but this is really a personal choice.</p>
 <p>You can also include the date with <code>Sys.time()</code> so you have a time stamp of when the report was compiled. If you happen to be working inside a git repository, <code>git2r::repository()</code> is a useful function that displays information about the current <code>git</code> state and the last commit.</p>
 <div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1"></a><span class="kw">Sys.time</span>()</span></code></pre></div>
-<pre><code>## [1] &quot;2020-10-19 16:19:38 UTC&quot;</code></pre>
+<pre><code>## [1] &quot;2020-10-19 19:47:35 UTC&quot;</code></pre>
 <div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1"></a>devtools<span class="op">::</span><span class="kw">session_info</span>()</span></code></pre></div>
 <pre><code>## ─ Session info ───────────────────────────────────────────────────────────────
 ##  setting  value                       
@@ -976,7 +976,7 @@ y_i = \beta_0 + \beta_1 x_i + \epsilon_i
 ##  DelayedMatrixStats       1.10.1   2020-07-03 [1] Bioconductor  
 ##  desc                     1.2.0    2018-05-01 [1] CRAN (R 4.0.2)
 ##  devtools                 2.3.2    2020-09-18 [1] CRAN (R 4.0.2)
-##  digest                   0.6.26   2020-10-17 [1] CRAN (R 4.0.3)
+##  digest                   0.6.26   2020-10-17 [1] CRAN (R 4.0.2)
 ##  dotCall64              * 1.0-0    2018-07-30 [1] CRAN (R 4.0.2)
 ##  dplyr                  * 1.0.2    2020-08-18 [1] CRAN (R 4.0.2)
 ##  ellipsis                 0.3.1    2020-05-15 [1] CRAN (R 4.0.2)
@@ -1083,7 +1083,7 @@ y_i = \beta_0 + \beta_1 x_i + \epsilon_i
 <span id="cb52-2"><a href="#cb52-2"></a>git2r<span class="op">::</span><span class="kw">repository</span>()</span></code></pre></div>
 <pre><code>## Local:    master /Users/runner/work/HDA2020/HDA2020
 ## Remote:   master @ origin (https://github.com/statOmics/HDA2020)
-## Head:     [4bf521e] 2020-10-19: Add homework assignment</code></pre>
+## Head:     [0d9bcc5] 2020-10-19: Remove glimpse</code></pre>
 </div>
 <div id="home" class="section level1 unnumbered">
 <h1><a href="https://statomics.github.io/HDA2020/">Home</a></h1>
