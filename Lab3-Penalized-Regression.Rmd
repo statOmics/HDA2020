@@ -231,105 +231,134 @@ the estimating function so $({\mathbf{X}}^T{\mathbf{X}})$
 becomes full rank again and is invertible. Two different penalty 
 terms or regularization methods can be used:
 
-1. L1 regularization: this regularization adds a term ${\gamma_1\|\boldsymbol{\beta}\|_{1}}$ to the estimating equation. The
-term will add a penalty based on the absolute value of the
-magnitude of the coefficients. This is used by the lasso regression
+1. L1 regularization: this regularization adds a term ${\gamma_1\|\boldsymbol{\beta}\|_{1}}$ to the estimating equation.
+The term will add a penalty based on the *absolute value* of the
+magnitude of the coefficients. This is used by the __lasso regression__
  
 $$
- \hat{\boldsymbol{\beta}}^{\text{lasso}} = \text{argmin}_{\boldsymbol{\beta}}\displaystyle({(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})^{t}(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})+{\gamma_1\|\boldsymbol{\beta}\|_{1}}}\displaystyle)
+ \hat{\boldsymbol{\beta}}^{\text{lasso}} = \text{argmin}_{\boldsymbol{\beta}}\displaystyle({(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})^T(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})+{\gamma_1\|\boldsymbol{\beta}\|_{1}}}\displaystyle)
 $$
 
 2. L2 regularization: this regularization adds a term ${\gamma_2\|\boldsymbol{\beta}\|_{2}^{2}}$ to the estimating equation.
 The penalty term is based on the square of the magnitude of the 
-coefficients. This is used by ridge regression.
+coefficients. This is used by __ridge regression__.
 
 $$
- \hat{\boldsymbol{\beta}}^{\text{ridge}} = \text{argmin}_{\boldsymbol{\beta}}\displaystyle({(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})^{t}(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})+{\gamma_2\|\boldsymbol{\beta}\|_{2}^{2}}}\displaystyle)
+ \hat{\boldsymbol{\beta}}^{\text{ridge}} = \text{argmin}_{\boldsymbol{\beta}}\displaystyle({(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})^T(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})+{\gamma_2\|\boldsymbol{\beta}\|_{2}^{2}}}\displaystyle)
 $$
 
 Elastic nets combine both types of regularizations. It does so by 
-introducing a $\alpha$ mixing parameter that gives essentially combines
+introducing a $\alpha$ mixing parameter that essentially combines
 the L1 and L2 norms in a weighted average.
 
 $$
- \hat{\boldsymbol{\beta}}^{\text{ridge}} = \text{argmin}_{\boldsymbol{\beta}}\displaystyle({(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})^{T}(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})+{\alpha \gamma_1\|\boldsymbol{\beta}\|_{1}}+ {(1 - \alpha)\gamma_2\|\boldsymbol{\beta}\|_{2}^{2}}}\displaystyle)
+ \hat{\boldsymbol{\beta}}^{\text{el.net}} = \text{argmin}_{\boldsymbol{\beta}}\displaystyle({(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})^{T}(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})+{\alpha \gamma_1\|\boldsymbol{\beta}\|_{1}}+ {(1 - \alpha)\gamma_2\|\boldsymbol{\beta}\|_{2}^{2}}}\displaystyle)
 $$
+
+
 
 # Exercise: Verification of ridge regression
 
 In least square regression the minimization of the estimation function
 $|{\mathbf{Y} - \mathbf{X} \boldsymbol{\beta}}\|^{2}_{2}$ leads to the solution ${\boldsymbol{\hat{\beta}}=(\mathbf{X^TX})^{-1}\mathbf{X^TY}}$. 
 
-For the penalized least square criterion used by ridge regression, 
-you minimize $\|{\boldsymbol{Y-X\beta\|^{2}_{2}}}+\gamma{\boldsymbol{\|\beta\|^{2}_{2}}}$ which leads to following solution:
+For the penalized least squares criterion used by ridge regression, you minimize 
+$\|{\mathbf{Y}-\mathbf{X}\boldsymbol{\beta}\|^{2}_{2}}+\gamma{\boldsymbol{\|\beta\|^{2}_{2}}}$
+which leads to following solution:
 
-$${\boldsymbol{\hat{\beta}}=(\mathbf{X^TX}}+\gamma{\boldsymbol{I}})^{-1}{\mathbf{X^TY}}$$
+$$
+{\boldsymbol{\hat{\beta}}=(\mathbf{X^TX}}+\gamma{\mathbf{I}})^{-1}{\mathbf{X^TY}}
+$$
+
+where $\mathbf{I}$ is the $p \times p$ identity matrix.
+
+The ridge parameter $\gamma$ *shrinks* the coefficients towards 0, with $\gamma = 0$ being equivalent to OLS (no shrinkage) and $\gamma = +\infty$ being equivalent to setting all $\hat{\beta}$'s to 0.
+The optimal parameter lies somewhere in between and needs to be tuned by the user.
+
 
 ## Tasks {-}
 
 Solve the following exercises using R.
 
 #### 1. Verify that ${\mathbf{(X^TX}}+\gamma{\mathbf{I}})$ has rank $200$, for any $\gamma>0$ of your choice. {-}
-    
-```{r}
-#1) Scale X
-tXX<-crossprod(X)
-p<-dim(tXX)[1]
-gamma<- 2 #My choice
 
-# Compute penalised matrix
-tXX_gammaI<-tXX+(gamma*diag(p))
-dim(tXX_gammaI)
-qr(tXX_gammaI)$rank #yes it does
+<details><summary>Solution</summary>
+```{r}
+XtX <- crossprod(X)
+p <- ncol(X)
+gamma <- 2 # My choice
+
+# Compute penalized matrix
+XtX_gammaI <- XtX + (gamma * diag(p))
+dim(XtX_gammaI)
+qr(XtX_gammaI)$rank == 200 # indeed
 ```
+</details>
+
 
 #### 2. Check that the inverse of ${\mathbf{(X^TX}}+\gamma{\mathbf{I}})$ can be computed. {-}
-    
+
+<details><summary>Solution</summary>
 ```{r}
-#2)Inverse: yes it can be computed
-InvtXX_gammaI<-solve(tXX_gammaI)
+# Yes, it can be computed (no error)
+XtX_gammaI_inv <- solve(XtX_gammaI)
+str(XtX_gammaI_inv)
+```
+</details>
+
+
+#### 3. Finally, compute ${\boldsymbol{\hat{\beta}}=(\mathbf{X^TX}}+\gamma{\mathbf{I}})^{-1}{\mathbf{X^TY}}$. {-}
+
+<details><summary>Solution</summary>
+```{r ridge-beta-estimates}
+## Calculate ridge beta estimates
+## Use `drop` to drop dimensions and create vector
+ridge_betas <- drop(XtX_gammaI_inv %*% t(X) %*% Y)
+length(ridge_betas) # one for every gene
+summary(ridge_betas)
 ```
 
-#### 3. Finally compute ${\boldsymbol{\hat{\beta}}=(\mathbf{X^TX}}+\gamma{\boldsymbol{I}})^{-1}{\mathbf{X^TY}}$. {-}
+We have now manually calculated the ridge regression estimates.
 
-```{r}
-#3)Beta
-hatbeta<-InvtXX_gammaI%*%t(X)%*%Y
-```
+</details>
 
-If we perform SVD on ${\mathbf{X}}$ we get
-    ${\mathbf{X}}={\mathbf{UDV^T}}={\mathbf{ZV^T}}$.
-    Replacing ${\mathbf{X}}$ with ${\mathbf{ZV^T}}$ gives
-    ${\boldsymbol{\hat{\beta}}=\mathbf{V(Z^TZ}}+\gamma{\mathbf{I}})^{-1}{\mathbf{Z^TY}}$
-    
 
-#### 4. Check to see that ${\mathbf{(X^TX}}+\gamma{\mathbf{I}})$ has a higher dimension than ${\mathbf{(Z^TZ}}+\gamma{\mathbf{I}})$. {-}
-    
-And therefore inverting ${\mathbf{(Z^TZ}}+\gamma{\mathbf{I}})$ is much faster than inverting
-${\mathbf{(X^TX}}+\gamma{\mathbf{I}})$ (You don’t have to check this).
-    
-```{r}
-X.svd<-  svd(X)
-Uk <- X.svd$u
-Dk <- diag(X.svd$d)
-Zk <- Uk%*%Dk
-Vk <- X.svd$v
-p<-dim(Zk)[1]
-tZZ_gammaI<-(t(Zk)%*%Zk)+gamma*diag(p)
-dim(tZZ_gammaI)
+<!-- If we perform SVD on ${\mathbf{X}}$ we get -->
+<!-- ${\mathbf{X}}={\mathbf{UDV^T}}={\mathbf{ZV^T}}$. -->
+<!-- Replacing ${\mathbf{X}}$ with ${\mathbf{ZV^T}}$ gives -->
+<!-- ${\boldsymbol{\hat{\beta}}=\mathbf{V(Z^TZ}}+\gamma{\mathbf{I}})^{-1}{\mathbf{Z^TY}}$ -->
 
-# Calculate the beta
-hatbeta_svd <- Vk %*% solve(tZZ_gammaI) %*% t(Zk) %*% Y
+<!-- #### 4. Check to see that ${\mathbf{(X^TX}}+\gamma{\mathbf{I}})$ has a higher dimension than ${\mathbf{(Z^TZ}}+\gamma{\mathbf{I}})$. {-} -->
 
-# Check whether the same
-comparison <- cbind(hatbeta, hatbeta_svd)
-head(comparison) # to not show everything 
-```
+<!-- And therefore inverting ${\mathbf{(Z^TZ}}+\gamma{\mathbf{I}})$ is much faster than inverting -->
+<!-- ${\mathbf{(X^TX}}+\gamma{\mathbf{I}})$ (You don’t have to check this). -->
 
-We therefore conclude that
-    ${\boldsymbol{\hat{\beta}}=\mathbf{V(Z^TZ}}+\gamma{\mathbf{I}})^{-1}{\mathbf{Z^TY}}$
-    is a faster way for computing ${\boldsymbol{\hat{\beta}}}$.
-    
+<!-- <details><summary>Solution</summary> -->
+<!-- ```{r} -->
+<!-- X.svd<-  svd(X) -->
+<!-- Uk <- X.svd$u -->
+<!-- Dk <- diag(X.svd$d) -->
+<!-- Zk <- Uk%*%Dk -->
+<!-- Vk <- X.svd$v -->
+<!-- p<-dim(Zk)[1] -->
+<!-- tZZ_gammaI<-(t(Zk)%*%Zk)+gamma*diag(p) -->
+<!-- dim(tZZ_gammaI) -->
+
+<!-- # Calculate the beta -->
+<!-- hatbeta_svd <- Vk %*% solve(tZZ_gammaI) %*% t(Zk) %*% Y -->
+
+<!-- # Check whether the same -->
+<!-- comparison <- cbind(hatbeta, hatbeta_svd) -->
+<!-- head(comparison) # to not show everything  -->
+<!-- ``` -->
+<!-- </details> -->
+
+<!-- We therefore conclude that -->
+<!-- ${\boldsymbol{\hat{\beta}}=\mathbf{V(Z^TZ}}+\gamma{\mathbf{I}})^{-1}{\mathbf{Z^TY}}$ -->
+<!-- is a faster way for computing ${\boldsymbol{\hat{\beta}}}$. -->
+
+
+
 # Performing ridge and lasso regression
 
 The package `glmnet` provides a function `glmnet()` that allows you to
