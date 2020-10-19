@@ -1,0 +1,794 @@
+---
+title: "Analysis of High Dimensional Data - Lab 3"
+subtitle: "Penalized regression techniques for high-dimensional data"
+author: "Adapted by Milan Malfait"
+date: "05 Nov 2020"
+---
+
+```{r setup, include=FALSE, cache=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.align = "center",
+  out.width = "100%"
+)
+```
+
+***
+
+```{r libraries, warning=FALSE, message=FALSE}
+## install packages with:
+## install.packages(c("glmnet", "pls", "NormalBetaPrime", "pROC", "boot"))
+library(NormalBetaPrime)
+library(glmnet)
+library(pls)
+library(pROC)
+library(boot)
+```
+
+
+# Introduction
+
+**In this lab session we will look at the following topics**
+
+  - Demonstrate why low dimensional prediction modeling fails in high dimension.
+  - Carry out Principal Component Regression (PCR)
+  - Use `glmnet()` to carry out ridge regression, lasso and elastic net
+  - Evaluation of these prediction models
+  
+
+## The dataset
+
+In this practical, we will use the dataset `eyedata` provided by
+the [__NormalBetaPrime__ package](https://cran.r-project.org/web/packages/NormalBetaPrime/index.html).
+This dataset contains gene expression data of 200
+genes for 120 samples. The data originates from microarray experiments
+of mammalian eye tissue samples.
+
+The dataset consists of two objects:
+
+  - `genes`: a $120 \times 200$ matrix with the expression levels of 200 genes
+  (columns) for 120 samples (rows)
+  - `trim32`: a vector with 120 expression levels of the TRIM32 gene.
+
+
+```{r load-data}
+data(eyedata)
+ls() # List objects in current R session
+```
+
+The goal of this exercise is to predict the expression levels of
+TRIM32 from the expression levels of the 200 genes measured in the
+microarray experiment. For this, it makes sense to start by constructing
+centered (and possibly scaled) data. We store this in two matrices
+`X` and `Y`:
+
+```{r prepare-data}
+X <- scale(genes, center = TRUE, scale = TRUE) 
+Y <- scale(trim32, center = TRUE)
+```
+
+Remember that scaling avoids that differences in levels of magnitude
+will give one variable (gene) more influence in the result. This has
+been illustrated in the [second practical session](./Lab2-PCA.html) as well.
+For the `Y` vector, this is less of an issue as we're talking about a single variable.
+Not scaling will make the predictions interpretable as "deviations from the
+mean".
+
+## The curse of singularity
+
+We begin by assuming that the predictors and the outcome have been
+centered so that the intercept is 0.
+We are presented with the usual regression model:
+
+$$
+Y_i=\beta_i X_{i1}+\dots+\beta_pX_{ip}+\epsilon_i   \text{ Or } {\boldsymbol{Y}}={\boldsymbol{X}}{\boldsymbol{\beta}} +{\boldsymbol{\epsilon}}
+$$
+
+Our goal is to get the least squares estimator of
+${\boldsymbol{\beta}}$, given by
+
+$$
+\hat{{\boldsymbol{\beta}}}= ({\boldsymbol{X}}^T{\boldsymbol{X}})^{-1}{\boldsymbol{X}}^T{\boldsymbol{Y}}
+$$
+
+in which the $p \times p$ matrix
+$({\boldsymbol{X}}^T{\boldsymbol{X}})^{-1}$ is crucial!
+To be able to calculate the inverse of ${\boldsymbol{X}}^T \boldsymbol{X}$,
+it has to be of full rank $p$, which would be 200 in this case.
+Let's check this:
+
+```{r singularity-problem, error=TRUE}
+dim(X) # 120 x 200, so p > n!
+qr(X)$rank
+
+XtX <- crossprod(X) # calculates t(X) %*% X more efficiently
+qr(XtX)$rank
+
+# Try to invert using solve: 
+solve(XtX)
+```
+
+We realize we cannot compute
+$({\boldsymbol{X}}^T{\boldsymbol{X}})^{-1}$ because the rank of
+$({\boldsymbol{X}}^T{\boldsymbol{X}})$ is less than $p$ hence we can’t
+get $\hat{{\boldsymbol{\beta}}}$ by means of least squares! 
+This is generally referred to as the __[singularity](https://www.statistics.com/glossary/singularity/) problem__.
+
+
+# Principal component regression
+
+A first way to deal with this singularity, is to bypass it using 
+principal components. Since rank(${\boldsymbol{X^TX}}$) = n = 199, 
+PCA will give 199 components, each being a linear combination of 
+$p = 200$ variables. These 199 PCs contain all information present in 
+the original ${\boldsymbol{X}}$ data. We could as well use an
+approximation of ${\boldsymbol{X}}$, i.e using just a few ($k<120$) PCs.
+So we use PCA as a method for reducing the dimension while retaining
+as much as the variation between the observations. Once we have these
+PCs, we can use them as variables in a standard regression.
+
+### Classic linear regression on PCs
+
+In the previous labs, we've seen how one can use singular value 
+decomposition for this. Let us take an arbitrary cutoff of $k = 4$
+for illustrative purposes.
+
+```{r PC based on SVD}
+X.svd<-  svd(X)
+k  <-  4                   # Lets abitrary take k=4
+Uk <- X.svd$u[ ,1:k]
+Dk <- diag(X.svd$d[1: k])  # the loadings matrix
+Zk <- Uk%*%Dk              # the scores matrix
+
+# Use the scores in classic linear regression
+pcr.mod1 <- glm(Y~Zk)
+summary(pcr.mod1)
+```
+
+As $\mathbf{X}$ and $\mathbf{Y}$ are centered, the intercept is 
+approximately 0. We introduce the function `glm()` for carrying out
+generalized linear models, as we will use it later on for logistic
+regression. Note that in this particular case we just fit a linear
+regression, so `lm()` will essentially give the same result.
+
+The output shows that PC1 and PC4 have a $\beta$ estimate that 
+differs significantly from 0, but the results can't be readily 
+interpreted. 
+
+### Using a binary response/outcome variable
+
+Instead of predicting the actual gene expression levels, researchers are
+often more interested in whether or not an expression level crosses a
+certain treshold, indicating that the gene has been turned on. We can
+easily construct such a dataset for the TRIM32 outcome. We define 
+"success" as having a value above the median, and "failure" as a value
+below the median
+
+```{r transform Y to binary}
+Ybin <- ifelse( Y > median(Y), 1, 0)
+table(Ybin)
+```
+
+The `ifelse()` function is a vectorized function that translates a 
+logical vector into another one based on its values. See also
+`?ifelse` for more information.
+
+Now we can use the `glm()` function again, but this time with the
+argument `family='binomial'`. By doing so, we tell `glm()` that we
+want to carry out a logistic regression (i.e. that the link function
+for the regression should be the logit function).
+
+```{r carry out logistic regression}
+pcr.bin.mod1 <- glm(Ybin~Zk, family = "binomial")
+summary(pcr.bin.mod1)
+```
+
+### Using the package pls
+
+PCR can also be performed using the `pcr()` function from the
+package `pls`. When using this function, you have to keep a 
+few things in mind.
+
+  1. the number of components is passed with the argument `ncomp`
+  2. the function allows you to scale (set `scale = TRUE`) and
+  center (set `center = TRUE`) the predictors first.
+  
+You can use the function `pcr()` in much the same way as you would
+use `lm()`. The resulting fit can easily be examined using the 
+function `summary()`, but the output looks quite different from
+the usual.
+
+```{r carry out PCR with pcr}
+suppressMessages(library(pls))
+# X is already scaled and centered, so that's not needed.
+pcr.mod2 <- pcr(Y ~ X , ncomp = 4)
+summary(pcr.mod2)
+
+```
+
+First of all the output shows you the data dimensions and the fitting
+method used. In this case, that is PC calculation based on SVD. The
+`summary()` function also provides the percentage of variance
+explained in the predictors and in the response using different numbers
+of components. For example, the first PC only captures 61.22$\%$ of all
+the variance, or information in the predictors and it explains $62.9\%$
+of the variance in the outcome. Note that for both methods the choice of
+the number of principal components was arbitrary chosen to be 4.
+
+At a later stage, we will look at how to choose the number of components
+that has the smallest prediction error.
+
+## Ridges, Lassos and Elastic Nets
+
+Ridge regression, lasso regression and elastic nets are all closely
+related techniques, based on the same idea: add a penalty term to 
+the estimating function so $({\boldsymbol{X}}^T{\boldsymbol{X}})$
+becomes full rank again and is invertible. Two different penalty 
+terms or regularization methods can be used:
+
+1. L1 regularization: this regularization adds a term ${\gamma_1\|\boldsymbol{\beta}\|_{1}}$ to the estimating equation. The
+term will add a penalty based on the absolute value of the
+magnitude of the coefficients. This is used by the lasso regression
+ 
+$$
+ \hat{\boldsymbol{\beta}}^{\text{lasso}} = \text{argmin}_{\boldsymbol{\beta}}\displaystyle({(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})^{t}(\mathbf{Y}-\mathbf{X}\boldsymbol{beta})+{\gamma_1\|\boldsymbol{\beta}\|_{1}}}\displaystyle)
+$$
+
+2. L2 regularization: this regularization adds a term ${\gamma_2\|\boldsymbol{\beta}\|_{2}^{2}}$ to the estimating equation.
+The penalty term is based on the square of the magnitude of the 
+coefficients. This is used by ridge regression.
+
+$$
+ \hat{\boldsymbol{\beta}}^{\text{ridge}} = \text{argmin}_{\boldsymbol{\beta}}\displaystyle({(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})^{t}(\mathbf{Y}-\mathbf{X}\boldsymbol{beta})+{\gamma_2\|\boldsymbol{\beta}\|_{2}^{2}}}\displaystyle)
+$$
+
+Elastic nets combine both types of regularizations. It does so by 
+introducing a $\alpha$ mixing parameter that gives essentially combines
+the L1 and L2 norms in a weighted average.
+$$
+ \hat{\boldsymbol{\beta}}^{\text{ridge}} = \text{argmin}_{\boldsymbol{\beta}}\displaystyle({(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})^{t}(\mathbf{Y}-\mathbf{X}\boldsymbol{beta})+{\alpha \gamma_1\|\boldsymbol{\beta}\|_{1}}+ {(1 - \alpha)\gamma_2\|\boldsymbol{\beta}\|_{2}^{2}}}\displaystyle)
+$$
+
+## Verification of ridge regression
+
+In least square regression the minimization of the estimation function
+$|{\boldsymbol{Y-X\beta}}\|^{2}_{2}$ leads to the solution ${\boldsymbol{\hat{\beta}=(X^TX)^{-1}X^TY}}$. 
+
+For the penalized least square criterion used by ridge regression, 
+you minimize $\|{\boldsymbol{Y-X\beta\|^{2}_{2}}}+\gamma{\boldsymbol{\|\beta\|^{2}_{2}}}$ which leads to following solution:
+
+$${\boldsymbol{\hat{\beta}=(X^TX}}+\gamma{\boldsymbol{I}})^{-1}{\boldsymbol{X^TY}}$$
+
+### Exercises
+
+Solve the following exercises using R.
+
+1.  Verify that ${\mathbf{(X^TX}}+\gamma{\mathbf{I}})$ has rank
+    $200$, for any $\gamma>0$ of your choice.
+    
+```{r}
+#1) Scale X
+tXX<-crossprod(X)
+p<-dim(tXX)[1]
+gamma<- 2 #My choice
+
+# Compute penalised matrix
+tXX_gammaI<-tXX+(gamma*diag(p))
+dim(tXX_gammaI)
+qr(tXX_gammaI)$rank #yes it does
+```
+
+2.  Check that the inverse of
+    ${\mathbf{(X^TX}}+\gamma{\mathbf{I}})$ can be computed.
+    
+```{r}
+#2)Inverse: yes it can be computed
+InvtXX_gammaI<-solve(tXX_gammaI)
+```
+
+3.  Finally compute
+    ${\boldsymbol{\hat{\beta}=(X^TX}}+\gamma{\mathbf{I}})^{-1}{\mathbf{X^TY}}$.
+
+```{r}
+#3)Beta
+hatbeta<-InvtXX_gammaI%*%t(X)%*%Y
+```
+
+If we perform SVD on ${\mathbf{X}}$ we get
+    ${\mathbf{X}}={\mathbf{UDV^T}}={\mathbf{ZV^T}}$.
+    Replacing ${\mathbf{X}}$ with ${\mathbf{ZV^T}}$ gives
+    ${\boldsymbol{\hat{\beta}=V(Z^TZ}}+\gamma{\mathbf{I}})^{-1}{\mathbf{Z^TY}}$
+    
+```{r}
+
+```
+
+4.  Check to see that ${\mathbf{(X^TX}}+\gamma{\mathbf{I}})$ has
+    a higher dimension than
+    ${\mathbf{(Z^TZ}}+\gamma{\mathbf{I}})$. And therefore
+    inverting ${\mathbf{(Z^TZ}}+\gamma{\mathbf{I}})$ is much
+    faster than inverting ${\mathbf{(X^TX}}+\gamma{\mathbf{I}})$
+    (You don’t have to check this).
+    
+```{r}
+X.svd<-  svd(X)
+Uk <- X.svd$u
+Dk <- diag(X.svd$d)
+Zk <- Uk%*%Dk
+Vk <- X.svd$v
+p<-dim(Zk)[1]
+tZZ_gammaI<-(t(Zk)%*%Zk)+gamma*diag(p)
+dim(tZZ_gammaI)
+
+# Calculate the beta
+hatbeta_svd <- Vk %*% solve(tZZ_gammaI) %*% t(Zk) %*% Y
+
+# Check whether the same
+comparison <- cbind(hatbeta, hatbeta_svd)
+head(comparison) # to not show everything 
+```
+
+We therefore conclude that
+    ${\boldsymbol{\hat{\beta}}=\mathbf{V(Z^TZ}}+\gamma{\mathbf{I}})^{-1}{\mathbf{Z^TY}}$
+    is a faster way for computing ${\boldsymbol{\hat{\beta}}}$.
+    
+## Carrying out ridge and lasso regression
+
+The package `glmnet` provides a function `glmnet()` that allows you to
+fit all three types of regressions. Which type is used, can be determined
+by specifying the `alpha` argument. For a ridge regression, you set `alpha`
+to 0, and for a lasso regression you set `alpha` to 1. Other `alpha` values
+between 0 and 1 will fit a form of elastic net. This function has slightly
+different syntax from the other model-fitting functions. To be able to 
+use it, you have to pass a `x` matrix as well as a `y` vector, and you
+don't use the formula syntax. 
+
+The gamma value can be passed by the argument `lambda` (notation isn't
+always consistent between text books and software...). The function
+`glmnet()` can also carry out a search for finding the best
+gamma value for a fit. This can be done by passing multiple values
+to the argument `lambda`.
+
+### Ridge regression example
+
+Let's perform a ridge regression in order to predict expression levels
+of the TRIM32 gene using the 200 gene probes data. We can start by
+using a $\gamma$ value of 2.
+
+```{r perform a single ridge regression}
+suppressMessages(library(glmnet))
+gamma <- 2
+ridge.mod <- glmnet(X, Y, alpha = 0, lambda = gamma)
+
+# have a look at the coefficients
+coef(ridge.mod)[1:10]
+```
+
+The first coefficient is the intercept, and is again essentially 0. But
+a value of 2 for $\gamma$ might not be the best choice, so let's see how
+the coefficients change with different values for $\gamma$.
+
+```{r perform a grid search for ridge regression}
+grid <- seq(1,10000, length=100)
+ridge.mod.grid <- glmnet(X,Y,alpha=0, lambda=grid)
+
+# Plot the coefficients against the LOG lambda sequence!
+# see ?plot.glmnet
+plot(ridge.mod.grid, xvar ="lambda", xlab ="Ln(gamma)")
+# add a vertical line at gamma = 2
+abline(h=0,lwd=2)
+```
+
+Similar to the case of PC regression we choose $\gamma=2$ and the grid
+of arbitrarily. We will see subsequently, how to choose $\gamma$ that
+minimizes the prediction error.
+
+### Carry out a lasso regression
+
+Lasso regression also does penalized regression, but we do not have any
+analytic solution of $\hat{{\boldsymbol{\beta}}}$ as in least squares
+and ridge regression. In order to fit a lasso model, we once again use
+the `glmnet()` function; however, this time we use the argument
+`alpha=1`. Other than this change, we proceed just as we did in fitting
+a ridge regression model.
+
+```{r carry out a lasso regression}
+#Note that the glmnet() function can supply gamma
+#automatically, we do not have to provide a grid. 
+lasso.mod <- glmnet(X,Y, alpha = 1)
+plot(lasso.mod,xvar ="lambda", xlab ="Ln(gamma)")
+```
+
+### Exercises
+
+1.  Use the grid of $\gamma$s and fit a ridge regression model with the
+    binary outcome variable `Ybin` and predictors `X`. Hint: in the
+    `glmnet()` function use `family="binomial"`.
+    
+```{r}
+#Binary version
+library(glmnet)
+grid <-seq(1,1000, length=100)# arbitrary grid
+
+ridge.mod <- glmnet(X,Ybin,alpha=0,lambda=grid,family = "binomial")
+```
+
+2.  Fit a Lasso model with the binary outcome variable `Ybin` and
+    predictors `X`. Again you use the binomial family
+    
+```{r}
+lasso.mod <- glmnet(X,Ybin, alpha = 1,
+                    family = "binomial")
+```
+
+3.  Plot your fitted models.
+
+```{r, fig.show='hold', out.width='49%'}
+plot(ridge.mod, xvar ="lambda", xlab ="gamma")
+
+plot(lasso.mod,xvar ="lambda", xlab ="gamma")
+```
+
+Again we ask the question which $\gamma$ is the right one? Generally the
+number of PCs in PC regression and $\gamma$ in the ridge and Lasso
+regression are called tuning parameters. The different number of
+PCs/$\gamma$, corresponds to different models which can be represented
+as a class of models $\mathcal{M}$. We now look at how to chose turning
+parameters and hence optimal prediction models from $\mathcal{M}$.
+
+## Evaluation of prediction models
+
+Before we begin, we use the `set.seed()` function in order to set a seed
+for R’s random number generator, so that we will all obtain precisely
+the same results as those shown below. It is generally good practice to
+set a random seed when performing an analysis such as cross-validation
+that contains an element of randomness, so that the results obtained can
+be reproduced precisely at a later time.
+
+We begin by using the `sample()` function to split the set of samples
+into two subsets, by selecting a random subset of 80 observations out of
+the original 120 observations. We refer to these observations as the
+**training** set.
+
+```{r create training set}
+set.seed(1)
+# Select 80 out of 120 (row)numbers
+trainID <- sample(120 ,80)
+
+#Training data
+trainX <- X[trainID,] 
+trainY <- Y[trainID]
+
+#Test data
+testX <- X[-trainID,] 
+testY <- Y[-trainID]
+```
+
+Here we use a shortcut in the sample command; see `?sample` for details.
+
+We are interested in the **extra-sample** error of our models. The
+extra-sample error will be estimated using cross-validation (CV). We
+will see both LOOCV and CV$_k$ ( k-folds cross validation).
+
+-   For the continuous outcome we will use the mean squared error (MSE).
+
+-   For the binary outcome, we will use the area under the receiver
+    operating characteristic curve (ROC), the AUC and the
+    misclassification error.
+
+-   We use the test/validation dataset for final model evaluation. No
+    estimation of model parameters whatsoever is done on the test
+    dataset.
+
+The LOOCV and CV$_k$ estimates can be automatically computed for any
+generalized linear model using the `glm()` and `cv.glm()` functions. The
+`cv.glm()` function is part of the `boot` package.  
+
+Let’s begins by creating our cost/evaluation measure functions. 
+For the AUC function, we simply use the function `auc` of the `pROC` package.
+
+
+
+```{r functions to calculate MSE, AUC and misclassification}
+suppressMessages(library(pROC))
+
+MSE <- function(obs, pred){
+  mse <- mean((obs - pred)^2)
+  return(mse)
+}
+
+MISERR <- function(obs, pred, cutoff = 0.5){
+  ypred <- as.numeric(pred > cutoff)  # translates TRUE/FALSE to 1/0
+  tab <- table(obs, ypred)
+  miserr <- 1 - sum(diag(tab))/sum(tab)
+  return(miserr)
+}
+```
+
+### PC regression
+
+We start with the PC regression and choose the number of PCs that minimizes
+a chosen extra-sample error. We use the function `predict()` to calculate
+the prediction errors. As our training dataset contains now only
+80 rows, we can test for a maximum of 79 PCs.
+
+```{r PC regression crossvalidation}
+suppressMessages(library(boot)) # for the cv.glm function
+
+max.n.comps <- 79
+cv.pcr.errors <- rep(NA, max.n.comps)
+
+for(i in 1:max.n.comps){
+  # Train the model
+  pcr.train <- pcr(trainY ~ trainX, ncomp = i)
+  # Calculate the predictions
+  ypred <- predict(pcr.train, newdata = testX)
+  # Calculate the extra-sample error
+  cv.pcr.errors[i] <- MSE(testY,ypred)
+}
+
+```
+
+Now we have a vector `cv.pcr.errors` that contains the MSE for every
+number of components. We can use this information to create a plot,
+and to find the number of components with the lowest MSE value:
+
+```{r find optimal number of components}
+nPC.at.min <- which.min(cv.pcr.errors)
+plot(1:max.n.comps, cv.pcr.errors, type = "l",
+     ylab = "MSE", xlab = "number PCs")
+abline(v = nPC.at.min, col = "red")
+```
+
+This is a manual procedure, but we can also use a K-fold crossvalidation
+based on the function `cv.glm()`. As we need to use the function `glm()`
+for that, we have to use the manual calculations. But `cv.glm` expects a 
+`data.frame` as input, so we need to adjust our previous code a bit.
+
+The `cv.glm()` function has the following arguments: `data, glmfit, cost` and `K`. `K` is the number of CV folds: `K=sample size` is LOOCV. The
+argument `data` is the dataset and `cost` is the error function: 
+for example MSE, AUC and the misclassification error.
+
+The output of `cv.glm()` contains an element `delta` with 2 values. The
+first one is the raw extra-sample error, the second one is one corrected
+for bias. We ignore that bias and use the raw values.
+
+```{r use K fold crossvalidation}
+trainX.svd <- svd(trainX)
+U <- trainX.svd$u
+D <- diag(trainX.svd$d)  # the loadings matrix
+trainZ <- U%*%D 
+
+# Avoid too long runtime
+nvals <- seq(5,30)
+cv.glm.pcr <- rep(NA, length(nvals))
+
+for(i in seq_along(nvals)){
+  # fitdata
+  fitdata <- data.frame(trainY, trainZ[,1:nvals[i]])
+  # make the model
+  mod <- glm(trainY ~ ., data = fitdata)
+  # do K fold crossvalidation. 
+  cv.glm.pcr[i] <- cv.glm(fitdata, mod, cost = MSE, K = 20)$delta[1]
+}
+
+nPC.at.min <- nvals[which.min(cv.glm.pcr)]
+plot(nvals, cv.glm.pcr, type = "l",
+     ylab = "MSE", xlab = "number PCs")
+abline(v = nPC.at.min, col = "red")
+```
+
+This outcome shows us that we can use approximately 12 PCs.
+
+Now let’s validate this with the test dataset and see how well we are
+doing with LOOCV. Since SVD is also an estimation procedure we will be
+cheating if we perform SVD on the test dataset. We will use the loadings
+of the training to construct PCs on the test: we are now sure we are
+only using the validation set for testing.
+
+```{r test on the test dataset}
+# Create scores for the test using loadings of the validation
+V <- trainX.svd$v
+testZ <- testX %*% V
+
+fitdata <- data.frame(trainY, trainZ[,1:12])
+mod <- glm(trainY ~ ., data = fitdata)
+
+preddata <- data.frame(testZ[, 1:12])
+
+preds <- predict(mod, newdata = preddata)
+MSE(testY, preds)
+
+
+```
+
+### Exercises
+
+1.  Dichotomize the training outcome variable, `trainY` at its 50$\%$
+    quantile.
+    
+```{r}
+trainY_bin <- ifelse( trainY > median(trainY), 1, 0)
+table(trainY_bin)
+testY_bin <- ifelse( testY > median(trainY), 1, 0)
+table(testY_bin)
+```
+
+2.  Construct a prediction model using PC regression on the training
+    dataset and select the optimum number of PCs using 5 folds cross
+    validation with the misclassification (at cutoff $c=0.5$ ) error and
+    the AUC as evaluation measures. Use the binary `trainY` as your
+    response variable.
+    
+```{r}
+K <- 5 # set K 
+set.seed(1) # Use this if you want the exact same results
+nPC <- 40 # max number of PCs, choose as you want with the 
+          # maximum given by dim(trainZ)[2]
+cv.pcr.error.bin = rep(NA,nPC)#We store our errors here
+
+for (i in seq_len(nPC)) {
+	fitdata <- data.frame(trainY_bin = trainY_bin,
+	                      trainZ[,1:i])
+	# Fit the model
+	cv.pcr.mod1 <- suppressWarnings(
+	  glm(trainY_bin ~ ., data = fitdata, 
+	                   family="binomial")
+	)
+	# do K fold crossvalidation
+	cv.pcr.error.bin[i] <- suppressWarnings(
+	  cv.glm(fitdata,cv.pcr.mod1, 
+	         cost = auc,K=K)$delta[1]
+	  )
+	# You use auc(), which is a function of the pROC package
+}
+```
+
+Note that you don't have that much cases, and a ton of variables. This
+can lead to lack of convergence in the internal fitting of the `glm()`.
+It's one of the reasons we need to reduce dimensions! The function
+`suppressWarnings()` suppresses all the warnings generated by ill fits.
+
+You want to maximize the AUC, so you need to look for the maximum
+value:
+```{r}
+nPC_at_max_AUC_CV <- c(1:nPC)[which.max(cv.pcr.error.bin)]
+plot(cv.pcr.error.bin ,xlab = "n PCs",ylab = "AUC",type = 'l')
+abline(v=nPC_at_max_AUC_CV,col="red")
+```
+
+Now we know the number of PCs, we can construct the model and 
+test it against our test data.
+
+```{r}
+fitdata <- data.frame(trainY_bin = trainY_bin,
+	                      trainZ[,1:nPC_at_max_AUC_CV])
+
+finalmodel <- glm(trainY_bin ~ . ,
+                  data = fitdata,family="binomial")
+
+# Perform testing on the data
+testdata <- data.frame(testZ[,1:nPC_at_max_AUC_CV])
+
+# We predict the response (type = "response")
+predPCR <- predict(finalmodel,
+                   newdata=testdata,type = "response")
+
+#We can now calculate the AUC 
+#on the test data set just to see
+#how good are we doing on test?
+auc(testY_bin, predPCR)
+```
+
+3.  With your dichotomized outcome `trainY` construct a Lasso and ridge
+    regression prediction model on the training dataset, select the
+    optimum $\gamma$ by using 5 folds CV and the AUC as your evaluation
+    measure: Hint use `cv.glmnet()` function, for 5 folds CV, set
+    `nfolds=5` and for the AUC set `type.measure="auc"`. Go to
+    `?cv.glmnet` for details.
+    
+```{r}
+set.seed(5)
+lasso_mod <- cv.glmnet(trainX, trainY_bin,
+                       family="binomial",
+                       type.measure="auc",nfolds=K,
+                       alpha=1)
+plot(lasso_mod)
+```
+
+We can look for the gamma values that give the best result. Here you have two possibilities :
+
+1. look at `lambda.min`, which is the value of 
+lambda that gives the best result for the crossvalidation.
+2. look at `lambda.1se`, which is the largest value of
+lambda such that the error is within 1 standard error
+of the best result for the crossvalidation.
+```{r}
+#best gammas 
+bestgamma.1se <- lasso_mod$lambda.1se
+bestgamma.min <- lasso_mod$lambda.min
+bestgamma.1se
+bestgamma.min
+```
+
+Let's choose the best gamma for the prediction. You can
+do this by passing the lambda value as the `s` argument
+of the `predict()` function:
+
+```{r}
+predLasso_prob <- predict(lasso_mod, newx= testX,
+                          s=bestgamma.min, type="response")
+
+#how good are we doing on test? 
+auc(testY_bin, as.vector(predLasso_prob))
+
+
+```
+
+We can now repeat this for the ridge regression:
+
+```{r}
+set.seed(5)
+ridge_mod <- cv.glmnet(trainX, trainY_bin,
+                       family="binomial",
+                       type.measure="auc",nfolds=K,
+                       alpha=0)
+plot(ridge_mod)
+```
+
+Let's do the model evaluation:
+
+```{r}
+bestgamma.min <- ridge_mod$lambda.min
+
+predRidge_prob <- predict(ridge_mod, newx= testX,
+                          s=bestgamma.min, type="response")
+
+#how good are we doing on test? 
+auc(testY_bin, as.vector(predRidge_prob))
+```
+
+4.  For all the above prediction models, select the best model in terms
+    of their estimated AUC (extra-sample error) on the training dataset.
+    Confirm your choice of model on the test dataset. Look at
+    the function `auc` of the package `pROC`.
+    
+For me it looks like the lasso model performs the best on the test
+data.
+
+5.  After deciding on your choice of model based on its AUC, to actually
+    use your model for prediction, you need an optimal cut-off point say
+    $c\in [0,1]$, where when a predicted probability $p$ is greater than
+    $c$, predict as high gene expression and when $p\leq c$ predict as
+    low. The optimal here means, $c$ has minimum misclassification
+    error. Find the optimal $c$ of your best model in terms of
+    misclassification error.
+
+For this, you need the function `MISERR` we defined above. You can 
+again loop over a number of possible $c$ values, and check whether 
+we get at a correct representation.
+
+We chose the lasso as best, so:
+
+```{r}
+cvals <- seq(0.01,0.99,by = 0.01)
+n <- length(cvals)
+
+c_miss <- rep(NA, n)
+
+for(i in seq_along(cvals)){
+  c_miss[i] <- MISERR(testY_bin, 
+                      predLasso_prob,
+                      cvals[i])
+}
+
+best_c <- cvals[which.min(c_miss)]
+
+plot(cvals, c_miss, type = "l")
+abline(v = best_c, col = "red")
+
+```
+
+This shows a cutoff value of 0.47 would give the least amount of
+misclassification error.
