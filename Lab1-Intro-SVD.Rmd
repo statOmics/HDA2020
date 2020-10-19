@@ -464,7 +464,7 @@ industries <- read_delim(industries_url, delim = " ",
                          col_types = cols())
 # Explore contents
 industries
-glimpse(industries)
+dim(industries)
 summary(industries)
 ```
 
