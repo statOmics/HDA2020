@@ -79,6 +79,6 @@ When submitting, please use the following format:
 
 * HW-Name1-Name2.Rmd (or HW1-Name1-Name2.R)
 
-Submissions should be done __through UFora__.
+Submissions should be done __through [UFora](https://ufora.ugent.be/d2l/home/221212)__.
 
 <span style="color:red">__The deadline for submission is November 8th.__</span>
