@@ -564,6 +564,13 @@ So there are likely still many patterns we are missing.
 </details>
 
 
+# Further reading
+
+Here are some further resources that can help with the interpretation of the PCA and its link with the SVD:
+
+* <https://setosa.io/ev/principal-component-analysis/>
+* <https://stats.stackexchange.com/a/134283/264768>
+
 
 # Session info {-}
 
