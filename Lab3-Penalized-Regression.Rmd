@@ -509,101 +509,167 @@ Again we can ask the question which $\gamma$ is the right one? Generally the
 number of PCs in PC regression and $\gamma$ in the ridge and Lasso
 regression are called __tuning parameters__. The different number of
 PCs/$\gamma$ correspond to different models which can be represented
-as a class of models $\mathcal{M}$. We now look at how to chose turning
+as a class of models $\mathcal{M}$. We now look at how to choose turning
 parameters and hence optimal prediction models from $\mathcal{M}$.
 
 
-# Evaluation of prediction models
+# Evaluation of prediction models and tunign hyperparameters
+
+First we will split our original data in a training and test set to validate our
+model. The training set will be used to train the model and tune the
+hyperparameters, while the test set will be used to evaluate the
+__out-of-sample__ performance of our final model. If we would use the same data
+to both fit and test the model, we would get biased results.
 
 Before we begin, we use the `set.seed()` function in order to set a seed
 for R’s random number generator, so that we will all obtain precisely
 the same results as those shown below. It is generally good practice to
 set a random seed when performing an analysis such as cross-validation
 that contains an element of randomness, so that the results obtained can
-be reproduced precisely at a later time.
+be reproduced at a later time.
 
-We begin by using the `sample()` function to split the set of samples
-into two subsets, by selecting a random subset of 80 observations out of
-the original 120 observations. We refer to these observations as the
-**training** set.
+We begin by using the `sample()` function to split the set of samples into two
+subsets, by selecting a random subset of 80 observations out of the original 120
+observations. We refer to these observations as the __training__ set. The rest
+of the observations will be used as the __test__ set.
 
-```{r create training set}
+```{r create-training-set}
 set.seed(1)
-# Select 80 out of 120 (row)numbers
-trainID <- sample(120 ,80)
+# Sample 80 random IDs from the rows of X (120 total)
+trainID <- sample(nrow(X), 80)
 
-#Training data
-trainX <- X[trainID,] 
+# Training data
+trainX <- X[trainID, ]
 trainY <- Y[trainID]
 
-#Test data
-testX <- X[-trainID,] 
+# Test data
+testX <- X[-trainID, ]
 testY <- Y[-trainID]
 ```
 
-Here we use a shortcut in the sample command; see `?sample` for details.
 
-We are interested in the **extra-sample** error of our models. The
-extra-sample error will be estimated using cross-validation (CV). We
-will see both LOOCV and CV$_k$ ( k-folds cross validation).
+## Model evaluation
 
--   For the continuous outcome we will use the mean squared error (MSE).
+We are interested in the __out-of-sample__ error of our models,
+i.e. how good our model does on unseen data.
+__This will allow us to compare different *classes* of models__.
 
--   For the binary outcome, we will use the area under the receiver
-    operating characteristic curve (ROC), the AUC and the
-    misclassification error.
+Different performance metrics will be used:
 
--   We use the test/validation dataset for final model evaluation. No
-    estimation of model parameters whatsoever is done on the test
-    dataset.
+-   For continuous outcomes we will use the mean squared error (MSE).
 
-The LOOCV and CV$_k$ estimates can be automatically computed for any
-generalized linear model using the `glm()` and `cv.glm()` functions. The
-`cv.glm()` function is part of the `boot` package.  
+-   For a binary outcome (as in the logistic regression models), 
+    we will use 
+    
+    * the area under the receiver operating characteristic curve
+    ([AUROC or AUC](https://en.wikipedia.org/wiki/Receiver_operating_characteristic)) 
+    
+    * the misclassification error based on a
+    [confusion matrix](https://en.wikipedia.org/wiki/Confusion_matrix),
+    i.e. the proportion of misclassified observations.
+
+
+We use the test subset for final model evaluation. No estimation of
+model parameters whatsoever is done on the test dataset.
 
 Let’s begins by creating our cost/evaluation measure functions. 
-For the AUC function, we simply use the function `auc` of the `pROC` package.
+For the AUC function, we simply use the function `auc` from the 
+*[pROC](https://CRAN.R-project.org/package=pROC)* package.
 
-
-
-```{r functions to calculate MSE, AUC and misclassification}
-suppressMessages(library(pROC))
-
+```{r performance-metric-functions}
+# Mean Squared Error
 MSE <- function(obs, pred){
-  mse <- mean((obs - pred)^2)
-  return(mse)
+  mean((obs - pred)^2)
 }
 
-MISERR <- function(obs, pred, cutoff = 0.5){
-  ypred <- as.numeric(pred > cutoff)  # translates TRUE/FALSE to 1/0
+# Misclassification error
+MISERR <- function(obs, pred, cutoff = 0.5) {
+  # Check if we have same number of observations and predictions
+  stopifnot(length(obs) == length(pred))
+  
+  n <- length(obs)
+  
+  # Turn predictions into binary response
+  ypred <- as.numeric(pred > cutoff)
+  
+  # Create confusion matrix
   tab <- table(obs, ypred)
-  miserr <- 1 - sum(diag(tab))/sum(tab)
-  return(miserr)
+  
+  # Correct observations are on the diagonal
+  # Error = 1 - the proportion of correct predictions
+  1 - sum(diag(tab)) / n
 }
 ```
 
-## PC regression
+To see how the misclassification error works and what a confusion matrix looks
+like, imagine we have a set of 10 observations and 10 corresponding predictions
+from a logistic regression model (these will be numbers between 0 and 1).
+We use a cutoff of 0.5 to classify a prediction as either 1 or 0.
+
+```{r}
+set.seed(123)
+n <- 10
+(obs <- sample(c(0, 1), n, replace = TRUE))  # 10 binary observations
+(pred <- runif(n))  # 10 predictions, random uniform between 0 and 1
+
+# Turn predictions into binary response
+(ypred <- as.numeric(pred > 0.5))
+
+# Create confusion matrix
+(tab <- table(obs, ypred))
+
+# Correct observations are on the diagonal
+# Error = 1 - the proportion of correct predictions
+1 - sum(diag(tab)) / n
+```
+
+In this case, we got half of the predictions wrong, i.e. a misclassification
+error of 0.5, which is unsurprising since we just used a uniform distribution to
+generate the predictions.
+
+These metrics will allow us to compare the performance of different types of
+models, e.g. PC regression, ridge regression and lasso regression, on our data.
+However, we still need to find the optimal model within each of these classes,
+by selecting the best hyperparameter (number of PCs for PC regression and $\gamma$
+for lasso and ridge).
+For that we will use 
+[*$k$-fold Cross Validation*](https://en.wikipedia.org/wiki/Cross-validation_(statistics))
+on our training set.
+
+
+## Tuning hyperparameters
+
+The test set is only used to evaluate the *final* model.
+To achieve this final model, we need to find the optimal hyperparameters by using
+*k-folds cross validation* (CV$_k$) on the training data.
+
+The CV$_k$ estimates can be automatically computed for any
+generalized linear model (generated with `glm()` and by extension `glmnet()`) 
+using the `cv.glm()` function from the
+*[boot](https://CRAN.R-project.org/package=boot)* package.
+
+
+# Example: PC regression evaluation
 
 We start with the PC regression and choose the number of PCs that minimizes
-a chosen extra-sample error. We use the function `predict()` to calculate
-the prediction errors. As our training dataset contains now only
-80 rows, we can test for a maximum of 79 PCs.
+a chosen out-of-sample error.  As our training dataset contains now only
+80 rows, we can use a maximum of 79 PCs in our model.
+
+The training set is used to fit the 
+We use the function `predict()` to calculate
 
 ```{r PC regression crossvalidation}
-suppressMessages(library(boot)) # for the cv.glm function
-
 max.n.comps <- 79
 cv.pcr.errors <- rep(NA, max.n.comps)
 
-for(i in 1:max.n.comps){
-  # Train the model
+for (i in 1:max.n.comps) {
+  # Train the model: fit PC regression with i components
   pcr.train <- pcr(trainY ~ trainX, ncomp = i)
   # Calculate the predictions
   ypred <- predict(pcr.train, newdata = testX)
-  # Calculate the extra-sample error
-  cv.pcr.errors[i] <- MSE(testY,ypred)
+  # Calculate the out-of-sample error
+  cv.pcr.errors[i] <- MSE(testY, ypred)
 }
-
 ```
 
 Now we have a vector `cv.pcr.errors` that contains the MSE for every
@@ -627,7 +693,7 @@ argument `data` is the dataset and `cost` is the error function:
 for example MSE, AUC and the misclassification error.
 
 The output of `cv.glm()` contains an element `delta` with 2 values. The
-first one is the raw extra-sample error, the second one is one corrected
+first one is the raw out-of-sample error, the second one is one corrected
 for bias. We ignore that bias and use the raw values.
 
 ```{r use K fold crossvalidation}
@@ -821,7 +887,7 @@ predRidge_prob <- predict(ridge_mod, newx= testX,
 auc(testY_bin, as.vector(predRidge_prob))
 ```
 
-#### 4. For all the above prediction models, select the best model in terms of their estimated AUC (extra-sample error) on the training dataset. Confirm your choice of model on the test dataset. Look at the function `auc` of the package `pROC`. {-}
+#### 4. For all the above prediction models, select the best model in terms of their estimated AUC (out-of-sample error) on the training dataset. Confirm your choice of model on the test dataset. Look at the function `auc` of the package `pROC`. {-}
     
 For me it looks like the lasso model performs the best on the test
 data.
