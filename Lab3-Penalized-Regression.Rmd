@@ -408,7 +408,7 @@ vector of values as input for the `lambda` argument, allowing to fit multiple
 models with the same input data but different hyperparameters.
 
 ```{r ridge-regression-grid-search}
-grid <- seq(1, 10000, length = 100)
+grid <- seq(1, 1000, by = 10)  # 1 to 1000 with steps of 10
 ridge_mod_grid <- glmnet(X, Y, alpha = 0, lambda = grid)
 
 # Plot the coefficients against the (natural) LOG lambda sequence!
@@ -440,7 +440,7 @@ prediction error.
 
 ## Lasso regression
 
-Lasso regression is also a form of penalized regression, but we do not have any
+Lasso regression is also a form of penalized regression, but we do not have an
 analytic solution of $\hat{{\boldsymbol{\beta}}}$ as in least squares
 and ridge regression. In order to fit a lasso model, we once again use
 the `glmnet()` function. However, this time we use the argument
@@ -455,44 +455,60 @@ but instead rely on `glmnet`'s
 
 ```{r glmnet-lasso-regression}
 # Note that the glmnet() function can supply gamma automatically
+# By default it uses a sequence of 100 lambda values
 lasso_model <- glmnet(X, Y, alpha = 1)
 plot(lasso_model, xvar = "lambda", xlab = "log(gamma)")
 ```
 
+Note that the number of non-zero coefficients is indicated at the top of the plot.
+In the case of lasso-regression the regularization is much less smooth compared
+to the ridge regression, with some coefficients increasing for higher $\gamma$
+before sharply dropping to zero.
 
-# Exercise: performing penalized regressions with `glmnet`
+
+# Exercise: performing penalized logistic regression with `glmnet`
 
 ## Tasks {-}
 
-#### 1. Use the grid of $\gamma$s and fit a ridge regression model with the binary outcome variable `Ybin` and predictors `X`. Hint: in the `glmnet()` function use `family="binomial"`. {-}
-    
-```{r}
-#Binary version
-library(glmnet)
-grid <-seq(1,1000, length=100)# arbitrary grid
+#### 1. Use the same `grid` of $\gamma$s from before and fit a ridge logistic regression model with them with the binary outcome variable `Ybin` and predictors `X`. {-}
 
-ridge.mod <- glmnet(X,Ybin,alpha=0,lambda=grid,family = "binomial")
-```
+*Hint:* in the `glmnet()` function use `family = "binomial"` for logistic regression.
 
-#### 2. Fit a Lasso model with the binary outcome variable `Ybin` and predictors `X`. Again you use the binomial family {-}
-    
+<details><summary>Solution</summary>
 ```{r}
-lasso.mod <- glmnet(X,Ybin, alpha = 1,
-                    family = "binomial")
+# Binary version
+grid <- seq(1, 1000, by = 10)  # same grid as before
+
+bin_ridge_model <- glmnet(X, Ybin, alpha = 0, lambda = grid, family = "binomial")
 ```
+</details>
+
+#### 2. Fit a lasso logistic model with the binary outcome variable `Ybin` and predictors `X`. {-}
+
+Again you should use the binomial family.
+
+<details><summary>Solution</summary>
+```{r}
+bin_lasso_model <- glmnet(X, Ybin, alpha = 1, family = "binomial")
+```
+</details>
 
 #### 3. Plot your fitted models. {-}
 
-```{r, fig.show='hold', out.width='49%'}
-plot(ridge.mod, xvar ="lambda", xlab ="gamma")
+<details><summary>Solution</summary>
+```{r, fig.show='hold'}
+plot(bin_ridge_model, xvar = "lambda", xlab = "log(gamma)")
+title("Ridge logistic regression", line = -1)
 
-plot(lasso.mod,xvar ="lambda", xlab ="gamma")
+plot(bin_lasso_model, xvar = "lambda", xlab = "log(gamma)")
+title("Lasso logistic regression", line = -1)
 ```
+</details>
 
-Again we ask the question which $\gamma$ is the right one? Generally the
+Again we can ask the question which $\gamma$ is the right one? Generally the
 number of PCs in PC regression and $\gamma$ in the ridge and Lasso
-regression are called tuning parameters. The different number of
-PCs/$\gamma$, corresponds to different models which can be represented
+regression are called __tuning parameters__. The different number of
+PCs/$\gamma$ correspond to different models which can be represented
 as a class of models $\mathcal{M}$. We now look at how to chose turning
 parameters and hence optimal prediction models from $\mathcal{M}$.
 
