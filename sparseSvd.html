@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Lieven Clement" />
+
+
+<title>4. Sparse Singular Value Decomposition</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<script src="site_libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #c4a000; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #000000; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #000000; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #000000; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">HDA2020</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fa fa-chalkboard-teacher"></span>
+     
+    Lectures
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="intro.html">1. Introduction</a>
+    </li>
+    <li>
+      <a href="svd.html">2. Singular Value Decomposition</a>
+    </li>
+    <li>
+      <a href="prediction.html">3. Prediction with High Dimensional Predictors</a>
+    </li>
+    <li>
+      <a href="sparseSvd.html">4. Sparse Singular Value Decomposition</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fa fa-laptop"></span>
+     
+    Practicals
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Lab1-Intro-SVD.html">Lab 1</a>
+    </li>
+    <li>
+      <a href="Lab2-PCA.html">Lab 2</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/statOmics/HDA2020">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="http://statomics.github.io/">statOmics</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">4. Sparse Singular Value Decomposition</h1>
+<h4 class="author">Lieven Clement</h4>
+<h4 class="date">statOmics, Ghent University (<a href="https://statomics.github.io" class="uri">https://statomics.github.io</a>)</h4>
+
+</div>
+
+
+<div id="introduction" class="section level1">
+<h1><span class="header-section-number">1</span> Introduction</h1>
+<p>In high dimensional data the PCs may have unclear interpretation because they depend on all <span class="math inline">\(p\)</span> original variables.</p>
+<div id="example-toxicogenomics-in-early-drug-development" class="section level2">
+<h2><span class="header-section-number">1.1</span> Example: Toxicogenomics in early drug development</h2>
+<div id="background" class="section level3">
+<h3><span class="header-section-number">1.1.1</span> Background</h3>
+<ul>
+<li><p>Effect of compound on gene expression.</p></li>
+<li><p>Insight in action and toxicity of drug in early phase</p></li>
+<li><p>Determine activity with bio-assay: e.g. binding afinity of compound to cellwall recepter (target, IC50).</p></li>
+<li><p>Early phase: 20 to 50 compounds</p></li>
+<li><p>Based on in vitro results one aims to get insight in how to build better compound (higher on-target activity less toxicity.</p></li>
+<li><p>Small variantions in moelculair structure lead to variations in BA and gene expression.</p></li>
+<li><p>Aim: Build model to predict bio-activity based on gene expression in liver cell line.</p></li>
+</ul>
+</div>
+<div id="data" class="section level3">
+<h3><span class="header-section-number">1.1.2</span> Data</h3>
+<ul>
+<li><p>30 chemical compounds have been screened for toxicity</p></li>
+<li><p>Bioassay data on toxicity screening</p></li>
+<li><p>Gene expressions in a liver cell line are profiled for each compound (4000 genes)</p></li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>toxData &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;https://raw.githubusercontent.com/statOmics/HDA2020/data/toxDataCentered.csv&quot;</span>)</span></code></pre></div>
+<pre><code>## 
+## [36m──[39m [1m[1mColumn specification[1m[22m [36m────────────────────────────────────────────────────────[39m
+## cols(
+##   .default = col_double()
+## )
+## [36mℹ[39m Use [30m[47m[30m[47m`spec()`[47m[30m[49m[39m for the full column specifications.</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>svdX &lt;-<span class="st"> </span><span class="kw">svd</span>(toxData[,<span class="op">-</span><span class="dv">1</span>])</span></code></pre></div>
+<p>Data is already centered:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>toxData <span class="op">%&gt;%</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a><span class="st">  </span>colMeans <span class="op">%&gt;%</span></span>
+<span id="cb4-3"><a href="#cb4-3"></a><span class="st">  </span>range</span></code></pre></div>
+<pre><code>## [1] -1.434038e-17  2.567391e-17</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a> toxData <span class="op">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2"></a><span class="st">  </span>names <span class="op">%&gt;%</span></span>
+<span id="cb6-3"><a href="#cb6-3"></a><span class="st">  </span>head</span></code></pre></div>
+<pre><code>## [1] &quot;BA&quot; &quot;X1&quot; &quot;X2&quot; &quot;X3&quot; &quot;X4&quot; &quot;X5&quot;</code></pre>
+<ul>
+<li>First column contains data on Bioassay.</li>
+<li>The higher the score on Bioassay the more toxic the compound</li>
+<li>Other columns contain data on gene expression X1, … , X4000</li>
+</ul>
+</div>
+<div id="data-exploration" class="section level3">
+<h3><span class="header-section-number">1.1.3</span> Data exploration</h3>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>toxData <span class="op">%&gt;%</span></span>
+<span id="cb8-2"><a href="#cb8-2"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span><span class="st">&quot;&quot;</span>,<span class="dt">y=</span>BA)) <span class="op">+</span></span>
+<span id="cb8-3"><a href="#cb8-3"></a><span class="st">  </span><span class="kw">geom_boxplot</span>(<span class="dt">outlier.shape=</span><span class="ot">NA</span>) <span class="op">+</span></span>
+<span id="cb8-4"><a href="#cb8-4"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">position=</span><span class="st">&quot;jitter&quot;</span>)</span></code></pre></div>
+<p><img src="sparseSvd_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>svdX &lt;-<span class="st"> </span>toxData[,<span class="op">-</span><span class="dv">1</span>] <span class="op">%&gt;%</span></span>
+<span id="cb9-2"><a href="#cb9-2"></a><span class="st">  </span>svd</span>
+<span id="cb9-3"><a href="#cb9-3"></a></span>
+<span id="cb9-4"><a href="#cb9-4"></a>k &lt;-<span class="st"> </span><span class="dv">2</span></span>
+<span id="cb9-5"><a href="#cb9-5"></a>Vk &lt;-<span class="st"> </span>svdX<span class="op">$</span>v[,<span class="dv">1</span><span class="op">:</span>k]</span>
+<span id="cb9-6"><a href="#cb9-6"></a>Uk &lt;-<span class="st"> </span>svdX<span class="op">$</span>u[,<span class="dv">1</span><span class="op">:</span>k]</span>
+<span id="cb9-7"><a href="#cb9-7"></a>Dk &lt;-<span class="st"> </span><span class="kw">diag</span>(svdX<span class="op">$</span>d[<span class="dv">1</span><span class="op">:</span>k])</span>
+<span id="cb9-8"><a href="#cb9-8"></a>Zk &lt;-<span class="st"> </span>Uk<span class="op">%*%</span>Dk</span>
+<span id="cb9-9"><a href="#cb9-9"></a><span class="kw">colnames</span>(Zk) &lt;-<span class="st"> </span><span class="kw">paste0</span>(<span class="st">&quot;Z&quot;</span>,<span class="dv">1</span><span class="op">:</span>k)</span>
+<span id="cb9-10"><a href="#cb9-10"></a><span class="kw">colnames</span>(Vk) &lt;-<span class="st"> </span><span class="kw">paste0</span>(<span class="st">&quot;V&quot;</span>,<span class="dv">1</span><span class="op">:</span>k)</span>
+<span id="cb9-11"><a href="#cb9-11"></a></span>
+<span id="cb9-12"><a href="#cb9-12"></a>pca &lt;-<span class="st"> </span>Zk <span class="op">%&gt;%</span></span>
+<span id="cb9-13"><a href="#cb9-13"></a><span class="st">  </span>as.data.frame <span class="op">%&gt;%</span></span>
+<span id="cb9-14"><a href="#cb9-14"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">BA =</span> toxData <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">pull</span>(BA)) <span class="op">%&gt;%</span></span>
+<span id="cb9-15"><a href="#cb9-15"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span> Z1, <span class="dt">y =</span> Z2, <span class="dt">color =</span> BA)) <span class="op">+</span></span>
+<span id="cb9-16"><a href="#cb9-16"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="dv">3</span>) <span class="op">+</span></span>
+<span id="cb9-17"><a href="#cb9-17"></a><span class="st">  </span><span class="kw">scale_colour_gradient2</span>(<span class="dt">low =</span> <span class="st">&quot;blue&quot;</span>,<span class="dt">mid=</span><span class="st">&quot;white&quot;</span>,<span class="dt">high=</span><span class="st">&quot;red&quot;</span>) <span class="op">+</span></span>
+<span id="cb9-18"><a href="#cb9-18"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="dv">3</span>, <span class="dt">pch =</span> <span class="dv">21</span>, <span class="dt">color =</span> <span class="st">&quot;black&quot;</span>)</span>
+<span id="cb9-19"><a href="#cb9-19"></a>pca</span></code></pre></div>
+<p><img src="sparseSvd_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<ul>
+<li>Scores on the first two principal components (or MDS plot). - Each point corresponds to a compound.</li>
+<li>Color code refers to the toxicity score (higher score more toxic).</li>
+<li>Clear separation between compounds according to toxicity.</li>
+</ul>
+<hr />
+<ul>
+<li>Next logic step in a PCA is to interpret the principal components.</li>
+<li>We thus have to assess the loadings.</li>
+<li>We can add a vector for each gene to get a biplot, but this would require plotting 4000 vectors, which would render the plot unreadable.</li>
+</ul>
+<p>Alternative graph to look at the many loadings of the first two PCs.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="kw">grid.arrange</span>(</span>
+<span id="cb10-2"><a href="#cb10-2"></a>  Vk <span class="op">%&gt;%</span></span>
+<span id="cb10-3"><a href="#cb10-3"></a><span class="st">    </span>as.data.frame <span class="op">%&gt;%</span></span>
+<span id="cb10-4"><a href="#cb10-4"></a><span class="st">    </span><span class="kw">mutate</span>(<span class="dt">geneID =</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(Vk)) <span class="op">%&gt;%</span></span>
+<span id="cb10-5"><a href="#cb10-5"></a><span class="st">    </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> geneID, <span class="dt">y =</span> V1)) <span class="op">+</span></span>
+<span id="cb10-6"><a href="#cb10-6"></a><span class="st">    </span><span class="kw">geom_point</span>(<span class="dt">pch=</span><span class="dv">21</span>) <span class="op">+</span></span>
+<span id="cb10-7"><a href="#cb10-7"></a><span class="st">    </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">2</span>,<span class="dv">0</span>,<span class="dv">2</span>)<span class="op">*</span><span class="kw">sd</span>(Vk[,<span class="dv">1</span>]), <span class="dt">col =</span> <span class="st">&quot;red&quot;</span>) ,</span>
+<span id="cb10-8"><a href="#cb10-8"></a>  Vk <span class="op">%&gt;%</span></span>
+<span id="cb10-9"><a href="#cb10-9"></a><span class="st">    </span>as.data.frame <span class="op">%&gt;%</span></span>
+<span id="cb10-10"><a href="#cb10-10"></a><span class="st">    </span><span class="kw">mutate</span>(<span class="dt">geneID =</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(Vk)) <span class="op">%&gt;%</span></span>
+<span id="cb10-11"><a href="#cb10-11"></a><span class="st">    </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> geneID, <span class="dt">y =</span> V2)) <span class="op">+</span></span>
+<span id="cb10-12"><a href="#cb10-12"></a><span class="st">    </span><span class="kw">geom_point</span>(<span class="dt">pch=</span><span class="dv">21</span>) <span class="op">+</span></span>
+<span id="cb10-13"><a href="#cb10-13"></a><span class="st">    </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">2</span>,<span class="dv">0</span>,<span class="dv">2</span>)<span class="op">*</span><span class="kw">sd</span>(Vk[,<span class="dv">2</span>]), <span class="dt">col =</span> <span class="st">&quot;red&quot;</span>),</span>
+<span id="cb10-14"><a href="#cb10-14"></a>  <span class="dt">ncol=</span><span class="dv">2</span>)</span></code></pre></div>
+<p><img src="sparseSvd_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<ul>
+<li><p>It is almost impossible to interpret the PCs because there are 4000 genes contributing to each PC.</p></li>
+<li><p>In an attempt to find the most important genes (in the sense that they drive the interpretation of the PCs), the plots show horizontal reference lines: the average of the loadings, and the average ± twice the standard deviation of the loadings. In between the lines we expects about 95% of the loadings (if they were normally distributed).</p></li>
+<li><p>The points outside the band come from the genes that have rather large loadings (in absolute value) and hence are important for the interpretation of the PCs.</p></li>
+<li><p>Note, that particularly for the first PC, only a few genes show a markedly large loadings that are negative. This means that an upregulation of these genes will lead to low scores on PC1.</p></li>
+<li><p>These genes will very likely play an important role in the toxicity mechanism.</p></li>
+<li><p>Indeed, low scores on PC1 are in the direction of more toxicity.</p></li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="sparse-matrix-decomposition" class="section level2">
+<h2><span class="header-section-number">1.2</span> Sparse matrix decomposition</h2>
+<p>Basic idea of sparse matrix decomposition of an <span class="math inline">\(n \times p\)</span> matrix <span class="math inline">\(\mathbf{X}\)</span>}</p>
+<p>Find a rank <span class="math inline">\(k\)</span> approximation of <span class="math inline">\(\mathbf{X}\)</span> of the form <span class="math display">\[
+\mathbf{X}_k = \sum_{j=1}^k \delta_j \mathbf{u}_j\mathbf{v}_j^t
+\]</span> such that many of the elements in the <span class="math inline">\(\mathbf{v}_j\)</span> and or <span class="math inline">\(\mathbf{u}_j\)</span> are exactly zero.</p>
+<p>We focus on the <strong>Penalised Matrix Decomposition</strong> (PMD) method of Witten <em>et al.</em> (2009, Biostatistics, 10, 3, 515-534).</p>
+<p>When many of the loadings in <span class="math inline">\(\mathbf{v}_j\)</span> are zero, the interpretation of the PC only depends on the features that correspond to the remaining non-zero loadings.</p>
+<hr />
+</div>
+</div>
+<div id="penalised-matrix-decomposition" class="section level1">
+<h1><span class="header-section-number">2</span> Penalised Matrix Decomposition</h1>
+<div id="rank-1-approximation" class="section level2">
+<h2><span class="header-section-number">2.1</span> Rank 1 approximation</h2>
+<p>The rank-1 PMD approximation of the <span class="math inline">\(n \times p\)</span> matrix <span class="math inline">\(\mathbf{X}\)</span> is of the form <span class="math display">\[
+\mathbf{X}_1 = \delta_1\mathbf{u}_1\mathbf{v}_1^t,
+\]</span></p>
+<p>and it is the solution to the following minimisation problem: <span class="math display">\[
+\min_{\delta,u,v} \Vert \mathbf{X} - \delta\mathbf{u}\mathbf{v}^t\Vert_F^2 \text{ subject to }
+\delta \geq 0, \Vert \mathbf{u}\Vert_2^2=\Vert \mathbf{v}\Vert_2^2=1, \vert\mathbf{u}\vert\leq c_1, \vert \mathbf{v}\vert \leq c_2
+\]</span></p>
+<p>for some user-defined constants <span class="math inline">\(c_1,c_2&gt;0\)</span>.</p>
+<p>The constraints <span class="math inline">\(\vert\mathbf{u}\vert\leq c_1\)</span> and <span class="math inline">\(\vert \mathbf{v}\vert \leq c_2\)</span> are known as <span class="math inline">\(L_1\)</span> or lasso constraints.</p>
+<p>Note, <span class="math display">\[
+\vert\mathbf{u}\vert\ = \sum_{i=1}^n \vert u_i \vert \text{ and }\vert\mathbf{v}\vert\ = \sum_{i=1}^p \vert v_i\vert.
+\]</span></p>
+<p>If <span class="math inline">\(c_1=+\infty\)</span>, then the constraint on <span class="math inline">\(\mathbf{u}\)</span> is removed (similar for <span class="math inline">\(c_2\)</span>).</p>
+<hr />
+<p>Note that <span class="math display">\[
+  \min_{\delta,u,v} \Vert \mathbf{X} - \delta\mathbf{u}\mathbf{v}^t\Vert_F^2 = \min_{A:\text{rank}(A)=1}  \Vert \mathbf{X} - A\Vert_F^2
+\]</span> with <span class="math inline">\(A=X_1\)</span> (truncated SVD of <span class="math inline">\(\mathbf{X}\)</span>, truncated after 1 term). However, the PMD requires a constrained minimisation. The unconstrained solution arises with <span class="math inline">\(c_1=c_2=+\infty\)</span>.</p>
+<p>Note that <span class="math inline">\(\Vert \mathbf{u}\Vert_2^2=\Vert \mathbf{v}\Vert_2^2=1\)</span> may also be written as <span class="math inline">\(\mathbf{u}^t\mathbf{u}=\mathbf{v}^t\mathbf{v}=1\)</span> (i.e. the vectors are normalised, just like for the singular vectors of the SVD).</p>
+<ul>
+<li><p>We also applied the <span class="math inline">\(L_1\)</span> constraint to the least-squares estimator of the regression parameters in a linear regression model.</p></li>
+<li><p>Effect was that many of the parameter estimates are set exactly to zero.</p></li>
+<li><p>Here, the same effect will take place. Many of the elements in <span class="math inline">\(\mathbf{u}\)</span> and <span class="math inline">\(\mathbf{v}\)</span> will be set exactly to zero.</p></li>
+<li><p>In particular, the smaller <span class="math inline">\(c_2\)</span>, the more elements of <span class="math inline">\(\mathbf{v}\)</span> will be set to zero (shrinkage).</p></li>
+<li><p>Similarly, the smaller <span class="math inline">\(c_1\)</span>, the more elements of <span class="math inline">\(\mathbf{u}\)</span> will be set to zero.</p></li>
+<li><p>The choice of <span class="math inline">\(c_1\)</span> and <span class="math inline">\(c_2\)</span> depends on the objective of the data analysis and will be discussed later.</p></li>
+</ul>
+<p>The solution is known as a rank-1 PMD approximation of <span class="math inline">\(\mathbf{X}\)</span> because <span class="math inline">\(\delta_1\mathbf{u}_1\mathbf{v}_1^t\)</span> is a matrix of rank 1.</p>
+<hr />
+</div>
+<div id="rank-2-approximation" class="section level2">
+<h2><span class="header-section-number">2.2</span> Rank-2 approximation</h2>
+<p>The rank-2 PMD approximation is found as follows:</p>
+<ol style="list-style-type: decimal">
+<li><p>find the rank-1 PMD as before: <span class="math inline">\(\mathbf{X}_1=\delta_1\mathbf{u}_1\mathbf{v}_1^t\)</span>;</p></li>
+<li><p>compute <span class="math display">\[
+\tilde{\mathbf{X}}_2 = \mathbf{X}-\mathbf{X}_1,
+\]</span></p></li>
+</ol>
+<p>and compute the rank-1 PMD of <span class="math inline">\(\tilde{\mathbf{X}}_2\)</span>, which gives <span class="math inline">\(\delta_2, \mathbf{u}_2, \mathbf{v}_2\)</span>;</p>
+<ol start="3" style="list-style-type: decimal">
+<li>the rank-2 PMD of <span class="math inline">\(\mathbf{X}\)</span> is then given by <span class="math display">\[
+\mathbf{X}_2 = \delta_1\mathbf{u}_1\mathbf{v}_1^t+\delta_2\mathbf{u}_2\mathbf{v}_2^t.
+\]</span> \end{enumerate}</li>
+</ol>
+<p>Note that the <span class="math inline">\(\mathbf{u}\)</span>’s and <span class="math inline">\(\mathbf{v}\)</span>’s are not necessarily orthogonal (only if <span class="math inline">\(c_1, c_2=+\infty\)</span>).</p>
+<hr />
+</div>
+<div id="rank-k-approximation" class="section level2">
+<h2><span class="header-section-number">2.3</span> Rank-k approximation</h2>
+<p>The rank-<span class="math inline">\(k\)</span> PMD approximation is found as follows:</p>
+<ol style="list-style-type: decimal">
+<li><p>find the rank-1 PMD as before: <span class="math inline">\(\tilde{\mathbf{X}}_1=\delta_1\mathbf{u}_1\mathbf{v}_1^t\)</span>;</p></li>
+<li><p>set <span class="math inline">\(j=1\)</span>;</p></li>
+<li><p>compute <span class="math display">\[
+\tilde{\mathbf{X}}_{j+1} = \mathbf{X}-\tilde{\mathbf{X}}_1-\cdots - \tilde{\mathbf{X}}_j,
+\]</span> and compute the rank-1 PMD of <span class="math inline">\(\tilde{\mathbf{X}}_{j+1}\)</span>, which gives <span class="math inline">\(\delta_{j+1}, \mathbf{u}_{j+1}, \mathbf{v}_{j+1}\)</span>;</p></li>
+<li><p>if <span class="math inline">\(j&lt;k\)</span>, increase <span class="math inline">\(j\)</span> with one and go back to step 3; otherwise go to step 5;</p></li>
+<li><p>the rank-<span class="math inline">\(k\)</span> PMD of <span class="math inline">\(\mathbf{X}\)</span> is then given by <span class="math display">\[
+  \mathbf{X}_k = \sum_{j=1}^k \delta_j\mathbf{u}_j\mathbf{v}_j^t.
+\]</span></p></li>
+</ol>
+<p>Without the <span class="math inline">\(L_1\)</span> constraints, this algorithm gives the ordinary SVD.</p>
+<p>As before the <span class="math inline">\(\delta_j\)</span>s, <span class="math inline">\(\mathbf{u}_j\)</span>s and <span class="math inline">\(\mathbf{v}_j\)</span>s are stacked into matrices <span class="math inline">\(\mathbf{D}_k\)</span>, <span class="math inline">\(\mathbf{U}_k\)</span> and <span class="math inline">\(\mathbf{V}_k\)</span>: <span class="math inline">\(\mathbf{X}_k = \mathbf{U}_k\mathbf{D}_k\mathbf{V}_k^t\)</span>.</p>
+<p>Note that the <span class="math inline">\(\mathbf{u}\)</span> vectors are generally not orthogonal (i.e. <span class="math inline">\(\mathbf{u}_i^t\mathbf{u}_j\neq 0\)</span> for <span class="math inline">\(i\neq j\)</span>) (the same holds for the <span class="math inline">\(\mathbf{v}\)</span> vectors).</p>
+<hr />
+</div>
+<div id="sparse-pca-via-pmd" class="section level2">
+<h2><span class="header-section-number">2.4</span> Sparse PCA via PMD</h2>
+<p>Just like the SVD can be used to find the PCA solution, the PMD can be used to find a sparse PCA solution (SPC).</p>
+<p>For a PCA, it is only important to have sparse loadings (in the <span class="math inline">\(\mathbf{v}\)</span>s); the scores (involving the <span class="math inline">\(\mathbf{u}\)</span>s) need not be sparse.</p>
+<p>The rank-1 solutions thus satisfy <span class="math display">\[
+  \min_{\delta,u,v} \Vert \mathbf{X} - \delta\mathbf{u}\mathbf{v}^t\Vert_F^2 \text{ subject to }
+  \delta \geq 0, \Vert \mathbf{u}\Vert_2^2=\Vert \mathbf{v}\Vert_2^2=1, \vert \mathbf{v}\vert \leq c
+\]</span> (i.e. no sparsity constraint on <span class="math inline">\(\mathbf{u}\)</span>).</p>
+<p>Hence the PCA scores <span class="math display">\[
+ \mathbf{Z}_k = \mathbf{U}_k\mathbf{D}_k
+\]</span> relate to <span class="math inline">\(\mathbf{X}_k\)</span> through the sparse loadings in <span class="math inline">\(\mathbf{V}_k\)</span>. }</p>
+<hr />
+<p>It can be shown that the SPC solution (rank-1) also maximises <span class="math display">\[
+  \mathbf{v}^t\mathbf{X}^t\mathbf{X}\mathbf{v} \text{ subject to }
+  \Vert \mathbf{u}\Vert_2^2=\Vert \mathbf{v}\Vert_2^2=1, \Vert \mathbf{v}\Vert_1 \leq c
+\]</span> (i.e. it maximises the variance of the PCs, subject to sparsity constraint on loadings).</p>
+<p>From these two slides we may conclude that we can use the PMD as the basis of a sparse PCA, and that the interpretation is as before in terms of maximising variance. Only now we hope that only a few features will give a non-zero loading in the <span class="math inline">\(\mathbf{v}\)</span>-vectors. Biplots may again be constructed (with fewer vectors to be plotted).</p>
+<hr />
+</div>
+</div>
+<div id="toxicogenomics-analysis-with-a-sparse-pca" class="section level1">
+<h1><span class="header-section-number">3</span> Toxicogenomics analysis with a sparse PCA</h1>
+<div id="spca" class="section level2">
+<h2><span class="header-section-number">3.1</span> SPCA</h2>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="kw">library</span>(PMA)</span>
+<span id="cb11-2"><a href="#cb11-2"></a></span>
+<span id="cb11-3"><a href="#cb11-3"></a>spcX &lt;-<span class="st"> </span><span class="kw">SPC</span>(</span>
+<span id="cb11-4"><a href="#cb11-4"></a>  toxData[,<span class="op">-</span><span class="dv">1</span>] <span class="op">%&gt;%</span></span>
+<span id="cb11-5"><a href="#cb11-5"></a><span class="st">    </span>as.matrix,</span>
+<span id="cb11-6"><a href="#cb11-6"></a>  <span class="dt">K=</span><span class="dv">30</span>,</span>
+<span id="cb11-7"><a href="#cb11-7"></a>  <span class="dt">sumabsv =</span> <span class="dv">5</span>)</span></code></pre></div>
+<pre><code>## 12345678910111213141516171819
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920</code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="kw">par</span>(<span class="dt">mfrow=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
+<span id="cb13-2"><a href="#cb13-2"></a><span class="kw">barplot</span>(spcX<span class="op">$</span>d<span class="op">^</span><span class="dv">2</span>,<span class="dt">ylab=</span><span class="st">&quot;eigenvalue&quot;</span>,<span class="dt">cex.lab=</span><span class="fl">1.5</span>)</span>
+<span id="cb13-3"><a href="#cb13-3"></a><span class="kw">barplot</span>(spcX<span class="op">$</span>prop.var.explained,</span>
+<span id="cb13-4"><a href="#cb13-4"></a>     <span class="dt">ylab=</span><span class="st">&quot;cummulative variance&quot;</span>,<span class="dt">cex.lab=</span><span class="fl">1.5</span>)</span></code></pre></div>
+<p><img src="sparseSvd_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<ul>
+<li><p>The plot on the left shows the eigenvalues (squared singular values) from the PMD.</p>
+<ul>
+<li>This suggests that the first one or two are the most important, but all eigenvalues remain substantially larger than zero.</li>
+</ul></li>
+<li><p>The figure on the right shows the cumulative percentage of variance retained in the PCs.</p>
+<ul>
+<li>These percentages are now no longer calculated as before as ratio’s of sums of eigenvalues.</li>
+<li>A more complicated calculation is required now, because the PCs are no longer uncorrelated with one another.</li>
+<li>Thus part of the information (variance) of one PC is shared with part of the information of another PCs (i.e. non-zero correlation or covariance).</li>
+</ul></li>
+</ul>
+</div>
+<div id="loading" class="section level2">
+<h2><span class="header-section-number">3.2</span> Loading</h2>
+<p>Loadings of the first two PCs, with constraint <span class="math inline">\(\Vert\mathbf{v}\Vert_1 &lt; 5\)</span>.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>k &lt;-<span class="st"> </span><span class="dv">2</span></span>
+<span id="cb14-2"><a href="#cb14-2"></a>Vk &lt;-<span class="st"> </span>spcX<span class="op">$</span>v[,<span class="dv">1</span><span class="op">:</span>k]</span>
+<span id="cb14-3"><a href="#cb14-3"></a><span class="kw">colnames</span>(Vk) &lt;-<span class="st"> </span><span class="kw">paste0</span>(<span class="st">&quot;V&quot;</span>,<span class="dv">1</span><span class="op">:</span>k)</span>
+<span id="cb14-4"><a href="#cb14-4"></a></span>
+<span id="cb14-5"><a href="#cb14-5"></a><span class="kw">grid.arrange</span>(</span>
+<span id="cb14-6"><a href="#cb14-6"></a>  Vk <span class="op">%&gt;%</span></span>
+<span id="cb14-7"><a href="#cb14-7"></a><span class="st">    </span>as.data.frame <span class="op">%&gt;%</span></span>
+<span id="cb14-8"><a href="#cb14-8"></a><span class="st">    </span><span class="kw">mutate</span>(<span class="dt">geneID =</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(Vk)) <span class="op">%&gt;%</span></span>
+<span id="cb14-9"><a href="#cb14-9"></a><span class="st">    </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> geneID, <span class="dt">y =</span> V1)) <span class="op">+</span></span>
+<span id="cb14-10"><a href="#cb14-10"></a><span class="st">    </span><span class="kw">geom_point</span>(<span class="dt">pch=</span><span class="dv">21</span>) <span class="op">+</span></span>
+<span id="cb14-11"><a href="#cb14-11"></a><span class="st">    </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">2</span>,<span class="dv">0</span>,<span class="dv">2</span>)<span class="op">*</span><span class="kw">sd</span>(Vk[,<span class="dv">1</span>]), <span class="dt">col =</span> <span class="st">&quot;red&quot;</span>) ,</span>
+<span id="cb14-12"><a href="#cb14-12"></a>  Vk <span class="op">%&gt;%</span></span>
+<span id="cb14-13"><a href="#cb14-13"></a><span class="st">    </span>as.data.frame <span class="op">%&gt;%</span></span>
+<span id="cb14-14"><a href="#cb14-14"></a><span class="st">    </span><span class="kw">mutate</span>(<span class="dt">geneID =</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(Vk)) <span class="op">%&gt;%</span></span>
+<span id="cb14-15"><a href="#cb14-15"></a><span class="st">    </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> geneID, <span class="dt">y =</span> V2)) <span class="op">+</span></span>
+<span id="cb14-16"><a href="#cb14-16"></a><span class="st">    </span><span class="kw">geom_point</span>(<span class="dt">pch=</span><span class="dv">21</span>) <span class="op">+</span></span>
+<span id="cb14-17"><a href="#cb14-17"></a><span class="st">    </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">2</span>,<span class="dv">0</span>,<span class="dv">2</span>)<span class="op">*</span><span class="kw">sd</span>(Vk[,<span class="dv">2</span>]), <span class="dt">col =</span> <span class="st">&quot;red&quot;</span>),</span>
+<span id="cb14-18"><a href="#cb14-18"></a>  <span class="dt">ncol=</span><span class="dv">2</span>)</span></code></pre></div>
+<p><img src="sparseSvd_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>These plots show the loadings of the first two sparse PCs. Many of the loadings are now exactly equal to zero. Only few genes show large loadings.</p>
+</div>
+<div id="change-constraint" class="section level2">
+<h2><span class="header-section-number">3.3</span> Change constraint</h2>
+<p>We now repeat the analysis, but with the constraint <span class="math inline">\(\Vert \mathbf{v} \Vert_1 &lt; 1\)</span>. This gives a much sparser solution with only two genes with non-zero loadings in each dimension.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>spcX1 &lt;-<span class="st"> </span><span class="kw">SPC</span>(</span>
+<span id="cb15-2"><a href="#cb15-2"></a>  toxData[,<span class="op">-</span><span class="dv">1</span>] <span class="op">%&gt;%</span></span>
+<span id="cb15-3"><a href="#cb15-3"></a><span class="st">    </span>as.matrix,</span>
+<span id="cb15-4"><a href="#cb15-4"></a>  <span class="dt">K=</span><span class="dv">30</span>,</span>
+<span id="cb15-5"><a href="#cb15-5"></a>  <span class="dt">sumabsv =</span> <span class="dv">1</span>)</span></code></pre></div>
+<pre><code>## 12
+## 12
+## 12
+## 12
+## 12
+## 12
+## 12
+## 12
+## 12
+## 12
+## 12
+## 12
+## 12
+## 12
+## 12
+## 12
+## 12
+## 12
+## 12
+## 12
+## 12
+## 12
+## 12
+## 12
+## 12
+## 12
+## 12
+## 12
+## 12
+## 12</code></pre>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a>k &lt;-<span class="st"> </span><span class="dv">2</span></span>
+<span id="cb17-2"><a href="#cb17-2"></a>Vk &lt;-<span class="st"> </span>spcX1<span class="op">$</span>v[,<span class="dv">1</span><span class="op">:</span>k]</span>
+<span id="cb17-3"><a href="#cb17-3"></a><span class="kw">colnames</span>(Vk) &lt;-<span class="st"> </span><span class="kw">paste0</span>(<span class="st">&quot;V&quot;</span>, <span class="dv">1</span><span class="op">:</span>k)</span>
+<span id="cb17-4"><a href="#cb17-4"></a></span>
+<span id="cb17-5"><a href="#cb17-5"></a><span class="kw">grid.arrange</span>(</span>
+<span id="cb17-6"><a href="#cb17-6"></a>  Vk <span class="op">%&gt;%</span></span>
+<span id="cb17-7"><a href="#cb17-7"></a><span class="st">    </span>as.data.frame <span class="op">%&gt;%</span></span>
+<span id="cb17-8"><a href="#cb17-8"></a><span class="st">    </span><span class="kw">mutate</span>(<span class="dt">geneID =</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(Vk)) <span class="op">%&gt;%</span></span>
+<span id="cb17-9"><a href="#cb17-9"></a><span class="st">    </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> geneID, <span class="dt">y =</span> V1)) <span class="op">+</span></span>
+<span id="cb17-10"><a href="#cb17-10"></a><span class="st">    </span><span class="kw">geom_point</span>(<span class="dt">pch=</span><span class="dv">21</span>) <span class="op">+</span></span>
+<span id="cb17-11"><a href="#cb17-11"></a><span class="st">    </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">2</span>,<span class="dv">0</span>,<span class="dv">2</span>)<span class="op">*</span><span class="kw">sd</span>(Vk[,<span class="dv">1</span>]), <span class="dt">col =</span> <span class="st">&quot;red&quot;</span>) ,</span>
+<span id="cb17-12"><a href="#cb17-12"></a>  Vk <span class="op">%&gt;%</span></span>
+<span id="cb17-13"><a href="#cb17-13"></a><span class="st">    </span>as.data.frame <span class="op">%&gt;%</span></span>
+<span id="cb17-14"><a href="#cb17-14"></a><span class="st">    </span><span class="kw">mutate</span>(<span class="dt">geneID =</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(Vk)) <span class="op">%&gt;%</span></span>
+<span id="cb17-15"><a href="#cb17-15"></a><span class="st">    </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> geneID, <span class="dt">y =</span> V2)) <span class="op">+</span></span>
+<span id="cb17-16"><a href="#cb17-16"></a><span class="st">    </span><span class="kw">geom_point</span>(<span class="dt">pch=</span><span class="dv">21</span>) <span class="op">+</span></span>
+<span id="cb17-17"><a href="#cb17-17"></a><span class="st">    </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">2</span>,<span class="dv">0</span>,<span class="dv">2</span>)<span class="op">*</span><span class="kw">sd</span>(Vk[,<span class="dv">2</span>]), <span class="dt">col =</span> <span class="st">&quot;red&quot;</span>),</span>
+<span id="cb17-18"><a href="#cb17-18"></a>  <span class="dt">ncol=</span><span class="dv">2</span>)</span></code></pre></div>
+<p><img src="sparseSvd_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<hr />
+<p>We now repeat the analysis, but with the constraint <span class="math inline">\(\Vert \mathbf{v} \Vert_1 &lt; 10\)</span>. This gives a much less sparse solution with several genes with non-zero loadings.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a>spcX10 &lt;-<span class="st"> </span><span class="kw">SPC</span>(</span>
+<span id="cb18-2"><a href="#cb18-2"></a>  toxData[,<span class="op">-</span><span class="dv">1</span>] <span class="op">%&gt;%</span></span>
+<span id="cb18-3"><a href="#cb18-3"></a><span class="st">    </span>as.matrix,</span>
+<span id="cb18-4"><a href="#cb18-4"></a>  <span class="dt">K=</span><span class="dv">30</span>,</span>
+<span id="cb18-5"><a href="#cb18-5"></a>  <span class="dt">sumabsv =</span> <span class="dv">10</span>)</span></code></pre></div>
+<pre><code>## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920
+## 1234567891011121314151617181920</code></pre>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a>k &lt;-<span class="st"> </span><span class="dv">2</span></span>
+<span id="cb20-2"><a href="#cb20-2"></a>Vk &lt;-<span class="st"> </span>spcX10<span class="op">$</span>v[,<span class="dv">1</span><span class="op">:</span>k]</span>
+<span id="cb20-3"><a href="#cb20-3"></a><span class="kw">colnames</span>(Vk) &lt;-<span class="st"> </span><span class="kw">paste0</span>(<span class="st">&quot;V&quot;</span>,<span class="dv">1</span><span class="op">:</span>k)</span>
+<span id="cb20-4"><a href="#cb20-4"></a></span>
+<span id="cb20-5"><a href="#cb20-5"></a><span class="kw">grid.arrange</span>(</span>
+<span id="cb20-6"><a href="#cb20-6"></a>  Vk <span class="op">%&gt;%</span></span>
+<span id="cb20-7"><a href="#cb20-7"></a><span class="st">    </span>as.data.frame <span class="op">%&gt;%</span></span>
+<span id="cb20-8"><a href="#cb20-8"></a><span class="st">    </span><span class="kw">mutate</span>(<span class="dt">geneID =</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(Vk)) <span class="op">%&gt;%</span></span>
+<span id="cb20-9"><a href="#cb20-9"></a><span class="st">    </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> geneID, <span class="dt">y =</span> V1)) <span class="op">+</span></span>
+<span id="cb20-10"><a href="#cb20-10"></a><span class="st">    </span><span class="kw">geom_point</span>(<span class="dt">pch=</span><span class="dv">21</span>) <span class="op">+</span></span>
+<span id="cb20-11"><a href="#cb20-11"></a><span class="st">    </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">2</span>,<span class="dv">0</span>,<span class="dv">2</span>)<span class="op">*</span><span class="kw">sd</span>(Vk[,<span class="dv">1</span>]), <span class="dt">col =</span> <span class="st">&quot;red&quot;</span>) ,</span>
+<span id="cb20-12"><a href="#cb20-12"></a>  Vk <span class="op">%&gt;%</span></span>
+<span id="cb20-13"><a href="#cb20-13"></a><span class="st">    </span>as.data.frame <span class="op">%&gt;%</span></span>
+<span id="cb20-14"><a href="#cb20-14"></a><span class="st">    </span><span class="kw">mutate</span>(<span class="dt">geneID =</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(Vk)) <span class="op">%&gt;%</span></span>
+<span id="cb20-15"><a href="#cb20-15"></a><span class="st">    </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> geneID, <span class="dt">y =</span> V2)) <span class="op">+</span></span>
+<span id="cb20-16"><a href="#cb20-16"></a><span class="st">    </span><span class="kw">geom_point</span>(<span class="dt">pch=</span><span class="dv">21</span>) <span class="op">+</span></span>
+<span id="cb20-17"><a href="#cb20-17"></a><span class="st">    </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">2</span>,<span class="dv">0</span>,<span class="dv">2</span>)<span class="op">*</span><span class="kw">sd</span>(Vk[,<span class="dv">2</span>]), <span class="dt">col =</span> <span class="st">&quot;red&quot;</span>),</span>
+<span id="cb20-18"><a href="#cb20-18"></a>  <span class="dt">ncol=</span><span class="dv">2</span>)</span></code></pre></div>
+<p><img src="sparseSvd_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<hr />
+</div>
+<div id="variance-explained" class="section level2">
+<h2><span class="header-section-number">3.4</span> Variance explained</h2>
+<p>Variance explained for <span class="math inline">\(c=1,5,10\)</span> and <span class="math inline">\(+\infty\)</span>.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a><span class="kw">data.frame</span>(</span>
+<span id="cb21-2"><a href="#cb21-2"></a>  <span class="dt">PCs =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">30</span>,</span>
+<span id="cb21-3"><a href="#cb21-3"></a>  <span class="st">&quot;c1&quot;</span> =<span class="st"> </span>spcX1<span class="op">$</span>prop.var.explained,</span>
+<span id="cb21-4"><a href="#cb21-4"></a>  <span class="st">&quot;c5&quot;</span> =<span class="st"> </span>spcX<span class="op">$</span>prop.var.explained,</span>
+<span id="cb21-5"><a href="#cb21-5"></a>  <span class="st">&quot;c10&quot;</span> =<span class="st"> </span>spcX10<span class="op">$</span>prop.var.explained,</span>
+<span id="cb21-6"><a href="#cb21-6"></a>  <span class="st">&quot;conventional&quot;</span> =<span class="st"> </span><span class="kw">cumsum</span>(svdX<span class="op">$</span>d<span class="op">^</span><span class="dv">2</span>)<span class="op">/</span><span class="kw">sum</span>(svdX<span class="op">$</span>d<span class="op">^</span><span class="dv">2</span>)</span>
+<span id="cb21-7"><a href="#cb21-7"></a>  ) <span class="op">%&gt;%</span></span>
+<span id="cb21-8"><a href="#cb21-8"></a><span class="st">  </span><span class="kw">gather</span>(<span class="st">&quot;method&quot;</span>,<span class="st">&quot;varExpl&quot;</span>,<span class="op">-</span><span class="dv">1</span>) <span class="op">%&gt;%</span></span>
+<span id="cb21-9"><a href="#cb21-9"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> PCs, <span class="dt">y =</span> varExpl, <span class="dt">color =</span> method)) <span class="op">+</span></span>
+<span id="cb21-10"><a href="#cb21-10"></a><span class="st">  </span><span class="kw">geom_line</span>() <span class="op">+</span></span>
+<span id="cb21-11"><a href="#cb21-11"></a><span class="st">  </span><span class="kw">geom_point</span>() <span class="op">+</span></span>
+<span id="cb21-12"><a href="#cb21-12"></a><span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;Variance explained (%)&quot;</span>)</span></code></pre></div>
+<p><img src="sparseSvd_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p>This graph illustrates that the percentages of variance explained by the PCs are smaller for sparser solutions. Thus in choosing an appropriate penalty parameter <span class="math inline">\(c_2\)</span> one should not only look at the sparseness of the solution, but also at the percentage of variance contained in the first few PCs. If this percentage is very small, then the graphs of the scores (or biplots) are no longer very informative (i.e. they will not tell the full story). Thus a compromise must be looked for.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a><span class="kw">library</span>(latex2exp)</span>
+<span id="cb22-2"><a href="#cb22-2"></a></span>
+<span id="cb22-3"><a href="#cb22-3"></a>Uk5 &lt;-<span class="st"> </span>spcX<span class="op">$</span>u[,<span class="dv">1</span><span class="op">:</span>k]</span>
+<span id="cb22-4"><a href="#cb22-4"></a>Dk5 &lt;-<span class="st"> </span><span class="kw">diag</span>(spcX<span class="op">$</span>d[<span class="dv">1</span><span class="op">:</span>k])</span>
+<span id="cb22-5"><a href="#cb22-5"></a>Zk5 &lt;-<span class="st"> </span>Uk5<span class="op">%*%</span>Dk5</span>
+<span id="cb22-6"><a href="#cb22-6"></a><span class="kw">colnames</span>(Zk5) &lt;-<span class="st"> </span><span class="kw">paste0</span>(<span class="st">&quot;Z&quot;</span>,<span class="dv">1</span><span class="op">:</span>k)</span>
+<span id="cb22-7"><a href="#cb22-7"></a></span>
+<span id="cb22-8"><a href="#cb22-8"></a>spc5 &lt;-<span class="st"> </span>Zk5 <span class="op">%&gt;%</span></span>
+<span id="cb22-9"><a href="#cb22-9"></a><span class="st">  </span>as.data.frame <span class="op">%&gt;%</span></span>
+<span id="cb22-10"><a href="#cb22-10"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">BA =</span> toxData <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">pull</span>(BA)) <span class="op">%&gt;%</span></span>
+<span id="cb22-11"><a href="#cb22-11"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span> Z1, <span class="dt">y =</span> Z2, <span class="dt">color =</span> BA)) <span class="op">+</span></span>
+<span id="cb22-12"><a href="#cb22-12"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="dv">3</span>) <span class="op">+</span></span>
+<span id="cb22-13"><a href="#cb22-13"></a><span class="st">  </span><span class="kw">scale_colour_gradient2</span>(<span class="dt">low =</span> <span class="st">&quot;blue&quot;</span>,<span class="dt">mid=</span><span class="st">&quot;white&quot;</span>,<span class="dt">high=</span><span class="st">&quot;red&quot;</span>) <span class="op">+</span></span>
+<span id="cb22-14"><a href="#cb22-14"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="dv">3</span>, <span class="dt">pch =</span> <span class="dv">21</span>, <span class="dt">color =</span> <span class="st">&quot;black&quot;</span>) <span class="op">+</span></span>
+<span id="cb22-15"><a href="#cb22-15"></a><span class="st">  </span><span class="kw">ggtitle</span>(<span class="kw">TeX</span>(<span class="st">&quot;$c_2 = 5$&quot;</span>))</span>
+<span id="cb22-16"><a href="#cb22-16"></a></span>
+<span id="cb22-17"><a href="#cb22-17"></a>Uk1 &lt;-<span class="st"> </span>spcX1<span class="op">$</span>u[,<span class="dv">1</span><span class="op">:</span>k]</span>
+<span id="cb22-18"><a href="#cb22-18"></a>Dk1 &lt;-<span class="st"> </span><span class="kw">diag</span>(spcX1<span class="op">$</span>d[<span class="dv">1</span><span class="op">:</span>k])</span>
+<span id="cb22-19"><a href="#cb22-19"></a>Zk1 &lt;-<span class="st"> </span>Uk1<span class="op">%*%</span>Dk1</span>
+<span id="cb22-20"><a href="#cb22-20"></a><span class="kw">colnames</span>(Zk1) &lt;-<span class="st"> </span><span class="kw">paste0</span>(<span class="st">&quot;Z&quot;</span>,<span class="dv">1</span><span class="op">:</span>k)</span>
+<span id="cb22-21"><a href="#cb22-21"></a></span>
+<span id="cb22-22"><a href="#cb22-22"></a>spc1 &lt;-<span class="st"> </span>Zk1 <span class="op">%&gt;%</span></span>
+<span id="cb22-23"><a href="#cb22-23"></a><span class="st">  </span>as.data.frame <span class="op">%&gt;%</span></span>
+<span id="cb22-24"><a href="#cb22-24"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">BA =</span> toxData <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">pull</span>(BA)) <span class="op">%&gt;%</span></span>
+<span id="cb22-25"><a href="#cb22-25"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span> Z1, <span class="dt">y =</span> Z2, <span class="dt">color =</span> BA)) <span class="op">+</span></span>
+<span id="cb22-26"><a href="#cb22-26"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="dv">3</span>) <span class="op">+</span></span>
+<span id="cb22-27"><a href="#cb22-27"></a><span class="st">  </span><span class="kw">scale_colour_gradient2</span>(<span class="dt">low =</span> <span class="st">&quot;blue&quot;</span>,<span class="dt">mid=</span><span class="st">&quot;white&quot;</span>,<span class="dt">high=</span><span class="st">&quot;red&quot;</span>) <span class="op">+</span></span>
+<span id="cb22-28"><a href="#cb22-28"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="dv">3</span>, <span class="dt">pch =</span> <span class="dv">21</span>, <span class="dt">color =</span> <span class="st">&quot;black&quot;</span>) <span class="op">+</span></span>
+<span id="cb22-29"><a href="#cb22-29"></a><span class="st">  </span><span class="kw">ggtitle</span>(<span class="kw">TeX</span>(<span class="st">&quot;$c_2 = 1$&quot;</span>))</span>
+<span id="cb22-30"><a href="#cb22-30"></a></span>
+<span id="cb22-31"><a href="#cb22-31"></a>Uk10 &lt;-<span class="st"> </span>spcX10<span class="op">$</span>u[,<span class="dv">1</span><span class="op">:</span>k]</span>
+<span id="cb22-32"><a href="#cb22-32"></a>Dk10 &lt;-<span class="st"> </span><span class="kw">diag</span>(spcX10<span class="op">$</span>d[<span class="dv">1</span><span class="op">:</span>k])</span>
+<span id="cb22-33"><a href="#cb22-33"></a>Zk10 &lt;-<span class="st"> </span>Uk10<span class="op">%*%</span>Dk10</span>
+<span id="cb22-34"><a href="#cb22-34"></a><span class="kw">colnames</span>(Zk10) &lt;-<span class="st"> </span><span class="kw">paste0</span>(<span class="st">&quot;Z&quot;</span>,<span class="dv">1</span><span class="op">:</span>k)</span>
+<span id="cb22-35"><a href="#cb22-35"></a></span>
+<span id="cb22-36"><a href="#cb22-36"></a>spc10 &lt;-<span class="st"> </span>Zk10 <span class="op">%&gt;%</span></span>
+<span id="cb22-37"><a href="#cb22-37"></a><span class="st">  </span>as.data.frame <span class="op">%&gt;%</span></span>
+<span id="cb22-38"><a href="#cb22-38"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">BA =</span> toxData <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">pull</span>(BA)) <span class="op">%&gt;%</span></span>
+<span id="cb22-39"><a href="#cb22-39"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span> Z1, <span class="dt">y =</span> Z2, <span class="dt">color =</span> BA)) <span class="op">+</span></span>
+<span id="cb22-40"><a href="#cb22-40"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="dv">3</span>) <span class="op">+</span></span>
+<span id="cb22-41"><a href="#cb22-41"></a><span class="st">  </span><span class="kw">scale_colour_gradient2</span>(<span class="dt">low =</span> <span class="st">&quot;blue&quot;</span>,<span class="dt">mid=</span><span class="st">&quot;white&quot;</span>,<span class="dt">high=</span><span class="st">&quot;red&quot;</span>) <span class="op">+</span></span>
+<span id="cb22-42"><a href="#cb22-42"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="dv">3</span>, <span class="dt">pch =</span> <span class="dv">21</span>, <span class="dt">color =</span> <span class="st">&quot;black&quot;</span>) <span class="op">+</span></span>
+<span id="cb22-43"><a href="#cb22-43"></a><span class="st">  </span><span class="kw">ggtitle</span>(<span class="kw">TeX</span>(<span class="st">&quot;$c_2 = 10$&quot;</span>))</span>
+<span id="cb22-44"><a href="#cb22-44"></a></span>
+<span id="cb22-45"><a href="#cb22-45"></a><span class="kw">grid.arrange</span>(spc1, spc5, spc10, pca <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="kw">TeX</span>(<span class="st">&quot;$c_2 = </span><span class="ch">\\</span><span class="st">infty&quot;</span>)), <span class="dt">ncol =</span> <span class="dv">2</span>)</span></code></pre></div>
+<p><img src="sparseSvd_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p>Finally we show the plots of the scores on the first two sparse PCs for <span class="math inline">\(c_2=1\)</span> (top-left), <span class="math inline">\(c_2=5\)</span> (top-right) and <span class="math inline">\(c_2=10\)</span> (bottom-left) and <span class="math inline">\(c_2=\infty\)</span> (bottom-right, convention SVD).</p>
+<p>Note, that the most sparse solution (top-left) shows a strong positive correlation between the first two PCs (as a consequence of the loss of orthogonality of the singular vectors).</p>
+<p>All graphs succeed quite well in separating the toxic from the non-toxic compounds based on their gene expression.</p>
+<ul>
+<li><p>Hence, we may expect that the two genes identified from the most sparse solution play an important role in the development of toxic effects.</p></li>
+<li><p>Note, however, that our data analysis did not provide a scientific proof for this conclusion: (sparse) PCA is only an exploratory or descriptive data analysis method that helps the data-analyst to gain insight into the data.</p></li>
+<li><p>The fact that we found a few genes that appear to be associated with toxicity is of course a nice result.</p></li>
+<li><p>It is important to understand that the toxicity outcome was not used in the (sparse) PCA. We only used the toxicity to color the points in the graphs. PCA is an unsupervised method.</p></li>
+<li><p>Later we will discuss supervised methods (and these methods will use the toxicity outcome data so that outcome-associated genes can be better selected).</p></li>
+</ul>
+</div>
+</div>
+
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiNC4gU3BhcnNlIFNpbmd1bGFyIFZhbHVlIERlY29tcG9zaXRpb24iCmF1dGhvcjogIkxpZXZlbiBDbGVtZW50IgpkYXRlOiAic3RhdE9taWNzLCBHaGVudCBVbml2ZXJzaXR5IChodHRwczovL3N0YXRvbWljcy5naXRodWIuaW8pIgpvdXRwdXQ6CiAgICBodG1sX2RvY3VtZW50OgogICAgICBjb2RlX2Rvd25sb2FkOiB0cnVlCiAgICAgIHRoZW1lOiBjb3NtbwogICAgICB0b2M6IHRydWUKICAgICAgdG9jX2Zsb2F0OiB0cnVlCiAgICAgIGhpZ2hsaWdodDogdGFuZ28KICAgICAgbnVtYmVyX3NlY3Rpb25zOiB0cnVlCi0tLQoKYGBge3IgZWNobyA9IEZBTFNFLCB3YXJuaW5nID0gRkFMU0V9CmxpYnJhcnkodGlkeXZlcnNlKQpsaWJyYXJ5KGdyaWRFeHRyYSkKYGBgCgojIEludHJvZHVjdGlvbgoKSW4gaGlnaCBkaW1lbnNpb25hbCBkYXRhIHRoZSBQQ3MgbWF5IGhhdmUgdW5jbGVhciBpbnRlcnByZXRhdGlvbiBiZWNhdXNlIHRoZXkgZGVwZW5kIG9uIGFsbCAkcCQgb3JpZ2luYWwgdmFyaWFibGVzLgoKIyMgRXhhbXBsZTogVG94aWNvZ2Vub21pY3MgaW4gZWFybHkgZHJ1ZyBkZXZlbG9wbWVudAoKIyMjIEJhY2tncm91bmQKCi0gRWZmZWN0IG9mIGNvbXBvdW5kIG9uIGdlbmUgZXhwcmVzc2lvbi4KCi0gSW5zaWdodCBpbiBhY3Rpb24gYW5kIHRveGljaXR5IG9mIGRydWcgaW4gZWFybHkgcGhhc2UKLSBEZXRlcm1pbmUgYWN0aXZpdHkgd2l0aCBiaW8tYXNzYXk6IGUuZy4gYmluZGluZyBhZmluaXR5IG9mIGNvbXBvdW5kIHRvIGNlbGx3YWxsIHJlY2VwdGVyICh0YXJnZXQsIElDNTApLgotIEVhcmx5IHBoYXNlOiAgMjAgdG8gNTAgY29tcG91bmRzCi0gQmFzZWQgb24gaW4gdml0cm8gcmVzdWx0cyBvbmUgYWltcyB0byBnZXQgaW5zaWdodCBpbiBob3cgdG8gYnVpbGQgYmV0dGVyIGNvbXBvdW5kIChoaWdoZXIgb24tdGFyZ2V0IGFjdGl2aXR5IGxlc3MgdG94aWNpdHkuCi0gU21hbGwgdmFyaWFudGlvbnMgaW4gbW9lbGN1bGFpciBzdHJ1Y3R1cmUgbGVhZCB0byB2YXJpYXRpb25zIGluIEJBIGFuZCBnZW5lIGV4cHJlc3Npb24uCi0gQWltOiBCdWlsZCBtb2RlbCB0byBwcmVkaWN0IGJpby1hY3Rpdml0eSBiYXNlZCBvbiBnZW5lIGV4cHJlc3Npb24gaW4gbGl2ZXIgY2VsbCBsaW5lLgoKIyMjIERhdGEKCi0gMzAgY2hlbWljYWwgY29tcG91bmRzIGhhdmUgYmVlbiBzY3JlZW5lZCBmb3IgdG94aWNpdHkKCi0gQmlvYXNzYXkgZGF0YSBvbiB0b3hpY2l0eSBzY3JlZW5pbmcKCi0gR2VuZSBleHByZXNzaW9ucyBpbiBhIGxpdmVyIGNlbGwgbGluZSBhcmUgcHJvZmlsZWQgZm9yIGVhY2ggY29tcG91bmQgKDQwMDAgZ2VuZXMpCgoKYGBge3J9CnRveERhdGEgPC0gcmVhZF9jc3YoImh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9zdGF0T21pY3MvSERBMjAyMC9kYXRhL3RveERhdGFDZW50ZXJlZC5jc3YiKQpzdmRYIDwtIHN2ZCh0b3hEYXRhWywtMV0pCmBgYAoKRGF0YSBpcyBhbHJlYWR5IGNlbnRlcmVkOgoKYGBge3J9CnRveERhdGEgJT4lCiAgY29sTWVhbnMgJT4lCiAgcmFuZ2UKYGBgCgpgYGB7cn0KIHRveERhdGEgJT4lCiAgbmFtZXMgJT4lCiAgaGVhZApgYGAKCi0gRmlyc3QgY29sdW1uIGNvbnRhaW5zIGRhdGEgb24gQmlvYXNzYXkuCi0gVGhlIGhpZ2hlciB0aGUgc2NvcmUgb24gQmlvYXNzYXkgdGhlIG1vcmUgdG94aWMgdGhlIGNvbXBvdW5kCi0gT3RoZXIgY29sdW1ucyBjb250YWluIGRhdGEgb24gZ2VuZSBleHByZXNzaW9uIFgxLCAuLi4gLCBYNDAwMAoKIyMjIERhdGEgZXhwbG9yYXRpb24KCmBgYHtyfQp0b3hEYXRhICU+JQogIGdncGxvdChhZXMoeD0iIix5PUJBKSkgKwogIGdlb21fYm94cGxvdChvdXRsaWVyLnNoYXBlPU5BKSArCiAgZ2VvbV9wb2ludChwb3NpdGlvbj0iaml0dGVyIikKYGBgCgpgYGB7cn0Kc3ZkWCA8LSB0b3hEYXRhWywtMV0gJT4lCiAgc3ZkCgprIDwtIDIKVmsgPC0gc3ZkWCR2WywxOmtdClVrIDwtIHN2ZFgkdVssMTprXQpEayA8LSBkaWFnKHN2ZFgkZFsxOmtdKQpaayA8LSBVayUqJURrCmNvbG5hbWVzKFprKSA8LSBwYXN0ZTAoIloiLDE6aykKY29sbmFtZXMoVmspIDwtIHBhc3RlMCgiViIsMTprKQoKcGNhIDwtIFprICU+JQogIGFzLmRhdGEuZnJhbWUgJT4lCiAgbXV0YXRlKEJBID0gdG94RGF0YSAlPiUgcHVsbChCQSkpICU+JQogIGdncGxvdChhZXMoeD0gWjEsIHkgPSBaMiwgY29sb3IgPSBCQSkpICsKICBnZW9tX3BvaW50KHNpemUgPSAzKSArCiAgc2NhbGVfY29sb3VyX2dyYWRpZW50Mihsb3cgPSAiYmx1ZSIsbWlkPSJ3aGl0ZSIsaGlnaD0icmVkIikgKwogIGdlb21fcG9pbnQoc2l6ZSA9IDMsIHBjaCA9IDIxLCBjb2xvciA9ICJibGFjayIpCnBjYQpgYGAKCi0gU2NvcmVzIG9uIHRoZSBmaXJzdCB0d28gcHJpbmNpcGFsIGNvbXBvbmVudHMgKG9yIE1EUyBwbG90KS4gLSBFYWNoIHBvaW50IGNvcnJlc3BvbmRzIHRvIGEgY29tcG91bmQuCi0gQ29sb3IgY29kZSByZWZlcnMgdG8gdGhlIHRveGljaXR5IHNjb3JlIChoaWdoZXIgc2NvcmUgbW9yZSB0b3hpYykuCi0gQ2xlYXIgc2VwYXJhdGlvbiBiZXR3ZWVuIGNvbXBvdW5kcyBhY2NvcmRpbmcgdG8gdG94aWNpdHkuCgotLS0KCi0gTmV4dCBsb2dpYyBzdGVwIGluIGEgUENBIGlzIHRvIGludGVycHJldCB0aGUgcHJpbmNpcGFsIGNvbXBvbmVudHMuCi0gV2UgdGh1cyBoYXZlIHRvIGFzc2VzcyB0aGUgbG9hZGluZ3MuCi0gV2UgY2FuIGFkZCBhIHZlY3RvciBmb3IgZWFjaCBnZW5lIHRvIGdldCBhIGJpcGxvdCwgYnV0IHRoaXMgd291bGQgcmVxdWlyZSBwbG90dGluZyA0MDAwIHZlY3RvcnMsIHdoaWNoIHdvdWxkIHJlbmRlciB0aGUgcGxvdCB1bnJlYWRhYmxlLgoKQWx0ZXJuYXRpdmUgZ3JhcGggdG8gbG9vayBhdCB0aGUgbWFueSBsb2FkaW5ncyBvZiB0aGUgZmlyc3QgdHdvIFBDcy4KCmBgYHtyfQpncmlkLmFycmFuZ2UoCiAgVmsgJT4lCiAgICBhcy5kYXRhLmZyYW1lICU+JQogICAgbXV0YXRlKGdlbmVJRCA9IDE6bnJvdyhWaykpICU+JQogICAgZ2dwbG90KGFlcyh4ID0gZ2VuZUlELCB5ID0gVjEpKSArCiAgICBnZW9tX3BvaW50KHBjaD0yMSkgKwogICAgZ2VvbV9obGluZSh5aW50ZXJjZXB0ID0gYygtMiwwLDIpKnNkKFZrWywxXSksIGNvbCA9ICJyZWQiKSAsCiAgVmsgJT4lCiAgICBhcy5kYXRhLmZyYW1lICU+JQogICAgbXV0YXRlKGdlbmVJRCA9IDE6bnJvdyhWaykpICU+JQogICAgZ2dwbG90KGFlcyh4ID0gZ2VuZUlELCB5ID0gVjIpKSArCiAgICBnZW9tX3BvaW50KHBjaD0yMSkgKwogICAgZ2VvbV9obGluZSh5aW50ZXJjZXB0ID0gYygtMiwwLDIpKnNkKFZrWywyXSksIGNvbCA9ICJyZWQiKSwKICBuY29sPTIpCmBgYAoKLSBJdCBpcyBhbG1vc3QgaW1wb3NzaWJsZSB0byBpbnRlcnByZXQgdGhlIFBDcyBiZWNhdXNlIHRoZXJlIGFyZSA0MDAwIGdlbmVzIGNvbnRyaWJ1dGluZyB0byBlYWNoIFBDLgoKLSBJbiBhbiBhdHRlbXB0IHRvIGZpbmQgdGhlIG1vc3QgaW1wb3J0YW50IGdlbmVzIChpbiB0aGUgc2Vuc2UgdGhhdCB0aGV5IGRyaXZlIHRoZSBpbnRlcnByZXRhdGlvbiBvZiB0aGUgUENzKSwgdGhlIHBsb3RzIHNob3cgaG9yaXpvbnRhbCByZWZlcmVuY2UgbGluZXM6IHRoZSBhdmVyYWdlIG9mIHRoZSBsb2FkaW5ncywgYW5kIHRoZSBhdmVyYWdlIMKxIHR3aWNlIHRoZSBzdGFuZGFyZCBkZXZpYXRpb24gb2YgdGhlIGxvYWRpbmdzLiBJbiBiZXR3ZWVuIHRoZSBsaW5lcyB3ZSBleHBlY3RzIGFib3V0IDk1JSBvZiB0aGUgbG9hZGluZ3MgKGlmIHRoZXkgd2VyZSBub3JtYWxseSBkaXN0cmlidXRlZCkuCgotIFRoZSBwb2ludHMgb3V0c2lkZSB0aGUgYmFuZCBjb21lIGZyb20gdGhlIGdlbmVzIHRoYXQgaGF2ZSByYXRoZXIgbGFyZ2UgbG9hZGluZ3MgKGluIGFic29sdXRlIHZhbHVlKSBhbmQgaGVuY2UgYXJlIGltcG9ydGFudCBmb3IgdGhlIGludGVycHJldGF0aW9uIG9mIHRoZSBQQ3MuCgotIE5vdGUsIHRoYXQgcGFydGljdWxhcmx5IGZvciB0aGUgZmlyc3QgUEMsIG9ubHkgYSBmZXcgZ2VuZXMgc2hvdyBhIG1hcmtlZGx5IGxhcmdlIGxvYWRpbmdzIHRoYXQgYXJlIG5lZ2F0aXZlLiBUaGlzIG1lYW5zIHRoYXQgYW4gdXByZWd1bGF0aW9uIG9mIHRoZXNlIGdlbmVzIHdpbGwgbGVhZCB0byBsb3cgc2NvcmVzIG9uIFBDMS4KLSBUaGVzZSBnZW5lcyB3aWxsIHZlcnkgbGlrZWx5IHBsYXkgYW4gaW1wb3J0YW50IHJvbGUgaW4gdGhlIHRveGljaXR5IG1lY2hhbmlzbS4KLSBJbmRlZWQsIGxvdyBzY29yZXMgb24gUEMxIGFyZSBpbiB0aGUgZGlyZWN0aW9uIG9mIG1vcmUgdG94aWNpdHkuCgotLS0KCiMjIFNwYXJzZSBtYXRyaXggZGVjb21wb3NpdGlvbgoKQmFzaWMgaWRlYSBvZiBzcGFyc2UgbWF0cml4IGRlY29tcG9zaXRpb24gb2YgYW4gJG4gXHRpbWVzIHAkIG1hdHJpeCAkXG1hdGhiZntYfSR9CgpGaW5kIGEgcmFuayAkayQgYXBwcm94aW1hdGlvbiBvZiAkXG1hdGhiZntYfSQgb2YgdGhlIGZvcm0KXFsKXG1hdGhiZntYfV9rID0gXHN1bV97aj0xfV5rIFxkZWx0YV9qIFxtYXRoYmZ7dX1falxtYXRoYmZ7dn1fal50ClxdCnN1Y2ggdGhhdCBtYW55IG9mIHRoZSBlbGVtZW50cyBpbiB0aGUgJFxtYXRoYmZ7dn1faiQgYW5kIG9yICRcbWF0aGJme3V9X2okIGFyZSBleGFjdGx5IHplcm8uCgpXZSBmb2N1cyBvbiB0aGUgKipQZW5hbGlzZWQgTWF0cml4IERlY29tcG9zaXRpb24qKiAoUE1EKSBtZXRob2Qgb2YgV2l0dGVuICpldCBhbC4qICgyMDA5LCBCaW9zdGF0aXN0aWNzLCAxMCwgMywgNTE1LTUzNCkuCgpXaGVuIG1hbnkgb2YgdGhlIGxvYWRpbmdzIGluICRcbWF0aGJme3Z9X2okIGFyZSB6ZXJvLCB0aGUgaW50ZXJwcmV0YXRpb24gb2YgdGhlIFBDIG9ubHkgZGVwZW5kcyBvbiB0aGUgZmVhdHVyZXMgdGhhdCBjb3JyZXNwb25kIHRvIHRoZSByZW1haW5pbmcgbm9uLXplcm8gbG9hZGluZ3MuCgotLS0KCiMgUGVuYWxpc2VkIE1hdHJpeCBEZWNvbXBvc2l0aW9uCgojIyBSYW5rIDEgYXBwcm94aW1hdGlvbgoKVGhlIHJhbmstMSBQTUQgYXBwcm94aW1hdGlvbiBvZiB0aGUgJG4gXHRpbWVzIHAkIG1hdHJpeCAkXG1hdGhiZntYfSQgaXMgb2YgdGhlIGZvcm0KXFsKXG1hdGhiZntYfV8xID0gXGRlbHRhXzFcbWF0aGJme3V9XzFcbWF0aGJme3Z9XzFedCwKXF0KCmFuZCBpdCBpcyB0aGUgc29sdXRpb24gdG8gdGhlIGZvbGxvd2luZyBtaW5pbWlzYXRpb24gcHJvYmxlbToKXFsKXG1pbl97XGRlbHRhLHUsdn0gXFZlcnQgXG1hdGhiZntYfSAtIFxkZWx0YVxtYXRoYmZ7dX1cbWF0aGJme3Z9XnRcVmVydF9GXjIgXHRleHR7IHN1YmplY3QgdG8gfQpcZGVsdGEgXGdlcSAwLCBcVmVydCBcbWF0aGJme3V9XFZlcnRfMl4yPVxWZXJ0IFxtYXRoYmZ7dn1cVmVydF8yXjI9MSwgXHZlcnRcbWF0aGJme3V9XHZlcnRcbGVxIGNfMSwgXHZlcnQgXG1hdGhiZnt2fVx2ZXJ0IFxsZXEgY18yClxdCgpmb3Igc29tZSB1c2VyLWRlZmluZWQgY29uc3RhbnRzICRjXzEsY18yPjAkLgoKVGhlIGNvbnN0cmFpbnRzICRcdmVydFxtYXRoYmZ7dX1cdmVydFxsZXEgY18xJCBhbmQgJFx2ZXJ0IFxtYXRoYmZ7dn1cdmVydCBcbGVxIGNfMiQgYXJlIGtub3duIGFzICRMXzEkIG9yIGxhc3NvIGNvbnN0cmFpbnRzLgoKCk5vdGUsClxbClx2ZXJ0XG1hdGhiZnt1fVx2ZXJ0XCA9IFxzdW1fe2k9MX1ebiBcdmVydCB1X2kgXHZlcnQgXHRleHR7IGFuZCB9XHZlcnRcbWF0aGJme3Z9XHZlcnRcID0gXHN1bV97aT0xfV5wIFx2ZXJ0IHZfaVx2ZXJ0LgpcXQoKSWYgJGNfMT0rXGluZnR5JCwgdGhlbiB0aGUgY29uc3RyYWludCBvbiAkXG1hdGhiZnt1fSQgaXMgcmVtb3ZlZCAoc2ltaWxhciBmb3IgJGNfMiQpLgoKLS0tCgpOb3RlIHRoYXQKXFsKICBcbWluX3tcZGVsdGEsdSx2fSBcVmVydCBcbWF0aGJme1h9IC0gXGRlbHRhXG1hdGhiZnt1fVxtYXRoYmZ7dn1edFxWZXJ0X0ZeMiA9IFxtaW5fe0E6XHRleHR7cmFua30oQSk9MX0gIFxWZXJ0IFxtYXRoYmZ7WH0gLSBBXFZlcnRfRl4yClxdCndpdGggJEE9WF8xJCAodHJ1bmNhdGVkIFNWRCBvZiAkXG1hdGhiZntYfSQsIHRydW5jYXRlZCBhZnRlciAxIHRlcm0pLiBIb3dldmVyLCB0aGUgUE1EIHJlcXVpcmVzIGEgY29uc3RyYWluZWQgbWluaW1pc2F0aW9uLiBUaGUgdW5jb25zdHJhaW5lZCBzb2x1dGlvbiBhcmlzZXMgd2l0aCAkY18xPWNfMj0rXGluZnR5JC4KCk5vdGUgdGhhdCAkXFZlcnQgXG1hdGhiZnt1fVxWZXJ0XzJeMj1cVmVydCBcbWF0aGJme3Z9XFZlcnRfMl4yPTEkIG1heSBhbHNvIGJlIHdyaXR0ZW4gYXMgJFxtYXRoYmZ7dX1edFxtYXRoYmZ7dX09XG1hdGhiZnt2fV50XG1hdGhiZnt2fT0xJCAoaS5lLiB0aGUgdmVjdG9ycyBhcmUgbm9ybWFsaXNlZCwganVzdCBsaWtlIGZvciB0aGUgc2luZ3VsYXIgdmVjdG9ycyBvZiB0aGUgU1ZEKS4KCi0gV2UgYWxzbyBhcHBsaWVkIHRoZSAkTF8xJCBjb25zdHJhaW50IHRvIHRoZSBsZWFzdC1zcXVhcmVzIGVzdGltYXRvciBvZiB0aGUgcmVncmVzc2lvbiBwYXJhbWV0ZXJzIGluIGEgbGluZWFyIHJlZ3Jlc3Npb24gbW9kZWwuCgotIEVmZmVjdCB3YXMgdGhhdCBtYW55IG9mIHRoZSBwYXJhbWV0ZXIgZXN0aW1hdGVzIGFyZSBzZXQgZXhhY3RseSB0byB6ZXJvLgoKLSBIZXJlLCB0aGUgc2FtZSBlZmZlY3Qgd2lsbCB0YWtlIHBsYWNlLiBNYW55IG9mIHRoZSBlbGVtZW50cyBpbiAkXG1hdGhiZnt1fSQgYW5kICRcbWF0aGJme3Z9JCB3aWxsIGJlIHNldCBleGFjdGx5IHRvIHplcm8uCgotIEluIHBhcnRpY3VsYXIsIHRoZSBzbWFsbGVyICRjXzIkLCB0aGUgbW9yZSBlbGVtZW50cyBvZiAkXG1hdGhiZnt2fSQgd2lsbCBiZSBzZXQgdG8gemVybyAoc2hyaW5rYWdlKS4KCi0gU2ltaWxhcmx5LCB0aGUgc21hbGxlciAkY18xJCwgdGhlIG1vcmUgZWxlbWVudHMgb2YgJFxtYXRoYmZ7dX0kIHdpbGwgYmUgc2V0IHRvIHplcm8uCgotIFRoZSBjaG9pY2Ugb2YgJGNfMSQgYW5kICRjXzIkIGRlcGVuZHMgb24gdGhlIG9iamVjdGl2ZSBvZiB0aGUgZGF0YSBhbmFseXNpcyBhbmQgd2lsbCBiZSBkaXNjdXNzZWQgbGF0ZXIuCgpUaGUgc29sdXRpb24gaXMga25vd24gYXMgYSByYW5rLTEgUE1EIGFwcHJveGltYXRpb24gb2YgJFxtYXRoYmZ7WH0kIGJlY2F1c2UgJFxkZWx0YV8xXG1hdGhiZnt1fV8xXG1hdGhiZnt2fV8xXnQkIGlzIGEgbWF0cml4IG9mIHJhbmsgMS4KCi0tLQoKIyMgUmFuay0yIGFwcHJveGltYXRpb24KClRoZSByYW5rLTIgUE1EIGFwcHJveGltYXRpb24gaXMgZm91bmQgYXMgZm9sbG93czoKCjEuIGZpbmQgdGhlIHJhbmstMSBQTUQgYXMgYmVmb3JlOiAkXG1hdGhiZntYfV8xPVxkZWx0YV8xXG1hdGhiZnt1fV8xXG1hdGhiZnt2fV8xXnQkOwoKMi4gY29tcHV0ZQpcWwpcdGlsZGV7XG1hdGhiZntYfX1fMiA9IFxtYXRoYmZ7WH0tXG1hdGhiZntYfV8xLApcXQoKYW5kIGNvbXB1dGUgdGhlIHJhbmstMSBQTUQgb2YgJFx0aWxkZXtcbWF0aGJme1h9fV8yJCwgd2hpY2ggZ2l2ZXMgJFxkZWx0YV8yLCBcbWF0aGJme3V9XzIsIFxtYXRoYmZ7dn1fMiQ7CgozLiB0aGUgcmFuay0yIFBNRCBvZiAkXG1hdGhiZntYfSQgaXMgdGhlbiBnaXZlbiBieQpcWwpcbWF0aGJme1h9XzIgPSBcZGVsdGFfMVxtYXRoYmZ7dX1fMVxtYXRoYmZ7dn1fMV50K1xkZWx0YV8yXG1hdGhiZnt1fV8yXG1hdGhiZnt2fV8yXnQuClxdClxlbmR7ZW51bWVyYXRlfQoKTm90ZSB0aGF0IHRoZSAkXG1hdGhiZnt1fSQncyBhbmQgJFxtYXRoYmZ7dn0kJ3MgYXJlIG5vdCBuZWNlc3NhcmlseSBvcnRob2dvbmFsIChvbmx5IGlmICRjXzEsIGNfMj0rXGluZnR5JCkuCgotLS0KCiMjIFJhbmstayBhcHByb3hpbWF0aW9uCgpUaGUgcmFuay0kayQgUE1EIGFwcHJveGltYXRpb24gaXMgZm91bmQgYXMgZm9sbG93czoKCjEuIGZpbmQgdGhlIHJhbmstMSBQTUQgYXMgYmVmb3JlOiAkXHRpbGRle1xtYXRoYmZ7WH19XzE9XGRlbHRhXzFcbWF0aGJme3V9XzFcbWF0aGJme3Z9XzFedCQ7CgoyLiBzZXQgJGo9MSQ7CgozLiBjb21wdXRlIFxbClx0aWxkZXtcbWF0aGJme1h9fV97aisxfSA9IFxtYXRoYmZ7WH0tXHRpbGRle1xtYXRoYmZ7WH19XzEtXGNkb3RzIC0gXHRpbGRle1xtYXRoYmZ7WH19X2osClxdIGFuZCBjb21wdXRlIHRoZSByYW5rLTEgUE1EIG9mICRcdGlsZGV7XG1hdGhiZntYfX1fe2orMX0kLCB3aGljaCBnaXZlcyAkXGRlbHRhX3tqKzF9LCBcbWF0aGJme3V9X3tqKzF9LCBcbWF0aGJme3Z9X3tqKzF9JDsKCjQuIGlmICRqPGskLCBpbmNyZWFzZSAkaiQgd2l0aCBvbmUgYW5kIGdvIGJhY2sgdG8gc3RlcCAzOyBvdGhlcndpc2UgZ28gdG8gc3RlcCA1OwoKNS4gdGhlIHJhbmstJGskIFBNRCBvZiAkXG1hdGhiZntYfSQgaXMgdGhlbiBnaXZlbiBieQogICBcWwogICAgIFxtYXRoYmZ7WH1fayA9IFxzdW1fe2o9MX1eayBcZGVsdGFfalxtYXRoYmZ7dX1falxtYXRoYmZ7dn1fal50LgogICBcXQoKV2l0aG91dCB0aGUgJExfMSQgY29uc3RyYWludHMsIHRoaXMgYWxnb3JpdGhtIGdpdmVzIHRoZSBvcmRpbmFyeSBTVkQuCgpBcyBiZWZvcmUgdGhlICRcZGVsdGFfaiRzLCAkXG1hdGhiZnt1fV9qJHMgYW5kICRcbWF0aGJme3Z9X2okcyBhcmUgc3RhY2tlZCBpbnRvIG1hdHJpY2VzICRcbWF0aGJme0R9X2skLCAkXG1hdGhiZntVfV9rJCBhbmQgJFxtYXRoYmZ7Vn1fayQ6ICRcbWF0aGJme1h9X2sgPSBcbWF0aGJme1V9X2tcbWF0aGJme0R9X2tcbWF0aGJme1Z9X2tedCQuCgoKTm90ZSB0aGF0IHRoZSAkXG1hdGhiZnt1fSQgdmVjdG9ycyBhcmUgZ2VuZXJhbGx5IG5vdCBvcnRob2dvbmFsIChpLmUuICRcbWF0aGJme3V9X2ledFxtYXRoYmZ7dX1falxuZXEgMCQgZm9yICRpXG5lcSBqJCkgKHRoZSBzYW1lIGhvbGRzIGZvciB0aGUgJFxtYXRoYmZ7dn0kIHZlY3RvcnMpLgoKLS0tCgojIyBTcGFyc2UgUENBIHZpYSBQTUQKCkp1c3QgbGlrZSB0aGUgU1ZEIGNhbiBiZSB1c2VkIHRvIGZpbmQgdGhlIFBDQSBzb2x1dGlvbiwgdGhlIFBNRCBjYW4gYmUgdXNlZCB0byBmaW5kIGEgc3BhcnNlIFBDQSBzb2x1dGlvbiAoU1BDKS4KCkZvciBhIFBDQSwgaXQgaXMgb25seSBpbXBvcnRhbnQgdG8gaGF2ZSBzcGFyc2UgbG9hZGluZ3MgKGluIHRoZSAkXG1hdGhiZnt2fSRzKTsgdGhlIHNjb3JlcyAoaW52b2x2aW5nIHRoZSAkXG1hdGhiZnt1fSRzKSBuZWVkIG5vdCBiZSBzcGFyc2UuCgpUaGUgcmFuay0xIHNvbHV0aW9ucyB0aHVzIHNhdGlzZnkKXFsKICBcbWluX3tcZGVsdGEsdSx2fSBcVmVydCBcbWF0aGJme1h9IC0gXGRlbHRhXG1hdGhiZnt1fVxtYXRoYmZ7dn1edFxWZXJ0X0ZeMiBcdGV4dHsgc3ViamVjdCB0byB9CiAgXGRlbHRhIFxnZXEgMCwgXFZlcnQgXG1hdGhiZnt1fVxWZXJ0XzJeMj1cVmVydCBcbWF0aGJme3Z9XFZlcnRfMl4yPTEsIFx2ZXJ0IFxtYXRoYmZ7dn1cdmVydCBcbGVxIGMKXF0KKGkuZS4gbm8gc3BhcnNpdHkgY29uc3RyYWludCBvbiAkXG1hdGhiZnt1fSQpLgoKSGVuY2UgdGhlIFBDQSBzY29yZXMKXFsKIFxtYXRoYmZ7Wn1fayA9IFxtYXRoYmZ7VX1fa1xtYXRoYmZ7RH1fawpcXQpyZWxhdGUgdG8gJFxtYXRoYmZ7WH1fayQgdGhyb3VnaCB0aGUgc3BhcnNlIGxvYWRpbmdzIGluICRcbWF0aGJme1Z9X2skLgp9CgotLS0KCkl0IGNhbiBiZSBzaG93biB0aGF0IHRoZSBTUEMgc29sdXRpb24gKHJhbmstMSkgYWxzbyBtYXhpbWlzZXMKXFsKICBcbWF0aGJme3Z9XnRcbWF0aGJme1h9XnRcbWF0aGJme1h9XG1hdGhiZnt2fSBcdGV4dHsgc3ViamVjdCB0byB9CiAgXFZlcnQgXG1hdGhiZnt1fVxWZXJ0XzJeMj1cVmVydCBcbWF0aGJme3Z9XFZlcnRfMl4yPTEsIFxWZXJ0IFxtYXRoYmZ7dn1cVmVydF8xIFxsZXEgYwpcXQooaS5lLiBpdCBtYXhpbWlzZXMgdGhlIHZhcmlhbmNlIG9mIHRoZSBQQ3MsIHN1YmplY3QgdG8gc3BhcnNpdHkgY29uc3RyYWludCBvbiBsb2FkaW5ncykuCgoKRnJvbSB0aGVzZSB0d28gc2xpZGVzIHdlIG1heSBjb25jbHVkZSB0aGF0IHdlIGNhbiB1c2UgdGhlIFBNRCBhcyB0aGUgYmFzaXMgb2YgYSBzcGFyc2UgUENBLCBhbmQgdGhhdCB0aGUgaW50ZXJwcmV0YXRpb24gaXMgYXMgYmVmb3JlIGluIHRlcm1zIG9mIG1heGltaXNpbmcgdmFyaWFuY2UuIE9ubHkgbm93IHdlIGhvcGUgdGhhdCBvbmx5IGEgZmV3IGZlYXR1cmVzIHdpbGwgZ2l2ZSBhIG5vbi16ZXJvIGxvYWRpbmcgaW4gdGhlICRcbWF0aGJme3Z9JC12ZWN0b3JzLiBCaXBsb3RzIG1heSBhZ2FpbiBiZSBjb25zdHJ1Y3RlZCAod2l0aCBmZXdlciB2ZWN0b3JzIHRvIGJlIHBsb3R0ZWQpLgoKLS0tCgojIFRveGljb2dlbm9taWNzIGFuYWx5c2lzIHdpdGggYSBzcGFyc2UgUENBCgojIyBTUENBCgpgYGB7cn0KbGlicmFyeShQTUEpCgpzcGNYIDwtIFNQQygKICB0b3hEYXRhWywtMV0gJT4lCiAgICBhcy5tYXRyaXgsCiAgSz0zMCwKICBzdW1hYnN2ID0gNSkKCnBhcihtZnJvdz1jKDEsMikpCmJhcnBsb3Qoc3BjWCRkXjIseWxhYj0iZWlnZW52YWx1ZSIsY2V4LmxhYj0xLjUpCmJhcnBsb3Qoc3BjWCRwcm9wLnZhci5leHBsYWluZWQsCiAgICAgeWxhYj0iY3VtbXVsYXRpdmUgdmFyaWFuY2UiLGNleC5sYWI9MS41KQoKYGBgCgoKLSBUaGUgcGxvdCBvbiB0aGUgbGVmdCBzaG93cyB0aGUgZWlnZW52YWx1ZXMgKHNxdWFyZWQgc2luZ3VsYXIgdmFsdWVzKSBmcm9tIHRoZSBQTUQuCgogIC0gVGhpcyBzdWdnZXN0cyB0aGF0IHRoZSBmaXJzdCBvbmUgb3IgdHdvIGFyZSB0aGUgbW9zdCBpbXBvcnRhbnQsIGJ1dCBhbGwgZWlnZW52YWx1ZXMgcmVtYWluIHN1YnN0YW50aWFsbHkgbGFyZ2VyIHRoYW4gemVyby4KCi0gVGhlIGZpZ3VyZSBvbiB0aGUgcmlnaHQgc2hvd3MgdGhlIGN1bXVsYXRpdmUgcGVyY2VudGFnZSBvZiB2YXJpYW5jZSByZXRhaW5lZCBpbiB0aGUgUENzLgoKICAgIC0gVGhlc2UgcGVyY2VudGFnZXMgYXJlIG5vdyBubyBsb25nZXIgY2FsY3VsYXRlZCBhcyBiZWZvcmUgYXMgcmF0aW8ncyBvZiBzdW1zIG9mIGVpZ2VudmFsdWVzLgogICAgLSBBIG1vcmUgY29tcGxpY2F0ZWQgY2FsY3VsYXRpb24gaXMgcmVxdWlyZWQgbm93LCBiZWNhdXNlIHRoZSBQQ3MgYXJlIG5vIGxvbmdlciB1bmNvcnJlbGF0ZWQgd2l0aCBvbmUgYW5vdGhlci4KICAgIC0gVGh1cyBwYXJ0IG9mIHRoZSBpbmZvcm1hdGlvbiAodmFyaWFuY2UpIG9mIG9uZSBQQyBpcyBzaGFyZWQgd2l0aCBwYXJ0IG9mIHRoZSBpbmZvcm1hdGlvbiBvZiBhbm90aGVyIFBDcyAoaS5lLiBub24temVybyBjb3JyZWxhdGlvbiBvciBjb3ZhcmlhbmNlKS4KCiMjIExvYWRpbmcKCkxvYWRpbmdzIG9mIHRoZSBmaXJzdCB0d28gUENzLCB3aXRoIGNvbnN0cmFpbnQgJFxWZXJ0XG1hdGhiZnt2fVxWZXJ0XzEgPCA1JC4KCmBgYHtyfQprIDwtIDIKVmsgPC0gc3BjWCR2WywxOmtdCmNvbG5hbWVzKFZrKSA8LSBwYXN0ZTAoIlYiLDE6aykKCmdyaWQuYXJyYW5nZSgKICBWayAlPiUKICAgIGFzLmRhdGEuZnJhbWUgJT4lCiAgICBtdXRhdGUoZ2VuZUlEID0gMTpucm93KFZrKSkgJT4lCiAgICBnZ3Bsb3QoYWVzKHggPSBnZW5lSUQsIHkgPSBWMSkpICsKICAgIGdlb21fcG9pbnQocGNoPTIxKSArCiAgICBnZW9tX2hsaW5lKHlpbnRlcmNlcHQgPSBjKC0yLDAsMikqc2QoVmtbLDFdKSwgY29sID0gInJlZCIpICwKICBWayAlPiUKICAgIGFzLmRhdGEuZnJhbWUgJT4lCiAgICBtdXRhdGUoZ2VuZUlEID0gMTpucm93KFZrKSkgJT4lCiAgICBnZ3Bsb3QoYWVzKHggPSBnZW5lSUQsIHkgPSBWMikpICsKICAgIGdlb21fcG9pbnQocGNoPTIxKSArCiAgICBnZW9tX2hsaW5lKHlpbnRlcmNlcHQgPSBjKC0yLDAsMikqc2QoVmtbLDJdKSwgY29sID0gInJlZCIpLAogIG5jb2w9MikKYGBgCgpUaGVzZSBwbG90cyBzaG93IHRoZSBsb2FkaW5ncyBvZiB0aGUgZmlyc3QgdHdvIHNwYXJzZSBQQ3MuIE1hbnkgb2YgdGhlIGxvYWRpbmdzIGFyZSBub3cgZXhhY3RseSBlcXVhbCB0byB6ZXJvLiBPbmx5IGZldyBnZW5lcyBzaG93IGxhcmdlIGxvYWRpbmdzLgoKIyMgQ2hhbmdlIGNvbnN0cmFpbnQKCldlIG5vdyByZXBlYXQgdGhlIGFuYWx5c2lzLCBidXQgd2l0aCB0aGUgY29uc3RyYWludCAkXFZlcnQgXG1hdGhiZnt2fSBcVmVydF8xIDwgMSQuIFRoaXMgZ2l2ZXMgYSBtdWNoIHNwYXJzZXIgc29sdXRpb24gd2l0aCBvbmx5IHR3byBnZW5lcyB3aXRoIG5vbi16ZXJvIGxvYWRpbmdzIGluIGVhY2ggZGltZW5zaW9uLgoKYGBge3J9CgpzcGNYMSA8LSBTUEMoCiAgdG94RGF0YVssLTFdICU+JQogICAgYXMubWF0cml4LAogIEs9MzAsCiAgc3VtYWJzdiA9IDEpCgprIDwtIDIKVmsgPC0gc3BjWDEkdlssMTprXQpjb2xuYW1lcyhWaykgPC0gcGFzdGUwKCJWIiwgMTprKQoKZ3JpZC5hcnJhbmdlKAogIFZrICU+JQogICAgYXMuZGF0YS5mcmFtZSAlPiUKICAgIG11dGF0ZShnZW5lSUQgPSAxOm5yb3coVmspKSAlPiUKICAgIGdncGxvdChhZXMoeCA9IGdlbmVJRCwgeSA9IFYxKSkgKwogICAgZ2VvbV9wb2ludChwY2g9MjEpICsKICAgIGdlb21faGxpbmUoeWludGVyY2VwdCA9IGMoLTIsMCwyKSpzZChWa1ssMV0pLCBjb2wgPSAicmVkIikgLAogIFZrICU+JQogICAgYXMuZGF0YS5mcmFtZSAlPiUKICAgIG11dGF0ZShnZW5lSUQgPSAxOm5yb3coVmspKSAlPiUKICAgIGdncGxvdChhZXMoeCA9IGdlbmVJRCwgeSA9IFYyKSkgKwogICAgZ2VvbV9wb2ludChwY2g9MjEpICsKICAgIGdlb21faGxpbmUoeWludGVyY2VwdCA9IGMoLTIsMCwyKSpzZChWa1ssMl0pLCBjb2wgPSAicmVkIiksCiAgbmNvbD0yKQpgYGAKCi0tLQoKV2Ugbm93IHJlcGVhdCB0aGUgYW5hbHlzaXMsIGJ1dCB3aXRoIHRoZSBjb25zdHJhaW50ICRcVmVydCBcbWF0aGJme3Z9IFxWZXJ0XzEgPCAxMCQuIFRoaXMgZ2l2ZXMgYSBtdWNoIGxlc3Mgc3BhcnNlIHNvbHV0aW9uIHdpdGggc2V2ZXJhbCBnZW5lcyB3aXRoIG5vbi16ZXJvIGxvYWRpbmdzLgoKYGBge3J9CnNwY1gxMCA8LSBTUEMoCiAgdG94RGF0YVssLTFdICU+JQogICAgYXMubWF0cml4LAogIEs9MzAsCiAgc3VtYWJzdiA9IDEwKQoKayA8LSAyClZrIDwtIHNwY1gxMCR2WywxOmtdCmNvbG5hbWVzKFZrKSA8LSBwYXN0ZTAoIlYiLDE6aykKCmdyaWQuYXJyYW5nZSgKICBWayAlPiUKICAgIGFzLmRhdGEuZnJhbWUgJT4lCiAgICBtdXRhdGUoZ2VuZUlEID0gMTpucm93KFZrKSkgJT4lCiAgICBnZ3Bsb3QoYWVzKHggPSBnZW5lSUQsIHkgPSBWMSkpICsKICAgIGdlb21fcG9pbnQocGNoPTIxKSArCiAgICBnZW9tX2hsaW5lKHlpbnRlcmNlcHQgPSBjKC0yLDAsMikqc2QoVmtbLDFdKSwgY29sID0gInJlZCIpICwKICBWayAlPiUKICAgIGFzLmRhdGEuZnJhbWUgJT4lCiAgICBtdXRhdGUoZ2VuZUlEID0gMTpucm93KFZrKSkgJT4lCiAgICBnZ3Bsb3QoYWVzKHggPSBnZW5lSUQsIHkgPSBWMikpICsKICAgIGdlb21fcG9pbnQocGNoPTIxKSArCiAgICBnZW9tX2hsaW5lKHlpbnRlcmNlcHQgPSBjKC0yLDAsMikqc2QoVmtbLDJdKSwgY29sID0gInJlZCIpLAogIG5jb2w9MikKYGBgCgotLS0KCiMjIFZhcmlhbmNlIGV4cGxhaW5lZAoKVmFyaWFuY2UgZXhwbGFpbmVkIGZvciAkYz0xLDUsMTAkIGFuZCAkK1xpbmZ0eSQuCgpgYGB7cn0KZGF0YS5mcmFtZSgKICBQQ3MgPSAxOjMwLAogICJjMSIgPSBzcGNYMSRwcm9wLnZhci5leHBsYWluZWQsCiAgImM1IiA9IHNwY1gkcHJvcC52YXIuZXhwbGFpbmVkLAogICJjMTAiID0gc3BjWDEwJHByb3AudmFyLmV4cGxhaW5lZCwKICAiY29udmVudGlvbmFsIiA9IGN1bXN1bShzdmRYJGReMikvc3VtKHN2ZFgkZF4yKQogICkgJT4lCiAgZ2F0aGVyKCJtZXRob2QiLCJ2YXJFeHBsIiwtMSkgJT4lCiAgZ2dwbG90KGFlcyh4ID0gUENzLCB5ID0gdmFyRXhwbCwgY29sb3IgPSBtZXRob2QpKSArCiAgZ2VvbV9saW5lKCkgKwogIGdlb21fcG9pbnQoKSArCiAgeWxhYigiVmFyaWFuY2UgZXhwbGFpbmVkICglKSIpCmBgYAoKVGhpcyBncmFwaCBpbGx1c3RyYXRlcyB0aGF0IHRoZSBwZXJjZW50YWdlcyBvZiB2YXJpYW5jZSBleHBsYWluZWQgYnkgdGhlIFBDcyBhcmUgc21hbGxlciBmb3Igc3BhcnNlciBzb2x1dGlvbnMuIFRodXMgaW4gY2hvb3NpbmcgYW4gYXBwcm9wcmlhdGUgcGVuYWx0eSBwYXJhbWV0ZXIgJGNfMiQgb25lIHNob3VsZCBub3Qgb25seSBsb29rIGF0IHRoZSBzcGFyc2VuZXNzIG9mIHRoZSBzb2x1dGlvbiwgYnV0ICBhbHNvIGF0IHRoZSBwZXJjZW50YWdlIG9mIHZhcmlhbmNlIGNvbnRhaW5lZCBpbiB0aGUgZmlyc3QgZmV3IFBDcy4gSWYgdGhpcyBwZXJjZW50YWdlIGlzIHZlcnkgc21hbGwsIHRoZW4gdGhlIGdyYXBocyBvZiB0aGUgc2NvcmVzIChvciBiaXBsb3RzKSBhcmUgbm8gbG9uZ2VyIHZlcnkgaW5mb3JtYXRpdmUgKGkuZS4gdGhleSB3aWxsIG5vdCB0ZWxsIHRoZSBmdWxsIHN0b3J5KS4gVGh1cyBhIGNvbXByb21pc2UgbXVzdCBiZSBsb29rZWQgZm9yLgoKYGBge3J9CmxpYnJhcnkobGF0ZXgyZXhwKQoKVWs1IDwtIHNwY1gkdVssMTprXQpEazUgPC0gZGlhZyhzcGNYJGRbMTprXSkKWms1IDwtIFVrNSUqJURrNQpjb2xuYW1lcyhaazUpIDwtIHBhc3RlMCgiWiIsMTprKQoKc3BjNSA8LSBaazUgJT4lCiAgYXMuZGF0YS5mcmFtZSAlPiUKICBtdXRhdGUoQkEgPSB0b3hEYXRhICU+JSBwdWxsKEJBKSkgJT4lCiAgZ2dwbG90KGFlcyh4PSBaMSwgeSA9IFoyLCBjb2xvciA9IEJBKSkgKwogIGdlb21fcG9pbnQoc2l6ZSA9IDMpICsKICBzY2FsZV9jb2xvdXJfZ3JhZGllbnQyKGxvdyA9ICJibHVlIixtaWQ9IndoaXRlIixoaWdoPSJyZWQiKSArCiAgZ2VvbV9wb2ludChzaXplID0gMywgcGNoID0gMjEsIGNvbG9yID0gImJsYWNrIikgKwogIGdndGl0bGUoVGVYKCIkY18yID0gNSQiKSkKClVrMSA8LSBzcGNYMSR1WywxOmtdCkRrMSA8LSBkaWFnKHNwY1gxJGRbMTprXSkKWmsxIDwtIFVrMSUqJURrMQpjb2xuYW1lcyhaazEpIDwtIHBhc3RlMCgiWiIsMTprKQoKc3BjMSA8LSBaazEgJT4lCiAgYXMuZGF0YS5mcmFtZSAlPiUKICBtdXRhdGUoQkEgPSB0b3hEYXRhICU+JSBwdWxsKEJBKSkgJT4lCiAgZ2dwbG90KGFlcyh4PSBaMSwgeSA9IFoyLCBjb2xvciA9IEJBKSkgKwogIGdlb21fcG9pbnQoc2l6ZSA9IDMpICsKICBzY2FsZV9jb2xvdXJfZ3JhZGllbnQyKGxvdyA9ICJibHVlIixtaWQ9IndoaXRlIixoaWdoPSJyZWQiKSArCiAgZ2VvbV9wb2ludChzaXplID0gMywgcGNoID0gMjEsIGNvbG9yID0gImJsYWNrIikgKwogIGdndGl0bGUoVGVYKCIkY18yID0gMSQiKSkKClVrMTAgPC0gc3BjWDEwJHVbLDE6a10KRGsxMCA8LSBkaWFnKHNwY1gxMCRkWzE6a10pClprMTAgPC0gVWsxMCUqJURrMTAKY29sbmFtZXMoWmsxMCkgPC0gcGFzdGUwKCJaIiwxOmspCgpzcGMxMCA8LSBaazEwICU+JQogIGFzLmRhdGEuZnJhbWUgJT4lCiAgbXV0YXRlKEJBID0gdG94RGF0YSAlPiUgcHVsbChCQSkpICU+JQogIGdncGxvdChhZXMoeD0gWjEsIHkgPSBaMiwgY29sb3IgPSBCQSkpICsKICBnZW9tX3BvaW50KHNpemUgPSAzKSArCiAgc2NhbGVfY29sb3VyX2dyYWRpZW50Mihsb3cgPSAiYmx1ZSIsbWlkPSJ3aGl0ZSIsaGlnaD0icmVkIikgKwogIGdlb21fcG9pbnQoc2l6ZSA9IDMsIHBjaCA9IDIxLCBjb2xvciA9ICJibGFjayIpICsKICBnZ3RpdGxlKFRlWCgiJGNfMiA9IDEwJCIpKQoKZ3JpZC5hcnJhbmdlKHNwYzEsIHNwYzUsIHNwYzEwLCBwY2EgKyBnZ3RpdGxlKFRlWCgiJGNfMiA9IFxcaW5mdHkiKSksIG5jb2wgPSAyKQpgYGAKCkZpbmFsbHkgd2Ugc2hvdyB0aGUgcGxvdHMgb2YgdGhlIHNjb3JlcyBvbiB0aGUgZmlyc3QgdHdvIHNwYXJzZSBQQ3MgZm9yICRjXzI9MSQgKHRvcC1sZWZ0KSwgJGNfMj01JCAodG9wLXJpZ2h0KSBhbmQgJGNfMj0xMCQgKGJvdHRvbS1sZWZ0KSBhbmQgJGNfMj1caW5mdHkkIChib3R0b20tcmlnaHQsIGNvbnZlbnRpb24gU1ZEKS4KCk5vdGUsIHRoYXQgdGhlIG1vc3Qgc3BhcnNlIHNvbHV0aW9uICh0b3AtbGVmdCkgc2hvd3MgYSBzdHJvbmcgcG9zaXRpdmUgY29ycmVsYXRpb24gYmV0d2VlbiB0aGUgZmlyc3QgdHdvIFBDcyAoYXMgYSBjb25zZXF1ZW5jZSBvZiB0aGUgbG9zcyBvZiBvcnRob2dvbmFsaXR5IG9mIHRoZSBzaW5ndWxhciB2ZWN0b3JzKS4KCkFsbCBncmFwaHMgc3VjY2VlZCBxdWl0ZSB3ZWxsIGluIHNlcGFyYXRpbmcgdGhlIHRveGljIGZyb20gdGhlIG5vbi10b3hpYyBjb21wb3VuZHMgYmFzZWQgb24gdGhlaXIgZ2VuZSBleHByZXNzaW9uLgoKLSBIZW5jZSwgd2UgbWF5IGV4cGVjdCB0aGF0IHRoZSB0d28gZ2VuZXMgaWRlbnRpZmllZCBmcm9tIHRoZSBtb3N0IHNwYXJzZSBzb2x1dGlvbiBwbGF5IGFuIGltcG9ydGFudCByb2xlIGluIHRoZSBkZXZlbG9wbWVudCBvZiB0b3hpYyBlZmZlY3RzLgoKLSBOb3RlLCBob3dldmVyLCB0aGF0IG91ciBkYXRhIGFuYWx5c2lzIGRpZCBub3QgcHJvdmlkZSBhIHNjaWVudGlmaWMgcHJvb2YgZm9yIHRoaXMgY29uY2x1c2lvbjogKHNwYXJzZSkgUENBIGlzIG9ubHkgYW4gZXhwbG9yYXRvcnkgb3IgZGVzY3JpcHRpdmUgZGF0YSBhbmFseXNpcyBtZXRob2QgdGhhdCBoZWxwcyB0aGUgZGF0YS1hbmFseXN0IHRvIGdhaW4gaW5zaWdodCBpbnRvIHRoZSBkYXRhLgoKLSBUaGUgZmFjdCB0aGF0IHdlIGZvdW5kIGEgZmV3IGdlbmVzIHRoYXQgYXBwZWFyIHRvIGJlIGFzc29jaWF0ZWQgd2l0aCB0b3hpY2l0eSBpcyBvZiBjb3Vyc2UgYSBuaWNlIHJlc3VsdC4KCi0gSXQgaXMgaW1wb3J0YW50IHRvIHVuZGVyc3RhbmQgdGhhdCB0aGUgdG94aWNpdHkgb3V0Y29tZSB3YXMgbm90IHVzZWQgaW4gdGhlIChzcGFyc2UpIFBDQS4gV2Ugb25seSB1c2VkIHRoZSB0b3hpY2l0eSB0byBjb2xvciB0aGUgcG9pbnRzIGluIHRoZSBncmFwaHMuIFBDQSBpcyBhbiB1bnN1cGVydmlzZWQgbWV0aG9kLgoKLSBMYXRlciB3ZSB3aWxsIGRpc2N1c3Mgc3VwZXJ2aXNlZCBtZXRob2RzIChhbmQgdGhlc2UgbWV0aG9kcyB3aWxsIHVzZSB0aGUgdG94aWNpdHkgb3V0Y29tZSBkYXRhIHNvIHRoYXQgb3V0Y29tZS1hc3NvY2lhdGVkIGdlbmVzIGNhbiBiZSBiZXR0ZXIgc2VsZWN0ZWQpLgo=</div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("sparseSvd.Rmd");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
