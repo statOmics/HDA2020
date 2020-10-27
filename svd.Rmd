@@ -1745,7 +1745,7 @@ Here, we will focus on the setosa species and on the sepal length and sepal widt
 ```{r}
 irisSetosa <- iris %>%
   filter(Species == "setosa") %>%
-  select("Sepal.Length","Sepal.Width")
+  dplyr::select("Sepal.Length","Sepal.Width")
 
 nIris <- nrow(irisSetosa)
 hIris <- diag(nIris) - matrix(1/nIris, nIris, nIris)

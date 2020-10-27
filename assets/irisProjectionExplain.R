@@ -1,7 +1,7 @@
 library(tidyverse)
 irisSetosa <- iris %>%
   filter(Species == "setosa") %>%
-  select("Sepal.Length","Sepal.Width")
+  dplyr::select("Sepal.Length","Sepal.Width")
 
 
 nIris <- nrow(irisSetosa)
