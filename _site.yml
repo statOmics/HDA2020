@@ -15,6 +15,8 @@ navbar:
         href: svd.html
       - text: "3. Prediction with High Dimensional Predictors"
         href: prediction.html
+      - text: "4. Sparse Singular Value Decomposition"
+        href: sparseSvd.html
     - text: "Practicals"
       icon: fa-laptop
       menu:

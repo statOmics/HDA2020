@@ -65,6 +65,10 @@ Questions related to the course contents can be asked by posting on [UFora](http
 
   - [Prediction theory](./prediction.html)
 
+#### 4. Sparse Singular Value Decomposition
+
+  - [Sparse SVD theory](./sparseSvd.html)
+
 ### Homework assignments
 
 - [Homework: Canonical Correlation Analysis](./HW-CCA.html)
