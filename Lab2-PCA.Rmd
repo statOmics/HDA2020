@@ -311,7 +311,7 @@ First do the PCA, excluding the `location` and `river` columns.
 
 ```{r heavymetals-pca}
 ## Remove 'location' and 'river' columns when creating matrix
-heavymetals_mx <- select(heavymetals, -location, -river) %>%
+heavymetals_mx <- dplyr::select(heavymetals, -location, -river) %>%
   as.matrix()
 
 ## Run PCA on centered and scaled data
@@ -546,7 +546,7 @@ Indeed, if we rank the countries by their agriculture employment, we largely rec
 ```{r}
 ## Show ranking of agriculture industry
 industries %>% 
-  select(country, agriculture, social.sector, mining, finance) %>% 
+  dplyr::select(country, agriculture, social.sector, mining, finance) %>% 
   arrange(desc(agriculture))
 ```
 
