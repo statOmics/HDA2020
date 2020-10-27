@@ -13,6 +13,8 @@ navbar:
         href: intro.html
       - text: "2. Singular Value Decomposition"
         href: svd.html
+      - text: "3. Prediction with High Dimensional Predictors"
+        href: prediction.html
     - text: "Practicals"
       icon: fa-laptop
       menu:

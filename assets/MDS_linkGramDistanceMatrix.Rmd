@@ -1,0 +1,90 @@
+---
+title: "MDS: Link Squared Distance Matrix and Gram Matrix in Practice"
+author: "Lieven Clement"
+date: "statOmics, Ghent University (https://statomics.github.io)"
+output:
+    html_document:
+      code_download: true
+      theme: cosmo
+      toc: true
+      toc_float: true
+      highlight: tango
+      number_sections: true
+---
+
+```{r echo=FALSE}
+library(tidyverse)
+```
+
+# Data
+
+Part of the iris dataset
+
+```{r}
+X <- iris[1:5,1:4] %>% as.matrix
+X
+```
+
+# Centering
+
+\[
+  \mathbf{H} = \mathbf{I} - \frac{1}{n} \mathbf{1}\mathbf{1}^T ,
+\]
+\[
+ \mathbf{X}_c = \mathbf{H}\mathbf{X}
+\]
+\[
+\mathbf{H}\mathbf{X}_c = \mathbf{X}_c
+\]
+
+```{r}
+H <- diag(nrow(X)) - matrix(1/nrow(X),nrow=nrow(X),ncol=nrow(X))
+Xc <- H%*%X
+colMeans(Xc)
+H%*%Xc-Xc
+```
+
+# Gram matrix
+
+**Gram matrix**: $\mathbf{G}=\mathbf{X}\mathbf{X}^T$
+Here we work on centered data so
+$\mathbf{G}=\mathbf{X}_c\mathbf{X}_c^T$
+
+```{r}
+G <- Xc%*%t(Xc)
+```
+
+# Squared Distance matrix
+
+\[
+  \mathbf{D}_X = \mathbf{N} - 2\mathbf{X}\mathbf{X}^T + \mathbf{N}^T ,
+\]
+
+```{r}
+N <- matrix(diag(G),nrow(Xc),nrow(Xc))
+N
+dist2 <- N-2*G+t(N)
+dist2
+dist(Xc)^2
+```
+
+# Link Gram Matrix and Squared Distance Matrix
+
+\[\mathbf{G} =\mathbf{X}_c\mathbf{X}_c^T=-\frac{1}{2}\mathbf{H}\mathbf{D}_X\mathbf{H}\]
+
+```{r}
+G
+-1/2*H%*%dist2%*%H
+-1/2*H%*%dist2%*%H - G
+```
+
+# Show that N cancels out when multiplying with H
+
+\[ \mathbf{H N H} = \mathbf{0}\]
+
+\[ \mathbf{H N}^T \mathbf{H} = \mathbf{0}\]
+
+```{r}
+N%*%H
+H%*%t(N)
+```
