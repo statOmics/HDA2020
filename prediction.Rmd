@@ -470,7 +470,7 @@ Hence, a small $\lambda$ will result in large variances of the parameter estimat
 - The lasso estimator of $\boldsymbol{\beta}$ is the solution to minimising the penalised SSE
 
 \[
-\SSE  = \Vert \mathbf{Y} - \mathbf{X\beta}\Vert_2^2 \text{ subject to } \Vert \mathbf\beta\Vert_1 \leq c
+SSE  = \Vert \mathbf{Y} - \mathbf{X\beta}\Vert_2^2 \text{ subject to } \Vert \mathbf\beta\Vert_1 \leq c
 \]
 
 or, equivalently, minimising
@@ -1326,7 +1326,7 @@ Some notes about the AUC:
 
 ### Data
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 library(glmnet)
 
 #BiocManager::install("genefu")
