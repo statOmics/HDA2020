@@ -8,7 +8,8 @@ BiocManager::install(
     "pixmap", "gridExtra", "ggmap","ExperimentHub",
     "scater", "CCA", "glmnet", "ggforce",
     "latex2exp", "SemiPar", "glmnet", "DAAG",
-    "genefu", "breastCancerMAINZ", "plotROC", "PMA"
+    "genefu", "breastCancerMAINZ", "plotROC", "PMA",
+    "mgcv"
   ),
   Ncpus = 2L)
 
