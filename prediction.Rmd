@@ -22,6 +22,7 @@ library(gridExtra)
 ## Prediction with High Dimensional Predictors
 
 General setting:
+
 -   Aim: build a **prediction model** that gives a prediction of an outcome for a given set of predictors.
 
 - We use $X$ to refer to the predictors and $Y$ to refer to the outcome.
@@ -41,10 +42,10 @@ General setting:
 - Effect of compound on gene expression.
 
 - Insight in action and toxicity of drug in early phase
-- Determine activity with bio-assay: e.g. binding afinity of compound to cellwall recepter (target, IC50).
+- Determine activity with bio-assay: e.g. binding affinity of compound to cell wall receptor (target, IC50).
 - Early phase:  20 to 50 compounds
 - Based on in vitro results one aims to get insight in how to build better compound (higher on-target activity less toxicity.
-- Small variantions in moelculair structure lead to variations in BA and gene expression.
+- Small variations in molecular structure lead to variations in BA and gene expression.
 - Aim: Build model to predict bio-activity based on gene expression in liver cell line.
 
 ### Data
@@ -109,7 +110,8 @@ Zk %>%
   geom_point(size = 3, pch = 21, color = "black")
 ```
 
-- Scores on the first two principal components (or MDS plot). - Each point corresponds to a compound.
+- Scores on the first two principal components (or MDS plot).
+- Each point corresponds to a compound.
 - Color code refers to the toxicity score (higher score more toxic).
 - Clear separation between compounds according to toxicity.
 
@@ -164,6 +166,106 @@ m1 %>%
 
 Problem??
 
+## Brain example
+
+- Courtesy to Solomon Kurz. Statistical rethinking with brms, ggplot2, and the tidyverse version 1.2.0.
+
+https://bookdown.org/content/3890/
+https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse
+
+- Data with brain size and body size for seven species
+
+```{r}
+brain <-
+tibble(species = c("afarensis", "africanus", "habilis", "boisei", "rudolfensis", "ergaster", "sapiens"),
+       brain   = c(438, 452, 612, 521, 752, 871, 1350),
+       mass    = c(37.0, 35.5, 34.5, 41.5, 55.5, 61.0, 53.5))
+```
+
+### Data exploration
+
+```{r}
+brain
+
+p <- brain %>%
+  ggplot(aes(x =  mass, y = brain, label = species)) +
+  geom_point()
+
+p + geom_text(nudge_y = 40)
+```
+
+### Models
+
+Six models range in complexity from the simple univariate model
+
+\begin{align*}
+\text{brain}_i & \sim \operatorname{Normal} (\mu_i, \sigma) \\
+\mu_i & = \beta_0 + \beta_1 \text{mass}_i,
+\end{align*}
+
+to the dizzying sixth-degree polynomial model
+
+\begin{align*}
+\text{brain}_i & \sim \operatorname{Normal} (\mu_i, \sigma) \\
+\mu_i & = \beta_0 + \beta_1 \text{mass}_i + \beta_2 \text{mass}_i^2 + \beta_3 \text{mass}_i^3 + \beta_4 \text{mass}_i^4 + \beta_5 \text{mass}_i^5 + \beta_6 \text{mass}_i^6.
+\end{align*}
+
+```{r, message = F, warning = F}
+formulas <- sapply(1:6, function(i)
+{
+  if (i==1) return("mass") else
+  return(
+     paste0("I(mass^",2:i,")") %>% paste(collapse=" + ")
+    )  
+})
+
+formulas <- sapply(
+  paste0("brain ~ ", formulas),
+  as.formula)
+
+models <- lapply(formulas, lm , data = brain)
+```
+
+We plot the fit for each model individually and them arrange them together in one plot.
+
+```{r}
+plots <- lapply(1:6, function(i)
+{
+  p +
+  geom_smooth(method = "lm", formula = y ~ poly(x,i)) +
+  ggtitle(
+    paste0(
+      "r2 = ",
+      round(summary(models[[i]])$r.squared*100,1),
+      "%")
+    )
+})
+
+do.call("grid.arrange",c(plots, ncol = 3))
+```
+
+- We clearly see that increasing the model complexity always produces a fit with a smaller SSE.
+- The problem of overfitting is very obvious. The more complex polynomial models will not generalise well for prediction!
+- We even have a model that fits the data perfectly, but that will make very absurd preditions!
+
+- Too few parameters hurts, too. Fit the underfit intercept-only model.
+
+```{r}
+m0 <- lm(brain ~ 1, brain)
+summary(m0)
+
+p +
+  stat_smooth(method = "lm", formula = y ~ 1)
+  ggtitle(
+    paste0(
+      "r2 = ",
+      round(summary(m0)$r.squared*100,1),
+      "%")
+    )
+```
+
+The underfit model did not learn anything about the relation between mass and brain. It would also do a very poor job for predicting new data.
+
 ## Overview
 
 We will make a distinction between continuous and discrete outcomes. In this course we focus on
@@ -176,8 +278,6 @@ We will make a distinction between continuous and discrete outcomes. In this cou
 - Logistic regression models for binary outcomes
 
   - Penalised regression: Lasso and ridge
-
-- Fisher discriminant analysis for discrete outcomes (multi-class)
 
 For all types of model, we will discuss feature selection methods.
 
@@ -231,7 +331,7 @@ Note, that
 
   - if $\text{rank}(\mathbf{X})=n=30$, the SVD of $\mathbf{X}$ is given by
   \[
-   \mathbf{X} = \sum_{i=1}^n \delta_i \mathbf{u}_i \mathbf{v}_i^T = \mathbf{U D V}^T = \mathbf{ZV}^T,
+   \mathbf{X} = \sum_{i=1}^n \delta_i \mathbf{u}_i \mathbf{v}_i^T = \mathbf{U} \boldsymbol{\Delta} \mathbf{V}^T = \mathbf{ZV}^T,
   \]
   with $\mathbf{Z}$ the $n\times n$ matrix with the scores on the $n$ PCs.
 
@@ -314,6 +414,37 @@ Note, that that is equivalent to minimizing
 
 Note, that $s$ has a one-to-one correspondence with $\lambda$
 
+## Graphical interpretation
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+library(ggforce)
+library(latex2exp)
+library(gridExtra)
+
+p1 <- ggplot() +
+  geom_ellipse(aes(x0 = 4, y0 = 11, a = 10, b = 3, angle = pi / 4)) +
+  geom_ellipse(aes(x0 = 4, y0 = 11, a = 5, b = 1.5, angle = pi / 4)) +
+  xlim(-12.5, 12.5) +
+  ylim(-5, 20) +
+  geom_point(aes(x = 4, y = 11)) +
+  annotate("text", label = TeX("$(\\hat{\\beta}_1^{ols}, \\hat{\\beta}_2^{ols})$"), x = -5, y = 15, size = 6, parse = TRUE) +
+  xlab(TeX("$\\beta_1$")) +
+  ylab(TeX("$\\beta_2$")) +
+  geom_segment(
+    aes(x = -5, y = 12.5, xend = 3.7, yend = 11.3),
+    arrow = arrow(length = unit(0.25, "cm"))
+    ) +   
+  coord_fixed()
+
+pRidge <- p1 +
+  geom_circle(aes(x0 = 0, y0 = 0, r = 3.9) , color = "red") +
+  geom_point(aes(x = -1.1, y = 3.75), color = "red") +
+  annotate("text", label = TeX("$(\\hat{\\beta}_1^{ridge}, \\hat{\\beta}_2^{ridge})$"), x = -8.1, y = 4.45, size = 6, parse = TRUE, color = "red") +
+  ggtitle("Ridge")
+
+pRidge
+```
+
 ## Solution
 
 The solution is given by
@@ -354,7 +485,7 @@ The criterion to be minimised is
 ### SVD and inverse
 Write the SVD of $\mathbf{X}$ ($p>n$) as
 \[
-   \mathbf{X} = \sum_{i=1}^n \delta_i \mathbf{u}_i \mathbf{v}_i^T = \sum_{i=1}^p \delta_i \mathbf{u}_i \mathbf{v}_i^T  = \mathbf{U D V}^T ,
+   \mathbf{X} = \sum_{i=1}^n \delta_i \mathbf{u}_i \mathbf{v}_i^T = \sum_{i=1}^p \delta_i \mathbf{u}_i \mathbf{v}_i^T  = \mathbf{U}\boldsymbol{D} \mathbf{V}^T ,
 \]
 with
 
@@ -390,6 +521,7 @@ Hence,
 \]
 which can be computed even when some eigenvalues in $\boldsymbol{\Delta}^2$ are zero.
 
+Note, that for high dimensional data ($p>>>n$) many eigenvalues are zero because $\mathbf{X^TX}$ is a $p \times p$ matrix and has rank $n$.  
 
 The identity $\mathbf{X^TX}+\lambda \mathbf{I} = \mathbf{V} (\boldsymbol{\Delta}^2+\lambda \mathbf{I}) \mathbf{V}^T$ is easily checked:
 \[
@@ -405,11 +537,11 @@ The identity $\mathbf{X^TX}+\lambda \mathbf{I} = \mathbf{V} (\boldsymbol{\Delta}
 &=& (\mathbf{X}^T\mathbf{X}+\lambda \mathbf{I})^{-1} \mathbf{X}^T \mathbf{X}\boldsymbol{\beta}\\
 \end{eqnarray}
 
-Note, that the shrinkage is larger in the direction of the smaller eigenvalues.
+- Note, that the shrinkage is larger in the direction of the smaller eigenvalues.
 
 \begin{eqnarray}
-\text{E}[\hat{\boldsymbol{\beta}}]&=&\mathbf{V} (\boldsymbol{\Delta}^2+\lambda \mathbf{I})^{-1} \mathbf{V}^T \mathbf{V} (\boldsymbol{\Delta}^2) \mathbf{V}^T\boldsymbol{\beta}\\
-&=&\mathbf{V} (\boldsymbol{\Delta}^2+\lambda \mathbf{I})^{-1} (\boldsymbol{\Delta}^2) \mathbf{V}^T\boldsymbol{\beta}\\
+\text{E}[\hat{\boldsymbol{\beta}}]&=&\mathbf{V} (\boldsymbol{\Delta}^2+\lambda \mathbf{I})^{-1} \mathbf{V}^T \mathbf{V} \boldsymbol{\Delta}^2 \mathbf{V}^T\boldsymbol{\beta}\\
+&=&\mathbf{V} (\boldsymbol{\Delta}^2+\lambda \mathbf{I})^{-1} \boldsymbol{\Delta}^2 \mathbf{V}^T\boldsymbol{\beta}\\
 &=& \mathbf{V}
 \left[\begin{array}{ccc}
 \frac{\delta_1^2}{\delta_1^2+\lambda}&\ldots&0 \\
@@ -425,18 +557,23 @@ Note, that the shrinkage is larger in the direction of the smaller eigenvalues.
   \]
   is smaller than with the least-squares estimator.
 
--  through the bias-variance trade-off it is hoped that better predictions in terms of MSE can be obtained, for an appropriate choice of $\lambda$.
+-  through the bias-variance trade-off it is hoped that better predictions in terms of expected conditional test error can be obtained, for an appropriate choice of $\lambda$.
 
 
-Recall the expression of the Mean Squared Error
-\[
-  \text{MSE}(\mathbf{x}) = \text{E}\left[(\hat{Y} - \mu^*)^2\mid \mathbf{x}\right] = \text{var}\left[\hat{Y}\mid \mathbf{x}\right] +\text{bias}^2(\mathbf{x})
-\]
+Recall the expression of the expected conditional test error
+\begin{eqnarray}
+  Err(\mathbf{x}) &=& \text{E}\left[(\hat{Y} - Y^*)^2\mid \mathbf{x}\right]\\
+  &=&
+  \text{var}\left[\hat{Y}\mid \mathbf{x}\right] + \text{bias}^2(\mathbf{x})+
+  \text{var}\left[Y^*\mid \mathbf{x}\right]
+\end{eqnarray}
 where
+
 - $\hat{Y}=\hat{Y}(\mathbf{x})=\mathbf{x}^T\hat{\boldsymbol{\beta}}$ is the prediction at $\mathbf{x}$
 - $Y^*$ is an outcome at predictor $\mathbf{x}$
-- $\mu(\mathbf{x}) = \text{E}\left[\hat{Y}\mid \mathbf{x}\right] \text{ and } \mu^*=\text{E}\left[Y^*\mid \mathbf{x}\right]$
+- $\mu(\mathbf{x}) = \text{E}\left[\hat{Y}\mid \mathbf{x}\right] \text{ and } \mu^*(x)=\text{E}\left[Y^*\mid \mathbf{x}\right]$
 - $\text{bias}(\mathbf{x})=\mu(\mathbf{x})-\mu^*(\mathbf{x})$
+- $\text{var}\left[Y^*\mid \mathbf{x}\right]$ the irreducible error that does not depend on the model. It simply originates from observations that randomly fluctuate around the true mean $\mu^*(x)$.
 
 ## Toxicogenomics example
 
@@ -459,7 +596,7 @@ The graph shows that with increasing penalty parameter, the parameter estimates 
 
 Another (informal) viewpoint is the following. By shrinking the estimates towards zero, the estimates loose some of their ``degrees of freedom'' so that the parameters become estimable with only $n<p$ data points. Even with a very small $\lambda>0$, the parameters regain their estimability. However, note that the variance of the estimator is given by
 \[
-  \text{var}\left[\hat{\mathbf\beta}\right] = (\mathbf{X^TX}+\lambda \mathbf{I})^{-1} \sigma^2 = \mathbf{V}(\mathbf{D}^2+\lambda\mathbf{I})^{-1}\mathbf{V}^T\sigma^2.
+  \text{var}\left[\hat{\mathbf\beta}\right] = (\mathbf{X^TX}+\lambda \mathbf{I})^{-1} \sigma^2 = \mathbf{V}(\boldsymbol{\Delta}^2+\lambda\mathbf{I})^{-1}\mathbf{V}^T\sigma^2.
 \]
 Hence, a small $\lambda$ will result in large variances of the parameter estimators. The larger $\lambda$, the smaller the variances become. In the limit, as $\lambda\rightarrow\infty$, the estimates are converged to zero and show no variability any longer.
 
@@ -483,7 +620,6 @@ or, equivalently, minimising
 
 - Fortunately, computational efficient algorithms have been implemented in statistical software
 
-
 - The Lasso estimator of $\boldsymbol{\beta}$ is biased and generally has a smaller variance then the least-squares estimator.
 
 - Hence, the bias-variance trade-off may here also help in finding better predictions with biased estimators.
@@ -493,21 +629,6 @@ or, equivalently, minimising
 - Hence, at first sight the lasso is not directly appropriate for high-dimensional settings.
 
 - An important advantage of the lasso is that choosing an appropriate value for $\lambda$ is a kind a model building or feature selection procedure (see further).
-
-## Toxicogenomics example
-
-```{r}
-mLasso <- glmnet(
-  x = toxData[,-1] %>%
-    as.matrix,
-  y = toxData %>%
-    pull(BA),
-alpha = 1)
-plot(mLasso, xvar = "lambda")
-```
-
-The graph with the paths of the parameter estimates nicely illustrates the typical behaviour of the lasso estimates as a function of $\lambda$: when $\lambda$ increases the estimates are shrunken towards zero. When an estimate hits zero, it remains exactly equal to zero when $\gamma$ further increases. A parameter estimate equal to zero, say $\hat\beta_j=0$, implies that the corresponding predictor $x_j$ is no longer included in the model (i.e. $\beta_jx_j=0$). The model fit is known as a sparse model fit (many zeroes). Hence, choosing a appropriate value for $\gamma$ is like choosing the important predictors in the model (feature selection).
-
 
 ## Graphical interpretation of Lasso vs ridge
 
@@ -522,31 +643,6 @@ and ridge
 \]
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
-library(ggforce)
-library(latex2exp)
-library(gridExtra)
-
-p1 <- ggplot() +
-  geom_ellipse(aes(x0 = 4, y0 = 11, a = 10, b = 3, angle = pi / 4)) +
-  geom_ellipse(aes(x0 = 4, y0 = 11, a = 5, b = 1.5, angle = pi / 4)) +
-  xlim(-12.5, 12.5) +
-  ylim(-5, 20) +
-  geom_point(aes(x = 4, y = 11)) +
-  annotate("text", label = TeX("$(\\hat{\\beta}_1^{ols}, \\hat{\\beta}_2^{ols})$"), x = -5, y = 15, size = 6, parse = TRUE) +
-  xlab(TeX("$\\beta_1$")) +
-  ylab(TeX("$\\beta_2$")) +
-  geom_segment(
-    aes(x = -5, y = 12.5, xend = 3.7, yend = 11.3),
-    arrow = arrow(length = unit(0.25, "cm"))
-    ) +   
-  coord_fixed()
-
-pRidge <- p1 +
-  geom_circle(aes(x0 = 0, y0 = 0, r = 3.9) , color = "red") +
-  geom_point(aes(x = -1.1, y = 3.75), color = "red") +
-  annotate("text", label = TeX("$(\\hat{\\beta}_1^{ridge}, \\hat{\\beta}_2^{ridge})$"), x = -8.1, y = 4.45, size = 6, parse = TRUE, color = "red") +
-  ggtitle("Ridge")
-
 pLasso <- p1 +
   geom_segment(aes(x = 0, y = 4.2 , xend = 4.2, yend = 0), color = "red") +
   geom_segment(aes(x = 0, y = 4.2 , xend = - 4.2, yend = 0), color = "red") +
@@ -563,14 +659,46 @@ Note, that
 - parameters for the lasso can never switch sign, they are set at zero! Selection!
 - ridge regression can lead to parameters that switch sign.
 
-# Splines
+## Toxicogenomics example
+
+```{r}
+mLasso <- glmnet(
+  x = toxData[,-1] %>%
+    as.matrix,
+  y = toxData %>%
+    pull(BA),
+alpha = 1)
+plot(mLasso, xvar = "lambda")
+```
+
+- The graph with the paths of the parameter estimates nicely illustrates the typical behaviour of the lasso estimates as a function of $\lambda$: when $\lambda$ increases the estimates are shrunken towards zero.
+
+- When an estimate hits zero, it remains exactly equal to zero when $\gamma$ further increases. A parameter estimate equal to zero, say $\hat\beta_j=0$, implies that the corresponding predictor $x_j$ is no longer included in the model (i.e. $\beta_jx_j=0$).
+
+- The model fit is known as a sparse model fit (many zeroes). Hence, choosing a appropriate value for $\gamma$ is like choosing the important predictors in the model (feature selection).
+
+
+# Splines and the connection to ridge regression.
+
+## Lidar dataset
+
+- LIDAR (light detection and ranging) uses the reflection of laser-emitted light to detect chemical compounds in the atmosphere.
+- The LIDAR technique has proven to be an efficient tool for monitoring the distribution of several atmospheric pollutants of importance; see Sigrist (1994).
+- The range is the distance traveled before the light is reflected back to its source.
+- The logratio is the logarithm of the ratio of received light from two laser sources.
+
+  - One source had a frequency equal to the resonance frequency of the compound of interest, which was mercury in this study.
+  - The other source had a frequency off this resonance frequency.
+
+  - The concentration of mercury can be derived from a regression model of the logratio in function of  the range for each range x.
 
 ```{r}
 library("SemiPar")
 data(lidar)
 pLidar <- lidar %>%
   ggplot(aes(x = range, y = logratio)) +
-  geom_point()
+  geom_point() +
+  xlab("range (m)")
 
 pLidar +
   geom_smooth()
@@ -584,9 +712,9 @@ pLidar +
 
 \[y_i=f(x_i)+\epsilon_i,\]
 with
-\[f(x)=\sum\limits_{k=1}^K \theta_k h_k(x)\]
+\[f(x)=\sum\limits_{k=1}^K \theta_k b_k(x)\]
 
--  Select set of basis functions $h_k(x) $
+-  Select set of basis functions $b_k(x)$
 -  Select number of basis functions $K$
 -  Examples
 
@@ -598,6 +726,7 @@ with
 ### Trunctated line basis
 
 \[y_i=f(x_i)+\epsilon_i,\]
+
 -  One of the most simple basis expansions
 -  $f(x_i)=\beta_0+\beta_1x_i+\sum\limits_{m=1}^{K-2}\theta_m(x_i-t_m)_+$ with $(.)_+$ the operator that takes the positive part.
 -  Note, that better basis expansions exist, which are orthogonal, computational more stable and/or continuous derivative beyond first order
@@ -633,23 +762,27 @@ grid.arrange(
 
 - Note, that the model is overfitting!
 - The fit is very wiggly and is tuned too much to the data.
+- The fit has a large variance and low bias.
 - It will therefore not generalise well to predict the logratio of future observations.
 
-Solution
+#### Solution for overfitting?
 
-- Adopt a ridge penalty
+- We could perform model selection on the basis to select the important basis functions to model the signal. But, this will have the undesired property that the fit will no longer be smooth.
+
+- We can also adopt a ridge penalty!
 - However, we do not want to penalise the intercept and the linear term.  
 - Ridge criterion
 
-\[\mathbf{Y}-\mathbf{X\beta}\vert\vert^2+\lambda\boldsymbol{\beta}^T\mathbf{D}\boldsymbol{\beta}
+\[\Vert\mathbf{Y}-\mathbf{X\beta}\Vert^2+\lambda\boldsymbol{\beta}^T\mathbf{D}\boldsymbol{\beta}
 \]
 
 With $\mathbf{D}$ with dimensions (K,K): $\mathbf{D}=\left[\begin{array}{cc}\mathbf{0}_{2\times2}& \mathbf{0}_{2\times K-2}\\
 \mathbf{0}_{K-2\times2}&\mathbf{I}_{K-2\times K-2}\end{array}\right]$
 
+- Here we will set the penalty at 900.
 
 ```{r}
-D<-diag(ncol(basisExp))
+D <- diag(ncol(basisExp))
 D[1:2,1:2] <- 0
 lambda <- 900
 betaRidge <- solve(t(basisExp)%*%basisExp+(lambda*D))%*%t(basisExp)%*%lidar$logratio
@@ -787,19 +920,21 @@ It can be shown that the training error is related to the insample test error vi
 \]
 
 Note, that for linear models
-\[ \hat{m}(\mathbf{x}_i) = \mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Y} = \mathbf{HY}
+\[ \hat{m}(\mathbf{x}_i) = \mathbf{X}\hat{\boldsymbol{\beta}}= \mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Y} = \mathbf{HY}
 \]
 with
+
 - $\mathbf{H}$ the hat matrix and
 - all $Y_i$ are assumed to be independently distributed  $N(\mathbf{X}\boldsymbol{\beta},\sigma^2)$  
 
-Hence, for linear models
+Hence, for linear models with independent observations
 
 \begin{eqnarray}
 \text{cov}_\mathbf{Y}\left[\hat{m}(\mathbf{x}_i),Y_i)\right] &=&
-\text{cov}_\mathbf{Y}\left[\mathbf{H}_i^T\mathbf{Y},Y_i)\right]\\
-&=& \text{cov}_\mathbf{Y}\left[h_ii Y_i,Y_i\right]\\
-&=& h_ii \sigma^2\\
+\text{cov}_\mathbf{Y}\left[\mathbf{H}_{i}^T\mathbf{Y},Y_i)\right]\\
+&=& \text{cov}_\mathbf{Y}\left[h_{ii} Y_i,Y_i\right]\\
+&=& h_{ii} \text{cov}_\mathbf{Y}\left[Y_i,Y_i\right]\\
+&=& h_{ii} \sigma^2\\
 \end{eqnarray}
 
 And we can thus estimate the insample error by Mallow's $C_p$
@@ -863,11 +998,11 @@ Some rationale as to why LOOCV offers a good estimator of the outsample error:
 
  - the sum in $CV$ is over all $\mathbf{x}_i$ in the training dataset, but each term $\mathbf{x}_i$ was left out once for the calculation of $\hat{m}^{-i}$. Hence, $\hat{m}^{-i}(\mathbf{x}_i)$ mimics an outsample prediction.
 
- - the sum in CV is over $n$ different training datasets (each one with a different observation removed), and hence CV is an estimator of the {\em expected} test error.
+ - the sum in CV is over $n$ different training datasets (each one with a different observation removed), and hence CV is an estimator of the *expected* test error.
 
  - For linear models the LOOCV can be readily obtained from the fitted model: i.e.
 
- \[\text{CV} = \frac{1}{n}\sum\limits_{i=1}^n \frac{e_i}{1-H_{ii}}\]
+ \[\text{CV} = \frac{1}{n}\sum\limits_{i=1}^n \frac{e_i^2}{(1-h_{ii})^2}\]
 
  with $e_i$ the residuals from the model that is fitted based on all training data.
 
@@ -898,7 +1033,7 @@ Since CV and CV$_k$ are estimators, they also show sampling variability. Standar
 For the expected conditional test error in $\mathbf{x}$, it holds that
 \begin{eqnarray*}
   \text{E}_{\cal{T}}\left[\text{Err}_{\cal{T}}(\mathbf{x})\right]
-    &=& \text{E}_{Y^*,{\cal{T}}}\left[\hat{m}(\mathbf{x})-Y^*)^2 \mid \mathbf{x}\right] \\
+    &=& \text{E}_{Y^*,{\cal{T}}}\left[(\hat{m}(\mathbf{x})-Y^*)^2 \mid \mathbf{x}\right] \\
     &=&  \text{var}_{\mathbf{Y}}\left[\hat{Y}(\mathbf{x})\mid \mathbf{x}\right] +(\mu(\mathbf{x})-\mu^*(\mathbf{x}))^2+\text{var}_{Y^*}\left[Y^*\mid \mathbf{x}\right]
 \end{eqnarray*}
 where $\mu(\mathbf{x}) = \text{E}_{\mathbf{Y}}\left[\hat{Y}(\mathbf{x})\mid \mathbf{x}\right] \text{ and } \mu^*(\mathbf{x})=\text{E}_{Y^*}\left[Y^*\mid \mathbf{x}\right]$.
@@ -914,6 +1049,15 @@ The importance of the bias-variance trade-off can be seen from a model selection
 Also note that the model $m$ which forms the basis of the prediction model $\hat{m}(\mathbf{x})$ does NOT need to satisfy $m(\mathbf{x})=\mu(\mathbf{x})$ or $m(\mathbf{x})=\mu^*(\mathbf{x})$. The model $m$ is known by the data-analyst (its the basis of the prediction model), whereas $\mu(\mathbf{x})$ and $\mu^*(\mathbf{x})$ are generally unknown to the data-analyst. We only hope that $m$ serves well as a prediction model.
 
 ---
+
+### In practice
+
+We use cross validation to estimate the lambda penalty for penalised regression:
+
+- Ridge Regression
+- Lasso
+- Build models, e.g. select the number of PCs for PCA regression
+- Splines
 
 ### Toxicogenomics example
 
@@ -1079,6 +1223,24 @@ grid.arrange(
 
 - Also note that the graph clearly illustrates the effect of overfitting: including too many PCs causes a large outsample error.
 
+### Lidar Example: splines
+
+- We use the mgcv package to fit the spline model to the lidar data.
+- A better basis is used than the truncated spline basis
+- Thin plate splines are also linear smoothers, i.e.  
+$\hat{Y} = \hat{m}(\mathbf{X}) = \mathbf{SY}$
+- So their variance can be easily calculated.
+- The ridge/smoothness penalty is chosen by generalized cross validation.
+
+```{r}
+library(mgcv)
+gamfit <- gam(logratio ~ s(range), data = lidar)
+gamfit$sp
+
+pLidar +
+  geom_line(aes(x = lidar$range, y = gamfit$fitted), lwd = 2)
+```
+
 ## More general error definitions
 
 So far we only looked at continuous outcomes $Y$ and errors defined in terms of the squared loss $(\hat{m}(\mathbf{x})-Y^*)^2$.
@@ -1121,7 +1283,7 @@ With a given loss function, the errors are defined as follows:
 
 When an exponential family distribution is assumed for the outcome distribution, and when the deviance loss is used, the insample error can be estimated by means of the AIC and BIC.
 
-### Akaike's Information Criterion (AIC)}
+### Akaike's Information Criterion (AIC)
 
 The AIC for a model $m$ is given by
 \[
@@ -1183,7 +1345,7 @@ However, if the number of data points in the test dataset ($m$) is small, the es
 
 ## Cancer Example
 
-- Schmidt {\it et al.}, 2008, Cancer Research, {\bf 68}, 5405-5413
+- Schmidt *et al.*, 2008, Cancer Research, {\bf 68}, 5405-5413
 
 - Gene expression patterns in $n=200$ breast tumors were investigated ($p=22283$ genes)
 
@@ -1276,7 +1438,7 @@ It is also known as the true positive rate (TPR).
 
 Specificity is the probability to correctly predict a negative outcome:
 \[
-\text{spec}(\pi,c)=\\text{P}_{X^*}\left[\hat\pi(\mathbf{X}^*)\leq c \mid Y^*=0 \mid {\cal{T}}\right].
+\text{spec}(\pi,c)=\text{P}_{X^*}\left[\hat\pi(\mathbf{X}^*)\leq c \mid Y^*=0 \mid {\cal{T}}\right].
 \]
 
 It is also known as the true negative rate (TNR).
@@ -1287,7 +1449,7 @@ It is also known as the true negative rate (TNR).
 
 The misclassification error is the probability to incorrectly predict an outcome:
 \begin{eqnarray*}
-\text{mce}(\pi,c) &=&\text{P})_{X^*,Y^*}\left[\hat\pi(\mathbf{X})\leq c \text{ and } Y^*=1 \mid {\cal{T}}\right] \\
+\text{mce}(\pi,c) &=&\text{P}_{X^*,Y^*}\left[\hat\pi(\mathbf{X})\leq c \text{ and } Y^*=1 \mid {\cal{T}}\right] \\
 &  & + \text{P}_{X^*,Y^*}\left[\hat\pi(\mathbf{X})> c \text{ and } Y^*=0 \mid {\cal{T}}\right].
 \end{eqnarray*}
 
