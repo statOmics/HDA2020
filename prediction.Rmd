@@ -485,7 +485,7 @@ The criterion to be minimised is
 ### SVD and inverse
 Write the SVD of $\mathbf{X}$ ($p>n$) as
 \[
-   \mathbf{X} = \sum_{i=1}^n \delta_i \mathbf{u}_i \mathbf{v}_i^T = \sum_{i=1}^p \delta_i \mathbf{u}_i \mathbf{v}_i^T  = \mathbf{U}\boldsymbol{D} \mathbf{V}^T ,
+   \mathbf{X} = \sum_{i=1}^n \delta_i \mathbf{u}_i \mathbf{v}_i^T = \sum_{i=1}^p \delta_i \mathbf{u}_i \mathbf{v}_i^T  = \mathbf{U}\boldsymbol{\Delta} \mathbf{V}^T ,
 \]
 with
 
