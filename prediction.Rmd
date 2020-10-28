@@ -212,18 +212,34 @@ to the dizzying sixth-degree polynomial model
 
 ```{r, message = F, warning = F}
 formulas <- sapply(1:6, function(i)
-{
-  if (i==1) return("mass") else
   return(
-     paste0("I(mass^",2:i,")") %>% paste(collapse=" + ")
+     paste0("I(mass^",1:i,")") %>% paste(collapse=" + ")
     )  
-})
+)
 
 formulas <- sapply(
   paste0("brain ~ ", formulas),
   as.formula)
 
 models <- lapply(formulas, lm , data = brain)
+```
+
+```{r}
+data.frame(
+  formula=formulas %>%
+    as.character,
+  r2 = sapply(
+    models,
+    function(mod) summary(mod)$r.squared)
+  )  %>% 
+  ggplot(
+    aes(x = r2,
+      y = formula,
+      label = r2 %>%
+        round(2) %>%
+        as.character)
+  ) +
+  geom_text()
 ```
 
 We plot the fit for each model individually and them arrange them together in one plot.
