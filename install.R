@@ -10,7 +10,7 @@ BiocManager::install(
     "latex2exp", "SemiPar", "DAAG",
     "genefu", "breastCancerMAINZ", "plotROC", "PMA",
     "mgcv",
-    "pls", "NormalBetaPrime", "pROC", "boot"
+    "pls", "NormalBetaPrime", "boot"
   ),
   Ncpus = 2L)
 
