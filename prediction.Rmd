@@ -1121,6 +1121,7 @@ The Graphs shows
 - On top the number of non-zero regression parameter estimates are shown.
 
 Two vertical reference lines are added to the graph. They correspond to
+
 - the $\log(\lambda)$ that gives the smallest CV estimate of the extra-sample error, and
 - the largest $\log(\lambda)$ that gives a CV estimate of the extra-sample error that is within one standard error from the smallest error estimate.
 - The latter choice of $\lambda$ has no firm theoretical basis, except that it somehow accounts for the imprecision of the error estimate. One could loosely say that this $\gamma$ corresponds to the smallest model (i.e. least number of predictors) that gives an error that is within margin of error of the error of the best model.
