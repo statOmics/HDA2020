@@ -231,7 +231,7 @@ data.frame(
   r2 = sapply(
     models,
     function(mod) summary(mod)$r.squared)
-  )  %>% 
+  )  %>%
   ggplot(
     aes(x = r2,
       y = formula,
@@ -271,7 +271,7 @@ m0 <- lm(brain ~ 1, brain)
 summary(m0)
 
 p +
-  stat_smooth(method = "lm", formula = y ~ 1)
+  stat_smooth(method = "lm", formula = y ~ 1) +
   ggtitle(
     paste0(
       "r2 = ",
@@ -456,7 +456,10 @@ pRidge <- p1 +
   geom_circle(aes(x0 = 0, y0 = 0, r = 3.9) , color = "red") +
   geom_point(aes(x = -1.1, y = 3.75), color = "red") +
   annotate("text", label = TeX("$(\\hat{\\beta}_1^{ridge}, \\hat{\\beta}_2^{ridge})$"), x = -8.1, y = 4.45, size = 6, parse = TRUE, color = "red") +
-  ggtitle("Ridge")
+  ggtitle("Ridge") +
+  geom_vline(xintercept = 0, color = "grey") +
+  geom_hline(yintercept = 0, color = "grey") +
+  theme_minimal()
 
 pRidge
 ```
@@ -666,7 +669,11 @@ pLasso <- p1 +
   geom_segment(aes(x = 0, y = - 4.2 , xend = - 4.2, yend = 0), color = "red") +
   geom_point(aes(x = 0, y = 4.2), color = "red") +
   annotate("text", label = TeX("$(\\hat{\\beta}_1^{lasso}, \\hat{\\beta}_2^{lasso})$"), x = 7, y = 4.2, size = 6, parse = TRUE, color = "red") +
-  ggtitle("Lasso")
+  ggtitle("Lasso") +
+  geom_vline(xintercept = 0, color = "grey") +
+  geom_hline(yintercept = 0, color = "grey") +
+  theme_minimal()
+
 grid.arrange(pLasso, pRidge, ncol = 2)
 ```
 
