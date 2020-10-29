@@ -155,13 +155,17 @@ grid.arrange(
 
 ```{r}
 m1 <- lm(BA ~ -1 + ., toxData)
+
 m1 %>%
   coef %>%
   head(40)
+
 m1 %>%
   coef %>%
   is.na %>%
   sum
+
+summary(m1)$r.squared
 ```
 
 Problem??
@@ -409,14 +413,14 @@ m4 <- lm(Y~-1+Zk[,1:4])
 
 Methods for feature selection will be discussed later.
 
-# Ridge regresion
+# Ridge Regression
 
 ## Penalty
 
  The ridge parameter estimator is defined as the parameter $\mathbf\beta$ that minimises the **penalised least squares criterion**
 
  \[
- \text{SSE}=\Vert\mathbf{Y} - \mathbf{X\beta}\Vert_2^2 + \lambda \Vert \boldsymbol{\beta} \Vert_2^2
+ \text{SSE}_\text{pen}=\Vert\mathbf{Y} - \mathbf{X\beta}\Vert_2^2 + \lambda \Vert \boldsymbol{\beta} \Vert_2^2
 \]
 
 - $\Vert \boldsymbol{\beta} \Vert_2^2=\sum_{j=1}^p \beta_j^2$ is the **$L_2$ penalty term**
@@ -476,6 +480,12 @@ Hence, $(\mathbf{X^TX}+\lambda \mathbf{I})$ is invertible and $\hat{\boldsymbol{
 
 We also find
 \[
+  \text{var}\left[\hat{\mathbf\beta}\right] = (\mathbf{X^TX}+\lambda \mathbf{I})^{-1} \mathbf{X}^T\mathbf{X} (\mathbf{X^TX}+\lambda \mathbf{I})^{-1}\sigma^2
+\]
+
+However, it can be shown that improved intervals that also account for the bias can be constructed by using:
+
+\[
   \text{var}\left[\hat{\mathbf\beta}\right] = (\mathbf{X^TX}+\lambda \mathbf{I})^{-1}  \sigma^2.
 \]
 
@@ -483,17 +493,17 @@ We also find
 
 The criterion to be minimised is
   \[
-   \text{SSE}=\Vert\mathbf{Y} - \mathbf{X\beta}\Vert_2^2 + \lambda \Vert \boldsymbol{\beta} \Vert_2^2.
+   \text{SSE}_\text{pen}=\Vert\mathbf{Y} - \mathbf{X\beta}\Vert_2^2 + \lambda \Vert \boldsymbol{\beta} \Vert_2^2.
  \]
  First we re-express SSE in matrix notation:
  \[
-   \text{SSE} = (\mathbf{Y}-\mathbf{X\beta})^T(\mathbf{Y}-\mathbf{X\beta}) + \lambda \boldsymbol{\beta}^T\boldsymbol{\beta}.
+   \text{SSE}_\text{pen} = (\mathbf{Y}-\mathbf{X\beta})^T(\mathbf{Y}-\mathbf{X\beta}) + \lambda \boldsymbol{\beta}^T\boldsymbol{\beta}.
  \]
  The partial derivative w.r.t. $\boldsymbol{\beta}$ is
  \[
-   \frac{\partial}{\partial \boldsymbol{\beta}}\text{SSE} = -2\mathbf{X}^T(\mathbf{Y}-\mathbf{X\beta})+2\lambda\boldsymbol{\beta}.
+   \frac{\partial}{\partial \boldsymbol{\beta}}\text{SSE}_\text{pen} = -2\mathbf{X}^T(\mathbf{Y}-\mathbf{X\beta})+2\lambda\boldsymbol{\beta}.
  \]
- Solving $\frac{\partial}{\partial \boldsymbol{\beta}}\text{SSE}=0$ gives
+ Solving $\frac{\partial}{\partial \boldsymbol{\beta}}\text{SSE}_\text{pen}=0$ gives
  \[
    \hat{\boldsymbol{\beta}} = (\mathbf{X^TX}+\lambda \mathbf{I})^{-1} \mathbf{X^T Y}.
  \]
@@ -624,16 +634,19 @@ Hence, a small $\lambda$ will result in large variances of the parameter estimat
 - The Lasso is another example of penalised regression.
 
 - The lasso estimator of $\boldsymbol{\beta}$ is the solution to minimising the penalised SSE
-
 \[
-SSE  = \Vert \mathbf{Y} - \mathbf{X\beta}\Vert_2^2 \text{ subject to } \Vert \mathbf\beta\Vert_1 \leq c
+ \text{SSE}_\text{pen} = \sum_{i=1}^n (Y_i - \mathbf{x}_i^T\boldsymbol{\beta})^2 + \lambda \sum_{j=1}^p \vert \beta_j\vert.
 \]
+
 
 or, equivalently, minimising
-\[
- SSE  = \sum_{i=1}^n (Y_i - \mathbf{x}_i^T\boldsymbol{\beta})^2 + \lambda \sum_{j=1}^p \Vert \beta_j\Vert_1.
-\]
 
+\[
+\text{SSE}  = \Vert \mathbf{Y} - \mathbf{X\beta}\Vert_2^2 \text{ subject to } \Vert \mathbf\beta\Vert_1 \leq c
+\]
+with
+
+- $\Vert \mathbf\beta\Vert_1 = \sum\limits_{j=1}^p \vert \beta_j \vert$
 
 - Despite strong similarity between ridge and lasso regression ($L_2$ versus $L_1$ norm in penalty term), there is no analytical solution of the lasso parameter estimate of $\mathbf\beta$.
 
