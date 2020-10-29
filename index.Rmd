@@ -60,7 +60,14 @@ Questions related to the course contents can be asked by posting on [UFora](http
   - [Singular value decomposition theory](./svd.html)
   - [Lab 1: Introduction and SVD applications](./Lab1-Intro-SVD.html)
   - [Lab 2: PCA](./Lab2-PCA.html)
-  
+
+#### 3. Prediction with High Dimensional Predictors
+
+  - [Prediction theory](./prediction.html)
+
+#### 4. Sparse Singular Value Decomposition
+
+  - [Sparse SVD theory](./sparseSvd.html)
 
 ### Homework assignments
 

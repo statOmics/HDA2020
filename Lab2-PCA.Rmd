@@ -311,7 +311,7 @@ First do the PCA, excluding the `location` and `river` columns.
 
 ```{r heavymetals-pca}
 ## Remove 'location' and 'river' columns when creating matrix
-heavymetals_mx <- select(heavymetals, -location, -river) %>%
+heavymetals_mx <- dplyr::select(heavymetals, -location, -river) %>%
   as.matrix()
 
 ## Run PCA on centered and scaled data
@@ -546,7 +546,7 @@ Indeed, if we rank the countries by their agriculture employment, we largely rec
 ```{r}
 ## Show ranking of agriculture industry
 industries %>% 
-  select(country, agriculture, social.sector, mining, finance) %>% 
+  dplyr::select(country, agriculture, social.sector, mining, finance) %>% 
   arrange(desc(agriculture))
 ```
 
@@ -563,6 +563,13 @@ So there are likely still many patterns we are missing.
 
 </details>
 
+
+# Further reading
+
+Here are some further resources that can help with the interpretation of the PCA and its link with the SVD:
+
+* <https://setosa.io/ev/principal-component-analysis/>
+* <https://stats.stackexchange.com/a/134283/264768>
 
 
 # Session info {-}
