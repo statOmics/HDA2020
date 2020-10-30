@@ -23,11 +23,10 @@ options(
 
 ```{r libraries, warning=FALSE, message=FALSE}
 ## install packages with:
-## install.packages(c("glmnet", "pls", "NormalBetaPrime", "pROC", "boot"))
+## install.packages(c("glmnet", "pls", "NormalBetaPrime", "boot"))
 library(NormalBetaPrime)
 library(glmnet)
 library(pls)
-library(pROC)
 library(boot)
 ```
 
@@ -156,36 +155,6 @@ approximately 0.
 The output shows that PC1 and PC4 have a $\beta$ estimate that 
 differs significantly from 0 (at $p < 0.05$), but the results can't be readily 
 interpreted, since we have no immediate interpretation of the PCs.
-
-
-## Using a binary response/outcome variable
-
-Instead of predicting the actual gene expression levels, researchers are
-often more interested in whether or not an expression level crosses a
-certain threshold, indicating that the gene has been turned on.
-We can easily construct such a dataset for the TRIM32 outcome.
-We define "success" (1) as having a value above the median, and "failure" (0) as a value below the median.
-Discretizing a continuous variable like this is also sometimes called __dichotomization__.
-
-```{r binarize-Y}
-Ybin <- ifelse( Y > median(Y), 1, 0)
-table(Ybin)
-```
-
-The `ifelse()` function is a vectorized function that translates a 
-logical vector into another one based on its values. See also
-`?ifelse` for more information.
-
-Note that now we cannot use an ordinary linear regression model anymore, because our response variable is no longer (approximately) normal (it can only take on values 0 and 1!).
-Instead, we will use __logistic regression__, which models the response variable $Y$ with a *binomial* distribution and uses a *logit* link-function between the response and the linear predictor.
-Logistic regression belongs to the class of __Generalized Linear Models (GLM)__ (in fact, standard linear regression is also a special case of GLM) and is implemented in R in the `glm` function.
-The type of GLM fitted by `glm` is controlled with the `family` argument.
-For logistic regression, we specify `family = "binomial"` (by default, this argument is set to `"gaussian"`, which is equivalent to `lm`, see `?glm` for details).
-
-```{r pc-logistic-regression}
-pcr_logistic_model <- glm(Ybin ~ Zk, family = "binomial")
-summary(pcr_logistic_model)
-```
 
 
 ## Using the package `pls`
@@ -384,7 +353,7 @@ general, see the
 [glmnet introduction vignette](https://cran.r-project.org/web/packages/glmnet/vignettes/glmnet.pdf)
 
 
-## Ridge regression
+## Demonstration: Ridge regression {-}
 
 Let's perform a ridge regression in order to predict expression levels
 of the TRIM32 gene using the 200 gene probes data. We can start by
@@ -438,7 +407,7 @@ arbitrarily. We will see subsequently, how to choose $\gamma$ that minimizes the
 prediction error.
 
 
-## Lasso regression
+# Exercise: Lasso regression
 
 Lasso regression is also a form of penalized regression, but we do not have an
 analytic solution of $\hat{{\boldsymbol{\beta}}}$ as in least squares
@@ -446,17 +415,32 @@ and ridge regression. In order to fit a lasso model, we once again use
 the `glmnet()` function. However, this time we use the argument
 `alpha = 1`
 
-> Verify that this indeed corresponds to lasso regression using the equations
-from [Section 3](#elnet-theory).
 
-Other than this, we proceed just as we did when fitting a ridge regression model.
-However, we will not provide a custom sequence of $\gamma$ (`lambda`) values here
-but instead rely on `glmnet`'s 
+## Tasks {-}
 
+#### 1. Verify that setting `alpha = 1` indeed corresponds to lasso regression using the equations from [Section 3](#elnet-theory). {-}
+
+
+#### 2. Perform a lasso regression with the `glmnet` function with `Y` the response and `X` the predictors. {-}
+
+You do not have to provide a custom sequence of $\gamma$ (`lambda`) values here
+but can instead rely on `glmnet`'s default behaviour of choosing the grid of
+$\gamma$ values based on the data (see `?glmnet` for more details).
+
+<details><summary>Solution</summary>
 ```{r glmnet-lasso-regression}
 # Note that the glmnet() function can supply gamma automatically
 # By default it uses a sequence of 100 lambda values
 lasso_model <- glmnet(X, Y, alpha = 1)
+```
+</details>
+
+
+#### 3. Make the coefficient profile plot and interpret. {-}
+
+<details><summary>Solution</summary>
+
+```{r}
 plot(lasso_model, xvar = "lambda", xlab = "log(gamma)")
 ```
 
@@ -464,56 +448,12 @@ Note that the number of non-zero coefficients is indicated at the top of the plo
 In the case of lasso-regression the regularization is much less smooth compared
 to the ridge regression, with some coefficients increasing for higher $\gamma$
 before sharply dropping to zero.
+In contrast to ridge, lasso eventually shrinks all coefficients to 0.
 
-
-# Exercise: performing penalized logistic regression with `glmnet`
-
-## Tasks {-}
-
-#### 1. Use the same `grid` of $\gamma$s from before and fit a ridge logistic regression model with them with the binary outcome variable `Ybin` and predictors `X`. {-}
-
-*Hint:* in the `glmnet()` function use `family = "binomial"` for logistic regression.
-
-<details><summary>Solution</summary>
-```{r}
-# Binary version
-grid <- seq(1, 1000, by = 10)  # same grid as before
-
-bin_ridge_model <- glmnet(X, Ybin, alpha = 0, lambda = grid, family = "binomial")
-```
 </details>
 
-#### 2. Fit a lasso logistic model with the binary outcome variable `Ybin` and predictors `X`. {-}
 
-Again you should use the binomial family.
-
-<details><summary>Solution</summary>
-```{r}
-bin_lasso_model <- glmnet(X, Ybin, alpha = 1, family = "binomial")
-```
-</details>
-
-#### 3. Plot your fitted models. {-}
-
-<details><summary>Solution</summary>
-```{r, fig.show='hold'}
-plot(bin_ridge_model, xvar = "lambda", xlab = "log(gamma)")
-title("Ridge logistic regression", line = -1)
-
-plot(bin_lasso_model, xvar = "lambda", xlab = "log(gamma)")
-title("Lasso logistic regression", line = -1)
-```
-</details>
-
-Again we can ask the question which $\gamma$ is the right one? Generally the
-number of PCs in PC regression and $\gamma$ in the ridge and Lasso
-regression are called __tuning parameters__. The different number of
-PCs/$\gamma$ correspond to different models which can be represented
-as a class of models $\mathcal{M}$. We now look at how to choose turning
-parameters and hence optimal prediction models from $\mathcal{M}$.
-
-
-# Evaluation of prediction models and tunign hyperparameters
+# Evaluation of prediction models and tuning hyperparameters
 
 First we will split our original data in a training and test set to validate our
 model. The training set will be used to train the model and tune the
@@ -547,87 +487,27 @@ testX <- X[-trainID, ]
 testY <- Y[-trainID]
 ```
 
+To make fitting the models a bit easier later, we will also create 2 data.frames
+combining the response and predictors for the training and test data.
+
+```{r}
+train_data <- data.frame("TRIM32" = trainY, trainX)
+test_data <- data.frame("TRIM32" = testY, testX)
+
+## Glancing at the data structure: for the first 10 columns only
+str(train_data[, 1:10])
+```
+
 
 ## Model evaluation
 
 We are interested in the __out-of-sample__ error of our models,
 i.e. how good our model does on unseen data.
 __This will allow us to compare different *classes* of models__.
+For continuous outcomes we will use the __mean squared error (MSE)__
+(or its square-root version, the RMSE).
 
-Different performance metrics will be used:
-
--   For continuous outcomes we will use the mean squared error (MSE).
-
--   For a binary outcome (as in the logistic regression models), 
-    we will use 
-    
-    * the area under the receiver operating characteristic curve
-    ([AUROC or AUC](https://en.wikipedia.org/wiki/Receiver_operating_characteristic)) 
-    
-    * the misclassification error based on a
-    [confusion matrix](https://en.wikipedia.org/wiki/Confusion_matrix),
-    i.e. the proportion of misclassified observations.
-
-
-We use the test subset for final model evaluation. No estimation of
-model parameters whatsoever is done on the test dataset.
-
-Let’s begins by creating our cost/evaluation measure functions. 
-For the AUC function, we simply use the function `auc` from the 
-*[pROC](https://CRAN.R-project.org/package=pROC)* package.
-
-```{r performance-metric-functions}
-# Mean Squared Error
-MSE <- function(obs, pred){
-  mean((obs - pred)^2)
-}
-
-# Misclassification error
-MISERR <- function(obs, pred, cutoff = 0.5) {
-  # Check if we have same number of observations and predictions
-  stopifnot(length(obs) == length(pred))
-  
-  n <- length(obs)
-  
-  # Turn predictions into binary response
-  ypred <- as.numeric(pred > cutoff)
-  
-  # Create confusion matrix
-  tab <- table(obs, ypred)
-  
-  # Correct observations are on the diagonal
-  # Error = 1 - the proportion of correct predictions
-  1 - sum(diag(tab)) / n
-}
-```
-
-To see how the misclassification error works and what a confusion matrix looks
-like, imagine we have a set of 10 observations and 10 corresponding predictions
-from a logistic regression model (these will be numbers between 0 and 1).
-We use a cutoff of 0.5 to classify a prediction as either 1 or 0.
-
-```{r}
-set.seed(123)
-n <- 10
-(obs <- sample(c(0, 1), n, replace = TRUE))  # 10 binary observations
-(pred <- runif(n))  # 10 predictions, random uniform between 0 and 1
-
-# Turn predictions into binary response
-(ypred <- as.numeric(pred > 0.5))
-
-# Create confusion matrix
-(tab <- table(obs, ypred))
-
-# Correct observations are on the diagonal
-# Error = 1 - the proportion of correct predictions
-1 - sum(diag(tab)) / n
-```
-
-In this case, we got half of the predictions wrong, i.e. a misclassification
-error of 0.5, which is unsurprising since we just used a uniform distribution to
-generate the predictions.
-
-These metrics will allow us to compare the performance of different types of
+The evaluation will allow us to compare the performance of different types of
 models, e.g. PC regression, ridge regression and lasso regression, on our data.
 However, we still need to find the optimal model within each of these classes,
 by selecting the best hyperparameter (number of PCs for PC regression and $\gamma$
@@ -640,8 +520,10 @@ on our training set.
 ## Tuning hyperparameters
 
 The test set is only used to evaluate the *final* model.
-To achieve this final model, we need to find the optimal hyperparameters by using
-*k-folds cross validation* (CV$_k$) on the training data.
+To achieve this final model, we need to find the optimal hyperparameters,
+i.e. the hyperparameters that best generalize the model to unseen data.
+We can estimate this by using *k-fold cross validation* (CV$_k$) on
+the training data.
 
 The CV$_k$ estimates can be automatically computed for any
 generalized linear model (generated with `glm()` and by extension `glmnet()`) 
@@ -651,276 +533,203 @@ using the `cv.glm()` function from the
 
 # Example: PC regression evaluation
 
-We start with the PC regression and choose the number of PCs that minimizes
-a chosen out-of-sample error.  As our training dataset contains now only
-80 rows, we can use a maximum of 79 PCs in our model.
+We start with the PC regression and look for the optimal number of PCs that minimizes
+the MSE using $k$-fold Cross validation.
+We then use this optimal number of PCs to train the final model and evaluate it
+on the test data.
 
-The training set is used to fit the 
-We use the function `predict()` to calculate
 
-```{r PC regression crossvalidation}
-max.n.comps <- 79
-cv.pcr.errors <- rep(NA, max.n.comps)
+## k-fold Cross Validation to tune number of components
 
-for (i in 1:max.n.comps) {
-  # Train the model: fit PC regression with i components
-  pcr.train <- pcr(trainY ~ trainX, ncomp = i)
-  # Calculate the predictions
-  ypred <- predict(pcr.train, newdata = testX)
-  # Calculate the out-of-sample error
-  cv.pcr.errors[i] <- MSE(testY, ypred)
+Conveniently, the `pcr` function from the `pls` package has an implementation for
+k-fold Cross Validation. We simply need to set `validation = CV` and `segments = 20`
+to perform 20-fold Cross Validation with PC regression.
+If we don't specify `ncomp`, `pcr` will select the maximum number of PCs that can
+be used for the CV.
+
+Note that our training data `trainX` consists of 80 observations (rows).
+If we perform 20-fold CV, that means we will split the data in 20 groups, so
+each group will consist of 4 observations. At each CV cycle, one group will be left
+out and the model will be trained on the remaining groups. This leaves us with
+76 training observations for each CV cycle, so the maximal number of components
+that can be used in the linear regression is 75.
+
+```{r pcr-kCV}
+## Set seed for reproducibility, kCV is a random process!
+set.seed(123)
+
+K <- 20
+
+## The 'Y ~ .' notation means: fit Y by every other variable in the data
+pcr_cv <- pcr(TRIM32 ~ ., data = train_data, validation = "CV", segments = K)
+summary(pcr_cv)
+```
+
+We can plot the *root mean squared error of prediction* (RMSEP) for each number
+of components as follows.
+
+```{r pcr_cv-plot}
+plot(pcr_cv, plottype = "validation")
+```
+
+The `pls` package also has a function `selectNcomp` to select the optimal number of components.
+Here we use the "one-sigma" method, which returns the lowest number of components
+for which the RMSE is within one standard error of the absolute minimum.
+The function also allows plotting the result by specifying `plot = TRUE`.
+
+```{r pcr-optimal-ncomp}
+optimal_ncomp <- selectNcomp(pcr_cv, method = "onesigma", plot = TRUE)
+```
+
+This outcome shows us that the optimal number of components for our model is
+`r optimal_ncomp`.
+
+
+## Validation on test data
+
+We now use our optimal number of components to train the final PCR model.
+This model is then validated on by generating predictions for the test data and
+calculating the MSE.
+
+We define a custom function to calculate the MSE.
+Note that there is also an `MSEP` function in the `pls` package which does the
+prediction and MSE calculation in one go.
+But our own function will come in handy later for lasso and ridge regression.
+
+```{r MSE}
+# Mean Squared Error
+## obs: observations; pred: predictions
+MSE <- function(obs, pred){
+  mean((drop(obs) - drop(pred))^2)
 }
 ```
 
-Now we have a vector `cv.pcr.errors` that contains the MSE for every
-number of components. We can use this information to create a plot,
-and to find the number of components with the lowest MSE value:
-
-```{r find optimal number of components}
-nPC.at.min <- which.min(cv.pcr.errors)
-plot(1:max.n.comps, cv.pcr.errors, type = "l",
-     ylab = "MSE", xlab = "number PCs")
-abline(v = nPC.at.min, col = "red")
+```{r final_pcr_model}
+final_pcr_model <- pcr(TRIM32 ~ ., data = train_data, ncomp = optimal_ncomp)
+pcr_preds <- predict(final_pcr_model, newdata = test_data, ncomp = optimal_ncomp)
+(pcr_mse <- MSE(testY, pcr_preds))
 ```
 
-This is a manual procedure, but we can also use a K-fold crossvalidation
-based on the function `cv.glm()`. As we need to use the function `glm()`
-for that, we have to use the manual calculations. But `cv.glm` expects a 
-`data.frame` as input, so we need to adjust our previous code a bit.
+For comparison, `MSEP` also gives the MSE for a model including only an intercept.
+This value on its own does not tell us very much, but we can use it to compare our
+PCR model with other types of models later.
 
-The `cv.glm()` function has the following arguments: `data, glmfit, cost` and `K`. `K` is the number of CV folds: `K=sample size` is LOOCV. The
-argument `data` is the dataset and `cost` is the error function: 
-for example MSE, AUC and the misclassification error.
+Finally, we plot the predicted values for our response variable (the TRIM32 gene expression)
+against the actual observed values from our test set.
 
-The output of `cv.glm()` contains an element `delta` with 2 values. The
-first one is the raw out-of-sample error, the second one is one corrected
-for bias. We ignore that bias and use the raw values.
-
-```{r use K fold crossvalidation}
-trainX.svd <- svd(trainX)
-U <- trainX.svd$u
-D <- diag(trainX.svd$d)  # the loadings matrix
-trainZ <- U%*%D 
-
-# Avoid too long runtime
-nvals <- seq(5,30)
-cv.glm.pcr <- rep(NA, length(nvals))
-
-for(i in seq_along(nvals)){
-  # fitdata
-  fitdata <- data.frame(trainY, trainZ[,1:nvals[i]])
-  # make the model
-  mod <- glm(trainY ~ ., data = fitdata)
-  # do K fold crossvalidation. 
-  cv.glm.pcr[i] <- cv.glm(fitdata, mod, cost = MSE, K = 20)$delta[1]
-}
-
-nPC.at.min <- nvals[which.min(cv.glm.pcr)]
-plot(nvals, cv.glm.pcr, type = "l",
-     ylab = "MSE", xlab = "number PCs")
-abline(v = nPC.at.min, col = "red")
+```{r pcr-predplot}
+predplot(final_pcr_model, newdata = test_data, line = TRUE)
 ```
 
-This outcome shows us that we can use approximately 12 PCs.
-
-Now let’s validate this with the test dataset and see how well we are
-doing with LOOCV. Since SVD is also an estimation procedure we will be
-cheating if we perform SVD on the test dataset. We will use the loadings
-of the training to construct PCs on the test: we are now sure we are
-only using the validation set for testing.
-
-```{r test on the test dataset}
-# Create scores for the test using loadings of the validation
-V <- trainX.svd$v
-testZ <- testX %*% V
-
-fitdata <- data.frame(trainY, trainZ[,1:12])
-mod <- glm(trainY ~ ., data = fitdata)
-
-preddata <- data.frame(testZ[, 1:12])
-
-preds <- predict(mod, newdata = preddata)
-MSE(testY, preds)
 
 
-```
+# Exercise: evaluate and compare prediction models
 
-# Exercise: evaluation prediction models
+#### 1. Perform a lasso regression with 20-fold Cross Validation on the training data (`trainX`, `trainY`). Plot the results and select the optimal `lambda` ($\gamma$) parameter. Fit a final model with the selected `lambda` and validate it on the test data. {-}
 
-#### 1. Dichotomize the training outcome variable, `trainY` at its 50% quantile. {-}
-    
-```{r}
-trainY_bin <- ifelse( trainY > median(trainY), 1, 0)
-table(trainY_bin)
-testY_bin <- ifelse( testY > median(trainY), 1, 0)
-table(testY_bin)
-```
-
-#### 2. Construct a prediction model using PC regression on the training dataset and select the optimum number of PCs using 5 folds cross validation with the misclassification (at cutoff $c=0.5$ ) error and the AUC as evaluation measures. Use the binary `trainY` as your response variable. {-}
-    
-```{r, message=FALSE}
-K <- 5 # set K 
-set.seed(1) # Use this if you want the exact same results
-nPC <- 40 # max number of PCs, choose as you want with the 
-          # maximum given by dim(trainZ)[2]
-cv.pcr.error.bin = rep(NA,nPC)#We store our errors here
-
-for (i in seq_len(nPC)) {
-	fitdata <- data.frame(trainY_bin = trainY_bin,
-	                      trainZ[,1:i])
-	# Fit the model
-	cv.pcr.mod1 <- suppressWarnings(
-	  glm(trainY_bin ~ ., data = fitdata, 
-	                   family="binomial")
-	)
-	# do K fold crossvalidation
-	cv.pcr.error.bin[i] <- suppressWarnings(
-	  cv.glm(fitdata,cv.pcr.mod1, 
-	         cost = auc,K=K)$delta[1]
-	  )
-	# You use auc(), which is a function of the pROC package
-	# It's possible that the code above produces a lot of messages
-	# You can specify `message = FALSE` in the code chunk options to suppress
-	# them (if you're working in RMarkdown)
-}
-```
-
-Note that you don't have that much cases, and a ton of variables. This
-can lead to lack of convergence in the internal fitting of the `glm()`.
-It's one of the reasons we need to reduce dimensions! The function
-`suppressWarnings()` suppresses all the warnings generated by ill fits.
-
-You want to maximize the AUC, so you need to look for the maximum
-value:
-```{r}
-nPC_at_max_AUC_CV <- c(1:nPC)[which.max(cv.pcr.error.bin)]
-plot(cv.pcr.error.bin ,xlab = "n PCs",ylab = "AUC",type = 'l')
-abline(v=nPC_at_max_AUC_CV,col="red")
-```
-
-Now we know the number of PCs, we can construct the model and 
-test it against our test data.
-
-```{r}
-fitdata <- data.frame(trainY_bin = trainY_bin,
-	                      trainZ[,1:nPC_at_max_AUC_CV])
-
-finalmodel <- glm(trainY_bin ~ . ,
-                  data = fitdata,family="binomial")
-
-# Perform testing on the data
-testdata <- data.frame(testZ[,1:nPC_at_max_AUC_CV])
-
-# We predict the response (type = "response")
-predPCR <- predict(finalmodel,
-                   newdata=testdata,type = "response")
-
-#We can now calculate the AUC 
-#on the test data set just to see
-#how good are we doing on test?
-auc(testY_bin, predPCR)
-```
-
-#### 3. With your dichotomized outcome `trainY` construct a Lasso and ridge regression prediction model on the training dataset, select the optimum $\gamma$ by using 5 folds CV and the AUC as your evaluation measure. {-}
-
-*Hint*: use `cv.glmnet()` function, for 5 folds CV, set `nfolds=5` and for the AUC set `type.measure="auc"`.
+*Hint*: use the `cv.glmnet()` function, for 20 folds CV, set `nfolds = 20` and 
+to use the MSE metric set `type.measure = "mse"`.
 Go to `?cv.glmnet` for details.
+
+<details><summary>Solution</summary>
+
+```{r lasso-cv}
+set.seed(123)
+lasso_cv <- cv.glmnet(trainX, trainY, alpha = 1, 
+                      nfolds = K, type.measure = "mse")
+lasso_cv
+plot(lasso_cv)
+```
+
+Note that we can extract the fitted lasso regression object from the CV result
+and make the coefficient profile plot as before.
+
+```{r lasso-cv-coefficient-profile}
+plot(lasso_cv$glmnet.fit, xvar = "lambda")
+```
+
+We can look for the gamma values that give the best result. 
+Here you have two possibilities :
+
+1. `lambda.min`: the value of  $\gamma$ that gives the best result for the crossvalidation.
+2. `lambda.1se`: the largest value of $\gamma$ such that the MSE is within 1 standard error
+of the best result from the cross validation.
+
+```{r}
+lasso_cv$lambda.min
+lasso_cv$lambda.1se
+```
+
+We will (rather arbitrarily) use `lambda.min` here to fit the final model and generate predictions on the test data.
+Note that we don't actually have to redo the fitting, we can just use our existing
+`lasso_cv` object, which already contains the fitted models for a range of `lambda` values.
+We can use the `predict` function and specify the `s` argument (which confusingly sets `lambda` in this case)  to make predictions on the test data.
+
+```{r}
+lasso_preds <- predict(lasso_cv, s = lasso_cv$lambda.min, newx = testX)
+## Calculate MSE
+(lasso_mse <- MSE(testY, lasso_preds))
+```
+</details>
+
+
+#### 2. Do the same for ridge regression. {-}
+
+<details><summary>Solution</summary>
+
+```{r ridge-cv}
+set.seed(123)
+ridge_cv <- cv.glmnet(trainX, trainY, alpha = 0, 
+                      nfolds = K, type.measure = "mse")
+ridge_cv
+plot(ridge_cv)
+```
+
+Note that we can extract the fitted ridge regression object from the CV result
+and make the coefficient profile plot as before.
+
+```{r ridge-cv-coefficient-profile}
+plot(ridge_cv$glmnet.fit, xvar = "lambda")
+```
+
+We can look for the gamma values that give the best result. 
+Here you have two possibilities :
+
+1. `lambda.min`: the value of  $\gamma$ that gives the best result for the crossvalidation.
+2. `lambda.1se`: the largest value of $\gamma$ such that the MSE is within 1 standard error
+of the best result from the cross validation.
+
+```{r}
+ridge_cv$lambda.min
+ridge_cv$lambda.1se
+```
+
+We will (rather arbitrarily) use `lambda.min` here to fit the final model and generate predictions on the test data.
+Note that we don't actually have to redo the fitting, we can just use our existing
+`ridge_cv` object, which already contains the fitted models for a range of `lambda` values.
+We can use the `predict` function and specify the `s` argument (which confusingly sets `lambda` in this case)  to make predictions on the test data.
+
+```{r ridge-predictions}
+ridge_preds <- predict(ridge_cv, s = ridge_cv$lambda.min, newx = testX)
+## Calculate MSE
+(ridge_mse <- MSE(testY, ridge_preds))
+```
+
+</details>
+
+
+#### 3. Which of the models considered (PCR, lasso, ridge) performs best?. {-}
     
-```{r}
-set.seed(5)
-lasso_mod <- cv.glmnet(trainX, trainY_bin,
-                       family="binomial",
-                       type.measure="auc",nfolds=K,
-                       alpha=1)
-plot(lasso_mod)
+<details><summary>Solution</summary>
+
+Based on the MSE, the ridge model performs best on the test data.
+
+```{r, echo=FALSE}
+knitr::kable(
+  data.frame(
+    "Model" = c("PCR", "Lasso", "Ridge"),
+    "MSE" = c(pcr_mse, lasso_mse, ridge_mse)
+  )
+)
 ```
-
-We can look for the gamma values that give the best result. Here you have two possibilities :
-
-1. look at `lambda.min`, which is the value of 
-lambda that gives the best result for the crossvalidation.
-2. look at `lambda.1se`, which is the largest value of
-lambda such that the error is within 1 standard error
-of the best result for the crossvalidation.
-```{r}
-#best gammas 
-bestgamma.1se <- lasso_mod$lambda.1se
-bestgamma.min <- lasso_mod$lambda.min
-bestgamma.1se
-bestgamma.min
-```
-
-Let's choose the best gamma for the prediction. You can
-do this by passing the lambda value as the `s` argument
-of the `predict()` function:
-
-```{r}
-predLasso_prob <- predict(lasso_mod, newx= testX,
-                          s=bestgamma.min, type="response")
-
-#how good are we doing on test? 
-auc(testY_bin, as.vector(predLasso_prob))
-
-
-```
-
-We can now repeat this for the ridge regression:
-
-```{r}
-set.seed(5)
-ridge_mod <- cv.glmnet(trainX, trainY_bin,
-                       family="binomial",
-                       type.measure="auc",nfolds=K,
-                       alpha=0)
-plot(ridge_mod)
-```
-
-Let's do the model evaluation:
-
-```{r}
-bestgamma.min <- ridge_mod$lambda.min
-
-predRidge_prob <- predict(ridge_mod, newx= testX,
-                          s=bestgamma.min, type="response")
-
-#how good are we doing on test? 
-auc(testY_bin, as.vector(predRidge_prob))
-```
-
-#### 4. For all the above prediction models, select the best model in terms of their estimated AUC (out-of-sample error) on the training dataset. Confirm your choice of model on the test dataset. Look at the function `auc` of the package `pROC`. {-}
-    
-For me it looks like the lasso model performs the best on the test
-data.
-
-#### 5. Find the optimal $c$ of your best model in terms of misclassification error. {-}
-
-After deciding on your choice of model based on its AUC, to actually use your model for prediction, you need an optimal cut-off point say $c\in [0,1]$, where when a predicted probability $p$ is greater than $c$, predict as high gene expression and when $p\leq c$ predict as low.
-The optimal here means, $c$ has minimum misclassification error. 
-
-For this, you need the function `MISERR` we defined above. You can 
-again loop over a number of possible $c$ values, and check whether 
-we get at a correct representation.
-
-We chose the lasso as best, so:
-
-```{r}
-cvals <- seq(0.01,0.99,by = 0.01)
-n <- length(cvals)
-
-c_miss <- rep(NA, n)
-
-for(i in seq_along(cvals)){
-  c_miss[i] <- MISERR(testY_bin, 
-                      predLasso_prob,
-                      cvals[i])
-}
-
-best_c <- cvals[which.min(c_miss)]
-
-plot(cvals, c_miss, type = "l")
-abline(v = best_c, col = "red")
-
-```
-
-This shows a cutoff value of 0.47 would give the least amount of
-misclassification error.
+</details>
