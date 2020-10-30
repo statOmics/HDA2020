@@ -64,6 +64,7 @@ Questions related to the course contents can be asked by posting on [UFora](http
 #### 3. Prediction with High Dimensional Predictors
 
   - [Prediction theory](./prediction.html)
+  - [Lab 3: Penalized regression and prediction](./Lab3-Penalized-Regression.html)
 
 #### 4. Sparse Singular Value Decomposition
 
