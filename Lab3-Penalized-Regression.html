@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Adapted by Milan Malfait" />
+
+<meta name="date" content="2020-11-05" />
+
+<title>Analysis of High Dimensional Data - Lab 3</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<script src="site_libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #c4a000; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #000000; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #000000; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #000000; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">HDA2020</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fa fa-chalkboard-teacher"></span>
+     
+    Lectures
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="intro.html">1. Introduction</a>
+    </li>
+    <li>
+      <a href="svd.html">2. Singular Value Decomposition</a>
+    </li>
+    <li>
+      <a href="prediction.html">3. Prediction with High Dimensional Predictors</a>
+    </li>
+    <li>
+      <a href="sparseSvd.html">4. Sparse Singular Value Decomposition</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fa fa-laptop"></span>
+     
+    Practicals
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Lab1-Intro-SVD.html">Lab 1</a>
+    </li>
+    <li>
+      <a href="Lab2-PCA.html">Lab 2</a>
+    </li>
+    <li>
+      <a href="Lab3-Penalized-Regression.html">Lab 3</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/statOmics/HDA2020">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="http://statomics.github.io/">statOmics</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Analysis of High Dimensional Data - Lab 3</h1>
+<h3 class="subtitle">Penalized regression techniques for high-dimensional data</h3>
+<h4 class="author">Adapted by Milan Malfait</h4>
+<h4 class="date">05 Nov 2020</h4>
+
+</div>
+
+
+<hr />
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co">## install packages with:</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="co">## install.packages(c(&quot;glmnet&quot;, &quot;pls&quot;, &quot;NormalBetaPrime&quot;, &quot;boot&quot;))</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="kw">library</span>(NormalBetaPrime)</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="kw">library</span>(glmnet)</span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="kw">library</span>(pls)</span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="kw">library</span>(boot)</span></code></pre></div>
+<div id="introduction" class="section level1">
+<h1><span class="header-section-number">1</span> Introduction</h1>
+<p><strong>In this lab session we will look at the following topics</strong></p>
+<ul>
+<li>Demonstrate why low dimensional prediction modeling fails in high dimension.</li>
+<li>Carry out Principal Component Regression (PCR)</li>
+<li>Use <code>glmnet()</code> to carry out ridge regression, lasso and elastic net</li>
+<li>Evaluation of these prediction models</li>
+</ul>
+<div id="the-dataset" class="section level2">
+<h2><span class="header-section-number">1.1</span> The dataset</h2>
+<p>In this practical, we will use the dataset <code>eyedata</code> provided by the <a href="https://cran.r-project.org/web/packages/NormalBetaPrime/index.html"><strong>NormalBetaPrime</strong> package</a>. This dataset contains gene expression data of 200 genes for 120 samples. The data originates from microarray experiments of mammalian eye tissue samples.</p>
+<p>The dataset consists of two objects:</p>
+<ul>
+<li><code>genes</code>: a <span class="math inline">\(120 \times 200\)</span> matrix with the expression levels of 200 genes (columns) for 120 samples (rows)</li>
+<li><code>trim32</code>: a vector with 120 expression levels of the TRIM32 gene.</li>
+</ul>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">data</span>(eyedata)</span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="co">## Look at objects that were just loaded</span></span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="kw">str</span>(genes)</span>
+<span id="cb2-4"><a href="#cb2-4"></a><span class="co">#&gt;  num [1:120, 1:200] 3.68 3.58 3.85 4.13 3.88 ...</span></span>
+<span id="cb2-5"><a href="#cb2-5"></a><span class="co">#&gt;  - attr(*, &quot;dimnames&quot;)=List of 2</span></span>
+<span id="cb2-6"><a href="#cb2-6"></a><span class="co">#&gt;   ..$ : chr [1:120] &quot;V2&quot; &quot;V3&quot; &quot;V4&quot; &quot;V5&quot; ...</span></span>
+<span id="cb2-7"><a href="#cb2-7"></a><span class="co">#&gt;   ..$ : chr [1:200] &quot;1377&quot; &quot;1748&quot; &quot;2487&quot; &quot;2679&quot; ...</span></span>
+<span id="cb2-8"><a href="#cb2-8"></a><span class="kw">str</span>(trim32)</span>
+<span id="cb2-9"><a href="#cb2-9"></a><span class="co">#&gt;  num [1:120] 8.42 8.36 8.41 8.29 8.27 ...</span></span></code></pre></div>
+<p>The goal of this exercise is to predict the expression levels of TRIM32 from the expression levels of the 200 genes measured in the microarray experiment. For this, it makes sense to start by constructing centered (and possibly scaled) data. We store this in two matrices <code>X</code> and <code>Y</code>:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>X &lt;-<span class="st"> </span><span class="kw">scale</span>(genes, <span class="dt">center =</span> <span class="ot">TRUE</span>, <span class="dt">scale =</span> <span class="ot">TRUE</span>) </span>
+<span id="cb3-2"><a href="#cb3-2"></a>Y &lt;-<span class="st"> </span><span class="kw">scale</span>(trim32, <span class="dt">center =</span> <span class="ot">TRUE</span>)</span></code></pre></div>
+<p>Remember that scaling avoids that differences in levels of magnitude will give one variable (gene) more influence in the result. This has been illustrated in the <a href="./Lab2-PCA.html">second practical session</a> as well. For the <code>Y</code> vector, this is less of an issue as we’re talking about a single variable. Not scaling will make the predictions interpretable as “deviations from the mean”.</p>
+</div>
+<div id="the-curse-of-singularity" class="section level2">
+<h2><span class="header-section-number">1.2</span> The curse of singularity</h2>
+<p>We begin by assuming that the predictors and the outcome have been centered so that the intercept is 0. We are presented with the usual regression model:</p>
+<p><span class="math display">\[
+Y_i=\beta_i X_{i1}+\dots+\beta_pX_{ip}+\epsilon_i \\ 
+\text{ Or } \mathbf{Y}={\mathbf{X}}{\boldsymbol{\beta}} +{\boldsymbol{\epsilon}}
+\]</span></p>
+<p>Our goal is to get the least squares estimator of <span class="math inline">\({\boldsymbol{\beta}}\)</span>, given by</p>
+<p><span class="math display">\[
+\hat{{\boldsymbol{\beta}}}= (\mathbf{X}^T{\mathbf{X}})^{-1}{\mathbf{X}}^T{\mathbf{Y}}
+\]</span></p>
+<p>in which the <span class="math inline">\(p \times p\)</span> matrix <span class="math inline">\(({\mathbf{X}}^T{\mathbf{X}})^{-1}\)</span> is crucial! To be able to calculate the inverse of <span class="math inline">\({\mathbf{X}}^T \mathbf{X}\)</span>, it has to be of full rank <span class="math inline">\(p\)</span>, which would be 200 in this case. Let’s check this:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">dim</span>(X) <span class="co"># 120 x 200, so p &gt; n!</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a><span class="co">#&gt; [1] 120 200</span></span>
+<span id="cb4-3"><a href="#cb4-3"></a><span class="kw">qr</span>(X)<span class="op">$</span>rank</span>
+<span id="cb4-4"><a href="#cb4-4"></a><span class="co">#&gt; [1] 119</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a></span>
+<span id="cb4-6"><a href="#cb4-6"></a>XtX &lt;-<span class="st"> </span><span class="kw">crossprod</span>(X) <span class="co"># calculates t(X) %*% X more efficiently</span></span>
+<span id="cb4-7"><a href="#cb4-7"></a><span class="kw">qr</span>(XtX)<span class="op">$</span>rank</span>
+<span id="cb4-8"><a href="#cb4-8"></a><span class="co">#&gt; [1] 119</span></span>
+<span id="cb4-9"><a href="#cb4-9"></a></span>
+<span id="cb4-10"><a href="#cb4-10"></a><span class="co"># Try to invert using solve: </span></span>
+<span id="cb4-11"><a href="#cb4-11"></a><span class="kw">solve</span>(XtX)</span>
+<span id="cb4-12"><a href="#cb4-12"></a><span class="co">#&gt; Error in solve.default(XtX): system is computationally singular: reciprocal condition number = 4.20888e-20</span></span></code></pre></div>
+<p>We realize we cannot compute <span class="math inline">\(({\mathbf{X}}^T{\mathbf{X}})^{-1}\)</span> because the rank of <span class="math inline">\(({\mathbf{X}}^T{\mathbf{X}})\)</span> is less than <span class="math inline">\(p\)</span> hence we can’t get <span class="math inline">\(\hat{{\boldsymbol{\beta}}}\)</span> by means of least squares! This is generally referred to as the <strong><a href="https://www.statistics.com/glossary/singularity/">singularity</a> problem</strong>.</p>
+</div>
+</div>
+<div id="principal-component-regression" class="section level1">
+<h1><span class="header-section-number">2</span> Principal component regression</h1>
+<p>A first way to deal with this singularity, is to bypass it using principal components. Since <span class="math inline">\(\min(n,p) = n = 120\)</span>, PCA will give 120 components, each being a linear combination of the <span class="math inline">\(p\)</span> = 200 variables. These 120 PCs contain all information present in the original data. We could as well use an approximation of <span class="math inline">\({\mathbf{X}}\)</span>, i.e using just a few (<span class="math inline">\(k&lt;120\)</span>) PCs. So we use PCA as a method for reducing the dimensions while retaining as much variation between the observations as possible. Once we have these PCs, we can use them as variables in a linear regression model.</p>
+<div id="classic-linear-regression-on-pcs" class="section level2">
+<h2><span class="header-section-number">2.1</span> Classic linear regression on PCs</h2>
+<p>We first compute the PCA on the data with <code>prcomp</code>. We will use an arbitrary cutoff of <span class="math inline">\(k = 4\)</span> PCs to illustrate the process of performing regression on the PCs.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>k &lt;-<span class="st"> </span><span class="dv">4</span> <span class="co"># Arbitrarily chosen k=4</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a>pca &lt;-<span class="st"> </span><span class="kw">prcomp</span>(X)</span>
+<span id="cb5-3"><a href="#cb5-3"></a>Vk &lt;-<span class="st"> </span>pca<span class="op">$</span>rotation[, <span class="dv">1</span><span class="op">:</span>k] <span class="co"># the loadings matrix</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a>Zk &lt;-<span class="st"> </span>pca<span class="op">$</span>x[, <span class="dv">1</span><span class="op">:</span>k] <span class="co"># the scores matrix</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a></span>
+<span id="cb5-6"><a href="#cb5-6"></a><span class="co"># Use the scores in classic linear regression</span></span>
+<span id="cb5-7"><a href="#cb5-7"></a>pcr_model1 &lt;-<span class="st"> </span><span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span>Zk)</span>
+<span id="cb5-8"><a href="#cb5-8"></a><span class="kw">summary</span>(pcr_model1)</span>
+<span id="cb5-9"><a href="#cb5-9"></a><span class="co">#&gt; </span></span>
+<span id="cb5-10"><a href="#cb5-10"></a><span class="co">#&gt; Call:</span></span>
+<span id="cb5-11"><a href="#cb5-11"></a><span class="co">#&gt; lm(formula = Y ~ Zk)</span></span>
+<span id="cb5-12"><a href="#cb5-12"></a><span class="co">#&gt; </span></span>
+<span id="cb5-13"><a href="#cb5-13"></a><span class="co">#&gt; Residuals:</span></span>
+<span id="cb5-14"><a href="#cb5-14"></a><span class="co">#&gt;      Min       1Q   Median       3Q      Max </span></span>
+<span id="cb5-15"><a href="#cb5-15"></a><span class="co">#&gt; -1.72388 -0.34723  0.02811  0.27817  2.03271 </span></span>
+<span id="cb5-16"><a href="#cb5-16"></a><span class="co">#&gt; </span></span>
+<span id="cb5-17"><a href="#cb5-17"></a><span class="co">#&gt; Coefficients:</span></span>
+<span id="cb5-18"><a href="#cb5-18"></a><span class="co">#&gt;               Estimate Std. Error t value Pr(&gt;|t|)    </span></span>
+<span id="cb5-19"><a href="#cb5-19"></a><span class="co">#&gt; (Intercept) -2.636e-15  5.454e-02   0.000   1.0000    </span></span>
+<span id="cb5-20"><a href="#cb5-20"></a><span class="co">#&gt; ZkPC1       -7.172e-02  4.950e-03 -14.488   &lt;2e-16 ***</span></span>
+<span id="cb5-21"><a href="#cb5-21"></a><span class="co">#&gt; ZkPC2        1.273e-02  1.342e-02   0.949   0.3447    </span></span>
+<span id="cb5-22"><a href="#cb5-22"></a><span class="co">#&gt; ZkPC3        3.371e-02  2.326e-02   1.449   0.1500    </span></span>
+<span id="cb5-23"><a href="#cb5-23"></a><span class="co">#&gt; ZkPC4        5.908e-02  2.535e-02   2.330   0.0215 *  </span></span>
+<span id="cb5-24"><a href="#cb5-24"></a><span class="co">#&gt; ---</span></span>
+<span id="cb5-25"><a href="#cb5-25"></a><span class="co">#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span></span>
+<span id="cb5-26"><a href="#cb5-26"></a><span class="co">#&gt; </span></span>
+<span id="cb5-27"><a href="#cb5-27"></a><span class="co">#&gt; Residual standard error: 0.5975 on 115 degrees of freedom</span></span>
+<span id="cb5-28"><a href="#cb5-28"></a><span class="co">#&gt; Multiple R-squared:  0.655,  Adjusted R-squared:  0.643 </span></span>
+<span id="cb5-29"><a href="#cb5-29"></a><span class="co">#&gt; F-statistic: 54.58 on 4 and 115 DF,  p-value: &lt; 2.2e-16</span></span></code></pre></div>
+<p>As <span class="math inline">\(\mathbf{X}\)</span> and <span class="math inline">\(\mathbf{Y}\)</span> are centered, the intercept is approximately 0.</p>
+<p>The output shows that PC1 and PC4 have a <span class="math inline">\(\beta\)</span> estimate that differs significantly from 0 (at <span class="math inline">\(p &lt; 0.05\)</span>), but the results can’t be readily interpreted, since we have no immediate interpretation of the PCs.</p>
+</div>
+<div id="using-the-package-pls" class="section level2">
+<h2><span class="header-section-number">2.2</span> Using the package <code>pls</code></h2>
+<p>PCR can also be performed using the <code>pcr()</code> function from the package <em><a href="https://CRAN.R-project.org/package=pls">pls</a></em> <strong>directly on the data</strong> (so without having to first perform the PCA manually). When using this function, you have to keep a few things in mind:</p>
+<ol style="list-style-type: decimal">
+<li>the number of components (PCs) to use is passed with the argument <code>ncomp</code></li>
+<li>the function allows you to scale (set <code>scale = TRUE</code>) and center (set <code>center = TRUE</code>) the predictors first (in the example here, <span class="math inline">\(\mathbf{X}\)</span> has already been centered and scaled).</li>
+</ol>
+<p>You can use the function <code>pcr()</code> in much the same way as you would use <code>lm()</code>. The resulting fit can easily be examined using the function <code>summary()</code>, but the output looks quite different from what you would get from <code>lm</code>.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co"># X is already scaled and centered, so that&#39;s not needed.</span></span>
+<span id="cb6-2"><a href="#cb6-2"></a>pcr_model2 &lt;-<span class="st"> </span><span class="kw">pcr</span>(Y <span class="op">~</span><span class="st"> </span>X, <span class="dt">ncomp =</span> <span class="dv">4</span>)</span>
+<span id="cb6-3"><a href="#cb6-3"></a><span class="kw">summary</span>(pcr_model2)</span>
+<span id="cb6-4"><a href="#cb6-4"></a><span class="co">#&gt; Data:    X dimension: 120 200 </span></span>
+<span id="cb6-5"><a href="#cb6-5"></a><span class="co">#&gt;  Y dimension: 120 1</span></span>
+<span id="cb6-6"><a href="#cb6-6"></a><span class="co">#&gt; Fit method: svdpc</span></span>
+<span id="cb6-7"><a href="#cb6-7"></a><span class="co">#&gt; Number of components considered: 4</span></span>
+<span id="cb6-8"><a href="#cb6-8"></a><span class="co">#&gt; TRAINING: % variance explained</span></span>
+<span id="cb6-9"><a href="#cb6-9"></a><span class="co">#&gt;    1 comps  2 comps  3 comps  4 comps</span></span>
+<span id="cb6-10"><a href="#cb6-10"></a><span class="co">#&gt; X    61.22    69.55    72.33    74.66</span></span>
+<span id="cb6-11"><a href="#cb6-11"></a><span class="co">#&gt; Y    62.97    63.24    63.87    65.50</span></span></code></pre></div>
+<p>First of all the output shows you the data dimensions and the fitting method used. In this case, that is PC calculation based on SVD. The <code>summary()</code> function also provides the percentage of variance explained in the predictors and in the response using different numbers of components. For example, the first PC only captures 61.22% of all the variance, or information in the predictors and it explains 62.9% of the variance in the outcome. Note that for both methods the choice of the number of principal components was arbitrary chosen to be 4.</p>
+<p>At a later stage, we will look at how to choose the number of components that has the <strong>smallest prediction error</strong>.</p>
+</div>
+</div>
+<div id="elnet-theory" class="section level1">
+<h1><span class="header-section-number">3</span> Ridges, Lassos and Elastic Nets</h1>
+<p>Ridge regression, lasso regression and elastic nets are all closely related techniques, based on the same idea: add a penalty term to the estimating function so <span class="math inline">\(({\mathbf{X}}^T{\mathbf{X}})\)</span> becomes full rank again and is invertible. Two different penalty terms or regularization methods can be used:</p>
+<ol style="list-style-type: decimal">
+<li>L1 regularization: this regularization adds a term <span class="math inline">\({\gamma_1\|\boldsymbol{\beta}\|_{1}}\)</span> to the estimating equation. The term will add a penalty based on the <em>absolute value</em> of the magnitude of the coefficients. This is used by the <strong>lasso regression</strong></li>
+</ol>
+<p><span class="math display">\[
+ \hat{\boldsymbol{\beta}}^{\text{lasso}} = \text{argmin}_{\boldsymbol{\beta}}\displaystyle({(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})^T(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})+{\gamma_1\|\boldsymbol{\beta}\|_{1}}}\displaystyle)
+\]</span></p>
+<ol start="2" style="list-style-type: decimal">
+<li>L2 regularization: this regularization adds a term <span class="math inline">\({\gamma_2\|\boldsymbol{\beta}\|_{2}^{2}}\)</span> to the estimating equation. The penalty term is based on the square of the magnitude of the coefficients. This is used by <strong>ridge regression</strong>.</li>
+</ol>
+<p><span class="math display">\[
+ \hat{\boldsymbol{\beta}}^{\text{ridge}} = \text{argmin}_{\boldsymbol{\beta}}\displaystyle({(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})^T(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})+{\gamma_2\|\boldsymbol{\beta}\|_{2}^{2}}}\displaystyle)
+\]</span></p>
+<p>Elastic nets combine both types of regularizations. It does so by introducing a <span class="math inline">\(\alpha\)</span> mixing parameter that essentially combines the L1 and L2 norms in a weighted average.</p>
+<p><span class="math display">\[
+ \hat{\boldsymbol{\beta}}^{\text{el.net}} = \text{argmin}_{\boldsymbol{\beta}}\displaystyle({(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})^{T}(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})+{\alpha \gamma_1\|\boldsymbol{\beta}\|_{1}}+ {(1 - \alpha)\gamma_2\|\boldsymbol{\beta}\|_{2}^{2}}}\displaystyle)
+\]</span></p>
+</div>
+<div id="exercise-verification-of-ridge-regression" class="section level1">
+<h1><span class="header-section-number">4</span> Exercise: Verification of ridge regression</h1>
+<p>In least square regression the minimization of the estimation function <span class="math inline">\(|{\mathbf{Y} - \mathbf{X} \boldsymbol{\beta}}\|^{2}_{2}\)</span> leads to the solution <span class="math inline">\({\boldsymbol{\hat{\beta}}=(\mathbf{X^TX})^{-1}\mathbf{X^TY}}\)</span>.</p>
+<p>For the penalized least squares criterion used by ridge regression, you minimize <span class="math inline">\(\|{\mathbf{Y}-\mathbf{X}\boldsymbol{\beta}\|^{2}_{2}}+\gamma{\boldsymbol{\|\beta\|^{2}_{2}}}\)</span> which leads to following solution:</p>
+<p><span class="math display">\[
+{\boldsymbol{\hat{\beta}}=(\mathbf{X^TX}}+\gamma{\mathbf{I}})^{-1}{\mathbf{X^TY}}
+\]</span></p>
+<p>where <span class="math inline">\(\mathbf{I}\)</span> is the <span class="math inline">\(p \times p\)</span> identity matrix.</p>
+<p>The ridge parameter <span class="math inline">\(\gamma\)</span> <em>shrinks</em> the coefficients towards 0, with <span class="math inline">\(\gamma = 0\)</span> being equivalent to OLS (no shrinkage) and <span class="math inline">\(\gamma = +\infty\)</span> being equivalent to setting all <span class="math inline">\(\hat{\beta}\)</span>’s to 0. The optimal parameter lies somewhere in between and needs to be tuned by the user.</p>
+<div id="tasks" class="section level2 unnumbered">
+<h2>Tasks</h2>
+<p>Solve the following exercises using R.</p>
+<div id="verify-that-mathbfxtxgammamathbfi-has-rank-200-for-any-gamma0-of-your-choice." class="section level4 unnumbered">
+<h4>1. Verify that <span class="math inline">\({\mathbf{(X^TX}}+\gamma{\mathbf{I}})\)</span> has rank <span class="math inline">\(200\)</span>, for any <span class="math inline">\(\gamma&gt;0\)</span> of your choice.</h4>
+<details>
+<p><summary>Solution</summary></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>XtX &lt;-<span class="st"> </span><span class="kw">crossprod</span>(X)</span>
+<span id="cb7-2"><a href="#cb7-2"></a>p &lt;-<span class="st"> </span><span class="kw">ncol</span>(X)</span>
+<span id="cb7-3"><a href="#cb7-3"></a>gamma &lt;-<span class="st"> </span><span class="dv">2</span> <span class="co"># My choice</span></span>
+<span id="cb7-4"><a href="#cb7-4"></a></span>
+<span id="cb7-5"><a href="#cb7-5"></a><span class="co"># Compute penalized matrix</span></span>
+<span id="cb7-6"><a href="#cb7-6"></a>XtX_gammaI &lt;-<span class="st"> </span>XtX <span class="op">+</span><span class="st"> </span>(gamma <span class="op">*</span><span class="st"> </span><span class="kw">diag</span>(p))</span>
+<span id="cb7-7"><a href="#cb7-7"></a><span class="kw">dim</span>(XtX_gammaI)</span>
+<span id="cb7-8"><a href="#cb7-8"></a><span class="co">#&gt; [1] 200 200</span></span>
+<span id="cb7-9"><a href="#cb7-9"></a><span class="kw">qr</span>(XtX_gammaI)<span class="op">$</span>rank <span class="op">==</span><span class="st"> </span><span class="dv">200</span> <span class="co"># indeed</span></span>
+<span id="cb7-10"><a href="#cb7-10"></a><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+</details>
+</div>
+<div id="check-that-the-inverse-of-mathbfxtxgammamathbfi-can-be-computed." class="section level4 unnumbered">
+<h4>2. Check that the inverse of <span class="math inline">\({\mathbf{(X^TX}}+\gamma{\mathbf{I}})\)</span> can be computed.</h4>
+<details>
+<p><summary>Solution</summary></p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="co"># Yes, it can be computed (no error)</span></span>
+<span id="cb8-2"><a href="#cb8-2"></a>XtX_gammaI_inv &lt;-<span class="st"> </span><span class="kw">solve</span>(XtX_gammaI)</span>
+<span id="cb8-3"><a href="#cb8-3"></a><span class="kw">str</span>(XtX_gammaI_inv)</span>
+<span id="cb8-4"><a href="#cb8-4"></a><span class="co">#&gt;  num [1:200, 1:200] 0.25408 -0.02756 0.00453 -0.02961 0.00722 ...</span></span>
+<span id="cb8-5"><a href="#cb8-5"></a><span class="co">#&gt;  - attr(*, &quot;dimnames&quot;)=List of 2</span></span>
+<span id="cb8-6"><a href="#cb8-6"></a><span class="co">#&gt;   ..$ : chr [1:200] &quot;1377&quot; &quot;1748&quot; &quot;2487&quot; &quot;2679&quot; ...</span></span>
+<span id="cb8-7"><a href="#cb8-7"></a><span class="co">#&gt;   ..$ : chr [1:200] &quot;1377&quot; &quot;1748&quot; &quot;2487&quot; &quot;2679&quot; ...</span></span></code></pre></div>
+</details>
+</div>
+<div id="finally-compute-boldsymbolhatbetamathbfxtxgammamathbfi-1mathbfxty." class="section level4 unnumbered">
+<h4>3. Finally, compute <span class="math inline">\({\boldsymbol{\hat{\beta}}=(\mathbf{X^TX}}+\gamma{\mathbf{I}})^{-1}{\mathbf{X^TY}}\)</span>.</h4>
+<details>
+<p><summary>Solution</summary></p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="co">## Calculate ridge beta estimates</span></span>
+<span id="cb9-2"><a href="#cb9-2"></a><span class="co">## Use `drop` to drop dimensions and create vector</span></span>
+<span id="cb9-3"><a href="#cb9-3"></a>ridge_betas &lt;-<span class="st"> </span><span class="kw">drop</span>(XtX_gammaI_inv <span class="op">%*%</span><span class="st"> </span><span class="kw">t</span>(X) <span class="op">%*%</span><span class="st"> </span>Y)</span>
+<span id="cb9-4"><a href="#cb9-4"></a><span class="kw">length</span>(ridge_betas) <span class="co"># one for every gene</span></span>
+<span id="cb9-5"><a href="#cb9-5"></a><span class="co">#&gt; [1] 200</span></span>
+<span id="cb9-6"><a href="#cb9-6"></a><span class="kw">summary</span>(ridge_betas)</span>
+<span id="cb9-7"><a href="#cb9-7"></a><span class="co">#&gt;      Min.   1st Qu.    Median      Mean   3rd Qu.      Max. </span></span>
+<span id="cb9-8"><a href="#cb9-8"></a><span class="co">#&gt; -0.235089 -0.045535 -0.008577 -0.000279  0.054195  0.215292</span></span></code></pre></div>
+<p>We have now manually calculated the ridge regression estimates.</p>
+</details>
+</div>
+</div>
+</div>
+<div id="performing-ridge-and-lasso-regression-with-glmnet" class="section level1">
+<h1><span class="header-section-number">5</span> Performing ridge and lasso regression with <code>glmnet</code></h1>
+<p>The package <em><a href="https://CRAN.R-project.org/package=glmnet">glmnet</a></em> provides a function <code>glmnet()</code> that allows you to fit all three types of regressions. Which type is used, can be determined by specifying the <code>alpha</code> argument. For a <strong>ridge regression</strong>, you set <code>alpha</code> to 0, and for a <strong>lasso regression</strong> you set <code>alpha</code> to 1. Other <code>alpha</code> values between 0 and 1 will fit a form of elastic net. This function has slightly different syntax from the other model-fitting functions. To be able to use it, you have to pass a <code>x</code> matrix as well as a <code>y</code> vector, and you don’t use the formula syntax.</p>
+<p>The gamma value, which controls the “strength” of the penalty, can be passed by the argument <code>lambda</code> (notation isn’t always consistent between text books and software…). The function <code>glmnet()</code> can also carry out a search for finding the best gamma value for a fit. This can be done by passing multiple values to the argument <code>lambda</code>. If not supplied, <code>glmnet</code> will generate a range of values itself, based on the data whereby the number of values can be controlled with the <code>nlambda</code> argument. This is generally the recommended way to use <code>glmnet</code>, see <code>?glmnet</code> for details.</p>
+<p>For a thorough introduction to the <strong>glmnet</strong> package and elastic net models in general, see the <a href="https://cran.r-project.org/web/packages/glmnet/vignettes/glmnet.pdf">glmnet introduction vignette</a></p>
+<div id="demonstration-ridge-regression" class="section level2 unnumbered">
+<h2>Demonstration: Ridge regression</h2>
+<p>Let’s perform a ridge regression in order to predict expression levels of the TRIM32 gene using the 200 gene probes data. We can start by using a <span class="math inline">\(\gamma\)</span> value of 2.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>gamma &lt;-<span class="st"> </span><span class="dv">2</span></span>
+<span id="cb10-2"><a href="#cb10-2"></a>ridge_model &lt;-<span class="st"> </span><span class="kw">glmnet</span>(X, Y, <span class="dt">alpha =</span> <span class="dv">0</span>, <span class="dt">lambda =</span> gamma)</span>
+<span id="cb10-3"><a href="#cb10-3"></a></span>
+<span id="cb10-4"><a href="#cb10-4"></a><span class="co"># have a look at the first 10 coefficients</span></span>
+<span id="cb10-5"><a href="#cb10-5"></a><span class="kw">coef</span>(ridge_model)[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>]</span>
+<span id="cb10-6"><a href="#cb10-6"></a><span class="co">#&gt;  [1] -2.635697e-15 -5.818717e-03 -9.888023e-03  5.100910e-03 -2.482488e-03</span></span>
+<span id="cb10-7"><a href="#cb10-7"></a><span class="co">#&gt;  [6] -8.341285e-03 -4.528922e-03 -7.961890e-03 -5.039029e-03  6.325841e-03</span></span></code></pre></div>
+<p>The first coefficient is the intercept, and is again essentially 0. But a value of 2 for <span class="math inline">\(\gamma\)</span> might not be the best choice, so let’s see how the coefficients change with different values for <span class="math inline">\(\gamma\)</span>.</p>
+<p>We will create a <em>grid</em> of <span class="math inline">\(\gamma\)</span> values, i.e. a range of values that will be used as input for the <code>glmnet</code> function. Note that this function can take a vector of values as input for the <code>lambda</code> argument, allowing to fit multiple models with the same input data but different hyperparameters.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>grid &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dv">1</span>, <span class="dv">1000</span>, <span class="dt">by =</span> <span class="dv">10</span>)  <span class="co"># 1 to 1000 with steps of 10</span></span>
+<span id="cb11-2"><a href="#cb11-2"></a>ridge_mod_grid &lt;-<span class="st"> </span><span class="kw">glmnet</span>(X, Y, <span class="dt">alpha =</span> <span class="dv">0</span>, <span class="dt">lambda =</span> grid)</span>
+<span id="cb11-3"><a href="#cb11-3"></a></span>
+<span id="cb11-4"><a href="#cb11-4"></a><span class="co"># Plot the coefficients against the (natural) LOG lambda sequence!</span></span>
+<span id="cb11-5"><a href="#cb11-5"></a><span class="co"># see ?plot.glmnet</span></span>
+<span id="cb11-6"><a href="#cb11-6"></a><span class="kw">plot</span>(ridge_mod_grid, <span class="dt">xvar =</span> <span class="st">&quot;lambda&quot;</span>, <span class="dt">xlab =</span> <span class="st">&quot;log(gamma)&quot;</span>)</span>
+<span id="cb11-7"><a href="#cb11-7"></a><span class="co"># add a vertical line at gamma = 2</span></span>
+<span id="cb11-8"><a href="#cb11-8"></a><span class="kw">text</span>(<span class="kw">log</span>(gamma), <span class="fl">-0.05</span>, <span class="dt">labels =</span> <span class="kw">expression</span>(gamma <span class="op">==</span><span class="st"> </span><span class="dv">2</span>), </span>
+<span id="cb11-9"><a href="#cb11-9"></a>     <span class="dt">adj =</span> <span class="fl">-0.5</span>, <span class="dt">col =</span> <span class="st">&quot;firebrick&quot;</span>)</span>
+<span id="cb11-10"><a href="#cb11-10"></a><span class="kw">abline</span>(<span class="dt">v =</span> <span class="kw">log</span>(gamma), <span class="dt">col =</span> <span class="st">&quot;firebrick&quot;</span>, <span class="dt">lwd =</span> <span class="dv">2</span>)</span></code></pre></div>
+<p><img src="Lab3-Penalized-Regression_files/figure-html/ridge-regression-grid-search-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>This plot is known as a <strong>coefficient profile plot</strong>, each colored line represents a coefficient <span class="math inline">\(\hat{\beta}\)</span> from the regression model and shows how they change with increased values of <span class="math inline">\(\gamma\)</span> (on the log-scale) <a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>.</p>
+<p>Note that for higher values <span class="math inline">\(\gamma\)</span>, the coefficient estimates become closer to 0, showing the <em>shrinkage</em> effect of the ridge penalty.</p>
+<p>Similar to the PC regression example, we chose <span class="math inline">\(\gamma=2\)</span> and the grid rather arbitrarily. We will see subsequently, how to choose <span class="math inline">\(\gamma\)</span> that minimizes the prediction error.</p>
+</div>
+</div>
+<div id="exercise-lasso-regression" class="section level1">
+<h1><span class="header-section-number">6</span> Exercise: Lasso regression</h1>
+<p>Lasso regression is also a form of penalized regression, but we do not have an analytic solution of <span class="math inline">\(\hat{{\boldsymbol{\beta}}}\)</span> as in least squares and ridge regression. In order to fit a lasso model, we once again use the <code>glmnet()</code> function. However, this time we use the argument <code>alpha = 1</code></p>
+<div id="tasks-1" class="section level2 unnumbered">
+<h2>Tasks</h2>
+<div id="verify-that-setting-alpha-1-indeed-corresponds-to-lasso-regression-using-the-equations-from-section-3." class="section level4 unnumbered">
+<h4>1. Verify that setting <code>alpha = 1</code> indeed corresponds to lasso regression using the equations from <a href="#elnet-theory">Section 3</a>.</h4>
+</div>
+<div id="perform-a-lasso-regression-with-the-glmnet-function-with-y-the-response-and-x-the-predictors." class="section level4 unnumbered">
+<h4>2. Perform a lasso regression with the <code>glmnet</code> function with <code>Y</code> the response and <code>X</code> the predictors.</h4>
+<p>You do not have to provide a custom sequence of <span class="math inline">\(\gamma\)</span> (<code>lambda</code>) values here but can instead rely on <code>glmnet</code>’s default behaviour of choosing the grid of <span class="math inline">\(\gamma\)</span> values based on the data (see <code>?glmnet</code> for more details).</p>
+<details>
+<p><summary>Solution</summary></p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="co"># Note that the glmnet() function can supply gamma automatically</span></span>
+<span id="cb12-2"><a href="#cb12-2"></a><span class="co"># By default it uses a sequence of 100 lambda values</span></span>
+<span id="cb12-3"><a href="#cb12-3"></a>lasso_model &lt;-<span class="st"> </span><span class="kw">glmnet</span>(X, Y, <span class="dt">alpha =</span> <span class="dv">1</span>)</span></code></pre></div>
+</details>
+</div>
+<div id="make-the-coefficient-profile-plot-and-interpret." class="section level4 unnumbered">
+<h4>3. Make the coefficient profile plot and interpret.</h4>
+<details>
+<p><summary>Solution</summary></p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="kw">plot</span>(lasso_model, <span class="dt">xvar =</span> <span class="st">&quot;lambda&quot;</span>, <span class="dt">xlab =</span> <span class="st">&quot;log(gamma)&quot;</span>)</span></code></pre></div>
+<p><img src="Lab3-Penalized-Regression_files/figure-html/unnamed-chunk-3-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>Note that the number of non-zero coefficients is indicated at the top of the plot. In the case of lasso-regression the regularization is much less smooth compared to the ridge regression, with some coefficients increasing for higher <span class="math inline">\(\gamma\)</span> before sharply dropping to zero. In contrast to ridge, lasso eventually shrinks all coefficients to 0.</p>
+</details>
+</div>
+</div>
+</div>
+<div id="evaluation-of-prediction-models-and-tuning-hyperparameters" class="section level1">
+<h1><span class="header-section-number">7</span> Evaluation of prediction models and tuning hyperparameters</h1>
+<p>First we will split our original data in a training and test set to validate our model. The training set will be used to train the model and tune the hyperparameters, while the test set will be used to evaluate the <strong>out-of-sample</strong> performance of our final model. If we would use the same data to both fit and test the model, we would get biased results.</p>
+<p>Before we begin, we use the <code>set.seed()</code> function in order to set a seed for R’s random number generator, so that we will all obtain precisely the same results as those shown below. It is generally good practice to set a random seed when performing an analysis such as cross-validation that contains an element of randomness, so that the results obtained can be reproduced at a later time.</p>
+<p>We begin by using the <code>sample()</code> function to split the set of samples into two subsets, by selecting a random subset of 80 observations out of the original 120 observations. We refer to these observations as the <strong>training</strong> set. The rest of the observations will be used as the <strong>test</strong> set.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="kw">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb14-2"><a href="#cb14-2"></a><span class="co"># Sample 80 random IDs from the rows of X (120 total)</span></span>
+<span id="cb14-3"><a href="#cb14-3"></a>trainID &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="kw">nrow</span>(X), <span class="dv">80</span>)</span>
+<span id="cb14-4"><a href="#cb14-4"></a></span>
+<span id="cb14-5"><a href="#cb14-5"></a><span class="co"># Training data</span></span>
+<span id="cb14-6"><a href="#cb14-6"></a>trainX &lt;-<span class="st"> </span>X[trainID, ]</span>
+<span id="cb14-7"><a href="#cb14-7"></a>trainY &lt;-<span class="st"> </span>Y[trainID]</span>
+<span id="cb14-8"><a href="#cb14-8"></a></span>
+<span id="cb14-9"><a href="#cb14-9"></a><span class="co"># Test data</span></span>
+<span id="cb14-10"><a href="#cb14-10"></a>testX &lt;-<span class="st"> </span>X[<span class="op">-</span>trainID, ]</span>
+<span id="cb14-11"><a href="#cb14-11"></a>testY &lt;-<span class="st"> </span>Y[<span class="op">-</span>trainID]</span></code></pre></div>
+<p>To make fitting the models a bit easier later, we will also create 2 data.frames combining the response and predictors for the training and test data.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>train_data &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="st">&quot;TRIM32&quot;</span> =<span class="st"> </span>trainY, trainX)</span>
+<span id="cb15-2"><a href="#cb15-2"></a>test_data &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="st">&quot;TRIM32&quot;</span> =<span class="st"> </span>testY, testX)</span>
+<span id="cb15-3"><a href="#cb15-3"></a></span>
+<span id="cb15-4"><a href="#cb15-4"></a><span class="co">## Glancing at the data structure: for the first 10 columns only</span></span>
+<span id="cb15-5"><a href="#cb15-5"></a><span class="kw">str</span>(train_data[, <span class="dv">1</span><span class="op">:</span><span class="dv">10</span>])</span>
+<span id="cb15-6"><a href="#cb15-6"></a><span class="co">#&gt; &#39;data.frame&#39;:    80 obs. of  10 variables:</span></span>
+<span id="cb15-7"><a href="#cb15-7"></a><span class="co">#&gt;  $ TRIM32: num  0.564 0.231 0.215 -0.239 -0.226 ...</span></span>
+<span id="cb15-8"><a href="#cb15-8"></a><span class="co">#&gt;  $ X1377 : num  -0.1498 -0.254 -0.7058 0.1164 -0.0195 ...</span></span>
+<span id="cb15-9"><a href="#cb15-9"></a><span class="co">#&gt;  $ X1748 : num  -0.3063 -0.4263 -0.4714 -0.5319 -0.0733 ...</span></span>
+<span id="cb15-10"><a href="#cb15-10"></a><span class="co">#&gt;  $ X2487 : num  -0.3588 0.3651 0.0306 0.6907 -1.0774 ...</span></span>
+<span id="cb15-11"><a href="#cb15-11"></a><span class="co">#&gt;  $ X2679 : num  0.2111 -0.0638 -0.0614 -0.129 -0.5161 ...</span></span>
+<span id="cb15-12"><a href="#cb15-12"></a><span class="co">#&gt;  $ X2789 : num  -0.0347 0.8042 -0.0639 0.4437 -0.0162 ...</span></span>
+<span id="cb15-13"><a href="#cb15-13"></a><span class="co">#&gt;  $ X2875 : num  -0.469 -0.535 -0.656 0.134 0.138 ...</span></span>
+<span id="cb15-14"><a href="#cb15-14"></a><span class="co">#&gt;  $ X3244 : num  0.603 -0.639 0.813 -1.101 0.122 ...</span></span>
+<span id="cb15-15"><a href="#cb15-15"></a><span class="co">#&gt;  $ X3375 : num  0.2031 -0.00797 -0.22859 0.45933 -0.11757 ...</span></span>
+<span id="cb15-16"><a href="#cb15-16"></a><span class="co">#&gt;  $ X3732 : num  0.317 -0.517 -0.226 -1.508 0.132 ...</span></span></code></pre></div>
+<div id="model-evaluation" class="section level2">
+<h2><span class="header-section-number">7.1</span> Model evaluation</h2>
+<p>We are interested in the <strong>out-of-sample</strong> error of our models, i.e. how good our model does on unseen data. <strong>This will allow us to compare different <em>classes</em> of models</strong>. For continuous outcomes we will use the <strong>mean squared error (MSE)</strong> (or its square-root version, the RMSE).</p>
+<p>The evaluation will allow us to compare the performance of different types of models, e.g. PC regression, ridge regression and lasso regression, on our data. However, we still need to find the optimal model within each of these classes, by selecting the best hyperparameter (number of PCs for PC regression and <span class="math inline">\(\gamma\)</span> for lasso and ridge). For that we will use <a href="https://en.wikipedia.org/wiki/Cross-validation_(statistics)"><em><span class="math inline">\(k\)</span>-fold Cross Validation</em></a> on our training set.</p>
+</div>
+<div id="tuning-hyperparameters" class="section level2">
+<h2><span class="header-section-number">7.2</span> Tuning hyperparameters</h2>
+<p>The test set is only used to evaluate the <em>final</em> model. To achieve this final model, we need to find the optimal hyperparameters, i.e. the hyperparameters that best generalize the model to unseen data. We can estimate this by using <em>k-fold cross validation</em> (<span class="math inline">\(CV_k\)</span>) on the training data.</p>
+<p>The <span class="math inline">\(CV_k\)</span> estimates can be automatically computed for any generalized linear model (generated with <code>glm()</code> and by extension <code>glmnet()</code>) using the <code>cv.glm()</code> function from the <em><a href="https://CRAN.R-project.org/package=boot">boot</a></em> package.</p>
+</div>
+</div>
+<div id="example-pc-regression-evaluation" class="section level1">
+<h1><span class="header-section-number">8</span> Example: PC regression evaluation</h1>
+<p>We start with the PC regression and look for the optimal number of PCs that minimizes the MSE using <span class="math inline">\(k\)</span>-fold Cross validation. We then use this optimal number of PCs to train the final model and evaluate it on the test data.</p>
+<div id="k-fold-cross-validation-to-tune-number-of-components" class="section level2">
+<h2><span class="header-section-number">8.1</span> k-fold Cross Validation to tune number of components</h2>
+<p>Conveniently, the <code>pcr</code> function from the <code>pls</code> package has an implementation for k-fold Cross Validation. We simply need to set <code>validation = CV</code> and <code>segments = 20</code> to perform 20-fold Cross Validation with PC regression. If we don’t specify <code>ncomp</code>, <code>pcr</code> will select the maximum number of PCs that can be used for the CV.</p>
+<p>Note that our training data <code>trainX</code> consists of 80 observations (rows). If we perform 20-fold CV, that means we will split the data in 20 groups, so each group will consist of 4 observations. At each CV cycle, one group will be left out and the model will be trained on the remaining groups. This leaves us with 76 training observations for each CV cycle, so the maximal number of components that can be used in the linear regression is 75.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a><span class="co">## Set seed for reproducibility, kCV is a random process!</span></span>
+<span id="cb16-2"><a href="#cb16-2"></a><span class="kw">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb16-3"><a href="#cb16-3"></a></span>
+<span id="cb16-4"><a href="#cb16-4"></a>K &lt;-<span class="st"> </span><span class="dv">20</span></span>
+<span id="cb16-5"><a href="#cb16-5"></a></span>
+<span id="cb16-6"><a href="#cb16-6"></a><span class="co">## The &#39;Y ~ .&#39; notation means: fit Y by every other variable in the data</span></span>
+<span id="cb16-7"><a href="#cb16-7"></a>pcr_cv &lt;-<span class="st"> </span><span class="kw">pcr</span>(TRIM32 <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> train_data, <span class="dt">validation =</span> <span class="st">&quot;CV&quot;</span>, <span class="dt">segments =</span> K)</span>
+<span id="cb16-8"><a href="#cb16-8"></a><span class="kw">summary</span>(pcr_cv)</span>
+<span id="cb16-9"><a href="#cb16-9"></a><span class="co">#&gt; Data:    X dimension: 80 200 </span></span>
+<span id="cb16-10"><a href="#cb16-10"></a><span class="co">#&gt;  Y dimension: 80 1</span></span>
+<span id="cb16-11"><a href="#cb16-11"></a><span class="co">#&gt; Fit method: svdpc</span></span>
+<span id="cb16-12"><a href="#cb16-12"></a><span class="co">#&gt; Number of components considered: 75</span></span>
+<span id="cb16-13"><a href="#cb16-13"></a><span class="co">#&gt; </span></span>
+<span id="cb16-14"><a href="#cb16-14"></a><span class="co">#&gt; VALIDATION: RMSEP</span></span>
+<span id="cb16-15"><a href="#cb16-15"></a><span class="co">#&gt; Cross-validated using 20 random segments.</span></span>
+<span id="cb16-16"><a href="#cb16-16"></a><span class="co">#&gt;        (Intercept)  1 comps  2 comps  3 comps  4 comps  5 comps  6 comps</span></span>
+<span id="cb16-17"><a href="#cb16-17"></a><span class="co">#&gt; CV           1.112   0.7013   0.7305   0.7402   0.6939   0.6872   0.6811</span></span>
+<span id="cb16-18"><a href="#cb16-18"></a><span class="co">#&gt; adjCV        1.112   0.6987   0.7269   0.7375   0.6905   0.6810   0.6759</span></span>
+<span id="cb16-19"><a href="#cb16-19"></a><span class="co">#&gt;        7 comps  8 comps  9 comps  10 comps  11 comps  12 comps  13 comps</span></span>
+<span id="cb16-20"><a href="#cb16-20"></a><span class="co">#&gt; CV      0.6552   0.6812   0.6377    0.6418    0.6153    0.6126    0.6045</span></span>
+<span id="cb16-21"><a href="#cb16-21"></a><span class="co">#&gt; adjCV   0.6526   0.6772   0.6294    0.6347    0.6080    0.6050    0.5976</span></span>
+<span id="cb16-22"><a href="#cb16-22"></a><span class="co">#&gt;        14 comps  15 comps  16 comps  17 comps  18 comps  19 comps  20 comps</span></span>
+<span id="cb16-23"><a href="#cb16-23"></a><span class="co">#&gt; CV       0.6112    0.5882    0.5834    0.5784    0.5744    0.5752    0.5763</span></span>
+<span id="cb16-24"><a href="#cb16-24"></a><span class="co">#&gt; adjCV    0.6068    0.5788    0.5751    0.5702    0.5669    0.5681    0.5693</span></span>
+<span id="cb16-25"><a href="#cb16-25"></a><span class="co">#&gt;        21 comps  22 comps  23 comps  24 comps  25 comps  26 comps  27 comps</span></span>
+<span id="cb16-26"><a href="#cb16-26"></a><span class="co">#&gt; CV       0.5696    0.5654    0.5624    0.5711    0.5676    0.5691    0.5598</span></span>
+<span id="cb16-27"><a href="#cb16-27"></a><span class="co">#&gt; adjCV    0.5643    0.5608    0.5596    0.5735    0.5586    0.5619    0.5527</span></span>
+<span id="cb16-28"><a href="#cb16-28"></a><span class="co">#&gt;        28 comps  29 comps  30 comps  31 comps  32 comps  33 comps  34 comps</span></span>
+<span id="cb16-29"><a href="#cb16-29"></a><span class="co">#&gt; CV       0.5547    0.5441     0.542    0.5444    0.5416    0.5464    0.5497</span></span>
+<span id="cb16-30"><a href="#cb16-30"></a><span class="co">#&gt; adjCV    0.5491    0.5400     0.539    0.5399    0.5374    0.5426    0.5438</span></span>
+<span id="cb16-31"><a href="#cb16-31"></a><span class="co">#&gt;        35 comps  36 comps  37 comps  38 comps  39 comps  40 comps  41 comps</span></span>
+<span id="cb16-32"><a href="#cb16-32"></a><span class="co">#&gt; CV       0.5496    0.5582    0.5618    0.5892    0.5849    0.5929    0.6047</span></span>
+<span id="cb16-33"><a href="#cb16-33"></a><span class="co">#&gt; adjCV    0.5437    0.5533    0.5561    0.5844    0.5816    0.5882    0.5997</span></span>
+<span id="cb16-34"><a href="#cb16-34"></a><span class="co">#&gt;        42 comps  43 comps  44 comps  45 comps  46 comps  47 comps  48 comps</span></span>
+<span id="cb16-35"><a href="#cb16-35"></a><span class="co">#&gt; CV       0.6127    0.6098    0.6230    0.6204    0.6197    0.6299    0.6337</span></span>
+<span id="cb16-36"><a href="#cb16-36"></a><span class="co">#&gt; adjCV    0.6079    0.6086    0.6214    0.6109    0.6119    0.6211    0.6264</span></span>
+<span id="cb16-37"><a href="#cb16-37"></a><span class="co">#&gt;        49 comps  50 comps  51 comps  52 comps  53 comps  54 comps  55 comps</span></span>
+<span id="cb16-38"><a href="#cb16-38"></a><span class="co">#&gt; CV       0.6410    0.6326    0.6375    0.6595    0.6586    0.6599    0.6453</span></span>
+<span id="cb16-39"><a href="#cb16-39"></a><span class="co">#&gt; adjCV    0.6325    0.6250    0.6322    0.6544    0.6559    0.6548    0.6369</span></span>
+<span id="cb16-40"><a href="#cb16-40"></a><span class="co">#&gt;        56 comps  57 comps  58 comps  59 comps  60 comps  61 comps  62 comps</span></span>
+<span id="cb16-41"><a href="#cb16-41"></a><span class="co">#&gt; CV       0.6442    0.6380    0.6456    0.6389    0.6733    0.6544    0.6544</span></span>
+<span id="cb16-42"><a href="#cb16-42"></a><span class="co">#&gt; adjCV    0.6355    0.6264    0.6361    0.6327    0.6712    0.6555    0.6425</span></span>
+<span id="cb16-43"><a href="#cb16-43"></a><span class="co">#&gt;        63 comps  64 comps  65 comps  66 comps  67 comps  68 comps  69 comps</span></span>
+<span id="cb16-44"><a href="#cb16-44"></a><span class="co">#&gt; CV       0.6566    0.6638    0.6770    0.6657    0.6615    0.6697    0.6545</span></span>
+<span id="cb16-45"><a href="#cb16-45"></a><span class="co">#&gt; adjCV    0.6462    0.6549    0.6685    0.6586    0.6535    0.6634    0.6456</span></span>
+<span id="cb16-46"><a href="#cb16-46"></a><span class="co">#&gt;        70 comps  71 comps  72 comps  73 comps  74 comps  75 comps</span></span>
+<span id="cb16-47"><a href="#cb16-47"></a><span class="co">#&gt; CV       0.6435    0.6402    0.6229    0.6313     0.632    0.6192</span></span>
+<span id="cb16-48"><a href="#cb16-48"></a><span class="co">#&gt; adjCV    0.6361    0.6292    0.6134    0.6241     0.624    0.6113</span></span>
+<span id="cb16-49"><a href="#cb16-49"></a><span class="co">#&gt; </span></span>
+<span id="cb16-50"><a href="#cb16-50"></a><span class="co">#&gt; TRAINING: % variance explained</span></span>
+<span id="cb16-51"><a href="#cb16-51"></a><span class="co">#&gt;         1 comps  2 comps  3 comps  4 comps  5 comps  6 comps  7 comps  8 comps</span></span>
+<span id="cb16-52"><a href="#cb16-52"></a><span class="co">#&gt; X         64.80    72.80    75.38    77.61    79.16    80.58    81.86    82.97</span></span>
+<span id="cb16-53"><a href="#cb16-53"></a><span class="co">#&gt; TRIM32    68.18    68.55    68.58    72.27    76.46    77.04    77.85    79.04</span></span>
+<span id="cb16-54"><a href="#cb16-54"></a><span class="co">#&gt;         9 comps  10 comps  11 comps  12 comps  13 comps  14 comps  15 comps</span></span>
+<span id="cb16-55"><a href="#cb16-55"></a><span class="co">#&gt; X         83.86     84.66     85.44     86.12     86.77     87.37     87.93</span></span>
+<span id="cb16-56"><a href="#cb16-56"></a><span class="co">#&gt; TRIM32    83.13     83.27     84.03     84.48     84.78     84.96     86.27</span></span>
+<span id="cb16-57"><a href="#cb16-57"></a><span class="co">#&gt;         16 comps  17 comps  18 comps  19 comps  20 comps  21 comps  22 comps</span></span>
+<span id="cb16-58"><a href="#cb16-58"></a><span class="co">#&gt; X          88.45     88.95     89.43     89.90     90.33     90.75     91.14</span></span>
+<span id="cb16-59"><a href="#cb16-59"></a><span class="co">#&gt; TRIM32     86.27     86.38     86.42     86.43     86.45     86.45     86.56</span></span>
+<span id="cb16-60"><a href="#cb16-60"></a><span class="co">#&gt;         23 comps  24 comps  25 comps  26 comps  27 comps  28 comps  29 comps</span></span>
+<span id="cb16-61"><a href="#cb16-61"></a><span class="co">#&gt; X          91.51     91.87     92.22     92.57     92.89     93.20     93.50</span></span>
+<span id="cb16-62"><a href="#cb16-62"></a><span class="co">#&gt; TRIM32     86.63     86.66     88.26     88.26     88.42     88.45     88.51</span></span>
+<span id="cb16-63"><a href="#cb16-63"></a><span class="co">#&gt;         30 comps  31 comps  32 comps  33 comps  34 comps  35 comps  36 comps</span></span>
+<span id="cb16-64"><a href="#cb16-64"></a><span class="co">#&gt; X          93.78     94.05     94.31     94.57     94.82     95.05     95.28</span></span>
+<span id="cb16-65"><a href="#cb16-65"></a><span class="co">#&gt; TRIM32     88.60     88.89     89.14     89.22     89.49     89.57     89.59</span></span>
+<span id="cb16-66"><a href="#cb16-66"></a><span class="co">#&gt;         37 comps  38 comps  39 comps  40 comps  41 comps  42 comps  43 comps</span></span>
+<span id="cb16-67"><a href="#cb16-67"></a><span class="co">#&gt; X          95.50     95.72     95.92     96.13     96.33     96.51     96.69</span></span>
+<span id="cb16-68"><a href="#cb16-68"></a><span class="co">#&gt; TRIM32     89.83     89.84     89.92     90.20     90.37     90.52     90.60</span></span>
+<span id="cb16-69"><a href="#cb16-69"></a><span class="co">#&gt;         44 comps  45 comps  46 comps  47 comps  48 comps  49 comps  50 comps</span></span>
+<span id="cb16-70"><a href="#cb16-70"></a><span class="co">#&gt; X          96.86     97.03     97.19     97.34     97.49     97.63     97.77</span></span>
+<span id="cb16-71"><a href="#cb16-71"></a><span class="co">#&gt; TRIM32     90.90     91.92     91.93     92.07     92.09     92.29     92.47</span></span>
+<span id="cb16-72"><a href="#cb16-72"></a><span class="co">#&gt;         51 comps  52 comps  53 comps  54 comps  55 comps  56 comps  57 comps</span></span>
+<span id="cb16-73"><a href="#cb16-73"></a><span class="co">#&gt; X          97.90     98.03     98.15     98.27     98.38     98.49     98.59</span></span>
+<span id="cb16-74"><a href="#cb16-74"></a><span class="co">#&gt; TRIM32     92.47     92.53     92.57     93.42     94.03     94.31     94.77</span></span>
+<span id="cb16-75"><a href="#cb16-75"></a><span class="co">#&gt;         58 comps  59 comps  60 comps  61 comps  62 comps  63 comps  64 comps</span></span>
+<span id="cb16-76"><a href="#cb16-76"></a><span class="co">#&gt; X          98.70     98.80     98.89     98.98     99.06     99.15     99.23</span></span>
+<span id="cb16-77"><a href="#cb16-77"></a><span class="co">#&gt; TRIM32     94.82     94.85     94.86     94.89     96.55     96.69     96.72</span></span>
+<span id="cb16-78"><a href="#cb16-78"></a><span class="co">#&gt;         65 comps  66 comps  67 comps  68 comps  69 comps  70 comps  71 comps</span></span>
+<span id="cb16-79"><a href="#cb16-79"></a><span class="co">#&gt; X          99.30     99.38     99.45     99.51     99.57     99.63     99.68</span></span>
+<span id="cb16-80"><a href="#cb16-80"></a><span class="co">#&gt; TRIM32     96.76     96.99     97.40     97.47     97.98     98.00     98.60</span></span>
+<span id="cb16-81"><a href="#cb16-81"></a><span class="co">#&gt;         72 comps  73 comps  74 comps  75 comps</span></span>
+<span id="cb16-82"><a href="#cb16-82"></a><span class="co">#&gt; X          99.73     99.78     99.82     99.87</span></span>
+<span id="cb16-83"><a href="#cb16-83"></a><span class="co">#&gt; TRIM32     98.75     98.77     99.04     99.22</span></span></code></pre></div>
+<p>We can plot the <em>root mean squared error of prediction</em> (RMSEP) for each number of components as follows.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="kw">plot</span>(pcr_cv, <span class="dt">plottype =</span> <span class="st">&quot;validation&quot;</span>)</span></code></pre></div>
+<p><img src="Lab3-Penalized-Regression_files/figure-html/pcr_cv-plot-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>The <code>pls</code> package also has a function <code>selectNcomp</code> to select the optimal number of components. Here we use the “one-sigma” method, which returns the lowest number of components for which the RMSE is within one standard error of the absolute minimum. The function also allows plotting the result by specifying <code>plot = TRUE</code>.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a>optimal_ncomp &lt;-<span class="st"> </span><span class="kw">selectNcomp</span>(pcr_cv, <span class="dt">method =</span> <span class="st">&quot;onesigma&quot;</span>, <span class="dt">plot =</span> <span class="ot">TRUE</span>)</span></code></pre></div>
+<p><img src="Lab3-Penalized-Regression_files/figure-html/pcr-optimal-ncomp-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>This outcome shows us that the optimal number of components for our model is 13.</p>
+</div>
+<div id="validation-on-test-data" class="section level2">
+<h2><span class="header-section-number">8.2</span> Validation on test data</h2>
+<p>We now use our optimal number of components to train the final PCR model. This model is then validated on by generating predictions for the test data and calculating the MSE.</p>
+<p>We define a custom function to calculate the MSE. Note that there is also an <code>MSEP</code> function in the <code>pls</code> package which does the prediction and MSE calculation in one go. But our own function will come in handy later for lasso and ridge regression.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a><span class="co"># Mean Squared Error</span></span>
+<span id="cb19-2"><a href="#cb19-2"></a><span class="co">## obs: observations; pred: predictions</span></span>
+<span id="cb19-3"><a href="#cb19-3"></a>MSE &lt;-<span class="st"> </span><span class="cf">function</span>(obs, pred){</span>
+<span id="cb19-4"><a href="#cb19-4"></a>  <span class="kw">mean</span>((<span class="kw">drop</span>(obs) <span class="op">-</span><span class="st"> </span><span class="kw">drop</span>(pred))<span class="op">^</span><span class="dv">2</span>)</span>
+<span id="cb19-5"><a href="#cb19-5"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a>final_pcr_model &lt;-<span class="st"> </span><span class="kw">pcr</span>(TRIM32 <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> train_data, <span class="dt">ncomp =</span> optimal_ncomp)</span>
+<span id="cb20-2"><a href="#cb20-2"></a>pcr_preds &lt;-<span class="st"> </span><span class="kw">predict</span>(final_pcr_model, <span class="dt">newdata =</span> test_data, <span class="dt">ncomp =</span> optimal_ncomp)</span>
+<span id="cb20-3"><a href="#cb20-3"></a>(pcr_mse &lt;-<span class="st"> </span><span class="kw">MSE</span>(testY, pcr_preds))</span>
+<span id="cb20-4"><a href="#cb20-4"></a><span class="co">#&gt; [1] 0.3655052</span></span></code></pre></div>
+<p>This value on its own does not tell us very much, but we can use it to compare our PCR model with other types of models later.</p>
+<p>Finally, we plot the predicted values for our response variable (the TRIM32 gene expression) against the actual observed values from our test set.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a><span class="kw">predplot</span>(final_pcr_model, <span class="dt">newdata =</span> test_data, <span class="dt">line =</span> <span class="ot">TRUE</span>)</span></code></pre></div>
+<p><img src="Lab3-Penalized-Regression_files/figure-html/pcr-predplot-1.png" width="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="exercise-evaluate-and-compare-prediction-models" class="section level1">
+<h1><span class="header-section-number">9</span> Exercise: evaluate and compare prediction models</h1>
+<div id="perform-a-lasso-regression-with-20-fold-cross-validation-on-the-training-data-trainx-trainy.-plot-the-results-and-select-the-optimal-lambda-gamma-parameter.-fit-a-final-model-with-the-selected-lambda-and-validate-it-on-the-test-data." class="section level4 unnumbered">
+<h4>1. Perform a lasso regression with 20-fold Cross Validation on the training data (<code>trainX</code>, <code>trainY</code>). Plot the results and select the optimal <code>lambda</code> (<span class="math inline">\(\gamma\)</span>) parameter. Fit a final model with the selected <code>lambda</code> and validate it on the test data.</h4>
+<p><em>Hint</em>: use the <code>cv.glmnet()</code> function, for 20 folds CV, set <code>nfolds = 20</code> and to use the MSE metric set <code>type.measure = "mse"</code>. Go to <code>?cv.glmnet</code> for details.</p>
+<details>
+<p><summary>Solution</summary></p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a><span class="kw">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb22-2"><a href="#cb22-2"></a>lasso_cv &lt;-<span class="st"> </span><span class="kw">cv.glmnet</span>(trainX, trainY, <span class="dt">alpha =</span> <span class="dv">1</span>, </span>
+<span id="cb22-3"><a href="#cb22-3"></a>                      <span class="dt">nfolds =</span> K, <span class="dt">type.measure =</span> <span class="st">&quot;mse&quot;</span>)</span>
+<span id="cb22-4"><a href="#cb22-4"></a>lasso_cv</span>
+<span id="cb22-5"><a href="#cb22-5"></a><span class="co">#&gt; </span></span>
+<span id="cb22-6"><a href="#cb22-6"></a><span class="co">#&gt; Call:  cv.glmnet(x = trainX, y = trainY, type.measure = &quot;mse&quot;, nfolds = K,      alpha = 1) </span></span>
+<span id="cb22-7"><a href="#cb22-7"></a><span class="co">#&gt; </span></span>
+<span id="cb22-8"><a href="#cb22-8"></a><span class="co">#&gt; Measure: Mean-Squared Error </span></span>
+<span id="cb22-9"><a href="#cb22-9"></a><span class="co">#&gt; </span></span>
+<span id="cb22-10"><a href="#cb22-10"></a><span class="co">#&gt;      Lambda Measure     SE Nonzero</span></span>
+<span id="cb22-11"><a href="#cb22-11"></a><span class="co">#&gt; min 0.07559  0.3639 0.0750      16</span></span>
+<span id="cb22-12"><a href="#cb22-12"></a><span class="co">#&gt; 1se 0.16668  0.4353 0.1646       9</span></span>
+<span id="cb22-13"><a href="#cb22-13"></a><span class="kw">plot</span>(lasso_cv)</span></code></pre></div>
+<p><img src="Lab3-Penalized-Regression_files/figure-html/lasso-cv-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>Note that we can extract the fitted lasso regression object from the CV result and make the coefficient profile plot as before.</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a><span class="kw">plot</span>(lasso_cv<span class="op">$</span>glmnet.fit, <span class="dt">xvar =</span> <span class="st">&quot;lambda&quot;</span>)</span></code></pre></div>
+<p><img src="Lab3-Penalized-Regression_files/figure-html/lasso-cv-coefficient-profile-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>We can look for the gamma values that give the best result. Here you have two possibilities :</p>
+<ol style="list-style-type: decimal">
+<li><code>lambda.min</code>: the value of <span class="math inline">\(\gamma\)</span> that gives the best result for the crossvalidation.</li>
+<li><code>lambda.1se</code>: the largest value of <span class="math inline">\(\gamma\)</span> such that the MSE is within 1 standard error of the best result from the cross validation.</li>
+</ol>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a>lasso_cv<span class="op">$</span>lambda.min</span>
+<span id="cb24-2"><a href="#cb24-2"></a><span class="co">#&gt; [1] 0.07558811</span></span>
+<span id="cb24-3"><a href="#cb24-3"></a>lasso_cv<span class="op">$</span>lambda<span class="fl">.1</span>se</span>
+<span id="cb24-4"><a href="#cb24-4"></a><span class="co">#&gt; [1] 0.1666817</span></span></code></pre></div>
+<p>We will (rather arbitrarily) use <code>lambda.min</code> here to fit the final model and generate predictions on the test data. Note that we don’t actually have to redo the fitting, we can just use our existing <code>lasso_cv</code> object, which already contains the fitted models for a range of <code>lambda</code> values. We can use the <code>predict</code> function and specify the <code>s</code> argument (which confusingly sets <code>lambda</code> in this case) to make predictions on the test data.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a>lasso_preds &lt;-<span class="st"> </span><span class="kw">predict</span>(lasso_cv, <span class="dt">s =</span> lasso_cv<span class="op">$</span>lambda.min, <span class="dt">newx =</span> testX)</span>
+<span id="cb25-2"><a href="#cb25-2"></a><span class="co">## Calculate MSE</span></span>
+<span id="cb25-3"><a href="#cb25-3"></a>(lasso_mse &lt;-<span class="st"> </span><span class="kw">MSE</span>(testY, lasso_preds))</span>
+<span id="cb25-4"><a href="#cb25-4"></a><span class="co">#&gt; [1] 0.3754368</span></span></code></pre></div>
+</details>
+</div>
+<div id="do-the-same-for-ridge-regression." class="section level4 unnumbered">
+<h4>2. Do the same for ridge regression.</h4>
+<details>
+<p><summary>Solution</summary></p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1"></a><span class="kw">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb26-2"><a href="#cb26-2"></a>ridge_cv &lt;-<span class="st"> </span><span class="kw">cv.glmnet</span>(trainX, trainY, <span class="dt">alpha =</span> <span class="dv">0</span>, </span>
+<span id="cb26-3"><a href="#cb26-3"></a>                      <span class="dt">nfolds =</span> K, <span class="dt">type.measure =</span> <span class="st">&quot;mse&quot;</span>)</span>
+<span id="cb26-4"><a href="#cb26-4"></a>ridge_cv</span>
+<span id="cb26-5"><a href="#cb26-5"></a><span class="co">#&gt; </span></span>
+<span id="cb26-6"><a href="#cb26-6"></a><span class="co">#&gt; Call:  cv.glmnet(x = trainX, y = trainY, type.measure = &quot;mse&quot;, nfolds = K,      alpha = 0) </span></span>
+<span id="cb26-7"><a href="#cb26-7"></a><span class="co">#&gt; </span></span>
+<span id="cb26-8"><a href="#cb26-8"></a><span class="co">#&gt; Measure: Mean-Squared Error </span></span>
+<span id="cb26-9"><a href="#cb26-9"></a><span class="co">#&gt; </span></span>
+<span id="cb26-10"><a href="#cb26-10"></a><span class="co">#&gt;     Lambda Measure     SE Nonzero</span></span>
+<span id="cb26-11"><a href="#cb26-11"></a><span class="co">#&gt; min   9.32  0.4648 0.1182     200</span></span>
+<span id="cb26-12"><a href="#cb26-12"></a><span class="co">#&gt; 1se  43.25  0.5820 0.2131     200</span></span>
+<span id="cb26-13"><a href="#cb26-13"></a><span class="kw">plot</span>(ridge_cv)</span></code></pre></div>
+<p><img src="Lab3-Penalized-Regression_files/figure-html/ridge-cv-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>Note that we can extract the fitted ridge regression object from the CV result and make the coefficient profile plot as before.</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a><span class="kw">plot</span>(ridge_cv<span class="op">$</span>glmnet.fit, <span class="dt">xvar =</span> <span class="st">&quot;lambda&quot;</span>)</span></code></pre></div>
+<p><img src="Lab3-Penalized-Regression_files/figure-html/ridge-cv-coefficient-profile-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>We can look for the gamma values that give the best result. Here you have two possibilities :</p>
+<ol style="list-style-type: decimal">
+<li><code>lambda.min</code>: the value of <span class="math inline">\(\gamma\)</span> that gives the best result for the crossvalidation.</li>
+<li><code>lambda.1se</code>: the largest value of <span class="math inline">\(\gamma\)</span> such that the MSE is within 1 standard error of the best result from the cross validation.</li>
+</ol>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1"></a>ridge_cv<span class="op">$</span>lambda.min</span>
+<span id="cb28-2"><a href="#cb28-2"></a><span class="co">#&gt; [1] 9.318855</span></span>
+<span id="cb28-3"><a href="#cb28-3"></a>ridge_cv<span class="op">$</span>lambda<span class="fl">.1</span>se</span>
+<span id="cb28-4"><a href="#cb28-4"></a><span class="co">#&gt; [1] 43.25429</span></span></code></pre></div>
+<p>We will (rather arbitrarily) use <code>lambda.min</code> here to fit the final model and generate predictions on the test data. Note that we don’t actually have to redo the fitting, we can just use our existing <code>ridge_cv</code> object, which already contains the fitted models for a range of <code>lambda</code> values. We can use the <code>predict</code> function and specify the <code>s</code> argument (which confusingly sets <code>lambda</code> in this case) to make predictions on the test data.</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1"></a>ridge_preds &lt;-<span class="st"> </span><span class="kw">predict</span>(ridge_cv, <span class="dt">s =</span> ridge_cv<span class="op">$</span>lambda.min, <span class="dt">newx =</span> testX)</span>
+<span id="cb29-2"><a href="#cb29-2"></a><span class="co">## Calculate MSE</span></span>
+<span id="cb29-3"><a href="#cb29-3"></a>(ridge_mse &lt;-<span class="st"> </span><span class="kw">MSE</span>(testY, ridge_preds))</span>
+<span id="cb29-4"><a href="#cb29-4"></a><span class="co">#&gt; [1] 0.3066121</span></span></code></pre></div>
+</details>
+</div>
+<div id="which-of-the-models-considered-pcr-lasso-ridge-performs-best." class="section level4 unnumbered">
+<h4>3. Which of the models considered (PCR, lasso, ridge) performs best?.</h4>
+<details>
+<p><summary>Solution</summary></p>
+<p>Based on the MSE, the ridge model performs best on the test data.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Model</th>
+<th align="right">MSE</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">PCR</td>
+<td align="right">0.3655052</td>
+</tr>
+<tr class="even">
+<td align="left">Lasso</td>
+<td align="right">0.3754368</td>
+</tr>
+<tr class="odd">
+<td align="left">Ridge</td>
+<td align="right">0.3066121</td>
+</tr>
+</tbody>
+</table>
+</details>
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Note: <code>log()</code> in R is the <strong>natural logarithm</strong> by default (base <span class="math inline">\(e\)</span>) and we will also use this notation in the text (like the x-axis title on the plot above). This might be different from the notation that you’re used to (<span class="math inline">\(\ln()\)</span>). To take logarithms with a different base in R you can specify the <code>base =</code> argument of <code>log</code> or use the shorthand functions <code>log10(x)</code> and <code>log2(x)</code> for base 10 and 2, respectively<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
+
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiQW5hbHlzaXMgb2YgSGlnaCBEaW1lbnNpb25hbCBEYXRhIC0gTGFiIDMiCnN1YnRpdGxlOiAiUGVuYWxpemVkIHJlZ3Jlc3Npb24gdGVjaG5pcXVlcyBmb3IgaGlnaC1kaW1lbnNpb25hbCBkYXRhIgphdXRob3I6ICJBZGFwdGVkIGJ5IE1pbGFuIE1hbGZhaXQiCmRhdGU6ICIwNSBOb3YgMjAyMCIKLS0tCgpgYGB7ciBzZXR1cCwgaW5jbHVkZT1GQUxTRSwgY2FjaGU9RkFMU0V9CmtuaXRyOjpvcHRzX2NodW5rJHNldCgKICBjb2xsYXBzZSA9IFRSVUUsCiAgY29tbWVudCA9ICIjPiIsCiAgZmlnLmFsaWduID0gImNlbnRlciIsCiAgb3V0LndpZHRoID0gIjEwMCUiCikKb3B0aW9ucygKICB3YXJuUGFydGlhbE1hdGNoRG9sbGFyID0gRkFMU0UsCiAgd2FyblBhcnRpYWxNYXRjaEF0dHIgPSBGQUxTRSwKICB3YXJuUGFydGlhbE1hdGNoQXJncyA9IEZBTFNFCikKYGBgCgoqKioKCmBgYHtyIGxpYnJhcmllcywgd2FybmluZz1GQUxTRSwgbWVzc2FnZT1GQUxTRX0KIyMgaW5zdGFsbCBwYWNrYWdlcyB3aXRoOgojIyBpbnN0YWxsLnBhY2thZ2VzKGMoImdsbW5ldCIsICJwbHMiLCAiTm9ybWFsQmV0YVByaW1lIiwgImJvb3QiKSkKbGlicmFyeShOb3JtYWxCZXRhUHJpbWUpCmxpYnJhcnkoZ2xtbmV0KQpsaWJyYXJ5KHBscykKbGlicmFyeShib290KQpgYGAKCgojIEludHJvZHVjdGlvbgoKKipJbiB0aGlzIGxhYiBzZXNzaW9uIHdlIHdpbGwgbG9vayBhdCB0aGUgZm9sbG93aW5nIHRvcGljcyoqCgogIC0gRGVtb25zdHJhdGUgd2h5IGxvdyBkaW1lbnNpb25hbCBwcmVkaWN0aW9uIG1vZGVsaW5nIGZhaWxzIGluIGhpZ2ggZGltZW5zaW9uLgogIC0gQ2Fycnkgb3V0IFByaW5jaXBhbCBDb21wb25lbnQgUmVncmVzc2lvbiAoUENSKQogIC0gVXNlIGBnbG1uZXQoKWAgdG8gY2Fycnkgb3V0IHJpZGdlIHJlZ3Jlc3Npb24sIGxhc3NvIGFuZCBlbGFzdGljIG5ldAogIC0gRXZhbHVhdGlvbiBvZiB0aGVzZSBwcmVkaWN0aW9uIG1vZGVscwogIAoKIyMgVGhlIGRhdGFzZXQKCkluIHRoaXMgcHJhY3RpY2FsLCB3ZSB3aWxsIHVzZSB0aGUgZGF0YXNldCBgZXllZGF0YWAgcHJvdmlkZWQgYnkKdGhlIFtfX05vcm1hbEJldGFQcmltZV9fIHBhY2thZ2VdKGh0dHBzOi8vY3Jhbi5yLXByb2plY3Qub3JnL3dlYi9wYWNrYWdlcy9Ob3JtYWxCZXRhUHJpbWUvaW5kZXguaHRtbCkuClRoaXMgZGF0YXNldCBjb250YWlucyBnZW5lIGV4cHJlc3Npb24gZGF0YSBvZiAyMDAKZ2VuZXMgZm9yIDEyMCBzYW1wbGVzLiBUaGUgZGF0YSBvcmlnaW5hdGVzIGZyb20gbWljcm9hcnJheSBleHBlcmltZW50cwpvZiBtYW1tYWxpYW4gZXllIHRpc3N1ZSBzYW1wbGVzLgoKVGhlIGRhdGFzZXQgY29uc2lzdHMgb2YgdHdvIG9iamVjdHM6CgogIC0gYGdlbmVzYDogYSAkMTIwIFx0aW1lcyAyMDAkIG1hdHJpeCB3aXRoIHRoZSBleHByZXNzaW9uIGxldmVscyBvZiAyMDAgZ2VuZXMKICAoY29sdW1ucykgZm9yIDEyMCBzYW1wbGVzIChyb3dzKQogIC0gYHRyaW0zMmA6IGEgdmVjdG9yIHdpdGggMTIwIGV4cHJlc3Npb24gbGV2ZWxzIG9mIHRoZSBUUklNMzIgZ2VuZS4KCgpgYGB7ciBsb2FkLWRhdGF9CmRhdGEoZXllZGF0YSkKIyMgTG9vayBhdCBvYmplY3RzIHRoYXQgd2VyZSBqdXN0IGxvYWRlZApzdHIoZ2VuZXMpCnN0cih0cmltMzIpCmBgYAoKVGhlIGdvYWwgb2YgdGhpcyBleGVyY2lzZSBpcyB0byBwcmVkaWN0IHRoZSBleHByZXNzaW9uIGxldmVscyBvZgpUUklNMzIgZnJvbSB0aGUgZXhwcmVzc2lvbiBsZXZlbHMgb2YgdGhlIDIwMCBnZW5lcyBtZWFzdXJlZCBpbiB0aGUKbWljcm9hcnJheSBleHBlcmltZW50LiBGb3IgdGhpcywgaXQgbWFrZXMgc2Vuc2UgdG8gc3RhcnQgYnkgY29uc3RydWN0aW5nCmNlbnRlcmVkIChhbmQgcG9zc2libHkgc2NhbGVkKSBkYXRhLiBXZSBzdG9yZSB0aGlzIGluIHR3byBtYXRyaWNlcwpgWGAgYW5kIGBZYDoKCmBgYHtyIHByZXBhcmUtZGF0YX0KWCA8LSBzY2FsZShnZW5lcywgY2VudGVyID0gVFJVRSwgc2NhbGUgPSBUUlVFKSAKWSA8LSBzY2FsZSh0cmltMzIsIGNlbnRlciA9IFRSVUUpCmBgYAoKUmVtZW1iZXIgdGhhdCBzY2FsaW5nIGF2b2lkcyB0aGF0IGRpZmZlcmVuY2VzIGluIGxldmVscyBvZiBtYWduaXR1ZGUKd2lsbCBnaXZlIG9uZSB2YXJpYWJsZSAoZ2VuZSkgbW9yZSBpbmZsdWVuY2UgaW4gdGhlIHJlc3VsdC4gVGhpcyBoYXMKYmVlbiBpbGx1c3RyYXRlZCBpbiB0aGUgW3NlY29uZCBwcmFjdGljYWwgc2Vzc2lvbl0oLi9MYWIyLVBDQS5odG1sKSBhcyB3ZWxsLgpGb3IgdGhlIGBZYCB2ZWN0b3IsIHRoaXMgaXMgbGVzcyBvZiBhbiBpc3N1ZSBhcyB3ZSdyZSB0YWxraW5nIGFib3V0IGEgc2luZ2xlIHZhcmlhYmxlLgpOb3Qgc2NhbGluZyB3aWxsIG1ha2UgdGhlIHByZWRpY3Rpb25zIGludGVycHJldGFibGUgYXMgImRldmlhdGlvbnMgZnJvbSB0aGUKbWVhbiIuCgojIyBUaGUgY3Vyc2Ugb2Ygc2luZ3VsYXJpdHkKCldlIGJlZ2luIGJ5IGFzc3VtaW5nIHRoYXQgdGhlIHByZWRpY3RvcnMgYW5kIHRoZSBvdXRjb21lIGhhdmUgYmVlbgpjZW50ZXJlZCBzbyB0aGF0IHRoZSBpbnRlcmNlcHQgaXMgMC4KV2UgYXJlIHByZXNlbnRlZCB3aXRoIHRoZSB1c3VhbCByZWdyZXNzaW9uIG1vZGVsOgoKJCQKWV9pPVxiZXRhX2kgWF97aTF9K1xkb3RzK1xiZXRhX3BYX3tpcH0rXGVwc2lsb25faSBcXCAKXHRleHR7IE9yIH0gXG1hdGhiZntZfT17XG1hdGhiZntYfX17XGJvbGRzeW1ib2x7XGJldGF9fSAre1xib2xkc3ltYm9se1xlcHNpbG9ufX0KJCQKCk91ciBnb2FsIGlzIHRvIGdldCB0aGUgbGVhc3Qgc3F1YXJlcyBlc3RpbWF0b3Igb2YKJHtcYm9sZHN5bWJvbHtcYmV0YX19JCwgZ2l2ZW4gYnkKCiQkClxoYXR7e1xib2xkc3ltYm9se1xiZXRhfX19PSAoXG1hdGhiZntYfV5Ue1xtYXRoYmZ7WH19KV57LTF9e1xtYXRoYmZ7WH19XlR7XG1hdGhiZntZfX0KJCQKCmluIHdoaWNoIHRoZSAkcCBcdGltZXMgcCQgbWF0cml4CiQoe1xtYXRoYmZ7WH19XlR7XG1hdGhiZntYfX0pXnstMX0kIGlzIGNydWNpYWwhClRvIGJlIGFibGUgdG8gY2FsY3VsYXRlIHRoZSBpbnZlcnNlIG9mICR7XG1hdGhiZntYfX1eVCBcbWF0aGJme1h9JCwKaXQgaGFzIHRvIGJlIG9mIGZ1bGwgcmFuayAkcCQsIHdoaWNoIHdvdWxkIGJlIDIwMCBpbiB0aGlzIGNhc2UuCkxldCdzIGNoZWNrIHRoaXM6CgpgYGB7ciBzaW5ndWxhcml0eS1wcm9ibGVtLCBlcnJvcj1UUlVFfQpkaW0oWCkgIyAxMjAgeCAyMDAsIHNvIHAgPiBuIQpxcihYKSRyYW5rCgpYdFggPC0gY3Jvc3Nwcm9kKFgpICMgY2FsY3VsYXRlcyB0KFgpICUqJSBYIG1vcmUgZWZmaWNpZW50bHkKcXIoWHRYKSRyYW5rCgojIFRyeSB0byBpbnZlcnQgdXNpbmcgc29sdmU6IApzb2x2ZShYdFgpCmBgYAoKV2UgcmVhbGl6ZSB3ZSBjYW5ub3QgY29tcHV0ZQokKHtcbWF0aGJme1h9fV5Ue1xtYXRoYmZ7WH19KV57LTF9JCBiZWNhdXNlIHRoZSByYW5rIG9mCiQoe1xtYXRoYmZ7WH19XlR7XG1hdGhiZntYfX0pJCBpcyBsZXNzIHRoYW4gJHAkIGhlbmNlIHdlIGNhbuKAmXQKZ2V0ICRcaGF0e3tcYm9sZHN5bWJvbHtcYmV0YX19fSQgYnkgbWVhbnMgb2YgbGVhc3Qgc3F1YXJlcyEgClRoaXMgaXMgZ2VuZXJhbGx5IHJlZmVycmVkIHRvIGFzIHRoZSBfX1tzaW5ndWxhcml0eV0oaHR0cHM6Ly93d3cuc3RhdGlzdGljcy5jb20vZ2xvc3Nhcnkvc2luZ3VsYXJpdHkvKSBwcm9ibGVtX18uCgoKIyBQcmluY2lwYWwgY29tcG9uZW50IHJlZ3Jlc3Npb24KCkEgZmlyc3Qgd2F5IHRvIGRlYWwgd2l0aCB0aGlzIHNpbmd1bGFyaXR5LCBpcyB0byBieXBhc3MgaXQgdXNpbmcgcHJpbmNpcGFsIGNvbXBvbmVudHMuClNpbmNlICRcbWluKG4scCkgPSBuID0gMTIwJCwgClBDQSB3aWxsIGdpdmUgYHIgbWluKGRpbShYKSlgIGNvbXBvbmVudHMsIGVhY2ggYmVpbmcgYSBsaW5lYXIgY29tYmluYXRpb24gb2YgdGhlIAokcCQgPSBgciBuY29sKFgpYCB2YXJpYWJsZXMuClRoZXNlIGByIG1pbihkaW0oWCkpYCBQQ3MgY29udGFpbiBhbGwgaW5mb3JtYXRpb24gcHJlc2VudCBpbiB0aGUgb3JpZ2luYWwgZGF0YS4KV2UgY291bGQgYXMgd2VsbCB1c2UgYW4gYXBwcm94aW1hdGlvbiBvZiAke1xtYXRoYmZ7WH19JCwgaS5lIHVzaW5nIGp1c3QgYSBmZXcgKCRrPDEyMCQpIFBDcy4KU28gd2UgdXNlIFBDQSBhcyBhIG1ldGhvZCBmb3IgcmVkdWNpbmcgdGhlIGRpbWVuc2lvbnMgd2hpbGUgcmV0YWluaW5nCmFzIG11Y2ggdmFyaWF0aW9uIGJldHdlZW4gdGhlIG9ic2VydmF0aW9ucyBhcyBwb3NzaWJsZS4KT25jZSB3ZSBoYXZlIHRoZXNlIFBDcywgd2UgY2FuIHVzZSB0aGVtIGFzIHZhcmlhYmxlcyBpbiBhIGxpbmVhciByZWdyZXNzaW9uIG1vZGVsLgoKIyMgQ2xhc3NpYyBsaW5lYXIgcmVncmVzc2lvbiBvbiBQQ3MKCldlIGZpcnN0IGNvbXB1dGUgdGhlIFBDQSBvbiB0aGUgZGF0YSB3aXRoIGBwcmNvbXBgLgpXZSB3aWxsIHVzZSBhbiBhcmJpdHJhcnkgY3V0b2ZmIG9mICRrID0gNCQgUENzIHRvIGlsbHVzdHJhdGUgdGhlIHByb2Nlc3Mgb2YgcGVyZm9ybWluZyByZWdyZXNzaW9uIG9uIHRoZSBQQ3MuCgpgYGB7ciBQQy1yZWdyZXNzaW9ufQprIDwtIDQgIyBBcmJpdHJhcmlseSBjaG9zZW4gaz00CnBjYSA8LSBwcmNvbXAoWCkKVmsgPC0gcGNhJHJvdGF0aW9uWywgMTprXSAjIHRoZSBsb2FkaW5ncyBtYXRyaXgKWmsgPC0gcGNhJHhbLCAxOmtdICMgdGhlIHNjb3JlcyBtYXRyaXgKCiMgVXNlIHRoZSBzY29yZXMgaW4gY2xhc3NpYyBsaW5lYXIgcmVncmVzc2lvbgpwY3JfbW9kZWwxIDwtIGxtKFkgfiBaaykKc3VtbWFyeShwY3JfbW9kZWwxKQpgYGAKCkFzICRcbWF0aGJme1h9JCBhbmQgJFxtYXRoYmZ7WX0kIGFyZSBjZW50ZXJlZCwgdGhlIGludGVyY2VwdCBpcyAKYXBwcm94aW1hdGVseSAwLgoKVGhlIG91dHB1dCBzaG93cyB0aGF0IFBDMSBhbmQgUEM0IGhhdmUgYSAkXGJldGEkIGVzdGltYXRlIHRoYXQgCmRpZmZlcnMgc2lnbmlmaWNhbnRseSBmcm9tIDAgKGF0ICRwIDwgMC4wNSQpLCBidXQgdGhlIHJlc3VsdHMgY2FuJ3QgYmUgcmVhZGlseSAKaW50ZXJwcmV0ZWQsIHNpbmNlIHdlIGhhdmUgbm8gaW1tZWRpYXRlIGludGVycHJldGF0aW9uIG9mIHRoZSBQQ3MuCgoKIyMgVXNpbmcgdGhlIHBhY2thZ2UgYHBsc2AKClBDUiBjYW4gYWxzbyBiZSBwZXJmb3JtZWQgdXNpbmcgdGhlIGBwY3IoKWAgZnVuY3Rpb24gZnJvbSB0aGUKcGFja2FnZSAqW3Bsc10oaHR0cHM6Ly9DUkFOLlItcHJvamVjdC5vcmcvcGFja2FnZT1wbHMpKgpfX2RpcmVjdGx5IG9uIHRoZSBkYXRhX18gKHNvIHdpdGhvdXQgaGF2aW5nIHRvIGZpcnN0IHBlcmZvcm0gdGhlIFBDQSBtYW51YWxseSkuCldoZW4gdXNpbmcgdGhpcyBmdW5jdGlvbiwgeW91IGhhdmUgdG8ga2VlcCBhIGZldyB0aGluZ3MgaW4gbWluZDoKCiAgMS4gdGhlIG51bWJlciBvZiBjb21wb25lbnRzIChQQ3MpIHRvIHVzZSBpcyBwYXNzZWQgd2l0aCB0aGUgYXJndW1lbnQgYG5jb21wYAogIDIuIHRoZSBmdW5jdGlvbiBhbGxvd3MgeW91IHRvIHNjYWxlIChzZXQgYHNjYWxlID0gVFJVRWApIGFuZAogIGNlbnRlciAoc2V0IGBjZW50ZXIgPSBUUlVFYCkgdGhlIHByZWRpY3RvcnMgZmlyc3QgKGluIHRoZSBleGFtcGxlIGhlcmUsICRcbWF0aGJme1h9JCBoYXMgYWxyZWFkeSBiZWVuIGNlbnRlcmVkIGFuZCBzY2FsZWQpLgogIApZb3UgY2FuIHVzZSB0aGUgZnVuY3Rpb24gYHBjcigpYCBpbiBtdWNoIHRoZSBzYW1lIHdheSBhcyB5b3Ugd291bGQKdXNlIGBsbSgpYC4gVGhlIHJlc3VsdGluZyBmaXQgY2FuIGVhc2lseSBiZSBleGFtaW5lZCB1c2luZyB0aGUgCmZ1bmN0aW9uIGBzdW1tYXJ5KClgLCBidXQgdGhlIG91dHB1dCBsb29rcyBxdWl0ZSBkaWZmZXJlbnQgZnJvbQp3aGF0IHlvdSB3b3VsZCBnZXQgZnJvbSBgbG1gLgoKYGBge3IgUEMtcmVncmVzc2lvbi1wbHMtcGFja2FnZX0KIyBYIGlzIGFscmVhZHkgc2NhbGVkIGFuZCBjZW50ZXJlZCwgc28gdGhhdCdzIG5vdCBuZWVkZWQuCnBjcl9tb2RlbDIgPC0gcGNyKFkgfiBYLCBuY29tcCA9IDQpCnN1bW1hcnkocGNyX21vZGVsMikKYGBgCgpGaXJzdCBvZiBhbGwgdGhlIG91dHB1dCBzaG93cyB5b3UgdGhlIGRhdGEgZGltZW5zaW9ucyBhbmQgdGhlIGZpdHRpbmcKbWV0aG9kIHVzZWQuIEluIHRoaXMgY2FzZSwgdGhhdCBpcyBQQyBjYWxjdWxhdGlvbiBiYXNlZCBvbiBTVkQuIFRoZQpgc3VtbWFyeSgpYCBmdW5jdGlvbiBhbHNvIHByb3ZpZGVzIHRoZSBwZXJjZW50YWdlIG9mIHZhcmlhbmNlCmV4cGxhaW5lZCBpbiB0aGUgcHJlZGljdG9ycyBhbmQgaW4gdGhlIHJlc3BvbnNlIHVzaW5nIGRpZmZlcmVudCBudW1iZXJzCm9mIGNvbXBvbmVudHMuIEZvciBleGFtcGxlLCB0aGUgZmlyc3QgUEMgb25seSBjYXB0dXJlcyA2MS4yMiUgb2YgYWxsCnRoZSB2YXJpYW5jZSwgb3IgaW5mb3JtYXRpb24gaW4gdGhlIHByZWRpY3RvcnMgYW5kIGl0IGV4cGxhaW5zIDYyLjklCm9mIHRoZSB2YXJpYW5jZSBpbiB0aGUgb3V0Y29tZS4gTm90ZSB0aGF0IGZvciBib3RoIG1ldGhvZHMgdGhlIGNob2ljZSBvZgp0aGUgbnVtYmVyIG9mIHByaW5jaXBhbCBjb21wb25lbnRzIHdhcyBhcmJpdHJhcnkgY2hvc2VuIHRvIGJlIDQuCgpBdCBhIGxhdGVyIHN0YWdlLCB3ZSB3aWxsIGxvb2sgYXQgaG93IHRvIGNob29zZSB0aGUgbnVtYmVyIG9mIGNvbXBvbmVudHMKdGhhdCBoYXMgdGhlIF9fc21hbGxlc3QgcHJlZGljdGlvbiBlcnJvcl9fLgoKCiMgUmlkZ2VzLCBMYXNzb3MgYW5kIEVsYXN0aWMgTmV0cyB7I2VsbmV0LXRoZW9yeX0KClJpZGdlIHJlZ3Jlc3Npb24sIGxhc3NvIHJlZ3Jlc3Npb24gYW5kIGVsYXN0aWMgbmV0cyBhcmUgYWxsIGNsb3NlbHkKcmVsYXRlZCB0ZWNobmlxdWVzLCBiYXNlZCBvbiB0aGUgc2FtZSBpZGVhOiBhZGQgYSBwZW5hbHR5IHRlcm0gdG8gCnRoZSBlc3RpbWF0aW5nIGZ1bmN0aW9uIHNvICQoe1xtYXRoYmZ7WH19XlR7XG1hdGhiZntYfX0pJApiZWNvbWVzIGZ1bGwgcmFuayBhZ2FpbiBhbmQgaXMgaW52ZXJ0aWJsZS4gVHdvIGRpZmZlcmVudCBwZW5hbHR5IAp0ZXJtcyBvciByZWd1bGFyaXphdGlvbiBtZXRob2RzIGNhbiBiZSB1c2VkOgoKMS4gTDEgcmVndWxhcml6YXRpb246IHRoaXMgcmVndWxhcml6YXRpb24gYWRkcyBhIHRlcm0gJHtcZ2FtbWFfMVx8XGJvbGRzeW1ib2x7XGJldGF9XHxfezF9fSQgdG8gdGhlIGVzdGltYXRpbmcgZXF1YXRpb24uClRoZSB0ZXJtIHdpbGwgYWRkIGEgcGVuYWx0eSBiYXNlZCBvbiB0aGUgKmFic29sdXRlIHZhbHVlKiBvZiB0aGUKbWFnbml0dWRlIG9mIHRoZSBjb2VmZmljaWVudHMuIFRoaXMgaXMgdXNlZCBieSB0aGUgX19sYXNzbyByZWdyZXNzaW9uX18KIAokJAogXGhhdHtcYm9sZHN5bWJvbHtcYmV0YX19XntcdGV4dHtsYXNzb319ID0gXHRleHR7YXJnbWlufV97XGJvbGRzeW1ib2x7XGJldGF9fVxkaXNwbGF5c3R5bGUoeyhcbWF0aGJme1l9LVxtYXRoYmZ7WH1cYm9sZHN5bWJvbHtcYmV0YX0pXlQoXG1hdGhiZntZfS1cbWF0aGJme1h9XGJvbGRzeW1ib2x7XGJldGF9KSt7XGdhbW1hXzFcfFxib2xkc3ltYm9se1xiZXRhfVx8X3sxfX19XGRpc3BsYXlzdHlsZSkKJCQKCjIuIEwyIHJlZ3VsYXJpemF0aW9uOiB0aGlzIHJlZ3VsYXJpemF0aW9uIGFkZHMgYSB0ZXJtICR7XGdhbW1hXzJcfFxib2xkc3ltYm9se1xiZXRhfVx8X3syfV57Mn19JCB0byB0aGUgZXN0aW1hdGluZyBlcXVhdGlvbi4KVGhlIHBlbmFsdHkgdGVybSBpcyBiYXNlZCBvbiB0aGUgc3F1YXJlIG9mIHRoZSBtYWduaXR1ZGUgb2YgdGhlIApjb2VmZmljaWVudHMuIFRoaXMgaXMgdXNlZCBieSBfX3JpZGdlIHJlZ3Jlc3Npb25fXy4KCiQkCiBcaGF0e1xib2xkc3ltYm9se1xiZXRhfX1ee1x0ZXh0e3JpZGdlfX0gPSBcdGV4dHthcmdtaW59X3tcYm9sZHN5bWJvbHtcYmV0YX19XGRpc3BsYXlzdHlsZSh7KFxtYXRoYmZ7WX0tXG1hdGhiZntYfVxib2xkc3ltYm9se1xiZXRhfSleVChcbWF0aGJme1l9LVxtYXRoYmZ7WH1cYm9sZHN5bWJvbHtcYmV0YX0pK3tcZ2FtbWFfMlx8XGJvbGRzeW1ib2x7XGJldGF9XHxfezJ9XnsyfX19XGRpc3BsYXlzdHlsZSkKJCQKCkVsYXN0aWMgbmV0cyBjb21iaW5lIGJvdGggdHlwZXMgb2YgcmVndWxhcml6YXRpb25zLiBJdCBkb2VzIHNvIGJ5IAppbnRyb2R1Y2luZyBhICRcYWxwaGEkIG1peGluZyBwYXJhbWV0ZXIgdGhhdCBlc3NlbnRpYWxseSBjb21iaW5lcwp0aGUgTDEgYW5kIEwyIG5vcm1zIGluIGEgd2VpZ2h0ZWQgYXZlcmFnZS4KCiQkCiBcaGF0e1xib2xkc3ltYm9se1xiZXRhfX1ee1x0ZXh0e2VsLm5ldH19ID0gXHRleHR7YXJnbWlufV97XGJvbGRzeW1ib2x7XGJldGF9fVxkaXNwbGF5c3R5bGUoeyhcbWF0aGJme1l9LVxtYXRoYmZ7WH1cYm9sZHN5bWJvbHtcYmV0YX0pXntUfShcbWF0aGJme1l9LVxtYXRoYmZ7WH1cYm9sZHN5bWJvbHtcYmV0YX0pK3tcYWxwaGEgXGdhbW1hXzFcfFxib2xkc3ltYm9se1xiZXRhfVx8X3sxfX0rIHsoMSAtIFxhbHBoYSlcZ2FtbWFfMlx8XGJvbGRzeW1ib2x7XGJldGF9XHxfezJ9XnsyfX19XGRpc3BsYXlzdHlsZSkKJCQKCgoKIyBFeGVyY2lzZTogVmVyaWZpY2F0aW9uIG9mIHJpZGdlIHJlZ3Jlc3Npb24KCkluIGxlYXN0IHNxdWFyZSByZWdyZXNzaW9uIHRoZSBtaW5pbWl6YXRpb24gb2YgdGhlIGVzdGltYXRpb24gZnVuY3Rpb24KJHx7XG1hdGhiZntZfSAtIFxtYXRoYmZ7WH0gXGJvbGRzeW1ib2x7XGJldGF9fVx8XnsyfV97Mn0kIGxlYWRzIHRvIHRoZSBzb2x1dGlvbiAke1xib2xkc3ltYm9se1xoYXR7XGJldGF9fT0oXG1hdGhiZntYXlRYfSleey0xfVxtYXRoYmZ7WF5UWX19JC4gCgpGb3IgdGhlIHBlbmFsaXplZCBsZWFzdCBzcXVhcmVzIGNyaXRlcmlvbiB1c2VkIGJ5IHJpZGdlIHJlZ3Jlc3Npb24sIHlvdSBtaW5pbWl6ZSAKJFx8e1xtYXRoYmZ7WX0tXG1hdGhiZntYfVxib2xkc3ltYm9se1xiZXRhfVx8XnsyfV97Mn19K1xnYW1tYXtcYm9sZHN5bWJvbHtcfFxiZXRhXHxeezJ9X3syfX19JAp3aGljaCBsZWFkcyB0byBmb2xsb3dpbmcgc29sdXRpb246CgokJAp7XGJvbGRzeW1ib2x7XGhhdHtcYmV0YX19PShcbWF0aGJme1heVFh9fStcZ2FtbWF7XG1hdGhiZntJfX0pXnstMX17XG1hdGhiZntYXlRZfX0KJCQKCndoZXJlICRcbWF0aGJme0l9JCBpcyB0aGUgJHAgXHRpbWVzIHAkIGlkZW50aXR5IG1hdHJpeC4KClRoZSByaWRnZSBwYXJhbWV0ZXIgJFxnYW1tYSQgKnNocmlua3MqIHRoZSBjb2VmZmljaWVudHMgdG93YXJkcyAwLCB3aXRoICRcZ2FtbWEgPSAwJCBiZWluZyBlcXVpdmFsZW50IHRvIE9MUyAobm8gc2hyaW5rYWdlKSBhbmQgJFxnYW1tYSA9ICtcaW5mdHkkIGJlaW5nIGVxdWl2YWxlbnQgdG8gc2V0dGluZyBhbGwgJFxoYXR7XGJldGF9JCdzIHRvIDAuClRoZSBvcHRpbWFsIHBhcmFtZXRlciBsaWVzIHNvbWV3aGVyZSBpbiBiZXR3ZWVuIGFuZCBuZWVkcyB0byBiZSB0dW5lZCBieSB0aGUgdXNlci4KCgojIyBUYXNrcyB7LX0KClNvbHZlIHRoZSBmb2xsb3dpbmcgZXhlcmNpc2VzIHVzaW5nIFIuCgojIyMjIDEuIFZlcmlmeSB0aGF0ICR7XG1hdGhiZnsoWF5UWH19K1xnYW1tYXtcbWF0aGJme0l9fSkkIGhhcyByYW5rICQyMDAkLCBmb3IgYW55ICRcZ2FtbWE+MCQgb2YgeW91ciBjaG9pY2UuIHstfQoKPGRldGFpbHM+PHN1bW1hcnk+U29sdXRpb248L3N1bW1hcnk+CmBgYHtyfQpYdFggPC0gY3Jvc3Nwcm9kKFgpCnAgPC0gbmNvbChYKQpnYW1tYSA8LSAyICMgTXkgY2hvaWNlCgojIENvbXB1dGUgcGVuYWxpemVkIG1hdHJpeApYdFhfZ2FtbWFJIDwtIFh0WCArIChnYW1tYSAqIGRpYWcocCkpCmRpbShYdFhfZ2FtbWFJKQpxcihYdFhfZ2FtbWFJKSRyYW5rID09IDIwMCAjIGluZGVlZApgYGAKPC9kZXRhaWxzPgoKCiMjIyMgMi4gQ2hlY2sgdGhhdCB0aGUgaW52ZXJzZSBvZiAke1xtYXRoYmZ7KFheVFh9fStcZ2FtbWF7XG1hdGhiZntJfX0pJCBjYW4gYmUgY29tcHV0ZWQuIHstfQoKPGRldGFpbHM+PHN1bW1hcnk+U29sdXRpb248L3N1bW1hcnk+CmBgYHtyfQojIFllcywgaXQgY2FuIGJlIGNvbXB1dGVkIChubyBlcnJvcikKWHRYX2dhbW1hSV9pbnYgPC0gc29sdmUoWHRYX2dhbW1hSSkKc3RyKFh0WF9nYW1tYUlfaW52KQpgYGAKPC9kZXRhaWxzPgoKCiMjIyMgMy4gRmluYWxseSwgY29tcHV0ZSAke1xib2xkc3ltYm9se1xoYXR7XGJldGF9fT0oXG1hdGhiZntYXlRYfX0rXGdhbW1he1xtYXRoYmZ7SX19KV57LTF9e1xtYXRoYmZ7WF5UWX19JC4gey19Cgo8ZGV0YWlscz48c3VtbWFyeT5Tb2x1dGlvbjwvc3VtbWFyeT4KYGBge3IgcmlkZ2UtYmV0YS1lc3RpbWF0ZXN9CiMjIENhbGN1bGF0ZSByaWRnZSBiZXRhIGVzdGltYXRlcwojIyBVc2UgYGRyb3BgIHRvIGRyb3AgZGltZW5zaW9ucyBhbmQgY3JlYXRlIHZlY3RvcgpyaWRnZV9iZXRhcyA8LSBkcm9wKFh0WF9nYW1tYUlfaW52ICUqJSB0KFgpICUqJSBZKQpsZW5ndGgocmlkZ2VfYmV0YXMpICMgb25lIGZvciBldmVyeSBnZW5lCnN1bW1hcnkocmlkZ2VfYmV0YXMpCmBgYAoKV2UgaGF2ZSBub3cgbWFudWFsbHkgY2FsY3VsYXRlZCB0aGUgcmlkZ2UgcmVncmVzc2lvbiBlc3RpbWF0ZXMuCgo8L2RldGFpbHM+CgoKCiMgUGVyZm9ybWluZyByaWRnZSBhbmQgbGFzc28gcmVncmVzc2lvbiB3aXRoIGBnbG1uZXRgCgpUaGUgcGFja2FnZSAqW2dsbW5ldF0oaHR0cHM6Ly9DUkFOLlItcHJvamVjdC5vcmcvcGFja2FnZT1nbG1uZXQpKiBwcm92aWRlcyBhCmZ1bmN0aW9uIGBnbG1uZXQoKWAgdGhhdCBhbGxvd3MgeW91IHRvIGZpdCBhbGwgdGhyZWUgdHlwZXMgb2YgcmVncmVzc2lvbnMuIFdoaWNoCnR5cGUgaXMgdXNlZCwgY2FuIGJlIGRldGVybWluZWQgYnkgc3BlY2lmeWluZyB0aGUgYGFscGhhYCBhcmd1bWVudC4gRm9yIGEKX19yaWRnZSByZWdyZXNzaW9uX18sIHlvdSBzZXQgYGFscGhhYCB0byAwLCBhbmQgZm9yIGEgX19sYXNzbyByZWdyZXNzaW9uX18geW91CnNldCBgYWxwaGFgIHRvIDEuIE90aGVyIGBhbHBoYWAgdmFsdWVzIGJldHdlZW4gMCBhbmQgMSB3aWxsIGZpdCBhIGZvcm0gb2YKZWxhc3RpYyBuZXQuIFRoaXMgZnVuY3Rpb24gaGFzIHNsaWdodGx5IGRpZmZlcmVudCBzeW50YXggZnJvbSB0aGUgb3RoZXIKbW9kZWwtZml0dGluZyBmdW5jdGlvbnMuIFRvIGJlIGFibGUgdG8gdXNlIGl0LCB5b3UgaGF2ZSB0byBwYXNzIGEgYHhgIG1hdHJpeCBhcwp3ZWxsIGFzIGEgYHlgIHZlY3RvciwgYW5kIHlvdSBkb24ndCB1c2UgdGhlIGZvcm11bGEgc3ludGF4LgoKVGhlIGdhbW1hIHZhbHVlLCB3aGljaCBjb250cm9scyB0aGUgInN0cmVuZ3RoIiBvZiB0aGUgcGVuYWx0eSwgY2FuIGJlIHBhc3NlZCBieQp0aGUgYXJndW1lbnQgYGxhbWJkYWAgKG5vdGF0aW9uIGlzbid0IGFsd2F5cyBjb25zaXN0ZW50IGJldHdlZW4gdGV4dCBib29rcyBhbmQKc29mdHdhcmUuLi4pLiBUaGUgZnVuY3Rpb24gYGdsbW5ldCgpYCBjYW4gYWxzbyBjYXJyeSBvdXQgYSBzZWFyY2ggZm9yIGZpbmRpbmcKdGhlIGJlc3QgZ2FtbWEgdmFsdWUgZm9yIGEgZml0LiBUaGlzIGNhbiBiZSBkb25lIGJ5IHBhc3NpbmcgbXVsdGlwbGUgdmFsdWVzIHRvCnRoZSBhcmd1bWVudCBgbGFtYmRhYC4gSWYgbm90IHN1cHBsaWVkLCBgZ2xtbmV0YCB3aWxsIGdlbmVyYXRlIGEgcmFuZ2Ugb2YgdmFsdWVzCml0c2VsZiwgYmFzZWQgb24gdGhlIGRhdGEgd2hlcmVieSB0aGUgbnVtYmVyIG9mIHZhbHVlcyBjYW4gYmUgY29udHJvbGxlZCB3aXRoCnRoZSBgbmxhbWJkYWAgYXJndW1lbnQuIFRoaXMgaXMgZ2VuZXJhbGx5IHRoZSByZWNvbW1lbmRlZCB3YXkgdG8gdXNlIGBnbG1uZXRgLApzZWUgYD9nbG1uZXRgIGZvciBkZXRhaWxzLgoKRm9yIGEgdGhvcm91Z2ggaW50cm9kdWN0aW9uIHRvIHRoZSBfX2dsbW5ldF9fIHBhY2thZ2UgYW5kIGVsYXN0aWMgbmV0IG1vZGVscyBpbgpnZW5lcmFsLCBzZWUgdGhlCltnbG1uZXQgaW50cm9kdWN0aW9uIHZpZ25ldHRlXShodHRwczovL2NyYW4uci1wcm9qZWN0Lm9yZy93ZWIvcGFja2FnZXMvZ2xtbmV0L3ZpZ25ldHRlcy9nbG1uZXQucGRmKQoKCiMjIERlbW9uc3RyYXRpb246IFJpZGdlIHJlZ3Jlc3Npb24gey19CgpMZXQncyBwZXJmb3JtIGEgcmlkZ2UgcmVncmVzc2lvbiBpbiBvcmRlciB0byBwcmVkaWN0IGV4cHJlc3Npb24gbGV2ZWxzCm9mIHRoZSBUUklNMzIgZ2VuZSB1c2luZyB0aGUgMjAwIGdlbmUgcHJvYmVzIGRhdGEuIFdlIGNhbiBzdGFydCBieQp1c2luZyBhICRcZ2FtbWEkIHZhbHVlIG9mIDIuCgpgYGB7ciBnbG1uZXQtcmlkZ2UtcmVncmVzc2lvbn0KZ2FtbWEgPC0gMgpyaWRnZV9tb2RlbCA8LSBnbG1uZXQoWCwgWSwgYWxwaGEgPSAwLCBsYW1iZGEgPSBnYW1tYSkKCiMgaGF2ZSBhIGxvb2sgYXQgdGhlIGZpcnN0IDEwIGNvZWZmaWNpZW50cwpjb2VmKHJpZGdlX21vZGVsKVsxOjEwXQpgYGAKClRoZSBmaXJzdCBjb2VmZmljaWVudCBpcyB0aGUgaW50ZXJjZXB0LCBhbmQgaXMgYWdhaW4gZXNzZW50aWFsbHkgMC4gQnV0CmEgdmFsdWUgb2YgMiBmb3IgJFxnYW1tYSQgbWlnaHQgbm90IGJlIHRoZSBiZXN0IGNob2ljZSwgc28gbGV0J3Mgc2VlIGhvdwp0aGUgY29lZmZpY2llbnRzIGNoYW5nZSB3aXRoIGRpZmZlcmVudCB2YWx1ZXMgZm9yICRcZ2FtbWEkLgoKV2Ugd2lsbCBjcmVhdGUgYSAqZ3JpZCogb2YgJFxnYW1tYSQgdmFsdWVzLCBpLmUuIGEgcmFuZ2Ugb2YgdmFsdWVzIHRoYXQgd2lsbCBiZQp1c2VkIGFzIGlucHV0IGZvciB0aGUgYGdsbW5ldGAgZnVuY3Rpb24uIE5vdGUgdGhhdCB0aGlzIGZ1bmN0aW9uIGNhbiB0YWtlIGEKdmVjdG9yIG9mIHZhbHVlcyBhcyBpbnB1dCBmb3IgdGhlIGBsYW1iZGFgIGFyZ3VtZW50LCBhbGxvd2luZyB0byBmaXQgbXVsdGlwbGUKbW9kZWxzIHdpdGggdGhlIHNhbWUgaW5wdXQgZGF0YSBidXQgZGlmZmVyZW50IGh5cGVycGFyYW1ldGVycy4KCmBgYHtyIHJpZGdlLXJlZ3Jlc3Npb24tZ3JpZC1zZWFyY2h9CmdyaWQgPC0gc2VxKDEsIDEwMDAsIGJ5ID0gMTApICAjIDEgdG8gMTAwMCB3aXRoIHN0ZXBzIG9mIDEwCnJpZGdlX21vZF9ncmlkIDwtIGdsbW5ldChYLCBZLCBhbHBoYSA9IDAsIGxhbWJkYSA9IGdyaWQpCgojIFBsb3QgdGhlIGNvZWZmaWNpZW50cyBhZ2FpbnN0IHRoZSAobmF0dXJhbCkgTE9HIGxhbWJkYSBzZXF1ZW5jZSEKIyBzZWUgP3Bsb3QuZ2xtbmV0CnBsb3QocmlkZ2VfbW9kX2dyaWQsIHh2YXIgPSAibGFtYmRhIiwgeGxhYiA9ICJsb2coZ2FtbWEpIikKIyBhZGQgYSB2ZXJ0aWNhbCBsaW5lIGF0IGdhbW1hID0gMgp0ZXh0KGxvZyhnYW1tYSksIC0wLjA1LCBsYWJlbHMgPSBleHByZXNzaW9uKGdhbW1hID09IDIpLCAKICAgICBhZGogPSAtMC41LCBjb2wgPSAiZmlyZWJyaWNrIikKYWJsaW5lKHYgPSBsb2coZ2FtbWEpLCBjb2wgPSAiZmlyZWJyaWNrIiwgbHdkID0gMikKYGBgCgpUaGlzIHBsb3QgaXMga25vd24gYXMgYSBfX2NvZWZmaWNpZW50IHByb2ZpbGUgcGxvdF9fLCBlYWNoIGNvbG9yZWQgbGluZQpyZXByZXNlbnRzIGEgY29lZmZpY2llbnQgJFxoYXR7XGJldGF9JCBmcm9tIHRoZSByZWdyZXNzaW9uIG1vZGVsIGFuZCBzaG93cyBob3cKdGhleSBjaGFuZ2Ugd2l0aCBpbmNyZWFzZWQgdmFsdWVzIG9mICRcZ2FtbWEkIChvbiB0aGUgbG9nLXNjYWxlKQpeW05vdGU6IGBsb2coKWAgaW4gUiBpcyB0aGUgX19uYXR1cmFsIGxvZ2FyaXRobV9fIGJ5IGRlZmF1bHQgKGJhc2UgJGUkKSBhbmQgd2UKd2lsbCBhbHNvIHVzZSB0aGlzIG5vdGF0aW9uIGluIHRoZSB0ZXh0IChsaWtlIHRoZSB4LWF4aXMgdGl0bGUgb24gdGhlIHBsb3QgYWJvdmUpLgpUaGlzIG1pZ2h0IGJlIGRpZmZlcmVudCBmcm9tIHRoZSBub3RhdGlvbiB0aGF0IHlvdSdyZSB1c2VkIHRvICgkXGxuKCkkKS4KVG8gdGFrZSBsb2dhcml0aG1zIHdpdGggYSBkaWZmZXJlbnQgYmFzZSBpbiBSIHlvdSBjYW4gc3BlY2lmeSB0aGUgYGJhc2UgPSBgCmFyZ3VtZW50IG9mIGBsb2dgIG9yIHVzZSB0aGUgc2hvcnRoYW5kIGZ1bmN0aW9ucyBgbG9nMTAoeClgIGFuZCBgbG9nMih4KWAgZm9yCmJhc2UgMTAgYW5kIDIsIHJlc3BlY3RpdmVseV0uCgpOb3RlIHRoYXQgZm9yIGhpZ2hlciB2YWx1ZXMgJFxnYW1tYSQsIHRoZSBjb2VmZmljaWVudCBlc3RpbWF0ZXMgYmVjb21lIGNsb3NlciB0byAwLApzaG93aW5nIHRoZSAqc2hyaW5rYWdlKiBlZmZlY3Qgb2YgdGhlIHJpZGdlIHBlbmFsdHkuCgpTaW1pbGFyIHRvIHRoZSBQQyByZWdyZXNzaW9uIGV4YW1wbGUsIHdlIGNob3NlICRcZ2FtbWE9MiQgYW5kIHRoZSBncmlkIHJhdGhlcgphcmJpdHJhcmlseS4gV2Ugd2lsbCBzZWUgc3Vic2VxdWVudGx5LCBob3cgdG8gY2hvb3NlICRcZ2FtbWEkIHRoYXQgbWluaW1pemVzIHRoZQpwcmVkaWN0aW9uIGVycm9yLgoKCiMgRXhlcmNpc2U6IExhc3NvIHJlZ3Jlc3Npb24KCkxhc3NvIHJlZ3Jlc3Npb24gaXMgYWxzbyBhIGZvcm0gb2YgcGVuYWxpemVkIHJlZ3Jlc3Npb24sIGJ1dCB3ZSBkbyBub3QgaGF2ZSBhbgphbmFseXRpYyBzb2x1dGlvbiBvZiAkXGhhdHt7XGJvbGRzeW1ib2x7XGJldGF9fX0kIGFzIGluIGxlYXN0IHNxdWFyZXMKYW5kIHJpZGdlIHJlZ3Jlc3Npb24uIEluIG9yZGVyIHRvIGZpdCBhIGxhc3NvIG1vZGVsLCB3ZSBvbmNlIGFnYWluIHVzZQp0aGUgYGdsbW5ldCgpYCBmdW5jdGlvbi4gSG93ZXZlciwgdGhpcyB0aW1lIHdlIHVzZSB0aGUgYXJndW1lbnQKYGFscGhhID0gMWAKCgojIyBUYXNrcyB7LX0KCiMjIyMgMS4gVmVyaWZ5IHRoYXQgc2V0dGluZyBgYWxwaGEgPSAxYCBpbmRlZWQgY29ycmVzcG9uZHMgdG8gbGFzc28gcmVncmVzc2lvbiB1c2luZyB0aGUgZXF1YXRpb25zIGZyb20gW1NlY3Rpb24gM10oI2VsbmV0LXRoZW9yeSkuIHstfQoKCiMjIyMgMi4gUGVyZm9ybSBhIGxhc3NvIHJlZ3Jlc3Npb24gd2l0aCB0aGUgYGdsbW5ldGAgZnVuY3Rpb24gd2l0aCBgWWAgdGhlIHJlc3BvbnNlIGFuZCBgWGAgdGhlIHByZWRpY3RvcnMuIHstfQoKWW91IGRvIG5vdCBoYXZlIHRvIHByb3ZpZGUgYSBjdXN0b20gc2VxdWVuY2Ugb2YgJFxnYW1tYSQgKGBsYW1iZGFgKSB2YWx1ZXMgaGVyZQpidXQgY2FuIGluc3RlYWQgcmVseSBvbiBgZ2xtbmV0YCdzIGRlZmF1bHQgYmVoYXZpb3VyIG9mIGNob29zaW5nIHRoZSBncmlkIG9mCiRcZ2FtbWEkIHZhbHVlcyBiYXNlZCBvbiB0aGUgZGF0YSAoc2VlIGA/Z2xtbmV0YCBmb3IgbW9yZSBkZXRhaWxzKS4KCjxkZXRhaWxzPjxzdW1tYXJ5PlNvbHV0aW9uPC9zdW1tYXJ5PgpgYGB7ciBnbG1uZXQtbGFzc28tcmVncmVzc2lvbn0KIyBOb3RlIHRoYXQgdGhlIGdsbW5ldCgpIGZ1bmN0aW9uIGNhbiBzdXBwbHkgZ2FtbWEgYXV0b21hdGljYWxseQojIEJ5IGRlZmF1bHQgaXQgdXNlcyBhIHNlcXVlbmNlIG9mIDEwMCBsYW1iZGEgdmFsdWVzCmxhc3NvX21vZGVsIDwtIGdsbW5ldChYLCBZLCBhbHBoYSA9IDEpCmBgYAo8L2RldGFpbHM+CgoKIyMjIyAzLiBNYWtlIHRoZSBjb2VmZmljaWVudCBwcm9maWxlIHBsb3QgYW5kIGludGVycHJldC4gey19Cgo8ZGV0YWlscz48c3VtbWFyeT5Tb2x1dGlvbjwvc3VtbWFyeT4KCmBgYHtyfQpwbG90KGxhc3NvX21vZGVsLCB4dmFyID0gImxhbWJkYSIsIHhsYWIgPSAibG9nKGdhbW1hKSIpCmBgYAoKTm90ZSB0aGF0IHRoZSBudW1iZXIgb2Ygbm9uLXplcm8gY29lZmZpY2llbnRzIGlzIGluZGljYXRlZCBhdCB0aGUgdG9wIG9mIHRoZSBwbG90LgpJbiB0aGUgY2FzZSBvZiBsYXNzby1yZWdyZXNzaW9uIHRoZSByZWd1bGFyaXphdGlvbiBpcyBtdWNoIGxlc3Mgc21vb3RoIGNvbXBhcmVkCnRvIHRoZSByaWRnZSByZWdyZXNzaW9uLCB3aXRoIHNvbWUgY29lZmZpY2llbnRzIGluY3JlYXNpbmcgZm9yIGhpZ2hlciAkXGdhbW1hJApiZWZvcmUgc2hhcnBseSBkcm9wcGluZyB0byB6ZXJvLgpJbiBjb250cmFzdCB0byByaWRnZSwgbGFzc28gZXZlbnR1YWxseSBzaHJpbmtzIGFsbCBjb2VmZmljaWVudHMgdG8gMC4KCjwvZGV0YWlscz4KCgojIEV2YWx1YXRpb24gb2YgcHJlZGljdGlvbiBtb2RlbHMgYW5kIHR1bmluZyBoeXBlcnBhcmFtZXRlcnMKCkZpcnN0IHdlIHdpbGwgc3BsaXQgb3VyIG9yaWdpbmFsIGRhdGEgaW4gYSB0cmFpbmluZyBhbmQgdGVzdCBzZXQgdG8gdmFsaWRhdGUgb3VyCm1vZGVsLiBUaGUgdHJhaW5pbmcgc2V0IHdpbGwgYmUgdXNlZCB0byB0cmFpbiB0aGUgbW9kZWwgYW5kIHR1bmUgdGhlCmh5cGVycGFyYW1ldGVycywgd2hpbGUgdGhlIHRlc3Qgc2V0IHdpbGwgYmUgdXNlZCB0byBldmFsdWF0ZSB0aGUKX19vdXQtb2Ytc2FtcGxlX18gcGVyZm9ybWFuY2Ugb2Ygb3VyIGZpbmFsIG1vZGVsLiBJZiB3ZSB3b3VsZCB1c2UgdGhlIHNhbWUgZGF0YQp0byBib3RoIGZpdCBhbmQgdGVzdCB0aGUgbW9kZWwsIHdlIHdvdWxkIGdldCBiaWFzZWQgcmVzdWx0cy4KCkJlZm9yZSB3ZSBiZWdpbiwgd2UgdXNlIHRoZSBgc2V0LnNlZWQoKWAgZnVuY3Rpb24gaW4gb3JkZXIgdG8gc2V0IGEgc2VlZApmb3IgUuKAmXMgcmFuZG9tIG51bWJlciBnZW5lcmF0b3IsIHNvIHRoYXQgd2Ugd2lsbCBhbGwgb2J0YWluIHByZWNpc2VseQp0aGUgc2FtZSByZXN1bHRzIGFzIHRob3NlIHNob3duIGJlbG93LiBJdCBpcyBnZW5lcmFsbHkgZ29vZCBwcmFjdGljZSB0bwpzZXQgYSByYW5kb20gc2VlZCB3aGVuIHBlcmZvcm1pbmcgYW4gYW5hbHlzaXMgc3VjaCBhcyBjcm9zcy12YWxpZGF0aW9uCnRoYXQgY29udGFpbnMgYW4gZWxlbWVudCBvZiByYW5kb21uZXNzLCBzbyB0aGF0IHRoZSByZXN1bHRzIG9idGFpbmVkIGNhbgpiZSByZXByb2R1Y2VkIGF0IGEgbGF0ZXIgdGltZS4KCldlIGJlZ2luIGJ5IHVzaW5nIHRoZSBgc2FtcGxlKClgIGZ1bmN0aW9uIHRvIHNwbGl0IHRoZSBzZXQgb2Ygc2FtcGxlcyBpbnRvIHR3bwpzdWJzZXRzLCBieSBzZWxlY3RpbmcgYSByYW5kb20gc3Vic2V0IG9mIDgwIG9ic2VydmF0aW9ucyBvdXQgb2YgdGhlIG9yaWdpbmFsIDEyMApvYnNlcnZhdGlvbnMuIFdlIHJlZmVyIHRvIHRoZXNlIG9ic2VydmF0aW9ucyBhcyB0aGUgX190cmFpbmluZ19fIHNldC4gVGhlIHJlc3QKb2YgdGhlIG9ic2VydmF0aW9ucyB3aWxsIGJlIHVzZWQgYXMgdGhlIF9fdGVzdF9fIHNldC4KCmBgYHtyIGNyZWF0ZS10cmFpbmluZy1zZXR9CnNldC5zZWVkKDEpCiMgU2FtcGxlIDgwIHJhbmRvbSBJRHMgZnJvbSB0aGUgcm93cyBvZiBYICgxMjAgdG90YWwpCnRyYWluSUQgPC0gc2FtcGxlKG5yb3coWCksIDgwKQoKIyBUcmFpbmluZyBkYXRhCnRyYWluWCA8LSBYW3RyYWluSUQsIF0KdHJhaW5ZIDwtIFlbdHJhaW5JRF0KCiMgVGVzdCBkYXRhCnRlc3RYIDwtIFhbLXRyYWluSUQsIF0KdGVzdFkgPC0gWVstdHJhaW5JRF0KYGBgCgpUbyBtYWtlIGZpdHRpbmcgdGhlIG1vZGVscyBhIGJpdCBlYXNpZXIgbGF0ZXIsIHdlIHdpbGwgYWxzbyBjcmVhdGUgMiBkYXRhLmZyYW1lcwpjb21iaW5pbmcgdGhlIHJlc3BvbnNlIGFuZCBwcmVkaWN0b3JzIGZvciB0aGUgdHJhaW5pbmcgYW5kIHRlc3QgZGF0YS4KCmBgYHtyfQp0cmFpbl9kYXRhIDwtIGRhdGEuZnJhbWUoIlRSSU0zMiIgPSB0cmFpblksIHRyYWluWCkKdGVzdF9kYXRhIDwtIGRhdGEuZnJhbWUoIlRSSU0zMiIgPSB0ZXN0WSwgdGVzdFgpCgojIyBHbGFuY2luZyBhdCB0aGUgZGF0YSBzdHJ1Y3R1cmU6IGZvciB0aGUgZmlyc3QgMTAgY29sdW1ucyBvbmx5CnN0cih0cmFpbl9kYXRhWywgMToxMF0pCmBgYAoKCiMjIE1vZGVsIGV2YWx1YXRpb24KCldlIGFyZSBpbnRlcmVzdGVkIGluIHRoZSBfX291dC1vZi1zYW1wbGVfXyBlcnJvciBvZiBvdXIgbW9kZWxzLAppLmUuIGhvdyBnb29kIG91ciBtb2RlbCBkb2VzIG9uIHVuc2VlbiBkYXRhLgpfX1RoaXMgd2lsbCBhbGxvdyB1cyB0byBjb21wYXJlIGRpZmZlcmVudCAqY2xhc3Nlcyogb2YgbW9kZWxzX18uCkZvciBjb250aW51b3VzIG91dGNvbWVzIHdlIHdpbGwgdXNlIHRoZSBfX21lYW4gc3F1YXJlZCBlcnJvciAoTVNFKV9fCihvciBpdHMgc3F1YXJlLXJvb3QgdmVyc2lvbiwgdGhlIFJNU0UpLgoKVGhlIGV2YWx1YXRpb24gd2lsbCBhbGxvdyB1cyB0byBjb21wYXJlIHRoZSBwZXJmb3JtYW5jZSBvZiBkaWZmZXJlbnQgdHlwZXMgb2YKbW9kZWxzLCBlLmcuIFBDIHJlZ3Jlc3Npb24sIHJpZGdlIHJlZ3Jlc3Npb24gYW5kIGxhc3NvIHJlZ3Jlc3Npb24sIG9uIG91ciBkYXRhLgpIb3dldmVyLCB3ZSBzdGlsbCBuZWVkIHRvIGZpbmQgdGhlIG9wdGltYWwgbW9kZWwgd2l0aGluIGVhY2ggb2YgdGhlc2UgY2xhc3NlcywKYnkgc2VsZWN0aW5nIHRoZSBiZXN0IGh5cGVycGFyYW1ldGVyIChudW1iZXIgb2YgUENzIGZvciBQQyByZWdyZXNzaW9uIGFuZCAkXGdhbW1hJApmb3IgbGFzc28gYW5kIHJpZGdlKS4KRm9yIHRoYXQgd2Ugd2lsbCB1c2UgClsqJGskLWZvbGQgQ3Jvc3MgVmFsaWRhdGlvbipdKGh0dHBzOi8vZW4ud2lraXBlZGlhLm9yZy93aWtpL0Nyb3NzLXZhbGlkYXRpb25fKHN0YXRpc3RpY3MpKQpvbiBvdXIgdHJhaW5pbmcgc2V0LgoKCiMjIFR1bmluZyBoeXBlcnBhcmFtZXRlcnMKClRoZSB0ZXN0IHNldCBpcyBvbmx5IHVzZWQgdG8gZXZhbHVhdGUgdGhlICpmaW5hbCogbW9kZWwuClRvIGFjaGlldmUgdGhpcyBmaW5hbCBtb2RlbCwgd2UgbmVlZCB0byBmaW5kIHRoZSBvcHRpbWFsIGh5cGVycGFyYW1ldGVycywKaS5lLiB0aGUgaHlwZXJwYXJhbWV0ZXJzIHRoYXQgYmVzdCBnZW5lcmFsaXplIHRoZSBtb2RlbCB0byB1bnNlZW4gZGF0YS4KV2UgY2FuIGVzdGltYXRlIHRoaXMgYnkgdXNpbmcgKmstZm9sZCBjcm9zcyB2YWxpZGF0aW9uKiAoJENWX2skKSBvbgp0aGUgdHJhaW5pbmcgZGF0YS4KClRoZSAkQ1ZfayQgZXN0aW1hdGVzIGNhbiBiZSBhdXRvbWF0aWNhbGx5IGNvbXB1dGVkIGZvciBhbnkKZ2VuZXJhbGl6ZWQgbGluZWFyIG1vZGVsIChnZW5lcmF0ZWQgd2l0aCBgZ2xtKClgIGFuZCBieSBleHRlbnNpb24gYGdsbW5ldCgpYCkgCnVzaW5nIHRoZSBgY3YuZ2xtKClgIGZ1bmN0aW9uIGZyb20gdGhlCipbYm9vdF0oaHR0cHM6Ly9DUkFOLlItcHJvamVjdC5vcmcvcGFja2FnZT1ib290KSogcGFja2FnZS4KCgojIEV4YW1wbGU6IFBDIHJlZ3Jlc3Npb24gZXZhbHVhdGlvbgoKV2Ugc3RhcnQgd2l0aCB0aGUgUEMgcmVncmVzc2lvbiBhbmQgbG9vayBmb3IgdGhlIG9wdGltYWwgbnVtYmVyIG9mIFBDcyB0aGF0IG1pbmltaXplcwp0aGUgTVNFIHVzaW5nICRrJC1mb2xkIENyb3NzIHZhbGlkYXRpb24uCldlIHRoZW4gdXNlIHRoaXMgb3B0aW1hbCBudW1iZXIgb2YgUENzIHRvIHRyYWluIHRoZSBmaW5hbCBtb2RlbCBhbmQgZXZhbHVhdGUgaXQKb24gdGhlIHRlc3QgZGF0YS4KCgojIyBrLWZvbGQgQ3Jvc3MgVmFsaWRhdGlvbiB0byB0dW5lIG51bWJlciBvZiBjb21wb25lbnRzCgpDb252ZW5pZW50bHksIHRoZSBgcGNyYCBmdW5jdGlvbiBmcm9tIHRoZSBgcGxzYCBwYWNrYWdlIGhhcyBhbiBpbXBsZW1lbnRhdGlvbiBmb3IKay1mb2xkIENyb3NzIFZhbGlkYXRpb24uIFdlIHNpbXBseSBuZWVkIHRvIHNldCBgdmFsaWRhdGlvbiA9IENWYCBhbmQgYHNlZ21lbnRzID0gMjBgCnRvIHBlcmZvcm0gMjAtZm9sZCBDcm9zcyBWYWxpZGF0aW9uIHdpdGggUEMgcmVncmVzc2lvbi4KSWYgd2UgZG9uJ3Qgc3BlY2lmeSBgbmNvbXBgLCBgcGNyYCB3aWxsIHNlbGVjdCB0aGUgbWF4aW11bSBudW1iZXIgb2YgUENzIHRoYXQgY2FuCmJlIHVzZWQgZm9yIHRoZSBDVi4KCk5vdGUgdGhhdCBvdXIgdHJhaW5pbmcgZGF0YSBgdHJhaW5YYCBjb25zaXN0cyBvZiA4MCBvYnNlcnZhdGlvbnMgKHJvd3MpLgpJZiB3ZSBwZXJmb3JtIDIwLWZvbGQgQ1YsIHRoYXQgbWVhbnMgd2Ugd2lsbCBzcGxpdCB0aGUgZGF0YSBpbiAyMCBncm91cHMsIHNvCmVhY2ggZ3JvdXAgd2lsbCBjb25zaXN0IG9mIDQgb2JzZXJ2YXRpb25zLiBBdCBlYWNoIENWIGN5Y2xlLCBvbmUgZ3JvdXAgd2lsbCBiZSBsZWZ0Cm91dCBhbmQgdGhlIG1vZGVsIHdpbGwgYmUgdHJhaW5lZCBvbiB0aGUgcmVtYWluaW5nIGdyb3Vwcy4gVGhpcyBsZWF2ZXMgdXMgd2l0aAo3NiB0cmFpbmluZyBvYnNlcnZhdGlvbnMgZm9yIGVhY2ggQ1YgY3ljbGUsIHNvIHRoZSBtYXhpbWFsIG51bWJlciBvZiBjb21wb25lbnRzCnRoYXQgY2FuIGJlIHVzZWQgaW4gdGhlIGxpbmVhciByZWdyZXNzaW9uIGlzIDc1LgoKYGBge3IgcGNyLWtDVn0KIyMgU2V0IHNlZWQgZm9yIHJlcHJvZHVjaWJpbGl0eSwga0NWIGlzIGEgcmFuZG9tIHByb2Nlc3MhCnNldC5zZWVkKDEyMykKCksgPC0gMjAKCiMjIFRoZSAnWSB+IC4nIG5vdGF0aW9uIG1lYW5zOiBmaXQgWSBieSBldmVyeSBvdGhlciB2YXJpYWJsZSBpbiB0aGUgZGF0YQpwY3JfY3YgPC0gcGNyKFRSSU0zMiB+IC4sIGRhdGEgPSB0cmFpbl9kYXRhLCB2YWxpZGF0aW9uID0gIkNWIiwgc2VnbWVudHMgPSBLKQpzdW1tYXJ5KHBjcl9jdikKYGBgCgpXZSBjYW4gcGxvdCB0aGUgKnJvb3QgbWVhbiBzcXVhcmVkIGVycm9yIG9mIHByZWRpY3Rpb24qIChSTVNFUCkgZm9yIGVhY2ggbnVtYmVyCm9mIGNvbXBvbmVudHMgYXMgZm9sbG93cy4KCmBgYHtyIHBjcl9jdi1wbG90fQpwbG90KHBjcl9jdiwgcGxvdHR5cGUgPSAidmFsaWRhdGlvbiIpCmBgYAoKVGhlIGBwbHNgIHBhY2thZ2UgYWxzbyBoYXMgYSBmdW5jdGlvbiBgc2VsZWN0TmNvbXBgIHRvIHNlbGVjdCB0aGUgb3B0aW1hbCBudW1iZXIgb2YgY29tcG9uZW50cy4KSGVyZSB3ZSB1c2UgdGhlICJvbmUtc2lnbWEiIG1ldGhvZCwgd2hpY2ggcmV0dXJucyB0aGUgbG93ZXN0IG51bWJlciBvZiBjb21wb25lbnRzCmZvciB3aGljaCB0aGUgUk1TRSBpcyB3aXRoaW4gb25lIHN0YW5kYXJkIGVycm9yIG9mIHRoZSBhYnNvbHV0ZSBtaW5pbXVtLgpUaGUgZnVuY3Rpb24gYWxzbyBhbGxvd3MgcGxvdHRpbmcgdGhlIHJlc3VsdCBieSBzcGVjaWZ5aW5nIGBwbG90ID0gVFJVRWAuCgpgYGB7ciBwY3Itb3B0aW1hbC1uY29tcH0Kb3B0aW1hbF9uY29tcCA8LSBzZWxlY3ROY29tcChwY3JfY3YsIG1ldGhvZCA9ICJvbmVzaWdtYSIsIHBsb3QgPSBUUlVFKQpgYGAKClRoaXMgb3V0Y29tZSBzaG93cyB1cyB0aGF0IHRoZSBvcHRpbWFsIG51bWJlciBvZiBjb21wb25lbnRzIGZvciBvdXIgbW9kZWwgaXMKYHIgb3B0aW1hbF9uY29tcGAuCgoKIyMgVmFsaWRhdGlvbiBvbiB0ZXN0IGRhdGEKCldlIG5vdyB1c2Ugb3VyIG9wdGltYWwgbnVtYmVyIG9mIGNvbXBvbmVudHMgdG8gdHJhaW4gdGhlIGZpbmFsIFBDUiBtb2RlbC4KVGhpcyBtb2RlbCBpcyB0aGVuIHZhbGlkYXRlZCBvbiBieSBnZW5lcmF0aW5nIHByZWRpY3Rpb25zIGZvciB0aGUgdGVzdCBkYXRhIGFuZApjYWxjdWxhdGluZyB0aGUgTVNFLgoKV2UgZGVmaW5lIGEgY3VzdG9tIGZ1bmN0aW9uIHRvIGNhbGN1bGF0ZSB0aGUgTVNFLgpOb3RlIHRoYXQgdGhlcmUgaXMgYWxzbyBhbiBgTVNFUGAgZnVuY3Rpb24gaW4gdGhlIGBwbHNgIHBhY2thZ2Ugd2hpY2ggZG9lcyB0aGUKcHJlZGljdGlvbiBhbmQgTVNFIGNhbGN1bGF0aW9uIGluIG9uZSBnby4KQnV0IG91ciBvd24gZnVuY3Rpb24gd2lsbCBjb21lIGluIGhhbmR5IGxhdGVyIGZvciBsYXNzbyBhbmQgcmlkZ2UgcmVncmVzc2lvbi4KCmBgYHtyIE1TRX0KIyBNZWFuIFNxdWFyZWQgRXJyb3IKIyMgb2JzOiBvYnNlcnZhdGlvbnM7IHByZWQ6IHByZWRpY3Rpb25zCk1TRSA8LSBmdW5jdGlvbihvYnMsIHByZWQpewogIG1lYW4oKGRyb3Aob2JzKSAtIGRyb3AocHJlZCkpXjIpCn0KYGBgCgpgYGB7ciBmaW5hbF9wY3JfbW9kZWx9CmZpbmFsX3Bjcl9tb2RlbCA8LSBwY3IoVFJJTTMyIH4gLiwgZGF0YSA9IHRyYWluX2RhdGEsIG5jb21wID0gb3B0aW1hbF9uY29tcCkKcGNyX3ByZWRzIDwtIHByZWRpY3QoZmluYWxfcGNyX21vZGVsLCBuZXdkYXRhID0gdGVzdF9kYXRhLCBuY29tcCA9IG9wdGltYWxfbmNvbXApCihwY3JfbXNlIDwtIE1TRSh0ZXN0WSwgcGNyX3ByZWRzKSkKYGBgCgpUaGlzIHZhbHVlIG9uIGl0cyBvd24gZG9lcyBub3QgdGVsbCB1cyB2ZXJ5IG11Y2gsIGJ1dCB3ZSBjYW4gdXNlIGl0IHRvIGNvbXBhcmUgb3VyClBDUiBtb2RlbCB3aXRoIG90aGVyIHR5cGVzIG9mIG1vZGVscyBsYXRlci4KCkZpbmFsbHksIHdlIHBsb3QgdGhlIHByZWRpY3RlZCB2YWx1ZXMgZm9yIG91ciByZXNwb25zZSB2YXJpYWJsZSAodGhlIFRSSU0zMiBnZW5lIGV4cHJlc3Npb24pCmFnYWluc3QgdGhlIGFjdHVhbCBvYnNlcnZlZCB2YWx1ZXMgZnJvbSBvdXIgdGVzdCBzZXQuCgpgYGB7ciBwY3ItcHJlZHBsb3R9CnByZWRwbG90KGZpbmFsX3Bjcl9tb2RlbCwgbmV3ZGF0YSA9IHRlc3RfZGF0YSwgbGluZSA9IFRSVUUpCmBgYAoKCgojIEV4ZXJjaXNlOiBldmFsdWF0ZSBhbmQgY29tcGFyZSBwcmVkaWN0aW9uIG1vZGVscwoKIyMjIyAxLiBQZXJmb3JtIGEgbGFzc28gcmVncmVzc2lvbiB3aXRoIDIwLWZvbGQgQ3Jvc3MgVmFsaWRhdGlvbiBvbiB0aGUgdHJhaW5pbmcgZGF0YSAoYHRyYWluWGAsIGB0cmFpbllgKS4gUGxvdCB0aGUgcmVzdWx0cyBhbmQgc2VsZWN0IHRoZSBvcHRpbWFsIGBsYW1iZGFgICgkXGdhbW1hJCkgcGFyYW1ldGVyLiBGaXQgYSBmaW5hbCBtb2RlbCB3aXRoIHRoZSBzZWxlY3RlZCBgbGFtYmRhYCBhbmQgdmFsaWRhdGUgaXQgb24gdGhlIHRlc3QgZGF0YS4gey19CgoqSGludCo6IHVzZSB0aGUgYGN2LmdsbW5ldCgpYCBmdW5jdGlvbiwgZm9yIDIwIGZvbGRzIENWLCBzZXQgYG5mb2xkcyA9IDIwYCBhbmQgCnRvIHVzZSB0aGUgTVNFIG1ldHJpYyBzZXQgYHR5cGUubWVhc3VyZSA9ICJtc2UiYC4KR28gdG8gYD9jdi5nbG1uZXRgIGZvciBkZXRhaWxzLgoKPGRldGFpbHM+PHN1bW1hcnk+U29sdXRpb248L3N1bW1hcnk+CgpgYGB7ciBsYXNzby1jdn0Kc2V0LnNlZWQoMTIzKQpsYXNzb19jdiA8LSBjdi5nbG1uZXQodHJhaW5YLCB0cmFpblksIGFscGhhID0gMSwgCiAgICAgICAgICAgICAgICAgICAgICBuZm9sZHMgPSBLLCB0eXBlLm1lYXN1cmUgPSAibXNlIikKbGFzc29fY3YKcGxvdChsYXNzb19jdikKYGBgCgpOb3RlIHRoYXQgd2UgY2FuIGV4dHJhY3QgdGhlIGZpdHRlZCBsYXNzbyByZWdyZXNzaW9uIG9iamVjdCBmcm9tIHRoZSBDViByZXN1bHQKYW5kIG1ha2UgdGhlIGNvZWZmaWNpZW50IHByb2ZpbGUgcGxvdCBhcyBiZWZvcmUuCgpgYGB7ciBsYXNzby1jdi1jb2VmZmljaWVudC1wcm9maWxlfQpwbG90KGxhc3NvX2N2JGdsbW5ldC5maXQsIHh2YXIgPSAibGFtYmRhIikKYGBgCgpXZSBjYW4gbG9vayBmb3IgdGhlIGdhbW1hIHZhbHVlcyB0aGF0IGdpdmUgdGhlIGJlc3QgcmVzdWx0LiAKSGVyZSB5b3UgaGF2ZSB0d28gcG9zc2liaWxpdGllcyA6CgoxLiBgbGFtYmRhLm1pbmA6IHRoZSB2YWx1ZSBvZiAgJFxnYW1tYSQgdGhhdCBnaXZlcyB0aGUgYmVzdCByZXN1bHQgZm9yIHRoZSBjcm9zc3ZhbGlkYXRpb24uCjIuIGBsYW1iZGEuMXNlYDogdGhlIGxhcmdlc3QgdmFsdWUgb2YgJFxnYW1tYSQgc3VjaCB0aGF0IHRoZSBNU0UgaXMgd2l0aGluIDEgc3RhbmRhcmQgZXJyb3IKb2YgdGhlIGJlc3QgcmVzdWx0IGZyb20gdGhlIGNyb3NzIHZhbGlkYXRpb24uCgpgYGB7cn0KbGFzc29fY3YkbGFtYmRhLm1pbgpsYXNzb19jdiRsYW1iZGEuMXNlCmBgYAoKV2Ugd2lsbCAocmF0aGVyIGFyYml0cmFyaWx5KSB1c2UgYGxhbWJkYS5taW5gIGhlcmUgdG8gZml0IHRoZSBmaW5hbCBtb2RlbCBhbmQgZ2VuZXJhdGUgcHJlZGljdGlvbnMgb24gdGhlIHRlc3QgZGF0YS4KTm90ZSB0aGF0IHdlIGRvbid0IGFjdHVhbGx5IGhhdmUgdG8gcmVkbyB0aGUgZml0dGluZywgd2UgY2FuIGp1c3QgdXNlIG91ciBleGlzdGluZwpgbGFzc29fY3ZgIG9iamVjdCwgd2hpY2ggYWxyZWFkeSBjb250YWlucyB0aGUgZml0dGVkIG1vZGVscyBmb3IgYSByYW5nZSBvZiBgbGFtYmRhYCB2YWx1ZXMuCldlIGNhbiB1c2UgdGhlIGBwcmVkaWN0YCBmdW5jdGlvbiBhbmQgc3BlY2lmeSB0aGUgYHNgIGFyZ3VtZW50ICh3aGljaCBjb25mdXNpbmdseSBzZXRzIGBsYW1iZGFgIGluIHRoaXMgY2FzZSkgIHRvIG1ha2UgcHJlZGljdGlvbnMgb24gdGhlIHRlc3QgZGF0YS4KCmBgYHtyfQpsYXNzb19wcmVkcyA8LSBwcmVkaWN0KGxhc3NvX2N2LCBzID0gbGFzc29fY3YkbGFtYmRhLm1pbiwgbmV3eCA9IHRlc3RYKQojIyBDYWxjdWxhdGUgTVNFCihsYXNzb19tc2UgPC0gTVNFKHRlc3RZLCBsYXNzb19wcmVkcykpCmBgYAo8L2RldGFpbHM+CgoKIyMjIyAyLiBEbyB0aGUgc2FtZSBmb3IgcmlkZ2UgcmVncmVzc2lvbi4gey19Cgo8ZGV0YWlscz48c3VtbWFyeT5Tb2x1dGlvbjwvc3VtbWFyeT4KCmBgYHtyIHJpZGdlLWN2fQpzZXQuc2VlZCgxMjMpCnJpZGdlX2N2IDwtIGN2LmdsbW5ldCh0cmFpblgsIHRyYWluWSwgYWxwaGEgPSAwLCAKICAgICAgICAgICAgICAgICAgICAgIG5mb2xkcyA9IEssIHR5cGUubWVhc3VyZSA9ICJtc2UiKQpyaWRnZV9jdgpwbG90KHJpZGdlX2N2KQpgYGAKCk5vdGUgdGhhdCB3ZSBjYW4gZXh0cmFjdCB0aGUgZml0dGVkIHJpZGdlIHJlZ3Jlc3Npb24gb2JqZWN0IGZyb20gdGhlIENWIHJlc3VsdAphbmQgbWFrZSB0aGUgY29lZmZpY2llbnQgcHJvZmlsZSBwbG90IGFzIGJlZm9yZS4KCmBgYHtyIHJpZGdlLWN2LWNvZWZmaWNpZW50LXByb2ZpbGV9CnBsb3QocmlkZ2VfY3YkZ2xtbmV0LmZpdCwgeHZhciA9ICJsYW1iZGEiKQpgYGAKCldlIGNhbiBsb29rIGZvciB0aGUgZ2FtbWEgdmFsdWVzIHRoYXQgZ2l2ZSB0aGUgYmVzdCByZXN1bHQuIApIZXJlIHlvdSBoYXZlIHR3byBwb3NzaWJpbGl0aWVzIDoKCjEuIGBsYW1iZGEubWluYDogdGhlIHZhbHVlIG9mICAkXGdhbW1hJCB0aGF0IGdpdmVzIHRoZSBiZXN0IHJlc3VsdCBmb3IgdGhlIGNyb3NzdmFsaWRhdGlvbi4KMi4gYGxhbWJkYS4xc2VgOiB0aGUgbGFyZ2VzdCB2YWx1ZSBvZiAkXGdhbW1hJCBzdWNoIHRoYXQgdGhlIE1TRSBpcyB3aXRoaW4gMSBzdGFuZGFyZCBlcnJvcgpvZiB0aGUgYmVzdCByZXN1bHQgZnJvbSB0aGUgY3Jvc3MgdmFsaWRhdGlvbi4KCmBgYHtyfQpyaWRnZV9jdiRsYW1iZGEubWluCnJpZGdlX2N2JGxhbWJkYS4xc2UKYGBgCgpXZSB3aWxsIChyYXRoZXIgYXJiaXRyYXJpbHkpIHVzZSBgbGFtYmRhLm1pbmAgaGVyZSB0byBmaXQgdGhlIGZpbmFsIG1vZGVsIGFuZCBnZW5lcmF0ZSBwcmVkaWN0aW9ucyBvbiB0aGUgdGVzdCBkYXRhLgpOb3RlIHRoYXQgd2UgZG9uJ3QgYWN0dWFsbHkgaGF2ZSB0byByZWRvIHRoZSBmaXR0aW5nLCB3ZSBjYW4ganVzdCB1c2Ugb3VyIGV4aXN0aW5nCmByaWRnZV9jdmAgb2JqZWN0LCB3aGljaCBhbHJlYWR5IGNvbnRhaW5zIHRoZSBmaXR0ZWQgbW9kZWxzIGZvciBhIHJhbmdlIG9mIGBsYW1iZGFgIHZhbHVlcy4KV2UgY2FuIHVzZSB0aGUgYHByZWRpY3RgIGZ1bmN0aW9uIGFuZCBzcGVjaWZ5IHRoZSBgc2AgYXJndW1lbnQgKHdoaWNoIGNvbmZ1c2luZ2x5IHNldHMgYGxhbWJkYWAgaW4gdGhpcyBjYXNlKSAgdG8gbWFrZSBwcmVkaWN0aW9ucyBvbiB0aGUgdGVzdCBkYXRhLgoKYGBge3IgcmlkZ2UtcHJlZGljdGlvbnN9CnJpZGdlX3ByZWRzIDwtIHByZWRpY3QocmlkZ2VfY3YsIHMgPSByaWRnZV9jdiRsYW1iZGEubWluLCBuZXd4ID0gdGVzdFgpCiMjIENhbGN1bGF0ZSBNU0UKKHJpZGdlX21zZSA8LSBNU0UodGVzdFksIHJpZGdlX3ByZWRzKSkKYGBgCgo8L2RldGFpbHM+CgoKIyMjIyAzLiBXaGljaCBvZiB0aGUgbW9kZWxzIGNvbnNpZGVyZWQgKFBDUiwgbGFzc28sIHJpZGdlKSBwZXJmb3JtcyBiZXN0Py4gey19CiAgICAKPGRldGFpbHM+PHN1bW1hcnk+U29sdXRpb248L3N1bW1hcnk+CgpCYXNlZCBvbiB0aGUgTVNFLCB0aGUgcmlkZ2UgbW9kZWwgcGVyZm9ybXMgYmVzdCBvbiB0aGUgdGVzdCBkYXRhLgoKYGBge3IsIGVjaG89RkFMU0V9CmtuaXRyOjprYWJsZSgKICBkYXRhLmZyYW1lKAogICAgIk1vZGVsIiA9IGMoIlBDUiIsICJMYXNzbyIsICJSaWRnZSIpLAogICAgIk1TRSIgPSBjKHBjcl9tc2UsIGxhc3NvX21zZSwgcmlkZ2VfbXNlKQogICkKKQpgYGAKPC9kZXRhaWxzPgo=</div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("Lab3-Penalized-Regression.Rmd");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

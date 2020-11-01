@@ -491,6 +491,9 @@ div.tocify {
     <li>
       <a href="Lab2-PCA.html">Lab 2</a>
     </li>
+    <li>
+      <a href="Lab3-Penalized-Regression.html">Lab 3</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -1040,16 +1043,15 @@ div.tocify {
 </div>
 <div id="toxicogenomics-example" class="section level2">
 <h2><span class="header-section-number">4.6</span> Toxicogenomics example</h2>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1"></a><span class="kw">library</span>(glmnet)</span></code></pre></div>
-<pre><code>## Loaded glmnet 4.0-2</code></pre>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1"></a>mRidge &lt;-<span class="st"> </span><span class="kw">glmnet</span>(</span>
-<span id="cb33-2"><a href="#cb33-2"></a>  <span class="dt">x =</span> toxData[,<span class="op">-</span><span class="dv">1</span>] <span class="op">%&gt;%</span></span>
-<span id="cb33-3"><a href="#cb33-3"></a><span class="st">    </span>as.matrix,</span>
-<span id="cb33-4"><a href="#cb33-4"></a>  <span class="dt">y =</span> toxData <span class="op">%&gt;%</span></span>
-<span id="cb33-5"><a href="#cb33-5"></a><span class="st">    </span><span class="kw">pull</span>(BA),</span>
-<span id="cb33-6"><a href="#cb33-6"></a>  <span class="dt">alpha =</span> <span class="dv">0</span>) <span class="co"># ridge: alpha = 0  </span></span>
-<span id="cb33-7"><a href="#cb33-7"></a></span>
-<span id="cb33-8"><a href="#cb33-8"></a><span class="kw">plot</span>(mRidge, <span class="dt">xvar=</span><span class="st">&quot;lambda&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1"></a><span class="kw">library</span>(glmnet)</span>
+<span id="cb31-2"><a href="#cb31-2"></a>mRidge &lt;-<span class="st"> </span><span class="kw">glmnet</span>(</span>
+<span id="cb31-3"><a href="#cb31-3"></a>  <span class="dt">x =</span> toxData[,<span class="op">-</span><span class="dv">1</span>] <span class="op">%&gt;%</span></span>
+<span id="cb31-4"><a href="#cb31-4"></a><span class="st">    </span>as.matrix,</span>
+<span id="cb31-5"><a href="#cb31-5"></a>  <span class="dt">y =</span> toxData <span class="op">%&gt;%</span></span>
+<span id="cb31-6"><a href="#cb31-6"></a><span class="st">    </span><span class="kw">pull</span>(BA),</span>
+<span id="cb31-7"><a href="#cb31-7"></a>  <span class="dt">alpha =</span> <span class="dv">0</span>) <span class="co"># ridge: alpha = 0  </span></span>
+<span id="cb31-8"><a href="#cb31-8"></a></span>
+<span id="cb31-9"><a href="#cb31-9"></a><span class="kw">plot</span>(mRidge, <span class="dt">xvar=</span><span class="st">&quot;lambda&quot;</span>)</span></code></pre></div>
 <p><img src="prediction_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
 <p>The R function  uses  to refer to the penalty parameter. In this course we use <span class="math inline">\(\lambda\)</span>, because <span class="math inline">\(\lambda\)</span> is often used as eigenvalues.</p>
 <p>The graph shows that with increasing penalty parameter, the parameter estimates are shrunken towards zero. The estimates will only reach zero for <span class="math inline">\(\lambda \rightarrow \infty\)</span>. The stronger the shrinkage, the larger the bias (towards zero) and the smaller the variance of the parameter estimators (and hence also smaller variance of the predictions).</p>
@@ -1097,13 +1099,13 @@ div.tocify {
 </div>
 <div id="toxicogenomics-example-1" class="section level2">
 <h2><span class="header-section-number">5.2</span> Toxicogenomics example</h2>
-<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1"></a>mLasso &lt;-<span class="st"> </span><span class="kw">glmnet</span>(</span>
-<span id="cb34-2"><a href="#cb34-2"></a>  <span class="dt">x =</span> toxData[,<span class="op">-</span><span class="dv">1</span>] <span class="op">%&gt;%</span></span>
-<span id="cb34-3"><a href="#cb34-3"></a><span class="st">    </span>as.matrix,</span>
-<span id="cb34-4"><a href="#cb34-4"></a>  <span class="dt">y =</span> toxData <span class="op">%&gt;%</span></span>
-<span id="cb34-5"><a href="#cb34-5"></a><span class="st">    </span><span class="kw">pull</span>(BA),</span>
-<span id="cb34-6"><a href="#cb34-6"></a><span class="dt">alpha =</span> <span class="dv">1</span>)</span>
-<span id="cb34-7"><a href="#cb34-7"></a><span class="kw">plot</span>(mLasso, <span class="dt">xvar =</span> <span class="st">&quot;lambda&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1"></a>mLasso &lt;-<span class="st"> </span><span class="kw">glmnet</span>(</span>
+<span id="cb32-2"><a href="#cb32-2"></a>  <span class="dt">x =</span> toxData[,<span class="op">-</span><span class="dv">1</span>] <span class="op">%&gt;%</span></span>
+<span id="cb32-3"><a href="#cb32-3"></a><span class="st">    </span>as.matrix,</span>
+<span id="cb32-4"><a href="#cb32-4"></a>  <span class="dt">y =</span> toxData <span class="op">%&gt;%</span></span>
+<span id="cb32-5"><a href="#cb32-5"></a><span class="st">    </span><span class="kw">pull</span>(BA),</span>
+<span id="cb32-6"><a href="#cb32-6"></a><span class="dt">alpha =</span> <span class="dv">1</span>)</span>
+<span id="cb32-7"><a href="#cb32-7"></a><span class="kw">plot</span>(mLasso, <span class="dt">xvar =</span> <span class="st">&quot;lambda&quot;</span>)</span></code></pre></div>
 <p><img src="prediction_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
 <ul>
 <li><p>The graph with the paths of the parameter estimates nicely illustrates the typical behaviour of the lasso estimates as a function of <span class="math inline">\(\lambda\)</span>: when <span class="math inline">\(\lambda\)</span> increases the estimates are shrunken towards zero.</p></li>
@@ -1127,15 +1129,15 @@ div.tocify {
 <li><p>The concentration of mercury can be derived from a regression model of the logratio in function of the range for each range x.</p></li>
 </ul></li>
 </ul>
-<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1"></a><span class="kw">library</span>(<span class="st">&quot;SemiPar&quot;</span>)</span>
-<span id="cb35-2"><a href="#cb35-2"></a><span class="kw">data</span>(lidar)</span>
-<span id="cb35-3"><a href="#cb35-3"></a>pLidar &lt;-<span class="st"> </span>lidar <span class="op">%&gt;%</span></span>
-<span id="cb35-4"><a href="#cb35-4"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> range, <span class="dt">y =</span> logratio)) <span class="op">+</span></span>
-<span id="cb35-5"><a href="#cb35-5"></a><span class="st">  </span><span class="kw">geom_point</span>() <span class="op">+</span></span>
-<span id="cb35-6"><a href="#cb35-6"></a><span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;range (m)&quot;</span>)</span>
-<span id="cb35-7"><a href="#cb35-7"></a></span>
-<span id="cb35-8"><a href="#cb35-8"></a>pLidar <span class="op">+</span></span>
-<span id="cb35-9"><a href="#cb35-9"></a><span class="st">  </span><span class="kw">geom_smooth</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1"></a><span class="kw">library</span>(<span class="st">&quot;SemiPar&quot;</span>)</span>
+<span id="cb33-2"><a href="#cb33-2"></a><span class="kw">data</span>(lidar)</span>
+<span id="cb33-3"><a href="#cb33-3"></a>pLidar &lt;-<span class="st"> </span>lidar <span class="op">%&gt;%</span></span>
+<span id="cb33-4"><a href="#cb33-4"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> range, <span class="dt">y =</span> logratio)) <span class="op">+</span></span>
+<span id="cb33-5"><a href="#cb33-5"></a><span class="st">  </span><span class="kw">geom_point</span>() <span class="op">+</span></span>
+<span id="cb33-6"><a href="#cb33-6"></a><span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;range (m)&quot;</span>)</span>
+<span id="cb33-7"><a href="#cb33-7"></a></span>
+<span id="cb33-8"><a href="#cb33-8"></a>pLidar <span class="op">+</span></span>
+<span id="cb33-9"><a href="#cb33-9"></a><span class="st">  </span><span class="kw">geom_smooth</span>()</span></code></pre></div>
 <pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
 <p><img src="prediction_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
 <ul>
@@ -1168,30 +1170,30 @@ div.tocify {
 <li>We will use this basis for didactical purposes</li>
 <li>We can use OLS to fit y w.r.t. the basis.</li>
 </ul>
-<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1"></a>knots &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dv">400</span>,<span class="dv">700</span>,<span class="fl">12.5</span>)</span>
-<span id="cb37-2"><a href="#cb37-2"></a></span>
-<span id="cb37-3"><a href="#cb37-3"></a>basis &lt;-<span class="st"> </span><span class="kw">sapply</span>(knots,</span>
-<span id="cb37-4"><a href="#cb37-4"></a>  <span class="cf">function</span>(k,y) (y<span class="op">-</span>k)<span class="op">*</span>(y<span class="op">&gt;</span>k),</span>
-<span id="cb37-5"><a href="#cb37-5"></a>  <span class="dt">y=</span> lidar <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">pull</span>(range)</span>
-<span id="cb37-6"><a href="#cb37-6"></a>  )</span>
-<span id="cb37-7"><a href="#cb37-7"></a></span>
-<span id="cb37-8"><a href="#cb37-8"></a>basisExp &lt;-<span class="st"> </span><span class="kw">cbind</span>(<span class="dv">1</span>, <span class="dt">range =</span> lidar <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">pull</span>(range), basis)</span>
-<span id="cb37-9"><a href="#cb37-9"></a></span>
-<span id="cb37-10"><a href="#cb37-10"></a>splineFitLs &lt;-<span class="st"> </span><span class="kw">lm</span>(logratio <span class="op">~</span><span class="st"> </span><span class="dv">-1</span> <span class="op">+</span><span class="st"> </span>basisExp, lidar)</span>
-<span id="cb37-11"><a href="#cb37-11"></a></span>
-<span id="cb37-12"><a href="#cb37-12"></a>pBasis &lt;-<span class="st"> </span>basisExp[,<span class="op">-</span><span class="dv">1</span>] <span class="op">%&gt;%</span></span>
-<span id="cb37-13"><a href="#cb37-13"></a><span class="st">  </span>data.frame <span class="op">%&gt;%</span></span>
-<span id="cb37-14"><a href="#cb37-14"></a><span class="st">  </span><span class="kw">gather</span>(<span class="st">&quot;basis&quot;</span>,<span class="st">&quot;values&quot;</span>,<span class="op">-</span><span class="dv">1</span>) <span class="op">%&gt;%</span></span>
-<span id="cb37-15"><a href="#cb37-15"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> range, <span class="dt">y =</span> values, <span class="dt">color =</span> basis)) <span class="op">+</span></span>
-<span id="cb37-16"><a href="#cb37-16"></a><span class="st">  </span><span class="kw">geom_line</span>() <span class="op">+</span></span>
-<span id="cb37-17"><a href="#cb37-17"></a><span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position=</span><span class="st">&quot;none&quot;</span>) <span class="op">+</span></span>
-<span id="cb37-18"><a href="#cb37-18"></a><span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;basis&quot;</span>)</span>
-<span id="cb37-19"><a href="#cb37-19"></a></span>
-<span id="cb37-20"><a href="#cb37-20"></a><span class="kw">grid.arrange</span>(</span>
-<span id="cb37-21"><a href="#cb37-21"></a>  pLidar <span class="op">+</span></span>
-<span id="cb37-22"><a href="#cb37-22"></a><span class="st">    </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">x =</span> lidar<span class="op">$</span>range, <span class="dt">y =</span> splineFitLs<span class="op">$</span>fitted), <span class="dt">lwd =</span> <span class="dv">2</span>),</span>
-<span id="cb37-23"><a href="#cb37-23"></a>  pBasis,</span>
-<span id="cb37-24"><a href="#cb37-24"></a>  <span class="dt">ncol=</span><span class="dv">1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1"></a>knots &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dv">400</span>,<span class="dv">700</span>,<span class="fl">12.5</span>)</span>
+<span id="cb35-2"><a href="#cb35-2"></a></span>
+<span id="cb35-3"><a href="#cb35-3"></a>basis &lt;-<span class="st"> </span><span class="kw">sapply</span>(knots,</span>
+<span id="cb35-4"><a href="#cb35-4"></a>  <span class="cf">function</span>(k,y) (y<span class="op">-</span>k)<span class="op">*</span>(y<span class="op">&gt;</span>k),</span>
+<span id="cb35-5"><a href="#cb35-5"></a>  <span class="dt">y=</span> lidar <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">pull</span>(range)</span>
+<span id="cb35-6"><a href="#cb35-6"></a>  )</span>
+<span id="cb35-7"><a href="#cb35-7"></a></span>
+<span id="cb35-8"><a href="#cb35-8"></a>basisExp &lt;-<span class="st"> </span><span class="kw">cbind</span>(<span class="dv">1</span>, <span class="dt">range =</span> lidar <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">pull</span>(range), basis)</span>
+<span id="cb35-9"><a href="#cb35-9"></a></span>
+<span id="cb35-10"><a href="#cb35-10"></a>splineFitLs &lt;-<span class="st"> </span><span class="kw">lm</span>(logratio <span class="op">~</span><span class="st"> </span><span class="dv">-1</span> <span class="op">+</span><span class="st"> </span>basisExp, lidar)</span>
+<span id="cb35-11"><a href="#cb35-11"></a></span>
+<span id="cb35-12"><a href="#cb35-12"></a>pBasis &lt;-<span class="st"> </span>basisExp[,<span class="op">-</span><span class="dv">1</span>] <span class="op">%&gt;%</span></span>
+<span id="cb35-13"><a href="#cb35-13"></a><span class="st">  </span>data.frame <span class="op">%&gt;%</span></span>
+<span id="cb35-14"><a href="#cb35-14"></a><span class="st">  </span><span class="kw">gather</span>(<span class="st">&quot;basis&quot;</span>,<span class="st">&quot;values&quot;</span>,<span class="op">-</span><span class="dv">1</span>) <span class="op">%&gt;%</span></span>
+<span id="cb35-15"><a href="#cb35-15"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> range, <span class="dt">y =</span> values, <span class="dt">color =</span> basis)) <span class="op">+</span></span>
+<span id="cb35-16"><a href="#cb35-16"></a><span class="st">  </span><span class="kw">geom_line</span>() <span class="op">+</span></span>
+<span id="cb35-17"><a href="#cb35-17"></a><span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position=</span><span class="st">&quot;none&quot;</span>) <span class="op">+</span></span>
+<span id="cb35-18"><a href="#cb35-18"></a><span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;basis&quot;</span>)</span>
+<span id="cb35-19"><a href="#cb35-19"></a></span>
+<span id="cb35-20"><a href="#cb35-20"></a><span class="kw">grid.arrange</span>(</span>
+<span id="cb35-21"><a href="#cb35-21"></a>  pLidar <span class="op">+</span></span>
+<span id="cb35-22"><a href="#cb35-22"></a><span class="st">    </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">x =</span> lidar<span class="op">$</span>range, <span class="dt">y =</span> splineFitLs<span class="op">$</span>fitted), <span class="dt">lwd =</span> <span class="dv">2</span>),</span>
+<span id="cb35-23"><a href="#cb35-23"></a>  pBasis,</span>
+<span id="cb35-24"><a href="#cb35-24"></a>  <span class="dt">ncol=</span><span class="dv">1</span>)</span></code></pre></div>
 <pre><code>## Warning: Use of `lidar$range` is discouraged. Use `range` instead.</code></pre>
 <p><img src="prediction_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
 <ul>
@@ -1215,15 +1217,15 @@ div.tocify {
 <ul>
 <li>Here we will set the penalty at 900.</li>
 </ul>
-<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1"></a>D &lt;-<span class="st"> </span><span class="kw">diag</span>(<span class="kw">ncol</span>(basisExp))</span>
-<span id="cb39-2"><a href="#cb39-2"></a>D[<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>] &lt;-<span class="st"> </span><span class="dv">0</span></span>
-<span id="cb39-3"><a href="#cb39-3"></a>lambda &lt;-<span class="st"> </span><span class="dv">900</span></span>
-<span id="cb39-4"><a href="#cb39-4"></a>betaRidge &lt;-<span class="st"> </span><span class="kw">solve</span>(<span class="kw">t</span>(basisExp)<span class="op">%*%</span>basisExp<span class="op">+</span>(lambda<span class="op">*</span>D))<span class="op">%*%</span><span class="kw">t</span>(basisExp)<span class="op">%*%</span>lidar<span class="op">$</span>logratio</span>
-<span id="cb39-5"><a href="#cb39-5"></a><span class="kw">grid.arrange</span>(</span>
-<span id="cb39-6"><a href="#cb39-6"></a>  pLidar <span class="op">+</span></span>
-<span id="cb39-7"><a href="#cb39-7"></a><span class="st">    </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">x =</span> lidar<span class="op">$</span>range, <span class="dt">y =</span> <span class="kw">c</span>(basisExp <span class="op">%*%</span><span class="st"> </span>betaRidge)), <span class="dt">lwd =</span> <span class="dv">2</span>),</span>
-<span id="cb39-8"><a href="#cb39-8"></a>  pBasis,</span>
-<span id="cb39-9"><a href="#cb39-9"></a>  <span class="dt">ncol=</span><span class="dv">1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1"></a>D &lt;-<span class="st"> </span><span class="kw">diag</span>(<span class="kw">ncol</span>(basisExp))</span>
+<span id="cb37-2"><a href="#cb37-2"></a>D[<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>] &lt;-<span class="st"> </span><span class="dv">0</span></span>
+<span id="cb37-3"><a href="#cb37-3"></a>lambda &lt;-<span class="st"> </span><span class="dv">900</span></span>
+<span id="cb37-4"><a href="#cb37-4"></a>betaRidge &lt;-<span class="st"> </span><span class="kw">solve</span>(<span class="kw">t</span>(basisExp)<span class="op">%*%</span>basisExp<span class="op">+</span>(lambda<span class="op">*</span>D))<span class="op">%*%</span><span class="kw">t</span>(basisExp)<span class="op">%*%</span>lidar<span class="op">$</span>logratio</span>
+<span id="cb37-5"><a href="#cb37-5"></a><span class="kw">grid.arrange</span>(</span>
+<span id="cb37-6"><a href="#cb37-6"></a>  pLidar <span class="op">+</span></span>
+<span id="cb37-7"><a href="#cb37-7"></a><span class="st">    </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">x =</span> lidar<span class="op">$</span>range, <span class="dt">y =</span> <span class="kw">c</span>(basisExp <span class="op">%*%</span><span class="st"> </span>betaRidge)), <span class="dt">lwd =</span> <span class="dv">2</span>),</span>
+<span id="cb37-8"><a href="#cb37-8"></a>  pBasis,</span>
+<span id="cb37-9"><a href="#cb37-9"></a>  <span class="dt">ncol=</span><span class="dv">1</span>)</span></code></pre></div>
 <pre><code>## Warning: Use of `lidar$range` is discouraged. Use `range` instead.</code></pre>
 <p><img src="prediction_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
 <p>How do we choose <span class="math inline">\(\lambda\)</span>?</p>
@@ -1433,16 +1435,16 @@ n \times C_p = \Vert \mathbf{Y} - \mathbf{X}\boldsymbol{\beta}\Vert_2^2 + 2\sigm
 <h3><span class="header-section-number">7.5.4</span> Toxicogenomics example</h3>
 <div id="lasso" class="section level4">
 <h4><span class="header-section-number">7.5.4.1</span> Lasso</h4>
-<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1"></a><span class="kw">set.seed</span>(<span class="dv">15</span>)</span>
-<span id="cb41-2"><a href="#cb41-2"></a><span class="kw">library</span>(glmnet)</span>
-<span id="cb41-3"><a href="#cb41-3"></a>mCvLasso &lt;-<span class="st"> </span><span class="kw">cv.glmnet</span>(</span>
-<span id="cb41-4"><a href="#cb41-4"></a>  <span class="dt">x =</span> toxData[,<span class="op">-</span><span class="dv">1</span>] <span class="op">%&gt;%</span></span>
-<span id="cb41-5"><a href="#cb41-5"></a><span class="st">    </span>as.matrix,</span>
-<span id="cb41-6"><a href="#cb41-6"></a>  <span class="dt">y =</span> toxData <span class="op">%&gt;%</span></span>
-<span id="cb41-7"><a href="#cb41-7"></a><span class="st">    </span><span class="kw">pull</span>(BA),</span>
-<span id="cb41-8"><a href="#cb41-8"></a>  <span class="dt">alpha =</span> <span class="dv">1</span>)  <span class="co"># lasso alpha=1</span></span>
-<span id="cb41-9"><a href="#cb41-9"></a></span>
-<span id="cb41-10"><a href="#cb41-10"></a><span class="kw">plot</span>(mCvLasso)</span></code></pre></div>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1"></a><span class="kw">set.seed</span>(<span class="dv">15</span>)</span>
+<span id="cb39-2"><a href="#cb39-2"></a><span class="kw">library</span>(glmnet)</span>
+<span id="cb39-3"><a href="#cb39-3"></a>mCvLasso &lt;-<span class="st"> </span><span class="kw">cv.glmnet</span>(</span>
+<span id="cb39-4"><a href="#cb39-4"></a>  <span class="dt">x =</span> toxData[,<span class="op">-</span><span class="dv">1</span>] <span class="op">%&gt;%</span></span>
+<span id="cb39-5"><a href="#cb39-5"></a><span class="st">    </span>as.matrix,</span>
+<span id="cb39-6"><a href="#cb39-6"></a>  <span class="dt">y =</span> toxData <span class="op">%&gt;%</span></span>
+<span id="cb39-7"><a href="#cb39-7"></a><span class="st">    </span><span class="kw">pull</span>(BA),</span>
+<span id="cb39-8"><a href="#cb39-8"></a>  <span class="dt">alpha =</span> <span class="dv">1</span>)  <span class="co"># lasso alpha=1</span></span>
+<span id="cb39-9"><a href="#cb39-9"></a></span>
+<span id="cb39-10"><a href="#cb39-10"></a><span class="kw">plot</span>(mCvLasso)</span></code></pre></div>
 <p><img src="prediction_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
 <p>Default CV procedure in  is <span class="math inline">\(k=10\)</span>-fold CV.</p>
 <p>The Graphs shows</p>
@@ -1458,15 +1460,15 @@ n \times C_p = \Vert \mathbf{Y} - \mathbf{X}\boldsymbol{\beta}\Vert_2^2 + 2\sigm
 <li>The latter choice of <span class="math inline">\(\lambda\)</span> has no firm theoretical basis, except that it somehow accounts for the imprecision of the error estimate. One could loosely say that this <span class="math inline">\(\gamma\)</span> corresponds to the smallest model (i.e. least number of predictors) that gives an error that is within margin of error of the error of the best model.</li>
 </ul>
 <hr />
-<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1"></a>mLassoOpt &lt;-<span class="st"> </span><span class="kw">glmnet</span>(</span>
-<span id="cb42-2"><a href="#cb42-2"></a>  <span class="dt">x =</span> toxData[,<span class="op">-</span><span class="dv">1</span>] <span class="op">%&gt;%</span></span>
-<span id="cb42-3"><a href="#cb42-3"></a><span class="st">    </span>as.matrix,</span>
-<span id="cb42-4"><a href="#cb42-4"></a>  <span class="dt">y =</span> toxData <span class="op">%&gt;%</span></span>
-<span id="cb42-5"><a href="#cb42-5"></a><span class="st">    </span><span class="kw">pull</span>(BA),</span>
-<span id="cb42-6"><a href="#cb42-6"></a>    <span class="dt">alpha =</span> <span class="dv">1</span>,</span>
-<span id="cb42-7"><a href="#cb42-7"></a>    <span class="dt">lambda =</span> mCvLasso<span class="op">$</span>lambda.min)</span>
-<span id="cb42-8"><a href="#cb42-8"></a></span>
-<span id="cb42-9"><a href="#cb42-9"></a><span class="kw">summary</span>(<span class="kw">coef</span>(mLassoOpt))</span></code></pre></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1"></a>mLassoOpt &lt;-<span class="st"> </span><span class="kw">glmnet</span>(</span>
+<span id="cb40-2"><a href="#cb40-2"></a>  <span class="dt">x =</span> toxData[,<span class="op">-</span><span class="dv">1</span>] <span class="op">%&gt;%</span></span>
+<span id="cb40-3"><a href="#cb40-3"></a><span class="st">    </span>as.matrix,</span>
+<span id="cb40-4"><a href="#cb40-4"></a>  <span class="dt">y =</span> toxData <span class="op">%&gt;%</span></span>
+<span id="cb40-5"><a href="#cb40-5"></a><span class="st">    </span><span class="kw">pull</span>(BA),</span>
+<span id="cb40-6"><a href="#cb40-6"></a>    <span class="dt">alpha =</span> <span class="dv">1</span>,</span>
+<span id="cb40-7"><a href="#cb40-7"></a>    <span class="dt">lambda =</span> mCvLasso<span class="op">$</span>lambda.min)</span>
+<span id="cb40-8"><a href="#cb40-8"></a></span>
+<span id="cb40-9"><a href="#cb40-9"></a><span class="kw">summary</span>(<span class="kw">coef</span>(mLassoOpt))</span></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":["i"],"name":[1],"type":["int"],"align":["right"]},{"label":["j"],"name":[2],"type":["int"],"align":["right"]},{"label":["x"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"1","3":"1.780154e-16"},{"1":"7","2":"1","3":"7.723008e-01"},{"1":"105","2":"1","3":"6.745130e-01"},{"1":"147","2":"1","3":"-7.480144e-01"},{"1":"420","2":"1","3":"1.275626e+00"},{"1":"453","2":"1","3":"4.271345e-02"},{"1":"1720","2":"1","3":"-4.548228e-01"},{"1":"1952","2":"1","3":"3.650587e-01"},{"1":"2032","2":"1","3":"1.233149e-04"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
@@ -1474,17 +1476,17 @@ n \times C_p = \Vert \mathbf{Y} - \mathbf{X}\boldsymbol{\beta}\Vert_2^2 + 2\sigm
 </div>
 <p>With the optimal <span class="math inline">\(\lambda\)</span> (smallest error estimate) the output shows the 9 non-zero estimated regression coefficients (sparse solution).</p>
 <hr />
-<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1"></a>mLasso1se &lt;-<span class="st"> </span><span class="kw">glmnet</span>(</span>
-<span id="cb43-2"><a href="#cb43-2"></a>  <span class="dt">x =</span> toxData[,<span class="op">-</span><span class="dv">1</span>] <span class="op">%&gt;%</span></span>
-<span id="cb43-3"><a href="#cb43-3"></a><span class="st">    </span>as.matrix,</span>
-<span id="cb43-4"><a href="#cb43-4"></a>    <span class="dt">y=</span> toxData <span class="op">%&gt;%</span></span>
-<span id="cb43-5"><a href="#cb43-5"></a><span class="st">      </span><span class="kw">pull</span>(BA),</span>
-<span id="cb43-6"><a href="#cb43-6"></a>    <span class="dt">alpha =</span> <span class="dv">1</span>,</span>
-<span id="cb43-7"><a href="#cb43-7"></a>    <span class="dt">lambda =</span> mCvLasso<span class="op">$</span>lambda<span class="fl">.1</span>se)</span>
-<span id="cb43-8"><a href="#cb43-8"></a></span>
-<span id="cb43-9"><a href="#cb43-9"></a>mLasso1se <span class="op">%&gt;%</span></span>
-<span id="cb43-10"><a href="#cb43-10"></a><span class="st">  </span>coef <span class="op">%&gt;%</span></span>
-<span id="cb43-11"><a href="#cb43-11"></a><span class="st">  </span>summary</span></code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1"></a>mLasso1se &lt;-<span class="st"> </span><span class="kw">glmnet</span>(</span>
+<span id="cb41-2"><a href="#cb41-2"></a>  <span class="dt">x =</span> toxData[,<span class="op">-</span><span class="dv">1</span>] <span class="op">%&gt;%</span></span>
+<span id="cb41-3"><a href="#cb41-3"></a><span class="st">    </span>as.matrix,</span>
+<span id="cb41-4"><a href="#cb41-4"></a>    <span class="dt">y=</span> toxData <span class="op">%&gt;%</span></span>
+<span id="cb41-5"><a href="#cb41-5"></a><span class="st">      </span><span class="kw">pull</span>(BA),</span>
+<span id="cb41-6"><a href="#cb41-6"></a>    <span class="dt">alpha =</span> <span class="dv">1</span>,</span>
+<span id="cb41-7"><a href="#cb41-7"></a>    <span class="dt">lambda =</span> mCvLasso<span class="op">$</span>lambda<span class="fl">.1</span>se)</span>
+<span id="cb41-8"><a href="#cb41-8"></a></span>
+<span id="cb41-9"><a href="#cb41-9"></a>mLasso1se <span class="op">%&gt;%</span></span>
+<span id="cb41-10"><a href="#cb41-10"></a><span class="st">  </span>coef <span class="op">%&gt;%</span></span>
+<span id="cb41-11"><a href="#cb41-11"></a><span class="st">  </span>summary</span></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":["i"],"name":[1],"type":["int"],"align":["right"]},{"label":["j"],"name":[2],"type":["int"],"align":["right"]},{"label":["x"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"1","3":"1.324855e-16"},{"1":"7","2":"1","3":"6.255918e-01"},{"1":"147","2":"1","3":"-1.767770e-02"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
@@ -1495,14 +1497,14 @@ n \times C_p = \Vert \mathbf{Y} - \mathbf{X}\boldsymbol{\beta}\Vert_2^2 + 2\sigm
 </div>
 <div id="ridge" class="section level4">
 <h4><span class="header-section-number">7.5.4.2</span> Ridge</h4>
-<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1"></a>mCvRidge &lt;-<span class="st"> </span><span class="kw">cv.glmnet</span>(</span>
-<span id="cb44-2"><a href="#cb44-2"></a>  <span class="dt">x =</span> toxData[,<span class="op">-</span><span class="dv">1</span>] <span class="op">%&gt;%</span></span>
-<span id="cb44-3"><a href="#cb44-3"></a><span class="st">    </span>as.matrix,</span>
-<span id="cb44-4"><a href="#cb44-4"></a>    <span class="dt">y =</span> toxData <span class="op">%&gt;%</span></span>
-<span id="cb44-5"><a href="#cb44-5"></a><span class="st">      </span><span class="kw">pull</span>(BA),</span>
-<span id="cb44-6"><a href="#cb44-6"></a>      <span class="dt">alpha =</span> <span class="dv">0</span>)  <span class="co"># ridge alpha=0</span></span>
-<span id="cb44-7"><a href="#cb44-7"></a></span>
-<span id="cb44-8"><a href="#cb44-8"></a><span class="kw">plot</span>(mCvRidge)</span></code></pre></div>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1"></a>mCvRidge &lt;-<span class="st"> </span><span class="kw">cv.glmnet</span>(</span>
+<span id="cb42-2"><a href="#cb42-2"></a>  <span class="dt">x =</span> toxData[,<span class="op">-</span><span class="dv">1</span>] <span class="op">%&gt;%</span></span>
+<span id="cb42-3"><a href="#cb42-3"></a><span class="st">    </span>as.matrix,</span>
+<span id="cb42-4"><a href="#cb42-4"></a>    <span class="dt">y =</span> toxData <span class="op">%&gt;%</span></span>
+<span id="cb42-5"><a href="#cb42-5"></a><span class="st">      </span><span class="kw">pull</span>(BA),</span>
+<span id="cb42-6"><a href="#cb42-6"></a>      <span class="dt">alpha =</span> <span class="dv">0</span>)  <span class="co"># ridge alpha=0</span></span>
+<span id="cb42-7"><a href="#cb42-7"></a></span>
+<span id="cb42-8"><a href="#cb42-8"></a><span class="kw">plot</span>(mCvRidge)</span></code></pre></div>
 <p><img src="prediction_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
 <ul>
 <li>Ridge does not seem to have optimal solution.</li>
@@ -1512,11 +1514,14 @@ n \times C_p = \Vert \mathbf{Y} - \mathbf{X}\boldsymbol{\beta}\Vert_2^2 + 2\sigm
 </div>
 <div id="pca-regression" class="section level4">
 <h4><span class="header-section-number">7.5.4.3</span> PCA regression</h4>
-<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1"></a><span class="kw">set.seed</span>(<span class="dv">1264</span>)</span>
-<span id="cb45-2"><a href="#cb45-2"></a><span class="kw">library</span>(DAAG)</span></code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1"></a><span class="kw">set.seed</span>(<span class="dv">1264</span>)</span>
+<span id="cb43-2"><a href="#cb43-2"></a><span class="kw">library</span>(DAAG)</span></code></pre></div>
 <pre><code>## Loading required package: lattice</code></pre>
 <pre><code>## 
 ## Attaching package: &#39;lattice&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:boot&#39;:
+## 
+##     melanoma</code></pre>
 <pre><code>## The following object is masked from &#39;package:fda&#39;:
 ## 
 ##     melanoma</code></pre>
@@ -1525,35 +1530,35 @@ n \times C_p = \Vert \mathbf{Y} - \mathbf{X}\boldsymbol{\beta}\Vert_2^2 + 2\sigm
 <pre><code>## The following object is masked from &#39;package:plyr&#39;:
 ## 
 ##     ozone</code></pre>
-<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1"></a>tox &lt;-<span class="st"> </span><span class="kw">data.frame</span>(</span>
-<span id="cb51-2"><a href="#cb51-2"></a>  <span class="dt">Y =</span> toxData <span class="op">%&gt;%</span></span>
-<span id="cb51-3"><a href="#cb51-3"></a><span class="st">    </span><span class="kw">pull</span>(BA),</span>
-<span id="cb51-4"><a href="#cb51-4"></a>  <span class="dt">PC =</span> Zk)</span>
-<span id="cb51-5"><a href="#cb51-5"></a></span>
-<span id="cb51-6"><a href="#cb51-6"></a>PC.seq &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">25</span></span>
-<span id="cb51-7"><a href="#cb51-7"></a>Err &lt;-<span class="st"> </span><span class="kw">numeric</span>(<span class="dv">25</span>)</span>
-<span id="cb51-8"><a href="#cb51-8"></a></span>
-<span id="cb51-9"><a href="#cb51-9"></a>mCvPca &lt;-<span class="st"> </span><span class="kw">cv.lm</span>(</span>
-<span id="cb51-10"><a href="#cb51-10"></a>  Y<span class="op">~</span>PC<span class="fl">.1</span>,</span>
-<span id="cb51-11"><a href="#cb51-11"></a>  <span class="dt">data =</span> tox,</span>
-<span id="cb51-12"><a href="#cb51-12"></a>  <span class="dt">m =</span> <span class="dv">5</span>,</span>
-<span id="cb51-13"><a href="#cb51-13"></a>  <span class="dt">printit =</span> <span class="ot">FALSE</span>)</span>
-<span id="cb51-14"><a href="#cb51-14"></a></span>
-<span id="cb51-15"><a href="#cb51-15"></a>Err[<span class="dv">1</span>]&lt;-<span class="kw">attr</span>(mCvPca,<span class="st">&quot;ms&quot;</span>)</span>
-<span id="cb51-16"><a href="#cb51-16"></a></span>
-<span id="cb51-17"><a href="#cb51-17"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">2</span><span class="op">:</span><span class="dv">25</span>) {</span>
-<span id="cb51-18"><a href="#cb51-18"></a>  mCvPca &lt;-<span class="st"> </span><span class="kw">cv.lm</span>(</span>
-<span id="cb51-19"><a href="#cb51-19"></a>    <span class="kw">as.formula</span>(</span>
-<span id="cb51-20"><a href="#cb51-20"></a>      <span class="kw">paste</span>(<span class="st">&quot;Y ~ PC.1 + &quot;</span>,</span>
-<span id="cb51-21"><a href="#cb51-21"></a>        <span class="kw">paste</span>(<span class="st">&quot;PC.&quot;</span>, <span class="dv">2</span><span class="op">:</span>i, <span class="dt">collapse =</span> <span class="st">&quot;+&quot;</span>, <span class="dt">sep=</span><span class="st">&quot;&quot;</span>),</span>
-<span id="cb51-22"><a href="#cb51-22"></a>        <span class="dt">sep=</span><span class="st">&quot;&quot;</span></span>
-<span id="cb51-23"><a href="#cb51-23"></a>      )</span>
-<span id="cb51-24"><a href="#cb51-24"></a>    ),</span>
-<span id="cb51-25"><a href="#cb51-25"></a>    <span class="dt">data =</span> tox,</span>
-<span id="cb51-26"><a href="#cb51-26"></a>    <span class="dt">m =</span> <span class="dv">5</span>,</span>
-<span id="cb51-27"><a href="#cb51-27"></a>    <span class="dt">printit =</span> <span class="ot">FALSE</span>)</span>
-<span id="cb51-28"><a href="#cb51-28"></a>  Err[i]&lt;-<span class="kw">attr</span>(mCvPca,<span class="st">&quot;ms&quot;</span>)</span>
-<span id="cb51-29"><a href="#cb51-29"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1"></a>tox &lt;-<span class="st"> </span><span class="kw">data.frame</span>(</span>
+<span id="cb50-2"><a href="#cb50-2"></a>  <span class="dt">Y =</span> toxData <span class="op">%&gt;%</span></span>
+<span id="cb50-3"><a href="#cb50-3"></a><span class="st">    </span><span class="kw">pull</span>(BA),</span>
+<span id="cb50-4"><a href="#cb50-4"></a>  <span class="dt">PC =</span> Zk)</span>
+<span id="cb50-5"><a href="#cb50-5"></a></span>
+<span id="cb50-6"><a href="#cb50-6"></a>PC.seq &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">25</span></span>
+<span id="cb50-7"><a href="#cb50-7"></a>Err &lt;-<span class="st"> </span><span class="kw">numeric</span>(<span class="dv">25</span>)</span>
+<span id="cb50-8"><a href="#cb50-8"></a></span>
+<span id="cb50-9"><a href="#cb50-9"></a>mCvPca &lt;-<span class="st"> </span><span class="kw">cv.lm</span>(</span>
+<span id="cb50-10"><a href="#cb50-10"></a>  Y<span class="op">~</span>PC<span class="fl">.1</span>,</span>
+<span id="cb50-11"><a href="#cb50-11"></a>  <span class="dt">data =</span> tox,</span>
+<span id="cb50-12"><a href="#cb50-12"></a>  <span class="dt">m =</span> <span class="dv">5</span>,</span>
+<span id="cb50-13"><a href="#cb50-13"></a>  <span class="dt">printit =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb50-14"><a href="#cb50-14"></a></span>
+<span id="cb50-15"><a href="#cb50-15"></a>Err[<span class="dv">1</span>]&lt;-<span class="kw">attr</span>(mCvPca,<span class="st">&quot;ms&quot;</span>)</span>
+<span id="cb50-16"><a href="#cb50-16"></a></span>
+<span id="cb50-17"><a href="#cb50-17"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">2</span><span class="op">:</span><span class="dv">25</span>) {</span>
+<span id="cb50-18"><a href="#cb50-18"></a>  mCvPca &lt;-<span class="st"> </span><span class="kw">cv.lm</span>(</span>
+<span id="cb50-19"><a href="#cb50-19"></a>    <span class="kw">as.formula</span>(</span>
+<span id="cb50-20"><a href="#cb50-20"></a>      <span class="kw">paste</span>(<span class="st">&quot;Y ~ PC.1 + &quot;</span>,</span>
+<span id="cb50-21"><a href="#cb50-21"></a>        <span class="kw">paste</span>(<span class="st">&quot;PC.&quot;</span>, <span class="dv">2</span><span class="op">:</span>i, <span class="dt">collapse =</span> <span class="st">&quot;+&quot;</span>, <span class="dt">sep=</span><span class="st">&quot;&quot;</span>),</span>
+<span id="cb50-22"><a href="#cb50-22"></a>        <span class="dt">sep=</span><span class="st">&quot;&quot;</span></span>
+<span id="cb50-23"><a href="#cb50-23"></a>      )</span>
+<span id="cb50-24"><a href="#cb50-24"></a>    ),</span>
+<span id="cb50-25"><a href="#cb50-25"></a>    <span class="dt">data =</span> tox,</span>
+<span id="cb50-26"><a href="#cb50-26"></a>    <span class="dt">m =</span> <span class="dv">5</span>,</span>
+<span id="cb50-27"><a href="#cb50-27"></a>    <span class="dt">printit =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb50-28"><a href="#cb50-28"></a>  Err[i]&lt;-<span class="kw">attr</span>(mCvPca,<span class="st">&quot;ms&quot;</span>)</span>
+<span id="cb50-29"><a href="#cb50-29"></a>}</span></code></pre></div>
 <ul>
 <li><p>Here we illustrate principal component regression.</p></li>
 <li><p>The most important PCs are selected in a forward model selection procedure.</p></li>
@@ -1561,21 +1566,21 @@ n \times C_p = \Vert \mathbf{Y} - \mathbf{X}\boldsymbol{\beta}\Vert_2^2 + 2\sigm
 <li><p>It is important to realise that a forward model selection procedure will not necessarily result in the best prediction model, particularly because the order of the PCs is generally not related to the importance of the PCs for predicting the outcome.</p></li>
 <li><p>A supervised PC would be better.</p></li>
 </ul>
-<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1"></a>pPCreg &lt;-<span class="st"> </span><span class="kw">data.frame</span>(PC.seq, Err) <span class="op">%&gt;%</span></span>
-<span id="cb52-2"><a href="#cb52-2"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> PC.seq, <span class="dt">y =</span> Err)) <span class="op">+</span></span>
-<span id="cb52-3"><a href="#cb52-3"></a><span class="st">  </span><span class="kw">geom_line</span>() <span class="op">+</span></span>
-<span id="cb52-4"><a href="#cb52-4"></a><span class="st">  </span><span class="kw">geom_point</span>() <span class="op">+</span></span>
-<span id="cb52-5"><a href="#cb52-5"></a><span class="st">  </span><span class="kw">geom_hline</span>(</span>
-<span id="cb52-6"><a href="#cb52-6"></a>    <span class="dt">yintercept =</span> <span class="kw">c</span>(</span>
-<span id="cb52-7"><a href="#cb52-7"></a>      mCvLasso<span class="op">$</span>cvm[mCvLasso<span class="op">$</span>lambda<span class="op">==</span>mCvLasso<span class="op">$</span>lambda.min],</span>
-<span id="cb52-8"><a href="#cb52-8"></a>      mCvLasso<span class="op">$</span>cvm[mCvLasso<span class="op">$</span>lambda<span class="op">==</span>mCvLasso<span class="op">$</span>lambda<span class="fl">.1</span>se]),</span>
-<span id="cb52-9"><a href="#cb52-9"></a>    <span class="dt">col =</span> <span class="st">&quot;red&quot;</span>) <span class="op">+</span></span>
-<span id="cb52-10"><a href="#cb52-10"></a><span class="st">  </span><span class="kw">xlim</span>(<span class="dv">1</span>,<span class="dv">26</span>)</span>
-<span id="cb52-11"><a href="#cb52-11"></a></span>
-<span id="cb52-12"><a href="#cb52-12"></a><span class="kw">grid.arrange</span>(</span>
-<span id="cb52-13"><a href="#cb52-13"></a>  pPCreg,</span>
-<span id="cb52-14"><a href="#cb52-14"></a>  pPCreg <span class="op">+</span><span class="st"> </span><span class="kw">ylim</span>(<span class="dv">0</span>,<span class="dv">5</span>),</span>
-<span id="cb52-15"><a href="#cb52-15"></a>  <span class="dt">ncol=</span><span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1"></a>pPCreg &lt;-<span class="st"> </span><span class="kw">data.frame</span>(PC.seq, Err) <span class="op">%&gt;%</span></span>
+<span id="cb51-2"><a href="#cb51-2"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> PC.seq, <span class="dt">y =</span> Err)) <span class="op">+</span></span>
+<span id="cb51-3"><a href="#cb51-3"></a><span class="st">  </span><span class="kw">geom_line</span>() <span class="op">+</span></span>
+<span id="cb51-4"><a href="#cb51-4"></a><span class="st">  </span><span class="kw">geom_point</span>() <span class="op">+</span></span>
+<span id="cb51-5"><a href="#cb51-5"></a><span class="st">  </span><span class="kw">geom_hline</span>(</span>
+<span id="cb51-6"><a href="#cb51-6"></a>    <span class="dt">yintercept =</span> <span class="kw">c</span>(</span>
+<span id="cb51-7"><a href="#cb51-7"></a>      mCvLasso<span class="op">$</span>cvm[mCvLasso<span class="op">$</span>lambda<span class="op">==</span>mCvLasso<span class="op">$</span>lambda.min],</span>
+<span id="cb51-8"><a href="#cb51-8"></a>      mCvLasso<span class="op">$</span>cvm[mCvLasso<span class="op">$</span>lambda<span class="op">==</span>mCvLasso<span class="op">$</span>lambda<span class="fl">.1</span>se]),</span>
+<span id="cb51-9"><a href="#cb51-9"></a>    <span class="dt">col =</span> <span class="st">&quot;red&quot;</span>) <span class="op">+</span></span>
+<span id="cb51-10"><a href="#cb51-10"></a><span class="st">  </span><span class="kw">xlim</span>(<span class="dv">1</span>,<span class="dv">26</span>)</span>
+<span id="cb51-11"><a href="#cb51-11"></a></span>
+<span id="cb51-12"><a href="#cb51-12"></a><span class="kw">grid.arrange</span>(</span>
+<span id="cb51-13"><a href="#cb51-13"></a>  pPCreg,</span>
+<span id="cb51-14"><a href="#cb51-14"></a>  pPCreg <span class="op">+</span><span class="st"> </span><span class="kw">ylim</span>(<span class="dv">0</span>,<span class="dv">5</span>),</span>
+<span id="cb51-15"><a href="#cb51-15"></a>  <span class="dt">ncol=</span><span class="dv">2</span>)</span></code></pre></div>
 <pre><code>## Warning: Removed 6 row(s) containing missing values (geom_path).</code></pre>
 <pre><code>## Warning: Removed 6 rows containing missing values (geom_point).</code></pre>
 <p><img src="prediction_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
@@ -1600,7 +1605,7 @@ n \times C_p = \Vert \mathbf{Y} - \mathbf{X}\boldsymbol{\beta}\Vert_2^2 + 2\sigm
 <li>So their variance can be easily calculated.</li>
 <li>The ridge/smoothness penalty is chosen by generalized cross validation.</li>
 </ul>
-<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1"></a><span class="kw">library</span>(mgcv)</span></code></pre></div>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1"></a><span class="kw">library</span>(mgcv)</span></code></pre></div>
 <pre><code>## Loading required package: nlme</code></pre>
 <pre><code>## 
 ## Attaching package: &#39;nlme&#39;</code></pre>
@@ -1611,12 +1616,12 @@ n \times C_p = \Vert \mathbf{Y} - \mathbf{X}\boldsymbol{\beta}\Vert_2^2 + 2\sigm
 ## 
 ##     collapse</code></pre>
 <pre><code>## This is mgcv 1.8-33. For overview type &#39;help(&quot;mgcv-package&quot;)&#39;.</code></pre>
-<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1"></a>gamfit &lt;-<span class="st"> </span><span class="kw">gam</span>(logratio <span class="op">~</span><span class="st"> </span><span class="kw">s</span>(range), <span class="dt">data =</span> lidar)</span>
-<span id="cb61-2"><a href="#cb61-2"></a>gamfit<span class="op">$</span>sp</span></code></pre></div>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1"></a>gamfit &lt;-<span class="st"> </span><span class="kw">gam</span>(logratio <span class="op">~</span><span class="st"> </span><span class="kw">s</span>(range), <span class="dt">data =</span> lidar)</span>
+<span id="cb60-2"><a href="#cb60-2"></a>gamfit<span class="op">$</span>sp</span></code></pre></div>
 <pre><code>##    s(range) 
 ## 0.006114634</code></pre>
-<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1"></a>pLidar <span class="op">+</span></span>
-<span id="cb63-2"><a href="#cb63-2"></a><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">x =</span> lidar<span class="op">$</span>range, <span class="dt">y =</span> gamfit<span class="op">$</span>fitted), <span class="dt">lwd =</span> <span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1"></a>pLidar <span class="op">+</span></span>
+<span id="cb62-2"><a href="#cb62-2"></a><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">x =</span> lidar<span class="op">$</span>range, <span class="dt">y =</span> gamfit<span class="op">$</span>fitted), <span class="dt">lwd =</span> <span class="dv">2</span>)</span></code></pre></div>
 <pre><code>## Warning: Use of `lidar$range` is discouraged. Use `range` instead.</code></pre>
 <p><img src="prediction_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
 </div>
@@ -1798,21 +1803,21 @@ n \times C_p = \Vert \mathbf{Y} - \mathbf{X}\boldsymbol{\beta}\Vert_2^2 + 2\sigm
 <h2><span class="header-section-number">8.5</span> Breast cancer example</h2>
 <div id="data-1" class="section level3">
 <h3><span class="header-section-number">8.5.1</span> Data</h3>
-<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1"></a><span class="kw">library</span>(glmnet)</span>
-<span id="cb65-2"><a href="#cb65-2"></a></span>
-<span id="cb65-3"><a href="#cb65-3"></a><span class="co">#BiocManager::install(&quot;genefu&quot;)</span></span>
-<span id="cb65-4"><a href="#cb65-4"></a><span class="co">#BiocManager::install(&quot;breastCancerMAINZ&quot;)</span></span>
-<span id="cb65-5"><a href="#cb65-5"></a></span>
-<span id="cb65-6"><a href="#cb65-6"></a><span class="kw">library</span>(genefu)</span>
-<span id="cb65-7"><a href="#cb65-7"></a><span class="kw">library</span>(breastCancerMAINZ)</span>
-<span id="cb65-8"><a href="#cb65-8"></a><span class="kw">data</span>(mainz)</span>
-<span id="cb65-9"><a href="#cb65-9"></a></span>
-<span id="cb65-10"><a href="#cb65-10"></a>X &lt;-<span class="st"> </span><span class="kw">t</span>(<span class="kw">exprs</span>(mainz)) <span class="co"># gene expressions</span></span>
-<span id="cb65-11"><a href="#cb65-11"></a>n &lt;-<span class="st"> </span><span class="kw">nrow</span>(X)</span>
-<span id="cb65-12"><a href="#cb65-12"></a>H &lt;-<span class="st"> </span><span class="kw">diag</span>(n)<span class="op">-</span><span class="dv">1</span><span class="op">/</span>n<span class="op">*</span><span class="kw">matrix</span>(<span class="dv">1</span>,<span class="dt">ncol=</span>n,<span class="dt">nrow=</span>n)</span>
-<span id="cb65-13"><a href="#cb65-13"></a>X &lt;-<span class="st"> </span>H<span class="op">%*%</span>X</span>
-<span id="cb65-14"><a href="#cb65-14"></a>Y &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="kw">pData</span>(mainz)<span class="op">$</span>grade<span class="op">==</span><span class="dv">3</span>,<span class="dv">1</span>,<span class="dv">0</span>)</span>
-<span id="cb65-15"><a href="#cb65-15"></a><span class="kw">table</span>(Y)</span></code></pre></div>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1"></a><span class="kw">library</span>(glmnet)</span>
+<span id="cb64-2"><a href="#cb64-2"></a></span>
+<span id="cb64-3"><a href="#cb64-3"></a><span class="co">#BiocManager::install(&quot;genefu&quot;)</span></span>
+<span id="cb64-4"><a href="#cb64-4"></a><span class="co">#BiocManager::install(&quot;breastCancerMAINZ&quot;)</span></span>
+<span id="cb64-5"><a href="#cb64-5"></a></span>
+<span id="cb64-6"><a href="#cb64-6"></a><span class="kw">library</span>(genefu)</span>
+<span id="cb64-7"><a href="#cb64-7"></a><span class="kw">library</span>(breastCancerMAINZ)</span>
+<span id="cb64-8"><a href="#cb64-8"></a><span class="kw">data</span>(mainz)</span>
+<span id="cb64-9"><a href="#cb64-9"></a></span>
+<span id="cb64-10"><a href="#cb64-10"></a>X &lt;-<span class="st"> </span><span class="kw">t</span>(<span class="kw">exprs</span>(mainz)) <span class="co"># gene expressions</span></span>
+<span id="cb64-11"><a href="#cb64-11"></a>n &lt;-<span class="st"> </span><span class="kw">nrow</span>(X)</span>
+<span id="cb64-12"><a href="#cb64-12"></a>H &lt;-<span class="st"> </span><span class="kw">diag</span>(n)<span class="op">-</span><span class="dv">1</span><span class="op">/</span>n<span class="op">*</span><span class="kw">matrix</span>(<span class="dv">1</span>,<span class="dt">ncol=</span>n,<span class="dt">nrow=</span>n)</span>
+<span id="cb64-13"><a href="#cb64-13"></a>X &lt;-<span class="st"> </span>H<span class="op">%*%</span>X</span>
+<span id="cb64-14"><a href="#cb64-14"></a>Y &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="kw">pData</span>(mainz)<span class="op">$</span>grade<span class="op">==</span><span class="dv">3</span>,<span class="dv">1</span>,<span class="dv">0</span>)</span>
+<span id="cb64-15"><a href="#cb64-15"></a><span class="kw">table</span>(Y)</span></code></pre></div>
 <pre><code>## Y
 ##   0   1 
 ## 165  35</code></pre>
@@ -1833,23 +1838,23 @@ n \times C_p = \Vert \mathbf{Y} - \mathbf{X}\boldsymbol{\beta}\Vert_2^2 + 2\sigm
 <li><p>using the training data to select a good <span class="math inline">\(\lambda\)</span> value in the lasso logistic regression model (through 10-fold CV)</p></li>
 <li><p>evaluating the final model by means of the test dataset (ROC Curve, AUC).</p></li>
 </ul>
-<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1"></a><span class="co">## Used to provide same results as in previous R version</span></span>
-<span id="cb67-2"><a href="#cb67-2"></a><span class="kw">RNGkind</span>(<span class="dt">sample.kind =</span> <span class="st">&quot;Rounding&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1"></a><span class="co">## Used to provide same results as in previous R version</span></span>
+<span id="cb66-2"><a href="#cb66-2"></a><span class="kw">RNGkind</span>(<span class="dt">sample.kind =</span> <span class="st">&quot;Rounding&quot;</span>)</span></code></pre></div>
 <pre><code>## Warning in RNGkind(sample.kind = &quot;Rounding&quot;): non-uniform &#39;Rounding&#39; sampler
 ## used</code></pre>
-<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1"></a><span class="kw">set.seed</span>(<span class="dv">6977326</span>)</span>
-<span id="cb69-2"><a href="#cb69-2"></a><span class="co">####</span></span>
-<span id="cb69-3"><a href="#cb69-3"></a></span>
-<span id="cb69-4"><a href="#cb69-4"></a>n &lt;-<span class="st"> </span><span class="kw">nrow</span>(X)</span>
-<span id="cb69-5"><a href="#cb69-5"></a>nTrain &lt;-<span class="st"> </span><span class="kw">round</span>(<span class="fl">0.8</span><span class="op">*</span>n)</span>
-<span id="cb69-6"><a href="#cb69-6"></a>nTrain</span></code></pre></div>
+<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1"></a><span class="kw">set.seed</span>(<span class="dv">6977326</span>)</span>
+<span id="cb68-2"><a href="#cb68-2"></a><span class="co">####</span></span>
+<span id="cb68-3"><a href="#cb68-3"></a></span>
+<span id="cb68-4"><a href="#cb68-4"></a>n &lt;-<span class="st"> </span><span class="kw">nrow</span>(X)</span>
+<span id="cb68-5"><a href="#cb68-5"></a>nTrain &lt;-<span class="st"> </span><span class="kw">round</span>(<span class="fl">0.8</span><span class="op">*</span>n)</span>
+<span id="cb68-6"><a href="#cb68-6"></a>nTrain</span></code></pre></div>
 <pre><code>## [1] 160</code></pre>
-<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1"></a>indTrain &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="dv">1</span><span class="op">:</span>n,nTrain)</span>
-<span id="cb71-2"><a href="#cb71-2"></a>XTrain &lt;-<span class="st"> </span>X[indTrain,]</span>
-<span id="cb71-3"><a href="#cb71-3"></a>YTrain &lt;-<span class="st"> </span>Y[indTrain]</span>
-<span id="cb71-4"><a href="#cb71-4"></a>XTest &lt;-<span class="st"> </span>X[<span class="op">-</span>indTrain,]</span>
-<span id="cb71-5"><a href="#cb71-5"></a>YTest &lt;-<span class="st"> </span>Y[<span class="op">-</span>indTrain]</span>
-<span id="cb71-6"><a href="#cb71-6"></a><span class="kw">table</span>(YTest)</span></code></pre></div>
+<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1"></a>indTrain &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="dv">1</span><span class="op">:</span>n,nTrain)</span>
+<span id="cb70-2"><a href="#cb70-2"></a>XTrain &lt;-<span class="st"> </span>X[indTrain,]</span>
+<span id="cb70-3"><a href="#cb70-3"></a>YTrain &lt;-<span class="st"> </span>Y[indTrain]</span>
+<span id="cb70-4"><a href="#cb70-4"></a>XTest &lt;-<span class="st"> </span>X[<span class="op">-</span>indTrain,]</span>
+<span id="cb70-5"><a href="#cb70-5"></a>YTest &lt;-<span class="st"> </span>Y[<span class="op">-</span>indTrain]</span>
+<span id="cb70-6"><a href="#cb70-6"></a><span class="kw">table</span>(YTest)</span></code></pre></div>
 <pre><code>## YTest
 ##  0  1 
 ## 32  8</code></pre>
@@ -1858,25 +1863,25 @@ n \times C_p = \Vert \mathbf{Y} - \mathbf{X}\boldsymbol{\beta}\Vert_2^2 + 2\sigm
 </div>
 <div id="model-fitting-based-on-training-data" class="section level3">
 <h3><span class="header-section-number">8.5.3</span> Model fitting based on training data</h3>
-<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1"></a>mLasso &lt;-<span class="st"> </span><span class="kw">glmnet</span>(</span>
+<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1"></a>mLasso &lt;-<span class="st"> </span><span class="kw">glmnet</span>(</span>
+<span id="cb72-2"><a href="#cb72-2"></a>  <span class="dt">x =</span> XTrain,</span>
+<span id="cb72-3"><a href="#cb72-3"></a>  <span class="dt">y =</span> YTrain,</span>
+<span id="cb72-4"><a href="#cb72-4"></a>  <span class="dt">alpha =</span> <span class="dv">1</span>,</span>
+<span id="cb72-5"><a href="#cb72-5"></a>  <span class="dt">family=</span><span class="st">&quot;binomial&quot;</span>)  <span class="co"># lasso: alpha = 1</span></span>
+<span id="cb72-6"><a href="#cb72-6"></a></span>
+<span id="cb72-7"><a href="#cb72-7"></a><span class="kw">plot</span>(mLasso, <span class="dt">xvar =</span> <span class="st">&quot;lambda&quot;</span>, <span class="dt">xlim =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">6</span>,<span class="op">-</span><span class="fl">1.5</span>))</span></code></pre></div>
+<p><img src="prediction_files/figure-html/unnamed-chunk-32-1.png" width="672" /></p>
+<hr />
+<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1"></a>mCvLasso &lt;-<span class="st"> </span><span class="kw">cv.glmnet</span>(</span>
 <span id="cb73-2"><a href="#cb73-2"></a>  <span class="dt">x =</span> XTrain,</span>
 <span id="cb73-3"><a href="#cb73-3"></a>  <span class="dt">y =</span> YTrain,</span>
 <span id="cb73-4"><a href="#cb73-4"></a>  <span class="dt">alpha =</span> <span class="dv">1</span>,</span>
-<span id="cb73-5"><a href="#cb73-5"></a>  <span class="dt">family=</span><span class="st">&quot;binomial&quot;</span>)  <span class="co"># lasso: alpha = 1</span></span>
-<span id="cb73-6"><a href="#cb73-6"></a></span>
-<span id="cb73-7"><a href="#cb73-7"></a><span class="kw">plot</span>(mLasso, <span class="dt">xvar =</span> <span class="st">&quot;lambda&quot;</span>, <span class="dt">xlim =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">6</span>,<span class="op">-</span><span class="fl">1.5</span>))</span></code></pre></div>
-<p><img src="prediction_files/figure-html/unnamed-chunk-32-1.png" width="672" /></p>
-<hr />
-<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1"></a>mCvLasso &lt;-<span class="st"> </span><span class="kw">cv.glmnet</span>(</span>
-<span id="cb74-2"><a href="#cb74-2"></a>  <span class="dt">x =</span> XTrain,</span>
-<span id="cb74-3"><a href="#cb74-3"></a>  <span class="dt">y =</span> YTrain,</span>
-<span id="cb74-4"><a href="#cb74-4"></a>  <span class="dt">alpha =</span> <span class="dv">1</span>,</span>
-<span id="cb74-5"><a href="#cb74-5"></a>  <span class="dt">type.measure =</span> <span class="st">&quot;class&quot;</span>,</span>
-<span id="cb74-6"><a href="#cb74-6"></a>    <span class="dt">family =</span> <span class="st">&quot;binomial&quot;</span>)  <span class="co"># lasso alpha = 1</span></span>
-<span id="cb74-7"><a href="#cb74-7"></a></span>
-<span id="cb74-8"><a href="#cb74-8"></a><span class="kw">plot</span>(mCvLasso)</span></code></pre></div>
+<span id="cb73-5"><a href="#cb73-5"></a>  <span class="dt">type.measure =</span> <span class="st">&quot;class&quot;</span>,</span>
+<span id="cb73-6"><a href="#cb73-6"></a>    <span class="dt">family =</span> <span class="st">&quot;binomial&quot;</span>)  <span class="co"># lasso alpha = 1</span></span>
+<span id="cb73-7"><a href="#cb73-7"></a></span>
+<span id="cb73-8"><a href="#cb73-8"></a><span class="kw">plot</span>(mCvLasso)</span></code></pre></div>
 <p><img src="prediction_files/figure-html/unnamed-chunk-33-1.png" width="672" /></p>
-<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1"></a>mCvLasso</span></code></pre></div>
+<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1"></a>mCvLasso</span></code></pre></div>
 <pre><code>## 
 ## Call:  cv.glmnet(x = XTrain, y = YTrain, type.measure = &quot;class&quot;, alpha = 1,      family = &quot;binomial&quot;) 
 ## 
@@ -1886,26 +1891,26 @@ n \times C_p = \Vert \mathbf{Y} - \mathbf{X}\boldsymbol{\beta}\Vert_2^2 + 2\sigm
 ## min 0.1044  0.1437 0.03366      18
 ## 1se 0.1911  0.1688 0.03492       0</code></pre>
 <p>The total misclassification error is used here to select a good value for <span class="math inline">\(\lambda\)</span>.</p>
-<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1"></a><span class="co"># BiocManager::install(&quot;plotROC&quot;)</span></span>
-<span id="cb77-2"><a href="#cb77-2"></a><span class="kw">library</span>(plotROC)</span>
-<span id="cb77-3"><a href="#cb77-3"></a></span>
-<span id="cb77-4"><a href="#cb77-4"></a>dfLassoOpt &lt;-<span class="st"> </span><span class="kw">data.frame</span>(</span>
-<span id="cb77-5"><a href="#cb77-5"></a>  <span class="dt">pi =</span> <span class="kw">predict</span>(mCvLasso,</span>
-<span id="cb77-6"><a href="#cb77-6"></a>    <span class="dt">newx =</span> XTest,</span>
-<span id="cb77-7"><a href="#cb77-7"></a>    <span class="dt">s =</span> mCvLasso<span class="op">$</span>lambda.min,</span>
-<span id="cb77-8"><a href="#cb77-8"></a>    <span class="dt">type =</span> <span class="st">&quot;response&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">c</span>(.),</span>
-<span id="cb77-9"><a href="#cb77-9"></a>  <span class="dt">known.truth =</span> YTest)</span>
-<span id="cb77-10"><a href="#cb77-10"></a></span>
-<span id="cb77-11"><a href="#cb77-11"></a>roc &lt;-</span>
-<span id="cb77-12"><a href="#cb77-12"></a><span class="st">  </span>dfLassoOpt  <span class="op">%&gt;%</span></span>
-<span id="cb77-13"><a href="#cb77-13"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">d =</span> known.truth, <span class="dt">m =</span> pi)) <span class="op">+</span></span>
-<span id="cb77-14"><a href="#cb77-14"></a><span class="st">  </span><span class="kw">geom_roc</span>(<span class="dt">n.cuts =</span> <span class="dv">0</span>) <span class="op">+</span></span>
-<span id="cb77-15"><a href="#cb77-15"></a><span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;1-specificity (FPR)&quot;</span>) <span class="op">+</span></span>
-<span id="cb77-16"><a href="#cb77-16"></a><span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;sensitivity (TPR)&quot;</span>)</span>
-<span id="cb77-17"><a href="#cb77-17"></a></span>
-<span id="cb77-18"><a href="#cb77-18"></a>roc</span></code></pre></div>
+<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1"></a><span class="co"># BiocManager::install(&quot;plotROC&quot;)</span></span>
+<span id="cb76-2"><a href="#cb76-2"></a><span class="kw">library</span>(plotROC)</span>
+<span id="cb76-3"><a href="#cb76-3"></a></span>
+<span id="cb76-4"><a href="#cb76-4"></a>dfLassoOpt &lt;-<span class="st"> </span><span class="kw">data.frame</span>(</span>
+<span id="cb76-5"><a href="#cb76-5"></a>  <span class="dt">pi =</span> <span class="kw">predict</span>(mCvLasso,</span>
+<span id="cb76-6"><a href="#cb76-6"></a>    <span class="dt">newx =</span> XTest,</span>
+<span id="cb76-7"><a href="#cb76-7"></a>    <span class="dt">s =</span> mCvLasso<span class="op">$</span>lambda.min,</span>
+<span id="cb76-8"><a href="#cb76-8"></a>    <span class="dt">type =</span> <span class="st">&quot;response&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">c</span>(.),</span>
+<span id="cb76-9"><a href="#cb76-9"></a>  <span class="dt">known.truth =</span> YTest)</span>
+<span id="cb76-10"><a href="#cb76-10"></a></span>
+<span id="cb76-11"><a href="#cb76-11"></a>roc &lt;-</span>
+<span id="cb76-12"><a href="#cb76-12"></a><span class="st">  </span>dfLassoOpt  <span class="op">%&gt;%</span></span>
+<span id="cb76-13"><a href="#cb76-13"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">d =</span> known.truth, <span class="dt">m =</span> pi)) <span class="op">+</span></span>
+<span id="cb76-14"><a href="#cb76-14"></a><span class="st">  </span><span class="kw">geom_roc</span>(<span class="dt">n.cuts =</span> <span class="dv">0</span>) <span class="op">+</span></span>
+<span id="cb76-15"><a href="#cb76-15"></a><span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;1-specificity (FPR)&quot;</span>) <span class="op">+</span></span>
+<span id="cb76-16"><a href="#cb76-16"></a><span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;sensitivity (TPR)&quot;</span>)</span>
+<span id="cb76-17"><a href="#cb76-17"></a></span>
+<span id="cb76-18"><a href="#cb76-18"></a>roc</span></code></pre></div>
 <p><img src="prediction_files/figure-html/unnamed-chunk-34-1.png" width="672" /></p>
-<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1"></a><span class="kw">calc_auc</span>(roc)</span></code></pre></div>
+<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1"></a><span class="kw">calc_auc</span>(roc)</span></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":["PANEL"],"name":[1],"type":["fct"],"align":["left"]},{"label":["group"],"name":[2],"type":["int"],"align":["right"]},{"label":["AUC"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"-1","3":"0.8320312"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
@@ -1917,18 +1922,18 @@ n \times C_p = \Vert \mathbf{Y} - \mathbf{X}\boldsymbol{\beta}\Vert_2^2 + 2\sigm
 <li><p>The sensitivities and specificities in the ROC curve are unbiased (independent test dataset) for the prediction model build from the training data. The estimates of sensitivity and specificity, however, are based on only 40 observations.</p></li>
 </ul>
 <hr />
-<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1"></a>mLambdaOpt &lt;-<span class="st"> </span><span class="kw">glmnet</span>(<span class="dt">x =</span> XTrain,</span>
-<span id="cb79-2"><a href="#cb79-2"></a>  <span class="dt">y =</span> YTrain,</span>
-<span id="cb79-3"><a href="#cb79-3"></a>  <span class="dt">alpha =</span> <span class="dv">1</span>,</span>
-<span id="cb79-4"><a href="#cb79-4"></a>  <span class="dt">lambda =</span> mCvLasso<span class="op">$</span>lambda.min,</span>
-<span id="cb79-5"><a href="#cb79-5"></a>  <span class="dt">family=</span><span class="st">&quot;binomial&quot;</span>)</span>
-<span id="cb79-6"><a href="#cb79-6"></a></span>
-<span id="cb79-7"><a href="#cb79-7"></a><span class="kw">qplot</span>(</span>
-<span id="cb79-8"><a href="#cb79-8"></a>  <span class="kw">summary</span>(<span class="kw">coef</span>(mLambdaOpt))[<span class="op">-</span><span class="dv">1</span>,<span class="dv">1</span>],</span>
-<span id="cb79-9"><a href="#cb79-9"></a>  <span class="kw">summary</span>(<span class="kw">coef</span>(mLambdaOpt))[<span class="op">-</span><span class="dv">1</span>,<span class="dv">3</span>]) <span class="op">+</span></span>
-<span id="cb79-10"><a href="#cb79-10"></a><span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;gene ID&quot;</span>) <span class="op">+</span></span>
-<span id="cb79-11"><a href="#cb79-11"></a><span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;beta-hat&quot;</span>) <span class="op">+</span></span>
-<span id="cb79-12"><a href="#cb79-12"></a><span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="dv">0</span>, <span class="dt">color =</span> <span class="st">&quot;red&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1"></a>mLambdaOpt &lt;-<span class="st"> </span><span class="kw">glmnet</span>(<span class="dt">x =</span> XTrain,</span>
+<span id="cb78-2"><a href="#cb78-2"></a>  <span class="dt">y =</span> YTrain,</span>
+<span id="cb78-3"><a href="#cb78-3"></a>  <span class="dt">alpha =</span> <span class="dv">1</span>,</span>
+<span id="cb78-4"><a href="#cb78-4"></a>  <span class="dt">lambda =</span> mCvLasso<span class="op">$</span>lambda.min,</span>
+<span id="cb78-5"><a href="#cb78-5"></a>  <span class="dt">family=</span><span class="st">&quot;binomial&quot;</span>)</span>
+<span id="cb78-6"><a href="#cb78-6"></a></span>
+<span id="cb78-7"><a href="#cb78-7"></a><span class="kw">qplot</span>(</span>
+<span id="cb78-8"><a href="#cb78-8"></a>  <span class="kw">summary</span>(<span class="kw">coef</span>(mLambdaOpt))[<span class="op">-</span><span class="dv">1</span>,<span class="dv">1</span>],</span>
+<span id="cb78-9"><a href="#cb78-9"></a>  <span class="kw">summary</span>(<span class="kw">coef</span>(mLambdaOpt))[<span class="op">-</span><span class="dv">1</span>,<span class="dv">3</span>]) <span class="op">+</span></span>
+<span id="cb78-10"><a href="#cb78-10"></a><span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;gene ID&quot;</span>) <span class="op">+</span></span>
+<span id="cb78-11"><a href="#cb78-11"></a><span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;beta-hat&quot;</span>) <span class="op">+</span></span>
+<span id="cb78-12"><a href="#cb78-12"></a><span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="dv">0</span>, <span class="dt">color =</span> <span class="st">&quot;red&quot;</span>)</span></code></pre></div>
 <p><img src="prediction_files/figure-html/unnamed-chunk-35-1.png" width="672" /></p>
 <ul>
 <li>The model with the optimal <span class="math inline">\(\lambda\)</span> has only 19 non-zero parameter estimates.</li>
@@ -1936,28 +1941,28 @@ n \times C_p = \Vert \mathbf{Y} - \mathbf{X}\boldsymbol{\beta}\Vert_2^2 + 2\sigm
 <li>These 19 parameter estimates are plotting in the graph. A listing of the model output would show the names of the genes.</li>
 </ul>
 <hr />
-<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1"></a>dfLasso1se &lt;-<span class="st"> </span><span class="kw">data.frame</span>(</span>
-<span id="cb80-2"><a href="#cb80-2"></a>  <span class="dt">pi =</span> <span class="kw">predict</span>(mCvLasso,</span>
-<span id="cb80-3"><a href="#cb80-3"></a>    <span class="dt">newx =</span> XTest,</span>
-<span id="cb80-4"><a href="#cb80-4"></a>    <span class="dt">s =</span> mCvLasso<span class="op">$</span>lambda<span class="fl">.1</span>se,</span>
-<span id="cb80-5"><a href="#cb80-5"></a>    <span class="dt">type =</span> <span class="st">&quot;response&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">c</span>(.),</span>
-<span id="cb80-6"><a href="#cb80-6"></a>  <span class="dt">known.truth =</span> YTest)</span>
-<span id="cb80-7"><a href="#cb80-7"></a></span>
-<span id="cb80-8"><a href="#cb80-8"></a>roc &lt;-</span>
-<span id="cb80-9"><a href="#cb80-9"></a><span class="st">  </span><span class="kw">rbind</span>(</span>
-<span id="cb80-10"><a href="#cb80-10"></a>    dfLassoOpt <span class="op">%&gt;%</span></span>
-<span id="cb80-11"><a href="#cb80-11"></a><span class="st">      </span><span class="kw">mutate</span>(<span class="dt">method =</span> <span class="st">&quot;min&quot;</span>),</span>
-<span id="cb80-12"><a href="#cb80-12"></a>    dfLasso1se <span class="op">%&gt;%</span></span>
-<span id="cb80-13"><a href="#cb80-13"></a><span class="st">      </span><span class="kw">mutate</span>(<span class="dt">method =</span> <span class="st">&quot;1se&quot;</span>)</span>
-<span id="cb80-14"><a href="#cb80-14"></a>  ) <span class="op">%&gt;%</span></span>
-<span id="cb80-15"><a href="#cb80-15"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">d =</span> known.truth, <span class="dt">m =</span> pi, <span class="dt">color =</span> method)) <span class="op">+</span></span>
-<span id="cb80-16"><a href="#cb80-16"></a><span class="st">  </span><span class="kw">geom_roc</span>(<span class="dt">n.cuts =</span> <span class="dv">0</span>) <span class="op">+</span></span>
-<span id="cb80-17"><a href="#cb80-17"></a><span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;1-specificity (FPR)&quot;</span>) <span class="op">+</span></span>
-<span id="cb80-18"><a href="#cb80-18"></a><span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;sensitivity (TPR)&quot;</span>)</span>
-<span id="cb80-19"><a href="#cb80-19"></a></span>
-<span id="cb80-20"><a href="#cb80-20"></a>roc</span></code></pre></div>
+<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1"></a>dfLasso1se &lt;-<span class="st"> </span><span class="kw">data.frame</span>(</span>
+<span id="cb79-2"><a href="#cb79-2"></a>  <span class="dt">pi =</span> <span class="kw">predict</span>(mCvLasso,</span>
+<span id="cb79-3"><a href="#cb79-3"></a>    <span class="dt">newx =</span> XTest,</span>
+<span id="cb79-4"><a href="#cb79-4"></a>    <span class="dt">s =</span> mCvLasso<span class="op">$</span>lambda<span class="fl">.1</span>se,</span>
+<span id="cb79-5"><a href="#cb79-5"></a>    <span class="dt">type =</span> <span class="st">&quot;response&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">c</span>(.),</span>
+<span id="cb79-6"><a href="#cb79-6"></a>  <span class="dt">known.truth =</span> YTest)</span>
+<span id="cb79-7"><a href="#cb79-7"></a></span>
+<span id="cb79-8"><a href="#cb79-8"></a>roc &lt;-</span>
+<span id="cb79-9"><a href="#cb79-9"></a><span class="st">  </span><span class="kw">rbind</span>(</span>
+<span id="cb79-10"><a href="#cb79-10"></a>    dfLassoOpt <span class="op">%&gt;%</span></span>
+<span id="cb79-11"><a href="#cb79-11"></a><span class="st">      </span><span class="kw">mutate</span>(<span class="dt">method =</span> <span class="st">&quot;min&quot;</span>),</span>
+<span id="cb79-12"><a href="#cb79-12"></a>    dfLasso1se <span class="op">%&gt;%</span></span>
+<span id="cb79-13"><a href="#cb79-13"></a><span class="st">      </span><span class="kw">mutate</span>(<span class="dt">method =</span> <span class="st">&quot;1se&quot;</span>)</span>
+<span id="cb79-14"><a href="#cb79-14"></a>  ) <span class="op">%&gt;%</span></span>
+<span id="cb79-15"><a href="#cb79-15"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">d =</span> known.truth, <span class="dt">m =</span> pi, <span class="dt">color =</span> method)) <span class="op">+</span></span>
+<span id="cb79-16"><a href="#cb79-16"></a><span class="st">  </span><span class="kw">geom_roc</span>(<span class="dt">n.cuts =</span> <span class="dv">0</span>) <span class="op">+</span></span>
+<span id="cb79-17"><a href="#cb79-17"></a><span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;1-specificity (FPR)&quot;</span>) <span class="op">+</span></span>
+<span id="cb79-18"><a href="#cb79-18"></a><span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;sensitivity (TPR)&quot;</span>)</span>
+<span id="cb79-19"><a href="#cb79-19"></a></span>
+<span id="cb79-20"><a href="#cb79-20"></a>roc</span></code></pre></div>
 <p><img src="prediction_files/figure-html/unnamed-chunk-36-1.png" width="672" /></p>
-<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1"></a><span class="kw">calc_auc</span>(roc)</span></code></pre></div>
+<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1"></a><span class="kw">calc_auc</span>(roc)</span></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":["PANEL"],"name":[1],"type":["fct"],"align":["left"]},{"label":["group"],"name":[2],"type":["int"],"align":["right"]},{"label":["AUC"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"1","3":"0.5000000"},{"1":"1","2":"2","3":"0.8320312"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
@@ -1969,15 +1974,15 @@ n \times C_p = \Vert \mathbf{Y} - \mathbf{X}\boldsymbol{\beta}\Vert_2^2 + 2\sigm
 <li><p>The reason is that with this choice of <span class="math inline">\(\lambda\)</span> (strong penalisation) almost all predictors are removed from the model.</p></li>
 <li><p>Therefore, do never blindly choose for the ``optimal’’ <span class="math inline">\(\lambda\)</span> as defined here, but assess the performance of the model first.</p></li>
 </ul>
-<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1"></a>mLambda1se &lt;-<span class="st"> </span><span class="kw">glmnet</span>(<span class="dt">x =</span> XTrain,</span>
-<span id="cb82-2"><a href="#cb82-2"></a>  <span class="dt">y =</span> YTrain,</span>
-<span id="cb82-3"><a href="#cb82-3"></a>  <span class="dt">alpha =</span> <span class="dv">1</span>,</span>
-<span id="cb82-4"><a href="#cb82-4"></a>  <span class="dt">lambda =</span> mCvLasso<span class="op">$</span>lambda<span class="fl">.1</span>se,</span>
-<span id="cb82-5"><a href="#cb82-5"></a>  <span class="dt">family=</span><span class="st">&quot;binomial&quot;</span>)</span>
-<span id="cb82-6"><a href="#cb82-6"></a></span>
-<span id="cb82-7"><a href="#cb82-7"></a>mLambda1se <span class="op">%&gt;%</span></span>
-<span id="cb82-8"><a href="#cb82-8"></a><span class="st">  </span>coef <span class="op">%&gt;%</span></span>
-<span id="cb82-9"><a href="#cb82-9"></a><span class="st">  </span>summary</span></code></pre></div>
+<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1"></a>mLambda1se &lt;-<span class="st"> </span><span class="kw">glmnet</span>(<span class="dt">x =</span> XTrain,</span>
+<span id="cb81-2"><a href="#cb81-2"></a>  <span class="dt">y =</span> YTrain,</span>
+<span id="cb81-3"><a href="#cb81-3"></a>  <span class="dt">alpha =</span> <span class="dv">1</span>,</span>
+<span id="cb81-4"><a href="#cb81-4"></a>  <span class="dt">lambda =</span> mCvLasso<span class="op">$</span>lambda<span class="fl">.1</span>se,</span>
+<span id="cb81-5"><a href="#cb81-5"></a>  <span class="dt">family=</span><span class="st">&quot;binomial&quot;</span>)</span>
+<span id="cb81-6"><a href="#cb81-6"></a></span>
+<span id="cb81-7"><a href="#cb81-7"></a>mLambda1se <span class="op">%&gt;%</span></span>
+<span id="cb81-8"><a href="#cb81-8"></a><span class="st">  </span>coef <span class="op">%&gt;%</span></span>
+<span id="cb81-9"><a href="#cb81-9"></a><span class="st">  </span>summary</span></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":["i"],"name":[1],"type":["int"],"align":["right"]},{"label":["j"],"name":[2],"type":["int"],"align":["right"]},{"label":["x"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"1","3":"-1.594512"},{"1":"2","2":"1","3":"0.000000"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
@@ -2018,23 +2023,23 @@ n \times C_p = \Vert \mathbf{Y} - \mathbf{X}\boldsymbol{\beta}\Vert_2^2 + 2\sigm
 <hr />
 <div id="breast-cancer-example-1" class="section level3">
 <h3><span class="header-section-number">8.6.1</span> Breast cancer example</h3>
-<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1"></a>mElastic &lt;-<span class="st"> </span><span class="kw">glmnet</span>(</span>
-<span id="cb83-2"><a href="#cb83-2"></a>  <span class="dt">x =</span> XTrain,</span>
-<span id="cb83-3"><a href="#cb83-3"></a>  <span class="dt">y =</span> YTrain,</span>
-<span id="cb83-4"><a href="#cb83-4"></a>  <span class="dt">alpha =</span> <span class="fl">0.5</span>,</span>
-<span id="cb83-5"><a href="#cb83-5"></a>  <span class="dt">family=</span><span class="st">&quot;binomial&quot;</span>)  <span class="co"># elastic net</span></span>
-<span id="cb83-6"><a href="#cb83-6"></a></span>
-<span id="cb83-7"><a href="#cb83-7"></a><span class="kw">plot</span>(mElastic, <span class="dt">xvar =</span> <span class="st">&quot;lambda&quot;</span>,<span class="dt">xlim=</span><span class="kw">c</span>(<span class="op">-</span><span class="fl">5.5</span>,<span class="op">-</span><span class="dv">1</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1"></a>mElastic &lt;-<span class="st"> </span><span class="kw">glmnet</span>(</span>
+<span id="cb82-2"><a href="#cb82-2"></a>  <span class="dt">x =</span> XTrain,</span>
+<span id="cb82-3"><a href="#cb82-3"></a>  <span class="dt">y =</span> YTrain,</span>
+<span id="cb82-4"><a href="#cb82-4"></a>  <span class="dt">alpha =</span> <span class="fl">0.5</span>,</span>
+<span id="cb82-5"><a href="#cb82-5"></a>  <span class="dt">family=</span><span class="st">&quot;binomial&quot;</span>)  <span class="co"># elastic net</span></span>
+<span id="cb82-6"><a href="#cb82-6"></a></span>
+<span id="cb82-7"><a href="#cb82-7"></a><span class="kw">plot</span>(mElastic, <span class="dt">xvar =</span> <span class="st">&quot;lambda&quot;</span>,<span class="dt">xlim=</span><span class="kw">c</span>(<span class="op">-</span><span class="fl">5.5</span>,<span class="op">-</span><span class="dv">1</span>))</span></code></pre></div>
 <p><img src="prediction_files/figure-html/unnamed-chunk-38-1.png" width="672" /></p>
-<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1"></a>mCvElastic &lt;-<span class="st"> </span><span class="kw">cv.glmnet</span>(<span class="dt">x =</span> XTrain,</span>
-<span id="cb84-2"><a href="#cb84-2"></a>  <span class="dt">y =</span> YTrain,</span>
-<span id="cb84-3"><a href="#cb84-3"></a>  <span class="dt">alpha =</span> <span class="fl">0.5</span>,</span>
-<span id="cb84-4"><a href="#cb84-4"></a>  <span class="dt">family =</span> <span class="st">&quot;binomial&quot;</span>,</span>
-<span id="cb84-5"><a href="#cb84-5"></a>    <span class="dt">type.measure =</span> <span class="st">&quot;class&quot;</span>)  <span class="co"># elastic net</span></span>
-<span id="cb84-6"><a href="#cb84-6"></a></span>
-<span id="cb84-7"><a href="#cb84-7"></a><span class="kw">plot</span>(mCvElastic)</span></code></pre></div>
+<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1"></a>mCvElastic &lt;-<span class="st"> </span><span class="kw">cv.glmnet</span>(<span class="dt">x =</span> XTrain,</span>
+<span id="cb83-2"><a href="#cb83-2"></a>  <span class="dt">y =</span> YTrain,</span>
+<span id="cb83-3"><a href="#cb83-3"></a>  <span class="dt">alpha =</span> <span class="fl">0.5</span>,</span>
+<span id="cb83-4"><a href="#cb83-4"></a>  <span class="dt">family =</span> <span class="st">&quot;binomial&quot;</span>,</span>
+<span id="cb83-5"><a href="#cb83-5"></a>    <span class="dt">type.measure =</span> <span class="st">&quot;class&quot;</span>)  <span class="co"># elastic net</span></span>
+<span id="cb83-6"><a href="#cb83-6"></a></span>
+<span id="cb83-7"><a href="#cb83-7"></a><span class="kw">plot</span>(mCvElastic)</span></code></pre></div>
 <p><img src="prediction_files/figure-html/unnamed-chunk-39-1.png" width="672" /></p>
-<div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1"></a>mCvElastic</span></code></pre></div>
+<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1"></a>mCvElastic</span></code></pre></div>
 <pre><code>## 
 ## Call:  cv.glmnet(x = XTrain, y = YTrain, type.measure = &quot;class&quot;, alpha = 0.5,      family = &quot;binomial&quot;) 
 ## 
@@ -2043,24 +2048,24 @@ n \times C_p = \Vert \mathbf{Y} - \mathbf{X}\boldsymbol{\beta}\Vert_2^2 + 2\sigm
 ##      Lambda Measure      SE Nonzero
 ## min 0.01859  0.1313 0.02708     148
 ## 1se 0.21876  0.1562 0.03391      26</code></pre>
-<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1"></a>dfElast &lt;-<span class="st"> </span><span class="kw">data.frame</span>(</span>
-<span id="cb87-2"><a href="#cb87-2"></a>  <span class="dt">pi =</span> <span class="kw">predict</span>(mElastic,</span>
-<span id="cb87-3"><a href="#cb87-3"></a>    <span class="dt">newx =</span> XTest,</span>
-<span id="cb87-4"><a href="#cb87-4"></a>    <span class="dt">s =</span> mCvElastic<span class="op">$</span>lambda.min,</span>
-<span id="cb87-5"><a href="#cb87-5"></a>    <span class="dt">type =</span> <span class="st">&quot;response&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">c</span>(.),</span>
-<span id="cb87-6"><a href="#cb87-6"></a>  <span class="dt">known.truth =</span> YTest)</span>
-<span id="cb87-7"><a href="#cb87-7"></a></span>
-<span id="cb87-8"><a href="#cb87-8"></a>roc &lt;-<span class="st"> </span><span class="kw">rbind</span>(</span>
-<span id="cb87-9"><a href="#cb87-9"></a>  dfLassoOpt <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">method =</span> <span class="st">&quot;lasso&quot;</span>),</span>
-<span id="cb87-10"><a href="#cb87-10"></a>  dfElast <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">method =</span> <span class="st">&quot;elast. net&quot;</span>)) <span class="op">%&gt;%</span></span>
-<span id="cb87-11"><a href="#cb87-11"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">d =</span> known.truth, <span class="dt">m =</span> pi, <span class="dt">color =</span> method)) <span class="op">+</span></span>
-<span id="cb87-12"><a href="#cb87-12"></a><span class="st">  </span><span class="kw">geom_roc</span>(<span class="dt">n.cuts =</span> <span class="dv">0</span>) <span class="op">+</span></span>
-<span id="cb87-13"><a href="#cb87-13"></a><span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;1-specificity (FPR)&quot;</span>) <span class="op">+</span></span>
-<span id="cb87-14"><a href="#cb87-14"></a><span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;sensitivity (TPR)&quot;</span>)</span>
-<span id="cb87-15"><a href="#cb87-15"></a></span>
-<span id="cb87-16"><a href="#cb87-16"></a>roc</span></code></pre></div>
+<div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1"></a>dfElast &lt;-<span class="st"> </span><span class="kw">data.frame</span>(</span>
+<span id="cb86-2"><a href="#cb86-2"></a>  <span class="dt">pi =</span> <span class="kw">predict</span>(mElastic,</span>
+<span id="cb86-3"><a href="#cb86-3"></a>    <span class="dt">newx =</span> XTest,</span>
+<span id="cb86-4"><a href="#cb86-4"></a>    <span class="dt">s =</span> mCvElastic<span class="op">$</span>lambda.min,</span>
+<span id="cb86-5"><a href="#cb86-5"></a>    <span class="dt">type =</span> <span class="st">&quot;response&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">c</span>(.),</span>
+<span id="cb86-6"><a href="#cb86-6"></a>  <span class="dt">known.truth =</span> YTest)</span>
+<span id="cb86-7"><a href="#cb86-7"></a></span>
+<span id="cb86-8"><a href="#cb86-8"></a>roc &lt;-<span class="st"> </span><span class="kw">rbind</span>(</span>
+<span id="cb86-9"><a href="#cb86-9"></a>  dfLassoOpt <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">method =</span> <span class="st">&quot;lasso&quot;</span>),</span>
+<span id="cb86-10"><a href="#cb86-10"></a>  dfElast <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">method =</span> <span class="st">&quot;elast. net&quot;</span>)) <span class="op">%&gt;%</span></span>
+<span id="cb86-11"><a href="#cb86-11"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">d =</span> known.truth, <span class="dt">m =</span> pi, <span class="dt">color =</span> method)) <span class="op">+</span></span>
+<span id="cb86-12"><a href="#cb86-12"></a><span class="st">  </span><span class="kw">geom_roc</span>(<span class="dt">n.cuts =</span> <span class="dv">0</span>) <span class="op">+</span></span>
+<span id="cb86-13"><a href="#cb86-13"></a><span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;1-specificity (FPR)&quot;</span>) <span class="op">+</span></span>
+<span id="cb86-14"><a href="#cb86-14"></a><span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;sensitivity (TPR)&quot;</span>)</span>
+<span id="cb86-15"><a href="#cb86-15"></a></span>
+<span id="cb86-16"><a href="#cb86-16"></a>roc</span></code></pre></div>
 <p><img src="prediction_files/figure-html/unnamed-chunk-40-1.png" width="672" /></p>
-<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1"></a><span class="kw">calc_auc</span>(roc)</span></code></pre></div>
+<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1"></a><span class="kw">calc_auc</span>(roc)</span></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":["PANEL"],"name":[1],"type":["fct"],"align":["left"]},{"label":["group"],"name":[2],"type":["int"],"align":["right"]},{"label":["AUC"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"1","3":"0.8398438"},{"1":"1","2":"2","3":"0.8320312"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
@@ -2069,18 +2074,18 @@ n \times C_p = \Vert \mathbf{Y} - \mathbf{X}\boldsymbol{\beta}\Vert_2^2 + 2\sigm
 <ul>
 <li>More parameters are used than for the lasso, but the performance does not improve.</li>
 </ul>
-<div class="sourceCode" id="cb89"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1"></a>mElasticOpt &lt;-<span class="st"> </span><span class="kw">glmnet</span>(<span class="dt">x =</span> XTrain,</span>
-<span id="cb89-2"><a href="#cb89-2"></a>  <span class="dt">y =</span> YTrain,</span>
-<span id="cb89-3"><a href="#cb89-3"></a>  <span class="dt">alpha =</span> <span class="fl">0.5</span>,</span>
-<span id="cb89-4"><a href="#cb89-4"></a>  <span class="dt">lambda =</span> mCvElastic<span class="op">$</span>lambda.min,</span>
-<span id="cb89-5"><a href="#cb89-5"></a>  <span class="dt">family=</span><span class="st">&quot;binomial&quot;</span>)</span>
-<span id="cb89-6"><a href="#cb89-6"></a></span>
-<span id="cb89-7"><a href="#cb89-7"></a><span class="kw">qplot</span>(</span>
-<span id="cb89-8"><a href="#cb89-8"></a>  <span class="kw">summary</span>(<span class="kw">coef</span>(mElasticOpt))[<span class="op">-</span><span class="dv">1</span>,<span class="dv">1</span>],</span>
-<span id="cb89-9"><a href="#cb89-9"></a>  <span class="kw">summary</span>(<span class="kw">coef</span>(mElasticOpt))[<span class="op">-</span><span class="dv">1</span>,<span class="dv">3</span>]) <span class="op">+</span></span>
-<span id="cb89-10"><a href="#cb89-10"></a><span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;gene ID&quot;</span>) <span class="op">+</span></span>
-<span id="cb89-11"><a href="#cb89-11"></a><span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;beta-hat&quot;</span>) <span class="op">+</span></span>
-<span id="cb89-12"><a href="#cb89-12"></a><span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="dv">0</span>, <span class="dt">color =</span> <span class="st">&quot;red&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1"></a>mElasticOpt &lt;-<span class="st"> </span><span class="kw">glmnet</span>(<span class="dt">x =</span> XTrain,</span>
+<span id="cb88-2"><a href="#cb88-2"></a>  <span class="dt">y =</span> YTrain,</span>
+<span id="cb88-3"><a href="#cb88-3"></a>  <span class="dt">alpha =</span> <span class="fl">0.5</span>,</span>
+<span id="cb88-4"><a href="#cb88-4"></a>  <span class="dt">lambda =</span> mCvElastic<span class="op">$</span>lambda.min,</span>
+<span id="cb88-5"><a href="#cb88-5"></a>  <span class="dt">family=</span><span class="st">&quot;binomial&quot;</span>)</span>
+<span id="cb88-6"><a href="#cb88-6"></a></span>
+<span id="cb88-7"><a href="#cb88-7"></a><span class="kw">qplot</span>(</span>
+<span id="cb88-8"><a href="#cb88-8"></a>  <span class="kw">summary</span>(<span class="kw">coef</span>(mElasticOpt))[<span class="op">-</span><span class="dv">1</span>,<span class="dv">1</span>],</span>
+<span id="cb88-9"><a href="#cb88-9"></a>  <span class="kw">summary</span>(<span class="kw">coef</span>(mElasticOpt))[<span class="op">-</span><span class="dv">1</span>,<span class="dv">3</span>]) <span class="op">+</span></span>
+<span id="cb88-10"><a href="#cb88-10"></a><span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;gene ID&quot;</span>) <span class="op">+</span></span>
+<span id="cb88-11"><a href="#cb88-11"></a><span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;beta-hat&quot;</span>) <span class="op">+</span></span>
+<span id="cb88-12"><a href="#cb88-12"></a><span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="dv">0</span>, <span class="dt">color =</span> <span class="st">&quot;red&quot;</span>)</span></code></pre></div>
 <p><img src="prediction_files/figure-html/unnamed-chunk-41-1.png" width="672" /></p>
 </div>
 </div>
