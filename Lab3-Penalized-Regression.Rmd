@@ -58,7 +58,9 @@ The dataset consists of two objects:
 
 ```{r load-data}
 data(eyedata)
-ls() # List objects in current R session
+## Look at objects that were just loaded
+str(genes)
+str(trim32)
 ```
 
 The goal of this exercise is to predict the expression levels of
@@ -292,41 +294,6 @@ We have now manually calculated the ridge regression estimates.
 </details>
 
 
-<!-- If we perform SVD on ${\mathbf{X}}$ we get -->
-<!-- ${\mathbf{X}}={\mathbf{UDV^T}}={\mathbf{ZV^T}}$. -->
-<!-- Replacing ${\mathbf{X}}$ with ${\mathbf{ZV^T}}$ gives -->
-<!-- ${\boldsymbol{\hat{\beta}}=\mathbf{V(Z^TZ}}+\gamma{\mathbf{I}})^{-1}{\mathbf{Z^TY}}$ -->
-
-<!-- #### 4. Check to see that ${\mathbf{(X^TX}}+\gamma{\mathbf{I}})$ has a higher dimension than ${\mathbf{(Z^TZ}}+\gamma{\mathbf{I}})$. {-} -->
-
-<!-- And therefore inverting ${\mathbf{(Z^TZ}}+\gamma{\mathbf{I}})$ is much faster than inverting -->
-<!-- ${\mathbf{(X^TX}}+\gamma{\mathbf{I}})$ (You don’t have to check this). -->
-
-<!-- <details><summary>Solution</summary> -->
-<!-- ```{r} -->
-<!-- X.svd<-  svd(X) -->
-<!-- Uk <- X.svd$u -->
-<!-- Dk <- diag(X.svd$d) -->
-<!-- Zk <- Uk%*%Dk -->
-<!-- Vk <- X.svd$v -->
-<!-- p<-dim(Zk)[1] -->
-<!-- tZZ_gammaI<-(t(Zk)%*%Zk)+gamma*diag(p) -->
-<!-- dim(tZZ_gammaI) -->
-
-<!-- # Calculate the beta -->
-<!-- hatbeta_svd <- Vk %*% solve(tZZ_gammaI) %*% t(Zk) %*% Y -->
-
-<!-- # Check whether the same -->
-<!-- comparison <- cbind(hatbeta, hatbeta_svd) -->
-<!-- head(comparison) # to not show everything  -->
-<!-- ``` -->
-<!-- </details> -->
-
-<!-- We therefore conclude that -->
-<!-- ${\boldsymbol{\hat{\beta}}=\mathbf{V(Z^TZ}}+\gamma{\mathbf{I}})^{-1}{\mathbf{Z^TY}}$ -->
-<!-- is a faster way for computing ${\boldsymbol{\hat{\beta}}}$. -->
-
-
 
 # Performing ridge and lasso regression with `glmnet`
 
@@ -522,10 +489,10 @@ on our training set.
 The test set is only used to evaluate the *final* model.
 To achieve this final model, we need to find the optimal hyperparameters,
 i.e. the hyperparameters that best generalize the model to unseen data.
-We can estimate this by using *k-fold cross validation* (CV$_k$) on
+We can estimate this by using *k-fold cross validation* ($CV_k$) on
 the training data.
 
-The CV$_k$ estimates can be automatically computed for any
+The $CV_k$ estimates can be automatically computed for any
 generalized linear model (generated with `glm()` and by extension `glmnet()`) 
 using the `cv.glm()` function from the
 *[boot](https://CRAN.R-project.org/package=boot)* package.
@@ -610,7 +577,6 @@ pcr_preds <- predict(final_pcr_model, newdata = test_data, ncomp = optimal_ncomp
 (pcr_mse <- MSE(testY, pcr_preds))
 ```
 
-For comparison, `MSEP` also gives the MSE for a model including only an intercept.
 This value on its own does not tell us very much, but we can use it to compare our
 PCR model with other types of models later.
 
