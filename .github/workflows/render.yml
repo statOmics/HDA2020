@@ -50,6 +50,7 @@ jobs:
         shell: Rscript {0}
       
       - name: Deploy 🚀
+        if: github.event_name == 'push'
         uses: JamesIves/github-pages-deploy-action@3.6.2
         with:
           ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
