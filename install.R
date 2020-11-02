@@ -9,7 +9,7 @@ BiocManager::install(
     "scater", "CCA", "glmnet", "ggforce",
     "latex2exp", "SemiPar", "glmnet", "DAAG",
     "genefu", "breastCancerMAINZ", "plotROC", "PMA",
-    "mgcv"
+    "mgcv", "sessioninfo","sparseLDA"
   ),
   Ncpus = 2L)
 

@@ -498,4 +498,17 @@ All graphs succeed quite well in separating the toxic from the non-toxic compoun
 
 - It is important to understand that the toxicity outcome was not used in the (sparse) PCA. We only used the toxicity to color the points in the graphs. PCA is an unsupervised method.
 
-- Later we will discuss supervised methods (and these methods will use the toxicity outcome data so that outcome-associated genes can be better selected).
+# Acknowledgement {-}
+
+- Olivier Thas for sharing his materials of Analysis of High Dimensional Data 2019-2020, which I used as the starting point for this chapter.  
+
+# Session info {-}
+
+<details><summary>Session info</summary>
+
+```{r session_info, echo=FALSE, cache=FALSE}
+Sys.time()
+sessioninfo::session_info()
+```
+
+</details>

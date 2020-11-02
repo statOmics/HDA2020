@@ -1380,9 +1380,9 @@ However, if the number of data points in the test dataset ($m$) is small, the es
 
 # Logistic Regression Analysis for High Dimensional Data
 
-## Cancer Example
+## Breast Cancer Example
 
-- Schmidt *et al.*, 2008, Cancer Research, {\bf 68}, 5405-5413
+- Schmidt *et al.*, 2008, Cancer Research, **68**, 5405-5413
 
 - Gene expression patterns in $n=200$ breast tumors were investigated ($p=22283$ genes)
 
@@ -1391,6 +1391,35 @@ However, if the number of data points in the test dataset ($m$) is small, the es
 - Here the objective is to predict stage 3 from the gene expression data (prediction of binary outcome)
 
 - If the prediction model works well, it can be used to predict the stage from a biopsy sample.
+
+## Data
+
+```{r, message=FALSE, warning=FALSE}
+#BiocManager::install("genefu")
+#BiocManager::install("breastCancerMAINZ")
+
+library(genefu)
+library(breastCancerMAINZ)
+data(mainz)
+
+X <- t(exprs(mainz)) # gene expressions
+n <- nrow(X)
+H <- diag(n)-1/n*matrix(1,ncol=n,nrow=n)
+X <- H%*%X
+Y <- ifelse(pData(mainz)$grade==3,1,0)
+table(Y)
+
+svdX <- svd(X)
+k <- 2
+Zk <- svdX$u[,1:k] %*% diag(svdX$d[1:k])
+colnames(Zk) <- paste0("Z",1:k)
+
+Zk %>%
+  as.data.frame %>%
+  mutate(grade = Y %>% as.factor) %>%
+  ggplot(aes(x= Z1, y = Z2, color = grade)) +
+  geom_point(size = 3)
+```
 
 ---
 
@@ -1818,3 +1847,18 @@ qplot(
   ylab("beta-hat") +
   geom_hline(yintercept = 0, color = "red")
 ```
+
+# Acknowledgement {-}
+
+- Olivier Thas for sharing his materials of Analysis of High Dimensional Data 2019-2020, which I used as the starting point for this chapter.  
+
+# Session info {-}
+
+<details><summary>Session info</summary>
+
+```{r session_info, echo=FALSE, cache=FALSE}
+Sys.time()
+sessioninfo::session_info()
+```
+
+</details>
