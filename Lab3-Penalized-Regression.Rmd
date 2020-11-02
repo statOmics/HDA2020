@@ -1,0 +1,701 @@
+---
+title: "Analysis of High Dimensional Data - Lab 3"
+subtitle: "Penalized regression techniques for high-dimensional data"
+author: "Adapted by Milan Malfait"
+date: "05 Nov 2020"
+---
+
+```{r setup, include=FALSE, cache=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.align = "center",
+  out.width = "100%"
+)
+options(
+  warnPartialMatchDollar = FALSE,
+  warnPartialMatchAttr = FALSE,
+  warnPartialMatchArgs = FALSE
+)
+```
+
+***
+
+```{r libraries, warning=FALSE, message=FALSE}
+## install packages with:
+## install.packages(c("glmnet", "pls", "NormalBetaPrime", "boot"))
+library(NormalBetaPrime)
+library(glmnet)
+library(pls)
+library(boot)
+```
+
+
+# Introduction
+
+**In this lab session we will look at the following topics**
+
+  - Demonstrate why low dimensional prediction modeling fails in high dimension.
+  - Carry out Principal Component Regression (PCR)
+  - Use `glmnet()` to carry out ridge regression, lasso and elastic net
+  - Evaluation of these prediction models
+  
+
+## The dataset
+
+In this practical, we will use the dataset `eyedata` provided by
+the [__NormalBetaPrime__ package](https://cran.r-project.org/web/packages/NormalBetaPrime/index.html).
+This dataset contains gene expression data of 200
+genes for 120 samples. The data originates from microarray experiments
+of mammalian eye tissue samples.
+
+The dataset consists of two objects:
+
+  - `genes`: a $120 \times 200$ matrix with the expression levels of 200 genes
+  (columns) for 120 samples (rows)
+  - `trim32`: a vector with 120 expression levels of the TRIM32 gene.
+
+
+```{r load-data}
+data(eyedata)
+## Look at objects that were just loaded
+str(genes)
+str(trim32)
+```
+
+The goal of this exercise is to predict the expression levels of
+TRIM32 from the expression levels of the 200 genes measured in the
+microarray experiment. For this, it makes sense to start by constructing
+centered (and possibly scaled) data. We store this in two matrices
+`X` and `Y`:
+
+```{r prepare-data}
+X <- scale(genes, center = TRUE, scale = TRUE) 
+Y <- scale(trim32, center = TRUE)
+```
+
+Remember that scaling avoids that differences in levels of magnitude
+will give one variable (gene) more influence in the result. This has
+been illustrated in the [second practical session](./Lab2-PCA.html) as well.
+For the `Y` vector, this is less of an issue as we're talking about a single variable.
+Not scaling will make the predictions interpretable as "deviations from the
+mean".
+
+## The curse of singularity
+
+We begin by assuming that the predictors and the outcome have been
+centered so that the intercept is 0.
+We are presented with the usual regression model:
+
+$$
+Y_i=\beta_i X_{i1}+\dots+\beta_pX_{ip}+\epsilon_i \\ 
+\text{ Or } \mathbf{Y}={\mathbf{X}}{\boldsymbol{\beta}} +{\boldsymbol{\epsilon}}
+$$
+
+Our goal is to get the least squares estimator of
+${\boldsymbol{\beta}}$, given by
+
+$$
+\hat{{\boldsymbol{\beta}}}= (\mathbf{X}^T{\mathbf{X}})^{-1}{\mathbf{X}}^T{\mathbf{Y}}
+$$
+
+in which the $p \times p$ matrix
+$({\mathbf{X}}^T{\mathbf{X}})^{-1}$ is crucial!
+To be able to calculate the inverse of ${\mathbf{X}}^T \mathbf{X}$,
+it has to be of full rank $p$, which would be 200 in this case.
+Let's check this:
+
+```{r singularity-problem, error=TRUE}
+dim(X) # 120 x 200, so p > n!
+qr(X)$rank
+
+XtX <- crossprod(X) # calculates t(X) %*% X more efficiently
+qr(XtX)$rank
+
+# Try to invert using solve: 
+solve(XtX)
+```
+
+We realize we cannot compute
+$({\mathbf{X}}^T{\mathbf{X}})^{-1}$ because the rank of
+$({\mathbf{X}}^T{\mathbf{X}})$ is less than $p$ hence we can’t
+get $\hat{{\boldsymbol{\beta}}}$ by means of least squares! 
+This is generally referred to as the __[singularity](https://www.statistics.com/glossary/singularity/) problem__.
+
+
+# Principal component regression
+
+A first way to deal with this singularity, is to bypass it using principal components.
+Since $\min(n,p) = n = 120$, 
+PCA will give `r min(dim(X))` components, each being a linear combination of the 
+$p$ = `r ncol(X)` variables.
+These `r min(dim(X))` PCs contain all information present in the original data.
+We could as well use an approximation of ${\mathbf{X}}$, i.e using just a few ($k<120$) PCs.
+So we use PCA as a method for reducing the dimensions while retaining
+as much variation between the observations as possible.
+Once we have these PCs, we can use them as variables in a linear regression model.
+
+## Classic linear regression on PCs
+
+We first compute the PCA on the data with `prcomp`.
+We will use an arbitrary cutoff of $k = 4$ PCs to illustrate the process of performing regression on the PCs.
+
+```{r PC-regression}
+k <- 4 # Arbitrarily chosen k=4
+pca <- prcomp(X)
+Vk <- pca$rotation[, 1:k] # the loadings matrix
+Zk <- pca$x[, 1:k] # the scores matrix
+
+# Use the scores in classic linear regression
+pcr_model1 <- lm(Y ~ Zk)
+summary(pcr_model1)
+```
+
+As $\mathbf{X}$ and $\mathbf{Y}$ are centered, the intercept is 
+approximately 0.
+
+The output shows that PC1 and PC4 have a $\beta$ estimate that 
+differs significantly from 0 (at $p < 0.05$), but the results can't be readily 
+interpreted, since we have no immediate interpretation of the PCs.
+
+
+## Using the package `pls`
+
+PCR can also be performed using the `pcr()` function from the
+package *[pls](https://CRAN.R-project.org/package=pls)*
+__directly on the data__ (so without having to first perform the PCA manually).
+When using this function, you have to keep a few things in mind:
+
+  1. the number of components (PCs) to use is passed with the argument `ncomp`
+  2. the function allows you to scale (set `scale = TRUE`) and
+  center (set `center = TRUE`) the predictors first (in the example here, $\mathbf{X}$ has already been centered and scaled).
+  
+You can use the function `pcr()` in much the same way as you would
+use `lm()`. The resulting fit can easily be examined using the 
+function `summary()`, but the output looks quite different from
+what you would get from `lm`.
+
+```{r PC-regression-pls-package}
+# X is already scaled and centered, so that's not needed.
+pcr_model2 <- pcr(Y ~ X, ncomp = 4)
+summary(pcr_model2)
+```
+
+First of all the output shows you the data dimensions and the fitting
+method used. In this case, that is PC calculation based on SVD. The
+`summary()` function also provides the percentage of variance
+explained in the predictors and in the response using different numbers
+of components. For example, the first PC only captures 61.22% of all
+the variance, or information in the predictors and it explains 62.9%
+of the variance in the outcome. Note that for both methods the choice of
+the number of principal components was arbitrary chosen to be 4.
+
+At a later stage, we will look at how to choose the number of components
+that has the __smallest prediction error__.
+
+
+# Ridges, Lassos and Elastic Nets {#elnet-theory}
+
+Ridge regression, lasso regression and elastic nets are all closely
+related techniques, based on the same idea: add a penalty term to 
+the estimating function so $({\mathbf{X}}^T{\mathbf{X}})$
+becomes full rank again and is invertible. Two different penalty 
+terms or regularization methods can be used:
+
+1. L1 regularization: this regularization adds a term ${\gamma_1\|\boldsymbol{\beta}\|_{1}}$ to the estimating equation.
+The term will add a penalty based on the *absolute value* of the
+magnitude of the coefficients. This is used by the __lasso regression__
+ 
+$$
+ \hat{\boldsymbol{\beta}}^{\text{lasso}} = \text{argmin}_{\boldsymbol{\beta}}\displaystyle({(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})^T(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})+{\gamma_1\|\boldsymbol{\beta}\|_{1}}}\displaystyle)
+$$
+
+2. L2 regularization: this regularization adds a term ${\gamma_2\|\boldsymbol{\beta}\|_{2}^{2}}$ to the estimating equation.
+The penalty term is based on the square of the magnitude of the 
+coefficients. This is used by __ridge regression__.
+
+$$
+ \hat{\boldsymbol{\beta}}^{\text{ridge}} = \text{argmin}_{\boldsymbol{\beta}}\displaystyle({(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})^T(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})+{\gamma_2\|\boldsymbol{\beta}\|_{2}^{2}}}\displaystyle)
+$$
+
+Elastic nets combine both types of regularizations. It does so by 
+introducing a $\alpha$ mixing parameter that essentially combines
+the L1 and L2 norms in a weighted average.
+
+$$
+ \hat{\boldsymbol{\beta}}^{\text{el.net}} = \text{argmin}_{\boldsymbol{\beta}}\displaystyle({(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})^{T}(\mathbf{Y}-\mathbf{X}\boldsymbol{\beta})+{\alpha \gamma_1\|\boldsymbol{\beta}\|_{1}}+ {(1 - \alpha)\gamma_2\|\boldsymbol{\beta}\|_{2}^{2}}}\displaystyle)
+$$
+
+
+
+# Exercise: Verification of ridge regression
+
+In least square regression the minimization of the estimation function
+$|{\mathbf{Y} - \mathbf{X} \boldsymbol{\beta}}\|^{2}_{2}$ leads to the solution ${\boldsymbol{\hat{\beta}}=(\mathbf{X^TX})^{-1}\mathbf{X^TY}}$. 
+
+For the penalized least squares criterion used by ridge regression, you minimize 
+$\|{\mathbf{Y}-\mathbf{X}\boldsymbol{\beta}\|^{2}_{2}}+\gamma{\boldsymbol{\|\beta\|^{2}_{2}}}$
+which leads to following solution:
+
+$$
+{\boldsymbol{\hat{\beta}}=(\mathbf{X^TX}}+\gamma{\mathbf{I}})^{-1}{\mathbf{X^TY}}
+$$
+
+where $\mathbf{I}$ is the $p \times p$ identity matrix.
+
+The ridge parameter $\gamma$ *shrinks* the coefficients towards 0, with $\gamma = 0$ being equivalent to OLS (no shrinkage) and $\gamma = +\infty$ being equivalent to setting all $\hat{\beta}$'s to 0.
+The optimal parameter lies somewhere in between and needs to be tuned by the user.
+
+
+## Tasks {-}
+
+Solve the following exercises using R.
+
+#### 1. Verify that ${\mathbf{(X^TX}}+\gamma{\mathbf{I}})$ has rank $200$, for any $\gamma>0$ of your choice. {-}
+
+<details><summary>Solution</summary>
+```{r}
+XtX <- crossprod(X)
+p <- ncol(X)
+gamma <- 2 # My choice
+
+# Compute penalized matrix
+XtX_gammaI <- XtX + (gamma * diag(p))
+dim(XtX_gammaI)
+qr(XtX_gammaI)$rank == 200 # indeed
+```
+</details>
+
+
+#### 2. Check that the inverse of ${\mathbf{(X^TX}}+\gamma{\mathbf{I}})$ can be computed. {-}
+
+<details><summary>Solution</summary>
+```{r}
+# Yes, it can be computed (no error)
+XtX_gammaI_inv <- solve(XtX_gammaI)
+str(XtX_gammaI_inv)
+```
+</details>
+
+
+#### 3. Finally, compute ${\boldsymbol{\hat{\beta}}=(\mathbf{X^TX}}+\gamma{\mathbf{I}})^{-1}{\mathbf{X^TY}}$. {-}
+
+<details><summary>Solution</summary>
+```{r ridge-beta-estimates}
+## Calculate ridge beta estimates
+## Use `drop` to drop dimensions and create vector
+ridge_betas <- drop(XtX_gammaI_inv %*% t(X) %*% Y)
+length(ridge_betas) # one for every gene
+summary(ridge_betas)
+```
+
+We have now manually calculated the ridge regression estimates.
+
+</details>
+
+
+
+# Performing ridge and lasso regression with `glmnet`
+
+The package *[glmnet](https://CRAN.R-project.org/package=glmnet)* provides a
+function `glmnet()` that allows you to fit all three types of regressions. Which
+type is used, can be determined by specifying the `alpha` argument. For a
+__ridge regression__, you set `alpha` to 0, and for a __lasso regression__ you
+set `alpha` to 1. Other `alpha` values between 0 and 1 will fit a form of
+elastic net. This function has slightly different syntax from the other
+model-fitting functions. To be able to use it, you have to pass a `x` matrix as
+well as a `y` vector, and you don't use the formula syntax.
+
+The gamma value, which controls the "strength" of the penalty, can be passed by
+the argument `lambda` (notation isn't always consistent between text books and
+software...). The function `glmnet()` can also carry out a search for finding
+the best gamma value for a fit. This can be done by passing multiple values to
+the argument `lambda`. If not supplied, `glmnet` will generate a range of values
+itself, based on the data whereby the number of values can be controlled with
+the `nlambda` argument. This is generally the recommended way to use `glmnet`,
+see `?glmnet` for details.
+
+For a thorough introduction to the __glmnet__ package and elastic net models in
+general, see the
+[glmnet introduction vignette](https://cran.r-project.org/web/packages/glmnet/vignettes/glmnet.pdf)
+
+
+## Demonstration: Ridge regression {-}
+
+Let's perform a ridge regression in order to predict expression levels
+of the TRIM32 gene using the 200 gene probes data. We can start by
+using a $\gamma$ value of 2.
+
+```{r glmnet-ridge-regression}
+gamma <- 2
+ridge_model <- glmnet(X, Y, alpha = 0, lambda = gamma)
+
+# have a look at the first 10 coefficients
+coef(ridge_model)[1:10]
+```
+
+The first coefficient is the intercept, and is again essentially 0. But
+a value of 2 for $\gamma$ might not be the best choice, so let's see how
+the coefficients change with different values for $\gamma$.
+
+We will create a *grid* of $\gamma$ values, i.e. a range of values that will be
+used as input for the `glmnet` function. Note that this function can take a
+vector of values as input for the `lambda` argument, allowing to fit multiple
+models with the same input data but different hyperparameters.
+
+```{r ridge-regression-grid-search}
+grid <- seq(1, 1000, by = 10)  # 1 to 1000 with steps of 10
+ridge_mod_grid <- glmnet(X, Y, alpha = 0, lambda = grid)
+
+# Plot the coefficients against the (natural) LOG lambda sequence!
+# see ?plot.glmnet
+plot(ridge_mod_grid, xvar = "lambda", xlab = "log(gamma)")
+# add a vertical line at gamma = 2
+text(log(gamma), -0.05, labels = expression(gamma == 2), 
+     adj = -0.5, col = "firebrick")
+abline(v = log(gamma), col = "firebrick", lwd = 2)
+```
+
+This plot is known as a __coefficient profile plot__, each colored line
+represents a coefficient $\hat{\beta}$ from the regression model and shows how
+they change with increased values of $\gamma$ (on the log-scale)
+^[Note: `log()` in R is the __natural logarithm__ by default (base $e$) and we
+will also use this notation in the text (like the x-axis title on the plot above).
+This might be different from the notation that you're used to ($\ln()$).
+To take logarithms with a different base in R you can specify the `base = `
+argument of `log` or use the shorthand functions `log10(x)` and `log2(x)` for
+base 10 and 2, respectively].
+
+Note that for higher values $\gamma$, the coefficient estimates become closer to 0,
+showing the *shrinkage* effect of the ridge penalty.
+
+Similar to the PC regression example, we chose $\gamma=2$ and the grid rather
+arbitrarily. We will see subsequently, how to choose $\gamma$ that minimizes the
+prediction error.
+
+
+# Exercise: Lasso regression
+
+Lasso regression is also a form of penalized regression, but we do not have an
+analytic solution of $\hat{{\boldsymbol{\beta}}}$ as in least squares
+and ridge regression. In order to fit a lasso model, we once again use
+the `glmnet()` function. However, this time we use the argument
+`alpha = 1`
+
+
+## Tasks {-}
+
+#### 1. Verify that setting `alpha = 1` indeed corresponds to lasso regression using the equations from [Section 3](#elnet-theory). {-}
+
+
+#### 2. Perform a lasso regression with the `glmnet` function with `Y` the response and `X` the predictors. {-}
+
+You do not have to provide a custom sequence of $\gamma$ (`lambda`) values here
+but can instead rely on `glmnet`'s default behaviour of choosing the grid of
+$\gamma$ values based on the data (see `?glmnet` for more details).
+
+<details><summary>Solution</summary>
+```{r glmnet-lasso-regression}
+# Note that the glmnet() function can supply gamma automatically
+# By default it uses a sequence of 100 lambda values
+lasso_model <- glmnet(X, Y, alpha = 1)
+```
+</details>
+
+
+#### 3. Make the coefficient profile plot and interpret. {-}
+
+<details><summary>Solution</summary>
+
+```{r}
+plot(lasso_model, xvar = "lambda", xlab = "log(gamma)")
+```
+
+Note that the number of non-zero coefficients is indicated at the top of the plot.
+In the case of lasso-regression the regularization is much less smooth compared
+to the ridge regression, with some coefficients increasing for higher $\gamma$
+before sharply dropping to zero.
+In contrast to ridge, lasso eventually shrinks all coefficients to 0.
+
+</details>
+
+
+# Evaluation of prediction models and tuning hyperparameters
+
+First we will split our original data in a training and test set to validate our
+model. The training set will be used to train the model and tune the
+hyperparameters, while the test set will be used to evaluate the
+__out-of-sample__ performance of our final model. If we would use the same data
+to both fit and test the model, we would get biased results.
+
+Before we begin, we use the `set.seed()` function in order to set a seed
+for R’s random number generator, so that we will all obtain precisely
+the same results as those shown below. It is generally good practice to
+set a random seed when performing an analysis such as cross-validation
+that contains an element of randomness, so that the results obtained can
+be reproduced at a later time.
+
+We begin by using the `sample()` function to split the set of samples into two
+subsets, by selecting a random subset of 80 observations out of the original 120
+observations. We refer to these observations as the __training__ set. The rest
+of the observations will be used as the __test__ set.
+
+```{r create-training-set}
+set.seed(1)
+# Sample 80 random IDs from the rows of X (120 total)
+trainID <- sample(nrow(X), 80)
+
+# Training data
+trainX <- X[trainID, ]
+trainY <- Y[trainID]
+
+# Test data
+testX <- X[-trainID, ]
+testY <- Y[-trainID]
+```
+
+To make fitting the models a bit easier later, we will also create 2 data.frames
+combining the response and predictors for the training and test data.
+
+```{r}
+train_data <- data.frame("TRIM32" = trainY, trainX)
+test_data <- data.frame("TRIM32" = testY, testX)
+
+## Glancing at the data structure: for the first 10 columns only
+str(train_data[, 1:10])
+```
+
+
+## Model evaluation
+
+We are interested in the __out-of-sample__ error of our models,
+i.e. how good our model does on unseen data.
+__This will allow us to compare different *classes* of models__.
+For continuous outcomes we will use the __mean squared error (MSE)__
+(or its square-root version, the RMSE).
+
+The evaluation will allow us to compare the performance of different types of
+models, e.g. PC regression, ridge regression and lasso regression, on our data.
+However, we still need to find the optimal model within each of these classes,
+by selecting the best hyperparameter (number of PCs for PC regression and $\gamma$
+for lasso and ridge).
+For that we will use 
+[*$k$-fold Cross Validation*](https://en.wikipedia.org/wiki/Cross-validation_(statistics))
+on our training set.
+
+
+## Tuning hyperparameters
+
+The test set is only used to evaluate the *final* model.
+To achieve this final model, we need to find the optimal hyperparameters,
+i.e. the hyperparameters that best generalize the model to unseen data.
+We can estimate this by using *k-fold cross validation* ($CV_k$) on
+the training data.
+
+The $CV_k$ estimates can be automatically computed for any
+generalized linear model (generated with `glm()` and by extension `glmnet()`) 
+using the `cv.glm()` function from the
+*[boot](https://CRAN.R-project.org/package=boot)* package.
+
+
+# Example: PC regression evaluation
+
+We start with the PC regression and look for the optimal number of PCs that minimizes
+the MSE using $k$-fold Cross validation.
+We then use this optimal number of PCs to train the final model and evaluate it
+on the test data.
+
+
+## k-fold Cross Validation to tune number of components
+
+Conveniently, the `pcr` function from the `pls` package has an implementation for
+k-fold Cross Validation. We simply need to set `validation = CV` and `segments = 20`
+to perform 20-fold Cross Validation with PC regression.
+If we don't specify `ncomp`, `pcr` will select the maximum number of PCs that can
+be used for the CV.
+
+Note that our training data `trainX` consists of 80 observations (rows).
+If we perform 20-fold CV, that means we will split the data in 20 groups, so
+each group will consist of 4 observations. At each CV cycle, one group will be left
+out and the model will be trained on the remaining groups. This leaves us with
+76 training observations for each CV cycle, so the maximal number of components
+that can be used in the linear regression is 75.
+
+```{r pcr-kCV}
+## Set seed for reproducibility, kCV is a random process!
+set.seed(123)
+
+K <- 20
+
+## The 'Y ~ .' notation means: fit Y by every other variable in the data
+pcr_cv <- pcr(TRIM32 ~ ., data = train_data, validation = "CV", segments = K)
+summary(pcr_cv)
+```
+
+We can plot the *root mean squared error of prediction* (RMSEP) for each number
+of components as follows.
+
+```{r pcr_cv-plot}
+plot(pcr_cv, plottype = "validation")
+```
+
+The `pls` package also has a function `selectNcomp` to select the optimal number of components.
+Here we use the "one-sigma" method, which returns the lowest number of components
+for which the RMSE is within one standard error of the absolute minimum.
+The function also allows plotting the result by specifying `plot = TRUE`.
+
+```{r pcr-optimal-ncomp}
+optimal_ncomp <- selectNcomp(pcr_cv, method = "onesigma", plot = TRUE)
+```
+
+This outcome shows us that the optimal number of components for our model is
+`r optimal_ncomp`.
+
+
+## Validation on test data
+
+We now use our optimal number of components to train the final PCR model.
+This model is then validated on by generating predictions for the test data and
+calculating the MSE.
+
+We define a custom function to calculate the MSE.
+Note that there is also an `MSEP` function in the `pls` package which does the
+prediction and MSE calculation in one go.
+But our own function will come in handy later for lasso and ridge regression.
+
+```{r MSE}
+# Mean Squared Error
+## obs: observations; pred: predictions
+MSE <- function(obs, pred){
+  mean((drop(obs) - drop(pred))^2)
+}
+```
+
+```{r final_pcr_model}
+final_pcr_model <- pcr(TRIM32 ~ ., data = train_data, ncomp = optimal_ncomp)
+pcr_preds <- predict(final_pcr_model, newdata = test_data, ncomp = optimal_ncomp)
+(pcr_mse <- MSE(testY, pcr_preds))
+```
+
+This value on its own does not tell us very much, but we can use it to compare our
+PCR model with other types of models later.
+
+Finally, we plot the predicted values for our response variable (the TRIM32 gene expression)
+against the actual observed values from our test set.
+
+```{r pcr-predplot}
+predplot(final_pcr_model, newdata = test_data, line = TRUE)
+```
+
+
+
+# Exercise: evaluate and compare prediction models
+
+#### 1. Perform a lasso regression with 20-fold Cross Validation on the training data (`trainX`, `trainY`). Plot the results and select the optimal `lambda` ($\gamma$) parameter. Fit a final model with the selected `lambda` and validate it on the test data. {-}
+
+*Hint*: use the `cv.glmnet()` function, for 20 folds CV, set `nfolds = 20` and 
+to use the MSE metric set `type.measure = "mse"`.
+Go to `?cv.glmnet` for details.
+
+<details><summary>Solution</summary>
+
+```{r lasso-cv}
+set.seed(123)
+lasso_cv <- cv.glmnet(trainX, trainY, alpha = 1, 
+                      nfolds = K, type.measure = "mse")
+lasso_cv
+plot(lasso_cv)
+```
+
+Note that we can extract the fitted lasso regression object from the CV result
+and make the coefficient profile plot as before.
+
+```{r lasso-cv-coefficient-profile}
+plot(lasso_cv$glmnet.fit, xvar = "lambda")
+```
+
+We can look for the gamma values that give the best result. 
+Here you have two possibilities :
+
+1. `lambda.min`: the value of  $\gamma$ that gives the best result for the crossvalidation.
+2. `lambda.1se`: the largest value of $\gamma$ such that the MSE is within 1 standard error
+of the best result from the cross validation.
+
+```{r}
+lasso_cv$lambda.min
+lasso_cv$lambda.1se
+```
+
+We will (rather arbitrarily) use `lambda.min` here to fit the final model and generate predictions on the test data.
+Note that we don't actually have to redo the fitting, we can just use our existing
+`lasso_cv` object, which already contains the fitted models for a range of `lambda` values.
+We can use the `predict` function and specify the `s` argument (which confusingly sets `lambda` in this case)  to make predictions on the test data.
+
+```{r}
+lasso_preds <- predict(lasso_cv, s = lasso_cv$lambda.min, newx = testX)
+## Calculate MSE
+(lasso_mse <- MSE(testY, lasso_preds))
+```
+</details>
+
+
+#### 2. Do the same for ridge regression. {-}
+
+<details><summary>Solution</summary>
+
+```{r ridge-cv}
+set.seed(123)
+ridge_cv <- cv.glmnet(trainX, trainY, alpha = 0, 
+                      nfolds = K, type.measure = "mse")
+ridge_cv
+plot(ridge_cv)
+```
+
+Note that we can extract the fitted ridge regression object from the CV result
+and make the coefficient profile plot as before.
+
+```{r ridge-cv-coefficient-profile}
+plot(ridge_cv$glmnet.fit, xvar = "lambda")
+```
+
+We can look for the gamma values that give the best result. 
+Here you have two possibilities :
+
+1. `lambda.min`: the value of  $\gamma$ that gives the best result for the crossvalidation.
+2. `lambda.1se`: the largest value of $\gamma$ such that the MSE is within 1 standard error
+of the best result from the cross validation.
+
+```{r}
+ridge_cv$lambda.min
+ridge_cv$lambda.1se
+```
+
+We will (rather arbitrarily) use `lambda.min` here to fit the final model and generate predictions on the test data.
+Note that we don't actually have to redo the fitting, we can just use our existing
+`ridge_cv` object, which already contains the fitted models for a range of `lambda` values.
+We can use the `predict` function and specify the `s` argument (which confusingly sets `lambda` in this case)  to make predictions on the test data.
+
+```{r ridge-predictions}
+ridge_preds <- predict(ridge_cv, s = ridge_cv$lambda.min, newx = testX)
+## Calculate MSE
+(ridge_mse <- MSE(testY, ridge_preds))
+```
+
+</details>
+
+
+#### 3. Which of the models considered (PCR, lasso, ridge) performs best?. {-}
+    
+<details><summary>Solution</summary>
+
+Based on the MSE, the ridge model performs best on the test data.
+
+```{r, echo=FALSE}
+knitr::kable(
+  data.frame(
+    "Model" = c("PCR", "Lasso", "Ridge"),
+    "MSE" = c(pcr_mse, lasso_mse, ridge_mse)
+  )
+)
+```
+</details>
