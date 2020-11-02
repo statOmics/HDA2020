@@ -11,7 +11,7 @@
 
 <meta name="author" content="Milan Malfait" />
 
-<meta name="date" content="2020-11-01" />
+<meta name="date" content="2020-11-02" />
 
 <title>Introduction to RMarkdown</title>
 
@@ -526,7 +526,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Introduction to RMarkdown</h1>
 <h4 class="author">Milan Malfait</h4>
-<h4 class="date">November 01, 2020</h4>
+<h4 class="date">November 02, 2020</h4>
 
 </div>
 
@@ -878,7 +878,7 @@ y_i = \beta_0 + \beta_1 x_i + \epsilon_i
 <p>Finally, it’s always good practice to include the <a href="">Session Info</a> for your R session in your document. That way, other persons (including your future self) looking at your document can see what versions of R and loaded packages were used, which can be quite essential for reproducibility. There are 2 options, either using the base R command <code>sessionInfo()</code> or using <a href="https://devtools.r-lib.org/reference/session_info.html">the version from the <code>devtools</code> package</a>: <code>devtools::session_info()</code>. Their outputs have slightly different formatting but the contents are essentially the same. Personally, I prefer the <code>devtools</code> version, but this is really a personal choice.</p>
 <p>You can also include the date with <code>Sys.time()</code> so you have a time stamp of when the report was compiled. If you happen to be working inside a git repository, <code>git2r::repository()</code> is a useful function that displays information about the current <code>git</code> state and the last commit.</p>
 <div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1"></a><span class="kw">Sys.time</span>()</span></code></pre></div>
-<pre><code>## [1] &quot;2020-11-01 16:30:25 UTC&quot;</code></pre>
+<pre><code>## [1] &quot;2020-11-02 14:18:27 UTC&quot;</code></pre>
 <div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1"></a>devtools<span class="op">::</span><span class="kw">session_info</span>()</span></code></pre></div>
 <pre><code>## ─ Session info ───────────────────────────────────────────────────────────────
 ##  setting  value                       
@@ -890,7 +890,7 @@ y_i = \beta_0 + \beta_1 x_i + \epsilon_i
 ##  collate  en_US.UTF-8                 
 ##  ctype    en_US.UTF-8                 
 ##  tz       UTC                         
-##  date     2020-11-01                  
+##  date     2020-11-02                  
 ## 
 ## ─ Packages ───────────────────────────────────────────────────────────────────
 ##  package                * version  date       lib source        
@@ -941,7 +941,7 @@ y_i = \beta_0 + \beta_1 x_i + \epsilon_i
 ##  fs                       1.5.0    2020-07-31 [1] CRAN (R 4.0.2)
 ##  generics                 0.1.0    2020-10-31 [1] CRAN (R 4.0.3)
 ##  GenomeInfoDb           * 1.26.0   2020-10-27 [1] Bioconductor  
-##  GenomeInfoDbData         1.2.4    2020-11-01 [1] Bioconductor  
+##  GenomeInfoDbData         1.2.4    2020-11-02 [1] Bioconductor  
 ##  GenomicRanges          * 1.42.0   2020-10-27 [1] Bioconductor  
 ##  ggbeeswarm               0.6.0    2017-08-07 [1] CRAN (R 4.0.2)
 ##  ggplot2                * 3.3.2    2020-06-19 [1] CRAN (R 4.0.2)
@@ -1023,7 +1023,7 @@ y_i = \beta_0 + \beta_1 x_i + \epsilon_i
 ##  viridis                  0.5.1    2018-03-29 [1] CRAN (R 4.0.2)
 ##  viridisLite              0.3.0    2018-02-01 [1] CRAN (R 4.0.1)
 ##  withr                    2.3.0    2020-09-22 [1] CRAN (R 4.0.2)
-##  xfun                     0.19     2020-10-30 [1] CRAN (R 4.0.3)
+##  xfun                     0.19     2020-10-30 [1] CRAN (R 4.0.2)
 ##  xml2                     1.3.2    2020-04-23 [1] CRAN (R 4.0.2)
 ##  xtable                   1.8-4    2019-04-21 [1] CRAN (R 4.0.2)
 ##  XVector                  0.30.0   2020-10-28 [1] Bioconductor  
@@ -1036,7 +1036,7 @@ y_i = \beta_0 + \beta_1 x_i + \epsilon_i
 <span id="cb52-2"><a href="#cb52-2"></a>git2r<span class="op">::</span><span class="kw">repository</span>()</span></code></pre></div>
 <pre><code>## Local:    master /Users/runner/work/HDA2020/HDA2020
 ## Remote:   master @ origin (https://github.com/statOmics/HDA2020)
-## Head:     [ebee0be] 2020-11-01: Only deploy site on push events</code></pre>
+## Head:     [31a6fc5] 2020-11-02: merged install.R</code></pre>
 </div>
 <div id="home" class="section level1 unnumbered">
 <h1><a href="https://statomics.github.io/HDA2020/">Home</a></h1>
