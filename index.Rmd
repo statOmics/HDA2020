@@ -48,7 +48,7 @@ Questions related to the course contents can be asked by posting on [UFora](http
 
 #### 1. Introduction
 
-  - Slides: [Intro](slides/IntroHighDim.pdf)
+  - Slides: [Lecture 1: Intro](slides/IntroHighDim.pdf)
   - Software: [Install and Launch Statistical Software](./software4stats.html)
   - [Introduction](./intro.html)
   - [Introduction to RMarkdown](./Introduction-RMarkdown.html)
@@ -57,18 +57,21 @@ Questions related to the course contents can be asked by posting on [UFora](http
 
 #### 2. Singular value decomposition
 
-  - [Singular value decomposition theory](./svd.html)
+  - [Lecture 2-3: Singular value decomposition](./svd.html)
   - [Lab 1: Introduction and SVD applications](./Lab1-Intro-SVD.html)
   - [Lab 2: PCA](./Lab2-PCA.html)
 
 #### 3. Prediction with High Dimensional Predictors
 
-  - [Prediction theory](./prediction.html)
+  - [Lecture 4-5: Prediction Theory](./prediction.html)
   - [Lab 3: Penalized regression and prediction](./Lab3-Penalized-Regression.html)
 
 #### 4. Sparse Singular Value Decomposition
 
-  - [Sparse SVD theory](./sparseSvd.html)
+  - [Lecture 5: Sparse SVD](./sparseSvd.html)
+
+#### 5. Linear discriminant analysis
+  - [Lecture 5: Linear Discriminant Analysis Theory](./lda.html)
 
 ### Homework assignments
 
