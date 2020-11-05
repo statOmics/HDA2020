@@ -88,3 +88,5 @@ Questions related to the course contents can be asked by posting on [UFora](http
 ### Homework assignments
 
 - [Homework: Canonical Correlation Analysis](./HW-CCA.html)
+- [Group Project](./Project.html)
+
