@@ -55,10 +55,12 @@ knitr::opts_chunk$set(
 
 In this practical session, we use the dataset by @alon1999broad on
 gene expression levels in 40 tumour and 22 normal colon tissue samples.
-They checked a total of 6500 human genes using the Affymetrix oligonucleotide array. You can read the data in as follows:
+They checked a total of 6500 human genes using the Affymetrix oligonucleotide array.
+You can read the data in as follows:
 
 ```{r read in data}
-Alon1999 <- read.csv("doc/Lab4/Alon1999.csv")
+Alon1999 <- read.csv("https://github.com/statOmics/HDA2020/raw/data/Alon1999.csv")
+str(Alon1999[, 1:10])
 ```
 
 The dataset contains one variable named `Y` with the values `t` and `n`.
@@ -72,7 +74,7 @@ across the samples.
 # Sparse PCA
 
 In order to work easily with the data, first construct a scaled matrix
-`X` and a vector `Y` which gives the scaled predictors and the respons
+`X` and a vector `Y` which gives the scaled predictors and the response
 variable:
 
 ```{r}
