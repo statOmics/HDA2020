@@ -73,6 +73,10 @@ Questions related to the course contents can be asked by posting on [UFora](http
 #### 5. Linear discriminant analysis
   - [Lecture 5: Linear Discriminant Analysis Theory](./lda.html)
 
+#### 6. Introduction to Clustering
+    - [Lecture 5: Introduction to Hierarchical Clustering](./hclust.html)
+    - Model Based Clustering (paper reading session 1)
+
 ### Homework assignments
 
 - [Homework: Canonical Correlation Analysis](./HW-CCA.html)

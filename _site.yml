@@ -17,6 +17,10 @@ navbar:
         href: prediction.html
       - text: "4. Sparse Singular Value Decomposition"
         href: sparseSvd.html
+      - text: "5. Linear Discriminant Analysis"
+        href: lda.html
+      - text: "6. Introduction to Hierarchical Clustering"
+        href: hclust.html
     - text: "Practicals"
       icon: fa-laptop
       menu:
