@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Lieven Clement" />
+
+
+<title>Introduction to Hierarchical Clustering</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<script src="site_libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #c4a000; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #000000; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #000000; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #000000; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">HDA2020</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fa fa-chalkboard-teacher"></span>
+     
+    Lectures
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="intro.html">1. Introduction</a>
+    </li>
+    <li>
+      <a href="svd.html">2. Singular Value Decomposition</a>
+    </li>
+    <li>
+      <a href="prediction.html">3. Prediction with High Dimensional Predictors</a>
+    </li>
+    <li>
+      <a href="sparseSvd.html">4. Sparse Singular Value Decomposition</a>
+    </li>
+    <li>
+      <a href="lda.html">5. Linear Discriminant Analysis</a>
+    </li>
+    <li>
+      <a href="hclust.html">6. Introduction to Hierarchical Clustering</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fa fa-laptop"></span>
+     
+    Practicals
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Lab1-Intro-SVD.html">Lab 1</a>
+    </li>
+    <li>
+      <a href="Lab2-PCA.html">Lab 2</a>
+    </li>
+    <li>
+      <a href="Lab3-Penalized-Regression.html">Lab 3</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/statOmics/HDA2020">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="http://statomics.github.io/">statOmics</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Introduction to Hierarchical Clustering</h1>
+<h4 class="author">Lieven Clement</h4>
+
+</div>
+
+
+<div id="introduction" class="section level1">
+<h1><span class="header-section-number">1</span> Introduction</h1>
+<div id="objective" class="section level2">
+<h2><span class="header-section-number">1.1</span> Objective</h2>
+<p>Objective: grouping of observations into <strong>clusters</strong>, so that</p>
+<ul>
+<li>similar observations appear in the same cluster</li>
+<li>dissimilar observations appear in distinct clusters</li>
+</ul>
+<p><span class="math inline">\(\longrightarrow\)</span> need for a measure for <strong>similarity</strong> and <strong>dissimilarity</strong>?</p>
+</div>
+<div id="example-1" class="section level2">
+<h2><span class="header-section-number">1.2</span> Example 1</h2>
+<p>Single cell transcriptomics: <span class="math inline">\(n \times p\)</span> Matrix for which - every column contains the expression levels of one of <span class="math inline">\(p\)</span> genes for <span class="math inline">\(n\)</span> cells - every row contains the expression levels of <span class="math inline">\(p\)</span> genes for one cell ({})</p>
+<ul>
+<li><p>Research question: look for groups of cells that have similar gene expression patterns</p></li>
+<li><p>Or, look for groups of genes that have similar expression levels across the different cells. This can help us in understanding the regulation and functionality of the genes.</p></li>
+</ul>
+<p><span class="math inline">\(\longrightarrow\)</span> both <strong>observations</strong> (rows) and <strong>variables</strong> (columns) can be clustered</p>
+</div>
+<div id="example-2." class="section level2">
+<h2><span class="header-section-number">1.3</span> Example 2.</h2>
+<p>Abundance studies: the abundances of <span class="math inline">\(n\)</span> plant species are counted on <span class="math inline">\(p\)</span> plots (habitats)</p>
+<ul>
+<li>look for groups that contain species that live in the same habitats, or, look for groups of habitats that have similar species communities</li>
+</ul>
+<p><span class="math inline">\(\longrightarrow\)</span> both <strong>observations</strong> (rows) and <strong>variables</strong> (columns) can be clustered</p>
+</div>
+</div>
+<div id="hierarchical-cluster-analysis-agnes" class="section level1">
+<h1><span class="header-section-number">2</span> Hierarchical Cluster Analysis: Agnes</h1>
+<div id="general-algorithm" class="section level2">
+<h2><span class="header-section-number">2.1</span> General Algorithm</h2>
+<ul>
+<li><p>In step 0 each observations is considered as a cluster (i.e. <span class="math inline">\(n\)</span> clusters).</p></li>
+<li><p>Every next step consists of:</p>
+<ol style="list-style-type: decimal">
+<li>merge the two clusters with the smallest intercluster dissimilarity</li>
+<li>recalculate the intercluster dissimilarities</li>
+</ol></li>
+</ul>
+<p>In step 0 the intercluster dissimilarity coincides with the dissimilarity between the corresponding observations \ <span class="math inline">\(\leftrightarrow\)</span> intercluster dissimilarity?</p>
+</div>
+<div id="intercluster-dissimilarities" class="section level2">
+<h2><span class="header-section-number">2.2</span> Intercluster Dissimilarities</h2>
+<ul>
+<li><p>Represent clusters (e.g. <span class="math inline">\(C_1\)</span> and <span class="math inline">\(C_2\)</span>) as sets of points <span class="math inline">\(\mathbf{x}_i\)</span> which belong to that cluster</p></li>
+<li><p><span class="math inline">\(d(C_1,C_2)\)</span>: intercluster dissimilarity between</p></li>
+</ul>
+<p>We consider three intercluster dissimilarities.</p>
+<div id="single-linkage-nearest-neighbour" class="section level3">
+<h3><span class="header-section-number">2.2.1</span> Single Linkage = Nearest Neighbour</h3>
+<p><span class="math display">\[
+  d(C_1,C_2) = \min_{\mathbf{x}_1 \in C_1; \mathbf{x}_2 \in C_2}
+  d(\mathbf{x}_1,\mathbf{x}_2) ,
+\]</span></p>
+<p>i.e. the dissimilarity between <span class="math inline">\(C_1\)</span> and <span class="math inline">\(C_2\)</span> is determined by the smallest dissimilarity between a point of <span class="math inline">\(C_1\)</span> and a point of <span class="math inline">\(C_2\)</span>.</p>
+<p><img src="https://raw.githubusercontent.com/statOmics/HDA2020/master/assets/hclustNearest.png" style="width:70.0%" /></p>
+</div>
+<div id="complete-linkage-furthest-neighbour" class="section level3">
+<h3><span class="header-section-number">2.2.2</span> Complete Linkage = Furthest Neighbour</h3>
+<p><span class="math display">\[
+    d(C_1,C_2) = \max_{\mathbf{x}_1 \in C_1; \mathbf{x}_2 \in C_2}
+    d(\mathbf{x}_1,\mathbf{x}_2) ,
+   \]</span> i.e. the dissimilarity between <span class="math inline">\(C_1\)</span> and <span class="math inline">\(C_2\)</span> is determined by the largest dissimilarity between a point of <span class="math inline">\(C_1\)</span> and a point of <span class="math inline">\(C_2\)</span>.</p>
+<p><img src="https://raw.githubusercontent.com/statOmics/HDA2020/master/assets/hclustFurthest.png" style="width:70.0%" /></p>
+</div>
+<div id="average-linkage-group-average" class="section level3">
+<h3><span class="header-section-number">2.2.3</span> Average Linkage = Group Average</h3>
+<p><span class="math display">\[
+    d(C_1,C_2) = \frac{1}{\vert C_1 \vert \vert C_2 \vert}
+    \sum_{\mathbf{x}_1 \in C_1; \mathbf{x}_2 \in C_2}
+    d(\mathbf{x}_1,\mathbf{x}_2) ,
+   \]</span> i.e. the dissimilarity between <span class="math inline">\(C_1\)</span> and <span class="math inline">\(C_2\)</span> is determined by the average dissimilarity between all points of <span class="math inline">\(C_1\)</span> and all points of <span class="math inline">\(C_2\)</span>.</p>
+<p><img src="https://raw.githubusercontent.com/statOmics/HDA2020/master/assets/hclustAverage.png" style="width:70.0%" /></p>
+</div>
+</div>
+<div id="cluster-tree" class="section level2">
+<h2><span class="header-section-number">2.3</span> Cluster Tree</h2>
+<p>Hierarchical nature of the algorithm:</p>
+<ul>
+<li><p>Nested sequence of clusters <span class="math inline">\(\longrightarrow\)</span> visualisation via a tree</p></li>
+<li><p>height of branches indicate the intercluster dissimilarity at which clusters are merged.</p></li>
+<li><p>Can used as instrument for deciding the number of clusters in the data</p></li>
+</ul>
+</div>
+</div>
+<div id="toy-example" class="section level1">
+<h1><span class="header-section-number">3</span> Toy example</h1>
+<table>
+<thead>
+<tr class="header">
+<th align="right">X1</th>
+<th align="right">X2</th>
+<th align="right">label</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1.50</td>
+<td align="right">2.40</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="right">2.00</td>
+<td align="right">2.50</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="right">2.50</td>
+<td align="right">2.25</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="right">2.00</td>
+<td align="right">3.00</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="right">2.25</td>
+<td align="right">3.20</td>
+<td align="right">5</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">library</span>(cluster)</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="kw">library</span>(tidyverse)</span></code></pre></div>
+<pre><code>## ── [1mAttaching packages[22m ─────────────────────────────────────── tidyverse 1.3.0 ──</code></pre>
+<pre><code>## [32m✔[39m [34mggplot2[39m 3.3.2     [32m✔[39m [34mpurrr  [39m 0.3.4
+## [32m✔[39m [34mtibble [39m 3.0.4     [32m✔[39m [34mdplyr  [39m 1.0.2
+## [32m✔[39m [34mtidyr  [39m 1.1.2     [32m✔[39m [34mstringr[39m 1.4.0
+## [32m✔[39m [34mreadr  [39m 1.4.0     [32m✔[39m [34mforcats[39m 0.5.0</code></pre>
+<pre><code>## ── [1mConflicts[22m ────────────────────────────────────────── tidyverse_conflicts() ──
+## [31m✖[39m [34mdplyr[39m::[32mfilter()[39m masks [34mstats[39m::filter()
+## [31m✖[39m [34mdplyr[39m::[32mlag()[39m    masks [34mstats[39m::lag()</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>toy <span class="op">%&gt;%</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(X1, X2, <span class="dt">label =</span> label)) <span class="op">+</span></span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="st">  </span><span class="kw">geom_point</span>() <span class="op">+</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a><span class="st">  </span><span class="kw">geom_text</span>(<span class="dt">nudge_x =</span> <span class="fl">.05</span>)</span></code></pre></div>
+<p><img src="hclust_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>toy[,<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>] <span class="op">%&gt;%</span><span class="st"> </span>dist</span></code></pre></div>
+<pre><code>##           1         2         3         4
+## 2 0.5099020                              
+## 3 1.0111874 0.5590170                    
+## 4 0.7810250 0.5000000 0.9013878          
+## 5 1.0965856 0.7433034 0.9823441 0.3201562</code></pre>
+<div id="single-linkage" class="section level2">
+<h2><span class="header-section-number">3.1</span> Single linkage</h2>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>toySingle &lt;-<span class="st"> </span><span class="kw">agnes</span>(toy[,<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>], <span class="dt">method =</span> <span class="st">&quot;single&quot;</span>)</span>
+<span id="cb8-2"><a href="#cb8-2"></a><span class="kw">par</span>(<span class="dt">mfrow=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>),<span class="dt">pty=</span><span class="st">&quot;s&quot;</span>)</span>
+<span id="cb8-3"><a href="#cb8-3"></a><span class="kw">plot</span>(X2 <span class="op">~</span><span class="st"> </span>X1, toy, <span class="dt">xlim =</span> <span class="kw">c</span>(<span class="fl">1.25</span>,<span class="fl">2.75</span>),<span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">2</span>,<span class="fl">3.5</span>))</span>
+<span id="cb8-4"><a href="#cb8-4"></a><span class="kw">text</span>(toy<span class="op">$</span>X1<span class="op">*</span><span class="fl">1.05</span>,toy<span class="op">$</span>X2,<span class="dt">label=</span>toy<span class="op">$</span>label)</span>
+<span id="cb8-5"><a href="#cb8-5"></a><span class="kw">plot</span>(toySingle, <span class="dt">which.plot =</span> <span class="dv">2</span>, <span class="dt">main =</span> <span class="st">&quot;Single&quot;</span>)</span></code></pre></div>
+<p><img src="hclust_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>toy[,<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>] <span class="op">%&gt;%</span><span class="st"> </span>dist</span></code></pre></div>
+<pre><code>##           1         2         3         4
+## 2 0.5099020                              
+## 3 1.0111874 0.5590170                    
+## 4 0.7810250 0.5000000 0.9013878          
+## 5 1.0965856 0.7433034 0.9823441 0.3201562</code></pre>
+</div>
+<div id="complete-linkage" class="section level2">
+<h2><span class="header-section-number">3.2</span> Complete linkage</h2>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>toyComplete &lt;-<span class="st"> </span><span class="kw">agnes</span>(toy[,<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>], <span class="dt">method =</span> <span class="st">&quot;complete&quot;</span>)</span>
+<span id="cb11-2"><a href="#cb11-2"></a><span class="kw">par</span>(<span class="dt">mfrow=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>),<span class="dt">pty=</span><span class="st">&quot;s&quot;</span>)</span>
+<span id="cb11-3"><a href="#cb11-3"></a><span class="kw">plot</span>(X2 <span class="op">~</span><span class="st"> </span>X1, toy, <span class="dt">xlim =</span> <span class="kw">c</span>(<span class="fl">1.25</span>,<span class="fl">2.75</span>),<span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">2</span>,<span class="fl">3.5</span>))</span>
+<span id="cb11-4"><a href="#cb11-4"></a><span class="kw">text</span>(toy<span class="op">$</span>X1<span class="op">*</span><span class="fl">1.05</span>,toy<span class="op">$</span>X2,<span class="dt">label=</span>toy<span class="op">$</span>label)</span>
+<span id="cb11-5"><a href="#cb11-5"></a><span class="kw">plot</span>(toyComplete, <span class="dt">which.plot =</span> <span class="dv">2</span>, <span class="dt">main =</span> <span class="st">&quot;Complete&quot;</span>)</span></code></pre></div>
+<p><img src="hclust_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>toy[,<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>] <span class="op">%&gt;%</span><span class="st"> </span>dist</span></code></pre></div>
+<pre><code>##           1         2         3         4
+## 2 0.5099020                              
+## 3 1.0111874 0.5590170                    
+## 4 0.7810250 0.5000000 0.9013878          
+## 5 1.0965856 0.7433034 0.9823441 0.3201562</code></pre>
+</div>
+<div id="average-linkage" class="section level2">
+<h2><span class="header-section-number">3.3</span> Average linkage</h2>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>toyAvg &lt;-<span class="st"> </span><span class="kw">agnes</span>(toy[,<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>], <span class="dt">method =</span> <span class="st">&quot;average&quot;</span>)</span>
+<span id="cb14-2"><a href="#cb14-2"></a><span class="kw">par</span>(<span class="dt">mfrow=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>),<span class="dt">pty=</span><span class="st">&quot;s&quot;</span>)</span>
+<span id="cb14-3"><a href="#cb14-3"></a><span class="kw">plot</span>(X2 <span class="op">~</span><span class="st"> </span>X1, toy, <span class="dt">xlim =</span> <span class="kw">c</span>(<span class="fl">1.25</span>,<span class="fl">2.75</span>),<span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">2</span>,<span class="fl">3.5</span>))</span>
+<span id="cb14-4"><a href="#cb14-4"></a><span class="kw">text</span>(toy<span class="op">$</span>X1<span class="op">*</span><span class="fl">1.05</span>,toy<span class="op">$</span>X2,<span class="dt">label=</span>toy<span class="op">$</span>label)</span>
+<span id="cb14-5"><a href="#cb14-5"></a><span class="kw">plot</span>(toyAvg, <span class="dt">which.plot =</span> <span class="dv">2</span>, <span class="dt">main =</span> <span class="st">&quot;Average&quot;</span>)</span></code></pre></div>
+<p><img src="hclust_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>toy[,<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>] <span class="op">%&gt;%</span><span class="st"> </span>dist</span></code></pre></div>
+<pre><code>##           1         2         3         4
+## 2 0.5099020                              
+## 3 1.0111874 0.5590170                    
+## 4 0.7810250 0.5000000 0.9013878          
+## 5 1.0965856 0.7433034 0.9823441 0.3201562</code></pre>
+</div>
+</div>
+
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiSW50cm9kdWN0aW9uIHRvIEhpZXJhcmNoaWNhbCBDbHVzdGVyaW5nIgphdXRob3I6ICJMaWV2ZW4gQ2xlbWVudCIKb3V0cHV0OgogIGh0bWxfZG9jdW1lbnQ6CiAgICBkZl9wcmludDogcGFnZWQKLS0tCgojIEludHJvZHVjdGlvbgojIyBPYmplY3RpdmUKCk9iamVjdGl2ZTogZ3JvdXBpbmcgb2Ygb2JzZXJ2YXRpb25zIGludG8gKipjbHVzdGVycyoqLCBzbyB0aGF0CgotIHNpbWlsYXIgb2JzZXJ2YXRpb25zIGFwcGVhciBpbiB0aGUgc2FtZSBjbHVzdGVyCi0gZGlzc2ltaWxhciBvYnNlcnZhdGlvbnMgYXBwZWFyIGluIGRpc3RpbmN0IGNsdXN0ZXJzCgokXGxvbmdyaWdodGFycm93JCBuZWVkIGZvciBhIG1lYXN1cmUgZm9yICoqc2ltaWxhcml0eSoqIGFuZCAqKmRpc3NpbWlsYXJpdHkqKj8KCgojIyBFeGFtcGxlIDEKClNpbmdsZSBjZWxsIHRyYW5zY3JpcHRvbWljczogICRuIFx0aW1lcyBwJCBNYXRyaXggZm9yIHdoaWNoCiAgLSBldmVyeSBjb2x1bW4gY29udGFpbnMgdGhlIGV4cHJlc3Npb24gbGV2ZWxzIG9mIG9uZSBvZiAkcCQgZ2VuZXMgZm9yICRuJCBjZWxscwogIC0gZXZlcnkgcm93IGNvbnRhaW5zIHRoZSBleHByZXNzaW9uIGxldmVscyBvZiAkcCQgZ2VuZXMgZm9yIG9uZSBjZWxsICh7XGVtIHNhbXBsZX0pCgogIC0gUmVzZWFyY2ggcXVlc3Rpb246IGxvb2sgZm9yIGdyb3VwcyBvZiBjZWxscyB0aGF0IGhhdmUgc2ltaWxhciBnZW5lIGV4cHJlc3Npb24gcGF0dGVybnMKCiAtIE9yLCBsb29rIGZvciBncm91cHMgb2YgZ2VuZXMgdGhhdCBoYXZlIHNpbWlsYXIgZXhwcmVzc2lvbiBsZXZlbHMgYWNyb3NzIHRoZSBkaWZmZXJlbnQgY2VsbHMuIFRoaXMgY2FuCiBoZWxwIHVzIGluIHVuZGVyc3RhbmRpbmcgdGhlIHJlZ3VsYXRpb24gYW5kIGZ1bmN0aW9uYWxpdHkgb2YgdGhlIGdlbmVzLgoKICRcbG9uZ3JpZ2h0YXJyb3ckIGJvdGggKipvYnNlcnZhdGlvbnMqKiAocm93cykgYW5kICoqdmFyaWFibGVzKiogKGNvbHVtbnMpIGNhbiBiZSBjbHVzdGVyZWQKCgojIyBFeGFtcGxlIDIuCgpBYnVuZGFuY2Ugc3R1ZGllczogdGhlIGFidW5kYW5jZXMgb2YgJG4kIHBsYW50IHNwZWNpZXMgYXJlIGNvdW50ZWQgb24gJHAkIHBsb3RzIChoYWJpdGF0cykKCiAgLSBsb29rIGZvciBncm91cHMgdGhhdCBjb250YWluIHNwZWNpZXMgdGhhdCBsaXZlIGluIHRoZSBzYW1lIGhhYml0YXRzLCBvciwgbG9vayBmb3IgZ3JvdXBzIG9mCiBoYWJpdGF0cyB0aGF0IGhhdmUgc2ltaWxhciBzcGVjaWVzIGNvbW11bml0aWVzCgokXGxvbmdyaWdodGFycm93JCBib3RoICoqb2JzZXJ2YXRpb25zKiogKHJvd3MpIGFuZCAqKnZhcmlhYmxlcyoqIChjb2x1bW5zKSBjYW4gYmUgY2x1c3RlcmVkCgoKIyBIaWVyYXJjaGljYWwgQ2x1c3RlciBBbmFseXNpczogQWduZXMKCiMjIEdlbmVyYWwgQWxnb3JpdGhtCgotIEluIHN0ZXAgMCBlYWNoIG9ic2VydmF0aW9ucyBpcyBjb25zaWRlcmVkIGFzIGEgY2x1c3RlciAoaS5lLiAkbiQgY2x1c3RlcnMpLgoKLSBFdmVyeSBuZXh0IHN0ZXAgY29uc2lzdHMgb2Y6CgogICAxLiBtZXJnZSB0aGUgdHdvIGNsdXN0ZXJzIHdpdGggdGhlIHNtYWxsZXN0IGludGVyY2x1c3RlciBkaXNzaW1pbGFyaXR5CiAgIDIuIHJlY2FsY3VsYXRlIHRoZSBpbnRlcmNsdXN0ZXIgZGlzc2ltaWxhcml0aWVzCgpJbiBzdGVwIDAgdGhlIGludGVyY2x1c3RlciBkaXNzaW1pbGFyaXR5IGNvaW5jaWRlcyB3aXRoIHRoZSBkaXNzaW1pbGFyaXR5IGJldHdlZW4gdGhlIGNvcnJlc3BvbmRpbmcgb2JzZXJ2YXRpb25zIFxcCiAgJFxsZWZ0cmlnaHRhcnJvdyQgaW50ZXJjbHVzdGVyIGRpc3NpbWlsYXJpdHk/CgojIyBJbnRlcmNsdXN0ZXIgRGlzc2ltaWxhcml0aWVzCgotIFJlcHJlc2VudCBjbHVzdGVycyAoZS5nLiAkQ18xJCBhbmQgJENfMiQpCiAgIGFzIHNldHMgb2YgcG9pbnRzICRcbWF0aGJme3h9X2kkIHdoaWNoIGJlbG9uZyB0byB0aGF0IGNsdXN0ZXIKCi0gJGQoQ18xLENfMikkOiBpbnRlcmNsdXN0ZXIgZGlzc2ltaWxhcml0eSBiZXR3ZWVuCgpXZSBjb25zaWRlciB0aHJlZSBpbnRlcmNsdXN0ZXIgZGlzc2ltaWxhcml0aWVzLgoKIyMjIFNpbmdsZSBMaW5rYWdlID0gTmVhcmVzdCBOZWlnaGJvdXIKClxbCiAgZChDXzEsQ18yKSA9IFxtaW5fe1xtYXRoYmZ7eH1fMSBcaW4gQ18xOyBcbWF0aGJme3h9XzIgXGluIENfMn0KICBkKFxtYXRoYmZ7eH1fMSxcbWF0aGJme3h9XzIpICwKXF0KCmkuZS4gdGhlIGRpc3NpbWlsYXJpdHkgYmV0d2VlbiAkQ18xJCBhbmQgJENfMiQgaXMgZGV0ZXJtaW5lZCBieSB0aGUgc21hbGxlc3QgZGlzc2ltaWxhcml0eSBiZXR3ZWVuIGEgcG9pbnQgb2YgJENfMSQgYW5kIGEgcG9pbnQgb2YgJENfMiQuCgohW10oaHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3N0YXRPbWljcy9IREEyMDIwL21hc3Rlci9hc3NldHMvaGNsdXN0TmVhcmVzdC5wbmcpe3dpZHRoPTcwJX0KCiMjIyBDb21wbGV0ZSBMaW5rYWdlID0gRnVydGhlc3QgTmVpZ2hib3VyCiAgIFxbCiAgICBkKENfMSxDXzIpID0gXG1heF97XG1hdGhiZnt4fV8xIFxpbiBDXzE7IFxtYXRoYmZ7eH1fMiBcaW4gQ18yfQogICAgZChcbWF0aGJme3h9XzEsXG1hdGhiZnt4fV8yKSAsCiAgIFxdCiAgIGkuZS4gdGhlIGRpc3NpbWlsYXJpdHkgYmV0d2VlbiAkQ18xJCBhbmQgJENfMiQgaXMgZGV0ZXJtaW5lZCBieSB0aGUgbGFyZ2VzdCBkaXNzaW1pbGFyaXR5IGJldHdlZW4gYSBwb2ludCBvZiAkQ18xJCBhbmQgYQogICBwb2ludCBvZiAkQ18yJC4KCgohW10oaHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3N0YXRPbWljcy9IREEyMDIwL21hc3Rlci9hc3NldHMvaGNsdXN0RnVydGhlc3QucG5nKXt3aWR0aD03MCV9CgojIyMgQXZlcmFnZSBMaW5rYWdlID0gR3JvdXAgQXZlcmFnZQoKICAgXFsKICAgIGQoQ18xLENfMikgPSBcZnJhY3sxfXtcdmVydCBDXzEgXHZlcnQgXHZlcnQgQ18yIFx2ZXJ0fQogICAgXHN1bV97XG1hdGhiZnt4fV8xIFxpbiBDXzE7IFxtYXRoYmZ7eH1fMiBcaW4gQ18yfQogICAgZChcbWF0aGJme3h9XzEsXG1hdGhiZnt4fV8yKSAsCiAgIFxdCiAgIGkuZS4gdGhlIGRpc3NpbWlsYXJpdHkgYmV0d2VlbiAkQ18xJCBhbmQgJENfMiQgaXMgZGV0ZXJtaW5lZCBieSB0aGUgYXZlcmFnZSBkaXNzaW1pbGFyaXR5IGJldHdlZW4gYWxsIHBvaW50cyBvZiAkQ18xJCBhbmQgYWxsCiAgIHBvaW50cyBvZiAkQ18yJC4KCiFbXShodHRwczovL3Jhdy5naXRodWJ1c2VyY29udGVudC5jb20vc3RhdE9taWNzL0hEQTIwMjAvbWFzdGVyL2Fzc2V0cy9oY2x1c3RBdmVyYWdlLnBuZyl7d2lkdGg9NzAlfQoKCiMjIENsdXN0ZXIgVHJlZQoKSGllcmFyY2hpY2FsIG5hdHVyZSBvZiB0aGUgYWxnb3JpdGhtOgoKLSBOZXN0ZWQgc2VxdWVuY2Ugb2YgY2x1c3RlcnMgJFxsb25ncmlnaHRhcnJvdyQgdmlzdWFsaXNhdGlvbiB2aWEgYSB0cmVlICAKCgotIGhlaWdodCBvZiBicmFuY2hlcyBpbmRpY2F0ZSB0aGUgaW50ZXJjbHVzdGVyIGRpc3NpbWlsYXJpdHkgYXQgd2hpY2ggY2x1c3RlcnMgYXJlIG1lcmdlZC4KCi0gQ2FuIHVzZWQgYXMgaW5zdHJ1bWVudCBmb3IgZGVjaWRpbmcgdGhlIG51bWJlciBvZiBjbHVzdGVycyBpbiB0aGUgZGF0YQoKCiMgVG95IGV4YW1wbGUKCgpgYGB7ciBlY2hvID0gRkFMU0V9CnRveSA8LSBkYXRhLmZyYW1lKAogIFgxID0gYygxLjUwLAogICAgICAgICAyLjAwLAogICAgICAgICAyLjUwLAogICAgICAgICAyLjAwLAogICAgICAgICAyLjI1KSwKICBYMiA9IGMoMi40MCwKICAgICAgICAgMi41MCwKICAgICAgICAgMi4yNSwKICAgICAgICAgMy4wMCwKICAgICAgICAgMy4yMCksCiAgbGFiZWwgPSAxOjUKICApCgprbml0cjo6a2FibGUodG95KQpgYGAKCmBgYHtyfQpsaWJyYXJ5KGNsdXN0ZXIpCmxpYnJhcnkodGlkeXZlcnNlKQoKdG95ICU+JQogIGdncGxvdChhZXMoWDEsIFgyLCBsYWJlbCA9IGxhYmVsKSkgKwogIGdlb21fcG9pbnQoKSArCiAgZ2VvbV90ZXh0KG51ZGdlX3ggPSAuMDUpCgp0b3lbLDE6Ml0gJT4lIGRpc3QKYGBgCgojIyBTaW5nbGUgbGlua2FnZQoKYGBge3J9CnRveVNpbmdsZSA8LSBhZ25lcyh0b3lbLDE6Ml0sIG1ldGhvZCA9ICJzaW5nbGUiKQpwYXIobWZyb3c9YygxLDIpLHB0eT0icyIpCnBsb3QoWDIgfiBYMSwgdG95LCB4bGltID0gYygxLjI1LDIuNzUpLHlsaW0gPSBjKDIsMy41KSkKdGV4dCh0b3kkWDEqMS4wNSx0b3kkWDIsbGFiZWw9dG95JGxhYmVsKQpwbG90KHRveVNpbmdsZSwgd2hpY2gucGxvdCA9IDIsIG1haW4gPSAiU2luZ2xlIikKdG95WywxOjJdICU+JSBkaXN0CmBgYAoKIyMgQ29tcGxldGUgbGlua2FnZQoKYGBge3J9CnRveUNvbXBsZXRlIDwtIGFnbmVzKHRveVssMToyXSwgbWV0aG9kID0gImNvbXBsZXRlIikKcGFyKG1mcm93PWMoMSwyKSxwdHk9InMiKQpwbG90KFgyIH4gWDEsIHRveSwgeGxpbSA9IGMoMS4yNSwyLjc1KSx5bGltID0gYygyLDMuNSkpCnRleHQodG95JFgxKjEuMDUsdG95JFgyLGxhYmVsPXRveSRsYWJlbCkKcGxvdCh0b3lDb21wbGV0ZSwgd2hpY2gucGxvdCA9IDIsIG1haW4gPSAiQ29tcGxldGUiKQp0b3lbLDE6Ml0gJT4lIGRpc3QKYGBgCgojIyBBdmVyYWdlIGxpbmthZ2UKCmBgYHtyfQp0b3lBdmcgPC0gYWduZXModG95WywxOjJdLCBtZXRob2QgPSAiYXZlcmFnZSIpCnBhcihtZnJvdz1jKDEsMikscHR5PSJzIikKcGxvdChYMiB+IFgxLCB0b3ksIHhsaW0gPSBjKDEuMjUsMi43NSkseWxpbSA9IGMoMiwzLjUpKQp0ZXh0KHRveSRYMSoxLjA1LHRveSRYMixsYWJlbD10b3kkbGFiZWwpCnBsb3QodG95QXZnLCB3aGljaC5wbG90ID0gMiwgbWFpbiA9ICJBdmVyYWdlIikKdG95WywxOjJdICU+JSBkaXN0CmBgYAo=</div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("hclust.Rmd");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

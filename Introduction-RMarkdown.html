@@ -475,6 +475,12 @@ div.tocify {
     <li>
       <a href="sparseSvd.html">4. Sparse Singular Value Decomposition</a>
     </li>
+    <li>
+      <a href="lda.html">5. Linear Discriminant Analysis</a>
+    </li>
+    <li>
+      <a href="hclust.html">6. Introduction to Hierarchical Clustering</a>
+    </li>
   </ul>
 </li>
 <li class="dropdown">
@@ -878,7 +884,7 @@ y_i = \beta_0 + \beta_1 x_i + \epsilon_i
 <p>Finally, it’s always good practice to include the <a href="">Session Info</a> for your R session in your document. That way, other persons (including your future self) looking at your document can see what versions of R and loaded packages were used, which can be quite essential for reproducibility. There are 2 options, either using the base R command <code>sessionInfo()</code> or using <a href="https://devtools.r-lib.org/reference/session_info.html">the version from the <code>devtools</code> package</a>: <code>devtools::session_info()</code>. Their outputs have slightly different formatting but the contents are essentially the same. Personally, I prefer the <code>devtools</code> version, but this is really a personal choice.</p>
 <p>You can also include the date with <code>Sys.time()</code> so you have a time stamp of when the report was compiled. If you happen to be working inside a git repository, <code>git2r::repository()</code> is a useful function that displays information about the current <code>git</code> state and the last commit.</p>
 <div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1"></a><span class="kw">Sys.time</span>()</span></code></pre></div>
-<pre><code>## [1] &quot;2020-11-06 15:21:41 UTC&quot;</code></pre>
+<pre><code>## [1] &quot;2020-11-06 15:29:45 UTC&quot;</code></pre>
 <div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1"></a>devtools<span class="op">::</span><span class="kw">session_info</span>()</span></code></pre></div>
 <pre><code>## ─ Session info ───────────────────────────────────────────────────────────────
 ##  setting  value                       
@@ -917,6 +923,7 @@ y_i = \beta_0 + \beta_1 x_i + \epsilon_i
 ##  CCA                    * 1.2      2012-10-29 [1] CRAN (R 4.0.2)
 ##  cellranger               1.1.0    2016-07-27 [1] CRAN (R 4.0.2)
 ##  cli                      2.1.0    2020-10-12 [1] CRAN (R 4.0.2)
+##  cluster                * 2.1.0    2019-06-19 [1] CRAN (R 4.0.2)
 ##  colorspace               1.4-1    2019-03-18 [1] CRAN (R 4.0.2)
 ##  crayon                   1.3.4    2017-09-16 [1] CRAN (R 4.0.2)
 ##  curl                     4.3      2019-12-02 [1] CRAN (R 4.0.1)
@@ -949,6 +956,7 @@ y_i = \beta_0 + \beta_1 x_i + \epsilon_i
 ##  gridExtra                2.3      2017-09-09 [1] CRAN (R 4.0.2)
 ##  gtable                   0.3.0    2019-03-25 [1] CRAN (R 4.0.2)
 ##  haven                    2.3.1    2020-06-01 [1] CRAN (R 4.0.2)
+##  highr                    0.8      2019-03-20 [1] CRAN (R 4.0.2)
 ##  hms                      0.5.3    2020-01-08 [1] CRAN (R 4.0.2)
 ##  htmltools                0.5.0    2020-06-16 [1] CRAN (R 4.0.2)
 ##  httpuv                   1.5.4    2020-06-06 [1] CRAN (R 4.0.2)
@@ -1036,7 +1044,7 @@ y_i = \beta_0 + \beta_1 x_i + \epsilon_i
 <span id="cb52-2"><a href="#cb52-2"></a>git2r<span class="op">::</span><span class="kw">repository</span>()</span></code></pre></div>
 <pre><code>## Local:    master /Users/runner/work/HDA2020/HDA2020
 ## Remote:   master @ origin (https://github.com/statOmics/HDA2020)
-## Head:     [eff4125] 2020-11-06: hclust images</code></pre>
+## Head:     [cf95297] 2020-11-06: hclust</code></pre>
 </div>
 <div id="home" class="section level1 unnumbered">
 <h1><a href="https://statomics.github.io/HDA2020/">Home</a></h1>
