@@ -43,6 +43,14 @@ knitr::opts_chunk$set(
 
 ***
 
+```{r libraries, warning=FALSE, message=FALSE}
+## install packages with:
+## install.packages(c("glmnet"))
+library(glmnet)
+library(MASS)
+```
+
+
 # Introduction
 
 **In this lab session we will look at the following topics**
@@ -58,7 +66,7 @@ gene expression levels in 40 tumour and 22 normal colon tissue samples.
 They checked a total of 6500 human genes using the Affymetrix oligonucleotide array.
 You can read the data in as follows:
 
-```{r read in data}
+```{r load-data}
 Alon1999 <- read.csv("https://github.com/statOmics/HDA2020/raw/data/Alon1999.csv")
 str(Alon1999[, 1:10])
 ```
@@ -88,19 +96,80 @@ Use these objects to solve the following exercises.
 
 #### 1. Perform a SVD on `X`, and store the scores of the PCs in a matrix `Z`. {-}
 
-  <!-- Solution -->
+<details><summary>Solution</summary>
+```{r}
+svd_X <- svd(X)
+Z <- svd_X$u %*% diag(svd_X$d) # Calculate the scores
+V <- svd_X$v                 # Calculate the loadings
+```
+</details>
+
 
 #### 2. Plot the singular values and confirm that the first and second PCs can approximate the data to some extent. {-}
 
-  <!-- Solution -->
+<details><summary>Solution</summary>
+```{r}
+plot(svd_X$d,
+  type = "b",
+  ylab = "Singular values",
+  xlab = "PCs"
+)
+```
+</details>
 
-#### 3. Plot the first two PCs and use different colours for tumour/normal tissue. {-}
 
-  <!-- Solution -->
+#### 3. Plot the first two PCs and use different colours for tumor/normal tissue. {-}
 
-#### 4. Plot histograms of the loadings of the first and second PCs. Which loadings will you pick as the most important ones? {-}
+In order to plot different colors and add a legend with base `R` plotting, you can do the following:
 
-  <!-- Solution -->
+```{r}
+cols <- c("n" = "red", "t" = "blue")
+plot(X[, 1], X[, 2], col = cols[Y], pch = 19)
+legend("bottomright", c("Normal", "Tumor"),
+  col = c("red", "blue"),
+  pch = 19, title = "Tissue"
+)
+```
+
+This plots the first two dimensions of the `X` (!) matrix with solid
+points (`pch = 19`), and the color red for normal tissue and blue for
+tumorous tissue. You can adapt this code to create the proper plot.
+
+<details><summary>Solution</summary>
+```{r}
+cols <- c("n" = "red", "t" = "blue")
+plot(Z[, 1], Z[, 2],
+  col = cols[Y],
+  xlab = "PC1", ylab = "PC2", pch = 19, cex = 1.5
+)
+legend("bottomleft", c("Normal", "Tumor"),
+  col = c("red", "blue"),
+  pch = 19, title = "Tissue"
+)
+```
+</details>
+
+
+#### 4. Plot histograms of the loadings of the first and second PCs. Which loadings are the most important? {-}
+
+<details><summary>Solution</summary>
+
+```{r}
+# First
+hist(V[, 1], breaks = 50)
+# Add vertical line at 95% quantile
+abline(v = quantile(V[, 1], 0.95), col = "red", lwd = 2)
+
+# Second
+hist(V[, 2], breaks = 50)
+abline(v = c(
+  quantile(V[, 2], 0.05),
+  quantile(V[, 2], 0.95)
+), col = "red", lwd = 2)
+```
+
+</details>
+
 
 #### 5. We know that the first PC $\mathbf{Z_1}$, is given by {-}
 
@@ -136,7 +205,30 @@ Use these objects to solve the following exercises.
   Remember that
   $\|\boldsymbol\beta_{\text{ridge}}\|_2 = \sqrt{\sum_{j=1}^p \beta_j^2}$
 
-  <!-- Solution -->
+<details><summary>Solution</summary>
+
+```{r, cache=FALSE}
+p <- dim(X)[2]
+
+# Let's take a ridiculously large gamma: 200
+tXX_gamma_I <- t(X) %*% X + 200 * diag(p)
+
+## This might take a while
+beta_ridge <- solve(tXX_gamma_I) %*% t(X) %*% Z[, 1]
+
+#||beta_ridge||_2
+mag_beta_ridge <- sqrt(sum(beta_ridge^2))
+
+# Plot agains the loadings
+plot(svd_X$v[, 1], beta_ridge / mag_beta_ridge,
+  xlab = "V1",
+  ylab = "beta_ridge/||beta_ridge||"
+)
+# Or just simply take the difference between them
+all(abs(svd_X$v[, 1] - beta_ridge / mag_beta_ridge) < 1e-13)
+```
+
+</details>
 
   Then you've proven that the loadings of the PCs can be computed from the
   ridge regression coefficients.
@@ -161,23 +253,62 @@ Use these objects to solve the following exercises.
 
   Now use the `glmnet` and `cv.glmnet` functions to select an appropriate number of non-zero loadings for the first and second PCs. Note that for elastic net, `cv.glmnet` takes `alpha=0.5`. Then you replace $\mathbf Y$ with `Z1` for PC1 and `Z2` for PC2.
 
-  <!-- Solution -->
-  
-#### 7. Plot your newly derived first and second PCs and use different colors for the tumor and normal tissues. How well do these new PCs separate the response classes? Compare this to the plot in exercise 3. Formulate a conclusion based on the two graphs. {-}
-
-In order to plot different colors and add a legend with base `R` plotting, you can do the following:
+<details><summary>Solution</summary>
 
 ```{r}
-cols <- c("n" = "red", "t" = "blue")
-plot(X[, 1], X[, 2], col = cols[Y], pch = 19)
-legend("bottomright", c("Normal", "Tumorous"), col = c("red", "blue"), pch = 19)
+par(mfrow = c(1, 2))
+# For PC1
+set.seed(45)
+fit_loadings1 <- cv.glmnet(X, Z[, 1],
+  alpha = 0.5, nfolds = 5
+)
+plot(fit_loadings1) # 97 to 93 genes will be important
+
+# For PC2
+set.seed(45)
+fit_loadings2 <- cv.glmnet(X, Z[, 2], alpha = 0.5, nfolds = 5)
+plot(fit_loadings2) # 77-75 genes will make sense
 ```
 
-This plots the first two dimensions of the `X` (!) matrix with solid
-points (`pch = 19`), and the color red for normal tissue and blue for
-tumorous tissue. You can adapt this code to create the proper plot.
+</details>
 
-  <!-- Solution -->
+
+#### 7. Plot your newly derived first and second PCs and use different colors for the tumor and normal tissues. How well do these new PCs separate the response classes? Compare this to the plot in exercise 3. Formulate a conclusion based on the two graphs. {-}
+
+<details><summary>Solution</summary>
+
+```{r}
+sparse_loadings1 <- as.vector(coef(fit_loadings1, s = fit_loadings1$lambda.1se))
+sparse_loadings2 <- as.vector(coef(fit_loadings2, s = fit_loadings2$lambda.1se))
+
+SPC1 <- X %*% sparse_loadings1[-1] # without the intercept
+SPC2 <- X %*% sparse_loadings2[-1] # without the intercept
+
+par(mfrow = c(1, 2))
+plot(Z[, 1], Z[, 2],
+  col = cols[Y], xlab = "PC1", ylab = "PC2", pch = 16, cex = 1.5,
+  main = "All 2000 genes \nfor PC1 and PC2"
+)
+legend(-45, -25,
+  legend = c("Normal tissue", "Tumor tissue"), bty = "n",
+  col = c("red", "blue"), pch = c(16, 16), cex = 1
+)
+plot(SPC1, SPC2,
+  col = cols[Y], xlab = "SPC1", ylab = "SPC2", pch = 16, cex = 1.5,
+  main = "99 genes for SPC1 \n and 75 genes for SPC2 "
+)
+legend(-45, -25,
+  legend = c("Normal tissue", "Tumor tissue"), bty = "n",
+  col = c("red", "blue"), pch = c(16, 16), cex = 1
+)
+```
+
+__Conclusion:__ Only about 5% (99/2000) of the genes are useful for PC1 and only about 4% (75/2000) of the genes are useful for PC2 .
+Sparse PCA has succeded in setting the useless genes/loadings to zero.
+In seperating normal and tumour tissues, SPCA perform almost the same as PCA if not better.
+The key point here is that SPCA uses only a tiny proportion of the genes to achieve the same task. 
+
+</details>
 
 
 # LDA
@@ -206,35 +337,100 @@ $$
 
 ## Exercises {-}
 
-#### 1. Load the package `MASS` by using the command `library(MASS)` {-}
+#### 1. The function `lda()` in the `MASS` package performs LDA. Similar to the `glmnet()` function, you will need to supply an `x` argument. The argument `grouping` is the vector with the response, and this has to be a factor variable. You have that stored as `Y`. Fit an LDA on `X` with grouping `Y`. {-}
 
-  <!-- Solution -->
+<details><summary>Solution</summary>
 
-#### 2. The function `lda()` in the `MASS` package performs LDA. Similar to the `glmnet()` function, you will need to supply an `x` argument. The argument `grouping` is the vector with the response, and this has to be a factor variable. You have that stored as `Y`. Fit an LDA on `X` with grouping `Y`. Call your fit `Alon1999.lda`. {-}
+```{r}
+## Perform LDA
+alon_lda <- lda(x = X, grouping = Y)
+```
 
-  <!-- Solution -->
+</details>
 
-#### 3. $\boldsymbol v$ can be extracted from the object as the element `scaling` (i.e. `Alon1999.lda$scaling` gives you $\boldsymbol v$). Extract this and call it `V1`. {-}
+#### 2. $\boldsymbol v$ can be extracted from the object as the element `scaling`. Extract this and call it `V1`. {-}
 
-  <!-- Solution -->
+<details><summary>Solution</summary>
 
-#### 4. Compute $\mathbf Z$ and call it `Z1`. {-}
+```{r}
+V1 <- alon_lda$scaling
+```
 
-  <!-- Solution -->
+</details>
 
-#### 5. Now check to see how well your single LDA/`Z1` separates the tumour and normal tissues groups. Compare it to the plot in (3) of the previous exercise, and observe whether LDA performs better in separating the two groups. {-}
+#### 3. Compute $\mathbf Z$ and call it `Z1`. {-}
 
-  <!-- Solution -->
+<details><summary>Solution</summary>
 
-#### 6. As was the case with the first and second PC, `Z1` is a linear combination determined by the loadings $\boldsymbol v$. These are non-zero for all genes. To get a few interesting genes, you can use a sparse LDA. Note that you can use the package `sparseLDA` with the function `sda()` to perform this analysis, but let's do this as we did for sparse PCA. {-}
+```{r}
+Z1 <- X %*% V1
+```
+
+</details>
+
+#### 4. Now check to see how well your single LDA/`Z1` separates the tumour and normal tissues groups. Compare it to the plot in (3) of the previous exercise, and observe whether LDA performs better in separating the two groups. {-}
+
+<details><summary>Solution</summary>
+
+```{r}
+par(mfrow = c(1, 1))
+boxplot(Z1 ~ Y, col = cols, ylab = "LDA")
+```
+
+</details>
+
+#### 5. As was the case with the first and second PC, `Z1` is a linear combination determined by the loadings $\boldsymbol v$. These are non-zero for all genes. To get a few interesting genes, you can use a sparse LDA. Note that you can use the package `sparseLDA` with the function `sda()` to perform this analysis, but let's do this as we did for sparse PCA. {-}
 
 a. Use the `cv.glmnet` function with `x=X`, `y=Z1` and `alpha=0.5` to select an appropriate number of non-zero genes for the LDA.
 
-  <!-- Solution -->
+<details><summary>Solution</summary>
 
-b. Check to see how well this subset of genes does in separating the tumour and normal tissue groups. Are they as effective as the entire set of genes? You may use AUC/ROC curves to check this.
+```{r}
+set.seed(45)
+lda_loadings <- cv.glmnet(X, Z1, alpha = 0.5, nfolds = 5)
+plot(lda_loadings)
+```
 
-  <!-- Solution -->
+</details>
+
+b. Check to see how well this subset of genes does in separating the tumour and normal tissue groups. Are they as effective as the entire set of genes?
+
+<details><summary>Solution</summary>
+
+```{r}
+sparse_lda_loadings <- as.vector(
+  coef(lda_loadings, s = lda_loadings$lambda.1se)
+)
+
+# See the genes involved
+plot(sparse_lda_loadings[sparse_lda_loadings != 0],
+  pch = 16, type = "n", xlim = c(0, 20)
+)
+text(
+  sparse_lda_loadings[sparse_lda_loadings != 0],
+  colnames(X)[sparse_lda_loadings != 0]
+)
+abline(h = 0, lwd = 3)
+
+# without the intercept
+SLDA <- X %*% sparse_lda_loadings[-1]
+
+# number of non-zero loadings
+n_nonzero <- sum(sparse_lda_loadings > 0)
+
+# boxplots
+par(mfrow = c(1, 2))
+boxplot(Z1 ~ Y,
+  col = cols, ylab = "LDA",
+  main = "Entire set of 2000 genes"
+)
+boxplot(SLDA ~ Y,
+  col = cols, ylab = "SLDA",
+  main = sprintf("Subset of %d genes", n_nonzero)
+)
+```
+
+</details>
 
 
 # References {-}
