@@ -166,17 +166,17 @@ The rank-1 PMD approximation of the $n \times p$ matrix $\mathbf{X}$ is of the f
 and it is the solution to the following minimisation problem:
 \[
 \min_{\delta,u,v} \Vert \mathbf{X} - \delta\mathbf{u}\mathbf{v}^t\Vert_F^2 \text{ subject to }
-\delta \geq 0, \Vert \mathbf{u}\Vert_2^2=\Vert \mathbf{v}\Vert_2^2=1, \vert\mathbf{u}\vert\leq c_1, \vert \mathbf{v}\vert \leq c_2
+\delta \geq 0, \Vert \mathbf{u}\Vert_2^2=\Vert \mathbf{v}\Vert_2^2=1, \Vert\mathbf{u}\Vert_1\leq c_1, \Vert \mathbf{v}\Vert_1 \leq c_2
 \]
 
 for some user-defined constants $c_1,c_2>0$.
 
-The constraints $\vert\mathbf{u}\vert\leq c_1$ and $\vert \mathbf{v}\vert \leq c_2$ are known as $L_1$ or lasso constraints.
+The constraints $\Vert\mathbf{u}\Vert_1\leq c_1$ and $\Vert \mathbf{v}\Vert_1 \leq c_2$ are known as $L_1$ or lasso constraints.
 
 
 Note,
 \[
-\vert\mathbf{u}\vert\ = \sum_{i=1}^n \vert u_i \vert \text{ and }\vert\mathbf{v}\vert\ = \sum_{i=1}^p \vert v_i\vert.
+\Vert\mathbf{u}\Vert_1\ = \sum_{i=1}^n \vert u_i \vert \text{ and }\Vert\mathbf{v}\Vert_1\ = \sum_{i=1}^p \vert v_i\vert.
 \]
 
 If $c_1=+\infty$, then the constraint on $\mathbf{u}$ is removed (similar for $c_2$).
@@ -224,7 +224,6 @@ and compute the rank-1 PMD of $\tilde{\mathbf{X}}_2$, which gives $\delta_2, \ma
 \[
 \mathbf{X}_2 = \delta_1\mathbf{u}_1\mathbf{v}_1^t+\delta_2\mathbf{u}_2\mathbf{v}_2^t.
 \]
-\end{enumerate}
 
 Note that the $\mathbf{u}$'s and $\mathbf{v}$'s are not necessarily orthogonal (only if $c_1, c_2=+\infty$).
 
@@ -276,7 +275,7 @@ Hence the PCA scores
  \mathbf{Z}_k = \mathbf{U}_k\mathbf{D}_k
 \]
 relate to $\mathbf{X}_k$ through the sparse loadings in $\mathbf{V}_k$.
-}
+
 
 ---
 
