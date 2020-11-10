@@ -76,8 +76,8 @@ Questions related to the course contents can be asked by posting on [UFora](http
 
 #### 6. Introduction to Clustering
 
-    - [Lecture 5: Introduction to Hierarchical Clustering](./hclust.html)
-    - Model Based Clustering (paper reading session 1)
+  - [Lecture 5: Introduction to Hierarchical Clustering](./hclust.html)
+  - Model Based Clustering (paper reading session 1)
 
 ### Homework assignments
 
