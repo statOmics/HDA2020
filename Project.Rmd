@@ -62,9 +62,7 @@ Kidney transplantation or renal transplantation is the organ transplant of a kid
 
 In this project, you are to investigate this claim. You will analyze data that contains gene expression levels of 54675 genes from 282 patients, taken from the study by @einecke2010molecular.
 
-Read in the data.
-The data consists of a subset of the original data where only the 25% most variable genes 
-(i.e. 13669 genes) were retained.
+The data consists of a subset of the original data where only the 25% most variable genes (i.e. 13669 genes) were retained and the number of patients was subsampled to 250.
 
 The data can be found on the GitHub page and can be read in directly using `read_csv`.
 However, the data is still quite large so it's recommended to download it locally to your computer,
@@ -74,14 +72,20 @@ To do that, just run the code shown below in an R console.
 The output directory will be *relative to your current working directory* (which you can check with `getwd()`). You can also specify an absolute file path.
 
 
-```{r download-data, eval=FALSE}
+```{r download-data}
 # Create raw-data/ folder if it does not exist (you can change this to whatever path you want)
 out_path <- "raw-data"
 if (!(dir.exists(out_path))) dir.create(out_path)
 
-# download data
-data_url <- "https://github.com/statOmics/HDA2020/raw/data/GSE21374-kidney-data.csv.gz"
-download.file(data_url, destfile = file.path(out_path, "GSE21374-kidney-data.csv.gz"))
+# Download data (only if doesn't exist locally)
+# Delete existing file with `unlink(file.path(out_path, fname))`
+# to force re-downloading
+fname <- "GSE21374-kidney-data.csv.gz"
+if (!file.exists(file.path(out_path, fname))) {
+  data_url <-
+    "https://github.com/statOmics/HDA2020/raw/data/GSE21374-kidney-data.csv.gz"
+  download.file(data_url, destfile = file.path(out_path, fname))
+}
 ```
 
 The data can then be loaded into R as follows.
@@ -177,9 +181,6 @@ You are only asked to *explore* whether the variability in gene expression level
 
 In choosing the number of PCs  in PCR, and the $\gamma$ in the Ridge  and Lasso models, you need to use cross validation (CV) on the training dataset.
 You should use the __area under the receiver characteristic curve (AUC)__ as a performance measure.
-There are several packages available that have a function to compute the AUC.
-For example the *[pROC](https://CRAN.R-project.org/package=pROC)* package has the function `auc`,
-which can be used with 2 vectors `observations` and `predictions` as `auc(observations, predictions)`.
 
 Once you have selected the optimal PCR, Ridge and Lasso models, you have to decide with what model you want to continue. For this model you have to determine a good threshold $c$ for the prediction cut-off that gives a good compromise between sensitivity and specificity. 
 
@@ -199,9 +200,12 @@ When submitting, please use the following format:
 
 * HW-Name1-Name2-Name3-Name4.R[md]
 
+where `Name` is your __family name__.
+It's also recommended to mention your full name in the report itself.
+
 Submissions should be done __through [UFora](?????LINK??????)__.
 
-<span style="color:red">__The deadline for submission is ??????.__</span>
+<span style="color:red">__The deadline for submission is 17/12/2020 at 23:59__</span>
 
 
 
