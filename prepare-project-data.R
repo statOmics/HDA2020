@@ -26,5 +26,20 @@ kidney_data <- data.frame(gene_exprs_by_patient) %>%
   full_join(RejectionStatus, by = "Patient_ID") %>% 
   select(Patient_ID, Reject_Status, everything())
 
+## Subsample non-rejected patients to have total n = 250
+non_rejected_patients <- kidney_data %>% 
+  filter(Reject_Status == 0) %>% 
+  pull(Patient_ID)
+
+set.seed(20201110)
+keep <- sample(
+  non_rejected_patients,
+  size = length(non_rejected_patients) - (nrow(kidney_data) - 250)
+)
+
+## Filter data
+kidney_data <- kidney_data %>% 
+  filter(Reject_Status == 1 | Patient_ID %in% keep)
+
 ## Export as compressed csv
 write_csv(kidney_data, file = "GSE21374-kidney-data.csv.gz")
