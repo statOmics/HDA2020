@@ -266,7 +266,7 @@ For a PCA, it is only important to have sparse loadings (in the $\mathbf{v}$s); 
 The rank-1 solutions thus satisfy
 \[
   \min_{\delta,u,v} \Vert \mathbf{X} - \delta\mathbf{u}\mathbf{v}^t\Vert_F^2 \text{ subject to }
-  \delta \geq 0, \Vert \mathbf{u}\Vert_2^2=\Vert \mathbf{v}\Vert_2^2=1, \vert \mathbf{v}\vert \leq c
+  \delta \geq 0, \Vert \mathbf{u}\Vert_2^2=\Vert \mathbf{v}\Vert_2^2=1, \Vert \mathbf{v}\Vert_1 \leq c
 \]
 (i.e. no sparsity constraint on $\mathbf{u}$).
 

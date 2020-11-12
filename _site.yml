@@ -21,6 +21,8 @@ navbar:
         href: lda.html
       - text: "6. Introduction to Hierarchical Clustering"
         href: hclust.html
+      - text: "Paper 1: EM algorithm explained"
+        href: em.html
     - text: "Practicals"
       icon: fa-laptop
       menu:

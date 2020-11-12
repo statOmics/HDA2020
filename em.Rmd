@@ -1,0 +1,239 @@
+---
+title: "EM"
+author: "Lieven Clement"
+date: "statOmics, Ghent University (https://statomics.github.io)"
+output:
+    html_document:
+      code_download: true
+      theme: cosmo
+      toc: true
+      toc_float: true
+      highlight: tango
+      number_sections: true
+---
+
+# Example of model based clustering with two groups
+
+We will use a toy example to explain the EM algorithm for model based clustering.
+
+- Two groups $k=1,2$
+- Univariate observations are observed $x_i$ with $i= 1, \dots, n$  
+- The data of group j follows a normal distribution $N(u_j,1)$ with a variance $\sigma^2=1$ and a mean $\mu_j$ that depends on the group $j=1,2$.
+
+
+The data follows the following  mixture distribution:
+
+\[f(x) = \pi_1 f_1(x) + (1-\pi_1) f_2(x)\]
+
+With
+
+- $\pi_1$ the probability that a random sample from the population belongs to group 1
+- $f_1(x)$ the density of the data in group 1, i.e. $N(\mu_1,1)$
+- $f_2(x)$ the density of the data in group 2, i.e. $N(\mu_2,1)$.
+
+- Unknowns? Group membership $z_i$, the group means $\mu_j$ and the proportion of subjects in the population of group 1 $\pi_1$ are unknown.
+
+We can estimate the model parameters $\boldsymbol{\theta} = [\mu_1,\mu_2,\pi_1]^T$ using maximum likelihood.
+
+\[
+L\left(\mu_1,\mu_2,\pi_1\vert \mathbf{X}\right) = \prod\limits_{i=1}^n \left[\pi_1 f_1(x_i) + (1-\pi_1) f_2(x_i)
+\right]\]
+
+It is easier to maximise the log-likelihood:
+
+\[
+l\left(\mu_1,\mu_2,\pi_1\vert \mathbf{X}\right) = \sum\limits_{i=1}^n \log\left[\pi_1 f_1(x_i) + (1-\pi_1) f_2(x_i)
+\right]\]
+
+The optimisation is difficult because we have to take the log of a sum and the likelihood does not factorise further.
+
+# Simulate toy Data
+
+```{r}
+library(tidyverse)
+mu1Real <- 2
+mu2Real <- -1
+pi1Real = .4
+set.seed(114)
+zReal <- rbinom(500, size = 1, prob = pi1Real)
+x <- ifelse(zReal==1, rnorm(500,mean=mu1Real), rnorm(500, mean=mu2Real))
+data.frame(x) %>%
+  ggplot(aes(x = x)) +
+  geom_histogram()
+data.frame(x,zReal) %>%
+    ggplot(aes(zReal,x,color=zReal)) +
+    geom_point() +
+    scale_colour_gradient2(
+      low = "blue",
+      mid="white",
+      high="red",
+      midpoint = 0.5) +
+      geom_point(x=.95,y=mu1Real, shape=25, col="red", size=3) +
+      geom_point(x=0.05,y=mu2Real, shape=25, col="blue", size=3) +
+      ggtitle("Simulated data with real group means (triangles)")
+```
+
+# Parameter estimation
+
+If we would know the cluster membership $z_{i1}$
+\[z_{i1}=\left\{ \begin{matrix} 1 & \text{if } x_i \text{ belongs to group 1}\\
+0 &  \text{if } x_i \text{ belongs to group 2}
+\end{matrix}\right.\]
+
+with $z_{i1}$ follows a Bernoulli distribution
+
+\[B(\pi_1)=\pi_1^{z_{i1}}(1-\pi_1)^{(1-z_{i1})} \]
+
+
+Then the density of $x_i$ given  $z_{i1}$ becomes
+
+\[f(x_i\vert z_{i1}) = f_1(x_i)^{z_{i1}}f_2(x_i)^{1-z_{i1}}\]
+
+and the joint distribution of $z_{i1}$ and $x_i$ then becomes
+\begin{eqnarray}
+f(x_i, z_{i1})&=&f(x_i\vert z_{i1}) f(z_{i1})\\
+&=& f_1(x_i)^{z_{i1}}f_2(x_i)^{1-z_{i1}}\pi_1^{z_{i1}}(1-\pi_1)^{(1-z_{ik})}
+\end{eqnarray}
+
+and the log likelihood of the complete data becomes
+
+\[
+l\left(\mu_1,\mu_2,\pi_1\vert \mathbf{X, Z}\right) = \sum_\limits{i=1}^n z_{i1} \log \left[\pi_1  f_1(x_i)\right] + (1-z_{i1})\log \left[(1-\pi_1) f_2(x_i)\right]
+\]
+
+- Note, that in the notation of the [Frayley and Raftery (1998)](https://sites.stat.washington.edu/people/raftery/Research/PDF/fraley1998.pdf) $z_2=1-z_1$ and $\pi_2= 1- \pi_1$
+
+## EM algorithm
+
+If we would know the cluster membership, we could estimate all model parameters based on the complete likelihood.
+
+Note, that the complete likelihood also factorises nicely!
+
+However, the cluster membership is unknown.
+
+The EM algorithm has been developed for missing data problems.
+
+It is an iterative algorithm that consists of two steps:
+
+1. E-step: calculate the expected log likelihood given the data and the current model parameter estimates
+
+2. M-step: maximise the expected log-likelihood
+
+3. Iterate between  1 and 2 until convergence.
+
+### E-step
+
+In iteration m+1
+
+\begin{eqnarray}
+Q\left(\mu_1,\mu_2,\pi_1\vert \mathbf{X, Z}\right)&=&
+E\left[l\left(\mu_1,\mu_2,\pi_1\vert \mathbf{X, Z}\right)\vert \mathbf{X}, \mu_1=\mu_1^m, \mu_2=\mu_2^m, \pi_1=\pi_1^m\right]\\ &=&
+E\left[\sum_\limits{i=1}^n z_{i1} \log\left[\pi_1  f_1(x_i)\right] + (1-z_{i1})\log \left[(1-\pi_1) f_2(x_i)\right]\vert \mathbf{X}, \mu_1=\mu_1^m, \mu_2=\mu_2^m, \pi_1=\pi_1^m\right]\\
+&=&\sum_\limits{i=1}^n E\left[z_{i1}\vert x_i,\mu_1=\mu_1^m, \mu_2=\mu_2^m, \pi_1=\pi_1^m\right]\log \left[\pi_1  f_1(x_i)\right] + \sum_\limits{i=1}^n \left(1- E\left[z_{i1}\vert x_i,\mu_1=\mu_1^m, \mu_2=\mu_2^m, \pi_1=\pi_1^m\right]\right)\log \left[(1-\pi_1) f_2(x_i)\right]
+\end{eqnarray}
+
+Note, that the expected log likelihood simplifies to replacing the unknown class memberships in the complete likelihood by their expected values.
+
+\begin{eqnarray}
+ E\left[z_{i1}\vert \mathbf{X},\mu_1=\mu_1^m, \mu_2=\mu_2^m, \pi_1=\pi_1^m\right] &=& 1 \times f(z_{i1}=1 \vert x_i,\mu_1=\mu_1^m, \mu_2=\mu_2^m, \pi_1=\pi_1^m)  + 0 \times f(z_{i1}=0 \vert x_i,\mu_1=\mu_1^m, \mu_2=\mu_2^m, \pi_1=\pi_1^m)  \\\\
+ &=& f(z_{i1}= 1 \vert x_i,\mu_1=\mu_1^m, \mu_2=\mu_2^m, \pi_1=\pi_1^m)\\\\
+ &=& \frac{f(z=1,x_i)}{f(x_i)}\\\\
+
+&=& \frac{\pi^m_1 f_1(x_i)}{\pi^m_1 f_1(x_i)+(1-\pi^m_1) f_2(x_i)}
+\end{eqnarray}
+
+We will refer to the expected class membership as $\hat z_{i1}^{m+1}$
+
+### M-step
+
+Maximise the expected log-likelihood to obtain the unknown model parameters:
+
+\[
+ Q\left(\mu_1,\mu_2,\pi_1\vert \mathbf{X, Z}\right) = \sum_\limits{i=1}^n \hat z_{i1}^m  \log \pi_1 + \sum_\limits{i=1}^n \hat z_{i1}^m  \log f_1(x_i) + \sum_\limits{i=1}^n\left(1- \hat z_{i1}\right)\log (1-\pi_1) +
+ \sum_\limits{i=1}^n\left(1- \hat z_{i1}\right)\log f_2(x_i)
+\]
+
+So we observe that the expected log likelihood implies an estimation orthogonality between the normal distributions and the Bernoulli distribution.
+
+So the parameter estimates that maximise the expected log-likelihood become:
+
+\[
+\hat \pi_1^{m+1} =\frac{\sum_{i=1}^n \hat z_{i1}^{m+1}}{n}\]
+\[
+\hat \mu_1^{m+1} = \frac{\sum_{i=1}^n \hat z_{i1}^{m+1} x_i}{\sum_{i=1}^n \hat z_{i1}^{m+1}}\]
+\[
+\hat \mu_2^{m+1} = \frac{\sum_{i=1}^n (1- \hat z_{i1}^{m+1}) x_i}{\sum_{i=1}^n (1-\hat z_{i1}^{m+1})}
+\]
+
+# Example
+## Initialize
+
+```{r}
+z <- as.double(x > 0)
+n <- length(z)
+
+p <- data.frame(x,zReal,z) %>%
+  ggplot(aes(zReal,x,color=z)) +
+  geom_point() +
+  scale_colour_gradient2(
+    low = "blue",
+    mid="white",
+    high="red",
+    midpoint = 0.5) +
+  geom_point(x=.95,y=mu1Real, shape=25, col="red", size=3) +
+  geom_point(x=0.05,y=mu2Real, shape=25, col="blue", size=3) +
+  ggtitle("Simulated data with real group means (triangles)")
+
+
+p
+```
+
+## EM algorithm
+
+```{r}
+for (k in 1:10)
+{
+  ## M-step
+  pi1 <- sum(z)/n
+  mu1 <- sum(z * x)/sum(z)
+  mu2 <- sum((1-z) * x)/sum(1-z)
+
+  ## E-step
+  d1 <- dnorm(x,mean=mu1)
+  d2 <- dnorm(x,mean=mu2)
+  d <- pi1 * d1 + (1-pi1)*d2
+  z <- pi1*d1/d
+  p <- data.frame(x,zReal,z) %>%
+    ggplot(aes(zReal,x,color=z)) +
+    geom_point() +
+    scale_colour_gradient2(
+      low = "blue",
+      mid="white",
+      high="red",
+      midpoint = 0.5) +
+      geom_point(x=.95,y=mu1Real, shape=25, col="red", size=3) +
+      geom_point(x=0.05,y=mu2Real, shape=25, col="blue", size=3) +
+      geom_point(x=.95,y=mu1, shape=3, col="red", size=3) +
+      geom_point(x=.05,y=mu2, shape=3, col="blue", size=3) +
+      ggtitle(paste0("iteration ",k, " real mean (triangle), estimate mean (+)"))
+
+  print(p)
+}
+```
+
+### Estimates
+
+```{r echo=FALSE}
+zInit <- as.double(x > 0)
+mu1Init <- sum(zInit*x)/sum(zInit)
+mu2Init <- sum((1-zInit)*x)/sum((1-zInit))
+pi1Init <- mean(zInit)
+
+knitr::kable(data.frame(
+  parameter = c("mu1", "mu2", "pi1"),
+  population = c(mu1Real, mu2Real, pi1Real),
+  initial = c(mu1Init, mu2Init, pi1Init) %>% round(3),
+  estimate = c(mu1, mu2, pi1) %>% round(3)
+  )
+  )
+```
