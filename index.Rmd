@@ -71,13 +71,20 @@ Questions related to the course contents can be asked by posting on [UFora](http
   - [Lecture 5: Sparse SVD](./sparseSvd.html)
 
 #### 5. Linear discriminant analysis
+
   - [Lecture 5: Linear Discriminant Analysis Theory](./lda.html)
+
+#### 6. Large Scale inference
+
+  - [Lecture 6: Large Scale Inference](./lsi.html)
+
+#### Paper Reading Session I: Introduction to Clustering
+
+  - Paper reading session 1, November 12 2020. Fraley and Raftery (1998). How Many Clusters? Which Clustering Method? Answers Via
+  Model-Based Cluster Analysis. The Computer Journal, (41)8:578- 588. [Paper](https://sites.stat.washington.edu/people/raftery/Research/PDF/fraley1998.pdf)
+  - [Paper Reading Session I: Introduction to Hierarchical Clustering](./hclust.html)
+  - [EM algorithm](./em.html)
 
 ### Homework assignments
 
 - [Homework: Canonical Correlation Analysis](./HW-CCA.html)
-
-### Paper reading sessions
-
-Paper reading session 1, November 12 2020. Fraley and Raftery (1998). How Many Clusters? Which Clustering Method? Answers Via
-Model-Based Cluster Analysis. The Computer Journal, (41)8:578- 588. [Paper](https://sites.stat.washington.edu/people/raftery/Research/PDF/fraley1998.pdf)

@@ -1767,7 +1767,7 @@ The lasso and ridge regression have positive and negative properties.
 
 A compromise between lasso and ridge: the **elastic net**:
 \[
-  \hat{\boldsymbol{\beta}} = \text{ArgMax}_\beta l(\boldsymbol{\beta}) -\gamma_1 \vert \boldsymbol\beta\vert -\gamma_2 \Vert \boldsymbol\beta\Vert_2^2.
+  \hat{\boldsymbol{\beta}} = \text{ArgMax}_\beta l(\boldsymbol{\beta}) -\gamma_1 \Vert \boldsymbol\beta\Vert_1 -\gamma_2 \Vert \boldsymbol\beta\Vert_2^2.
 \]
 
 The elastic gives a sparse solution with potentially more than $\min(n,p)$ predictors.
@@ -1776,7 +1776,7 @@ The elastic gives a sparse solution with potentially more than $\min(n,p)$ predi
 
 The `glmnet` R function uses the following parameterisation,
 \[
-  \hat{\boldsymbol{\beta}} = \text{ArgMax}_\beta l(\boldsymbol{\beta}) -\lambda\alpha \Vert \boldsymbol\beta\Vert_0 -\lambda(1-\alpha) \Vert \boldsymbol\beta\Vert_2^2.
+  \hat{\boldsymbol{\beta}} = \text{ArgMax}_\beta l(\boldsymbol{\beta}) -\lambda\alpha \Vert \boldsymbol\beta\Vert_1 -\lambda(1-\alpha) \Vert \boldsymbol\beta\Vert_2^2.
 \]
 
 - $\alpha$ parameter gives weight to $L_1$ penalty term (hence $\alpha=1$ gives the lasso, and $\alpha=0$ gives ridge).

@@ -1,0 +1,178 @@
+---
+title: "Introduction to Hierarchical Clustering"
+author: "Lieven Clement"
+output:
+  html_document:
+    df_print: paged
+---
+
+# Introduction
+## Objective
+
+Objective: grouping of observations into **clusters**, so that
+
+- similar observations appear in the same cluster
+- dissimilar observations appear in distinct clusters
+
+$\longrightarrow$ need for a measure for **similarity** and **dissimilarity**?
+
+
+## Example 1
+
+Single cell transcriptomics:  $n \times p$ Matrix for which
+  - every column contains the expression levels of one of $p$ genes for $n$ cells
+  - every row contains the expression levels of $p$ genes for one cell ({\em sample})
+
+  - Research question: look for groups of cells that have similar gene expression patterns
+
+ - Or, look for groups of genes that have similar expression levels across the different cells. This can
+ help us in understanding the regulation and functionality of the genes.
+
+ $\longrightarrow$ both **observations** (rows) and **variables** (columns) can be clustered
+
+
+## Example 2.
+
+Abundance studies: the abundances of $n$ plant species are counted on $p$ plots (habitats)
+
+  - look for groups that contain species that live in the same habitats, or, look for groups of
+ habitats that have similar species communities
+
+$\longrightarrow$ both **observations** (rows) and **variables** (columns) can be clustered
+
+
+# Hierarchical Cluster Analysis: Agnes
+
+## General Algorithm
+
+- In step 0 each observations is considered as a cluster (i.e. $n$ clusters).
+
+- Every next step consists of:
+
+   1. merge the two clusters with the smallest intercluster dissimilarity
+   2. recalculate the intercluster dissimilarities
+
+In step 0 the intercluster dissimilarity coincides with the dissimilarity between the corresponding observations \\
+  $\leftrightarrow$ intercluster dissimilarity?
+
+## Intercluster Dissimilarities
+
+- Represent clusters (e.g. $C_1$ and $C_2$)
+   as sets of points $\mathbf{x}_i$ which belong to that cluster
+
+- $d(C_1,C_2)$: intercluster dissimilarity between
+
+We consider three intercluster dissimilarities.
+
+### Single Linkage = Nearest Neighbour
+
+\[
+  d(C_1,C_2) = \min_{\mathbf{x}_1 \in C_1; \mathbf{x}_2 \in C_2}
+  d(\mathbf{x}_1,\mathbf{x}_2) ,
+\]
+
+i.e. the dissimilarity between $C_1$ and $C_2$ is determined by the smallest dissimilarity between a point of $C_1$ and a point of $C_2$.
+
+![](https://raw.githubusercontent.com/statOmics/HDA2020/master/assets/hclustNearest.png){width=70%}
+
+### Complete Linkage = Furthest Neighbour
+   \[
+    d(C_1,C_2) = \max_{\mathbf{x}_1 \in C_1; \mathbf{x}_2 \in C_2}
+    d(\mathbf{x}_1,\mathbf{x}_2) ,
+   \]
+   i.e. the dissimilarity between $C_1$ and $C_2$ is determined by the largest dissimilarity between a point of $C_1$ and a
+   point of $C_2$.
+
+
+![](https://raw.githubusercontent.com/statOmics/HDA2020/master/assets/hclustFurthest.png){width=70%}
+
+### Average Linkage = Group Average
+
+   \[
+    d(C_1,C_2) = \frac{1}{\vert C_1 \vert \vert C_2 \vert}
+    \sum_{\mathbf{x}_1 \in C_1; \mathbf{x}_2 \in C_2}
+    d(\mathbf{x}_1,\mathbf{x}_2) ,
+   \]
+   i.e. the dissimilarity between $C_1$ and $C_2$ is determined by the average dissimilarity between all points of $C_1$ and all
+   points of $C_2$.
+
+![](https://raw.githubusercontent.com/statOmics/HDA2020/master/assets/hclustAverage.png){width=70%}
+
+
+## Cluster Tree
+
+Hierarchical nature of the algorithm:
+
+- Nested sequence of clusters $\longrightarrow$ visualisation via a tree  
+
+
+- height of branches indicate the intercluster dissimilarity at which clusters are merged.
+
+- Can used as instrument for deciding the number of clusters in the data
+
+
+# Toy example
+
+
+```{r echo = FALSE}
+toy <- data.frame(
+  X1 = c(1.50,
+         2.00,
+         2.50,
+         2.00,
+         2.25),
+  X2 = c(2.40,
+         2.50,
+         2.25,
+         3.00,
+         3.20),
+  label = 1:5
+  )
+
+knitr::kable(toy)
+```
+
+```{r}
+library(cluster)
+library(tidyverse)
+
+toy %>%
+  ggplot(aes(X1, X2, label = label)) +
+  geom_point() +
+  geom_text(nudge_x = .05)
+
+toy[,1:2] %>% dist
+```
+
+## Single linkage
+
+```{r}
+toySingle <- agnes(toy[,1:2], method = "single")
+par(mfrow=c(1,2),pty="s")
+plot(X2 ~ X1, toy, xlim = c(1.25,2.75),ylim = c(2,3.5))
+text(toy$X1*1.05,toy$X2,label=toy$label)
+plot(toySingle, which.plot = 2, main = "Single")
+toy[,1:2] %>% dist
+```
+
+## Complete linkage
+
+```{r}
+toyComplete <- agnes(toy[,1:2], method = "complete")
+par(mfrow=c(1,2),pty="s")
+plot(X2 ~ X1, toy, xlim = c(1.25,2.75),ylim = c(2,3.5))
+text(toy$X1*1.05,toy$X2,label=toy$label)
+plot(toyComplete, which.plot = 2, main = "Complete")
+toy[,1:2] %>% dist
+```
+
+## Average linkage
+
+```{r}
+toyAvg <- agnes(toy[,1:2], method = "average")
+par(mfrow=c(1,2),pty="s")
+plot(X2 ~ X1, toy, xlim = c(1.25,2.75),ylim = c(2,3.5))
+text(toy$X1*1.05,toy$X2,label=toy$label)
+plot(toyAvg, which.plot = 2, main = "Average")
+toy[,1:2] %>% dist
+```
