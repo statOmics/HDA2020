@@ -19,9 +19,11 @@ navbar:
         href: sparseSvd.html
       - text: "5. Linear Discriminant Analysis"
         href: lda.html
-      - text: "6. Introduction to Hierarchical Clustering"
+      - text: "6. Large Scale Inference"
+        href: lsi.html
+      - text: "Paper 1: Intro Hierarchical Clustering"
         href: hclust.html
-      - text: "Paper 1: EM algorithm explained"
+      - text: "Paper 1: EM algorithm"
         href: em.html
     - text: "Practicals"
       icon: fa-laptop
