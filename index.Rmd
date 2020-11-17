@@ -73,6 +73,7 @@ Questions related to the course contents can be asked by posting on [UFora](http
 #### 5. Linear discriminant analysis
 
   - [Lecture 5: Linear Discriminant Analysis Theory](./lda.html)
+  - [Lab 4: Sparse PCA and LDA](./Lab4-Sparse-PCA-LDA.html)
 
 #### 6. Large Scale inference
 
