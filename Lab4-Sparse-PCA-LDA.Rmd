@@ -402,20 +402,24 @@ In this section, we will perform LDA on the gene data to get a clear understandi
 Remember that the LDA problem can be stated as
 
 $$
-\mathbf v=\text{ArgMax}_a\frac{\boldsymbol a^t \mathbf B \boldsymbol a}{\boldsymbol a^t \mathbf W \boldsymbol a} \text{ subject to }
-\boldsymbol a^t \mathbf W \boldsymbol a=1.
-\$$
+\mathbf{v}
+  = \text{ArgMax}_a \frac{\mathbf{a^T B a}}{\mathbf{a^T W a}}
+    \text{ subject to }
+    \mathbf{a^T W a} = 1
+$$
 
 Which is equivalent to the eigenvalue/eigenvector problem 
 
 $$
-\mathbf W^{-1} \mathbf B \boldsymbol a=\lambda \boldsymbol a
+\mathbf W^{-1} \mathbf B \mathbf a=\lambda \mathbf a
 $$
 
-In our case where we only have two groups, only one solution exist. This is the one eigenvector $\boldsymbol v$ and one eigenvalue. We can then write the PC/Scores as
+In our case, where we only have two groups, only one solution exists.
+This is the eigenvector $\mathbf v$ and its eigenvalue.
+We can then write the PC-scores as
 
 $$
-\mathbf Z=\mathbf X \boldsymbol v
+\mathbf Z=\mathbf X \mathbf v
 $$
 
 
@@ -430,9 +434,11 @@ $$
 alon_lda <- lda(x = X, grouping = Y)
 ```
 
+Note the warning regarding collinearity.
+
 </details>
 
-#### 2. $\boldsymbol v$ can be extracted from the object as the element `scaling`. Extract this and call it `V1`. {-}
+#### 2. $\mathbf v$ can be extracted from the object as the element `scaling`. Extract this and call it `V1`. {-}
 
 <details><summary>Solution</summary>
 
@@ -454,16 +460,19 @@ Z1 <- X %*% V1
 
 #### 4. Now check to see how well your single LDA/`Z1` separates the tumour and normal tissues groups. Compare it to the plot in (3) of the previous exercise, and observe whether LDA performs better in separating the two groups. {-}
 
+You could use a boxplot for visualization, but feel free to be creative!
+
 <details><summary>Solution</summary>
 
 ```{r}
 par(mfrow = c(1, 1))
-boxplot(Z1 ~ Y, col = cols, ylab = "LDA")
+boxplot(Z1 ~ Y, col = cols, ylab = expression("Z"[1]), 
+        main = "Separation of normal and tumour samples by LDA")
 ```
 
 </details>
 
-#### 5. As was the case with the first and second PC, `Z1` is a linear combination determined by the loadings $\boldsymbol v$. These are non-zero for all genes. To get a few interesting genes, you can use a sparse LDA. Note that you can use the package `sparseLDA` with the function `sda()` to perform this analysis, but let's do this as we did for sparse PCA. {-}
+#### 5. As was the case with the first and second PC, `Z1` is a linear combination determined by the loadings $\mathbf v$. These are non-zero for all genes. To get a few interesting genes, you can use a sparse LDA. Note that you can use the package `sparseLDA` with the function `sda()` to perform this analysis, but let's do this as we did for sparse PCA. {-}
 
 a. Use the `cv.glmnet` function with `x=X`, `y=Z1` and `alpha=0.5` to select an appropriate number of non-zero genes for the LDA.
 
