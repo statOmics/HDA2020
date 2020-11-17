@@ -893,7 +893,7 @@ y_i = \beta_0 + \beta_1 x_i + \epsilon_i
 <p>Finally, it’s always good practice to include the <a href="">Session Info</a> for your R session in your document. That way, other persons (including your future self) looking at your document can see what versions of R and loaded packages were used, which can be quite essential for reproducibility. There are 2 options, either using the base R command <code>sessionInfo()</code> or using <a href="https://devtools.r-lib.org/reference/session_info.html">the version from the <code>devtools</code> package</a>: <code>devtools::session_info()</code>. Their outputs have slightly different formatting but the contents are essentially the same. Personally, I prefer the <code>devtools</code> version, but this is really a personal choice.</p>
 <p>You can also include the date with <code>Sys.time()</code> so you have a time stamp of when the report was compiled. If you happen to be working inside a git repository, <code>git2r::repository()</code> is a useful function that displays information about the current <code>git</code> state and the last commit.</p>
 <div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1"></a><span class="kw">Sys.time</span>()</span></code></pre></div>
-<pre><code>## [1] &quot;2020-11-17 17:00:20 UTC&quot;</code></pre>
+<pre><code>## [1] &quot;2020-11-17 17:48:07 UTC&quot;</code></pre>
 <div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1"></a>devtools<span class="op">::</span><span class="kw">session_info</span>()</span></code></pre></div>
 <pre><code>## ─ Session info ───────────────────────────────────────────────────────────────
 ##  setting  value                       
@@ -1053,7 +1053,7 @@ y_i = \beta_0 + \beta_1 x_i + \epsilon_i
 <span id="cb52-2"><a href="#cb52-2"></a>git2r<span class="op">::</span><span class="kw">repository</span>()</span></code></pre></div>
 <pre><code>## Local:    master /Users/runner/work/HDA2020/HDA2020
 ## Remote:   master @ origin (https://github.com/statOmics/HDA2020)
-## Head:     [13e1bf2] 2020-11-17: Merge pull request #4 from statOmics/add-lab4</code></pre>
+## Head:     [6a48e9f] 2020-11-17: update index</code></pre>
 </div>
 <div id="home" class="section level1 unnumbered">
 <h1><a href="https://statomics.github.io/HDA2020/">Home</a></h1>
