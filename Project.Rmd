@@ -2,7 +2,7 @@
 title: "Project assignment"
 subtitle: "High Dimensional Data Analysis 2020"
 author: "Adapted by Milan Malfait"
-date: "November 2020"
+date: "19 Nov 2020"
 output:
   html_document:
     number_sections: false
@@ -109,7 +109,9 @@ kidney_data <- read_csv(
 str(kidney_data[, 1:10])
 
 ## Extract gene expression data as matrix X
-X <- as.matrix(select(kidney_data, -Patient_ID, -Reject_Status))
+X <- kidney_data %>% 
+  select(-Patient_ID, -Reject_Status) %>% 
+  as.matrix()
 rownames(X) <- kidney_data$Patient_ID
 dim(X)
 str(X)
@@ -119,13 +121,6 @@ reject_status <- kidney_data$Reject_Status
 names(reject_status) <- kidney_data$Patient_ID
 length(reject_status)
 table(reject_status) # number of 0's (accepts) and 1's (rejects)
-```
-
-Note that the gene expression data has already been __centered and scaled__.
-
-```{r}
-all(colMeans(X) < 1e-14)
-all(abs(matrixStats::colVars(X) - 1) < 1e-14)
 ```
 
 We are interested in the following research questions:
