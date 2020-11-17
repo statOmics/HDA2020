@@ -478,10 +478,13 @@ div.tocify {
       <a href="lda.html">5. Linear Discriminant Analysis</a>
     </li>
     <li>
-      <a href="hclust.html">6. Introduction to Hierarchical Clustering</a>
+      <a href="lsi.html">6. Large Scale Inference</a>
     </li>
     <li>
-      <a href="em.html">Paper 1: EM algorithm explained</a>
+      <a href="hclust.html">Paper 1: Intro Hierarchical Clustering</a>
+    </li>
+    <li>
+      <a href="em.html">Paper 1: EM algorithm</a>
     </li>
   </ul>
 </li>
@@ -1034,7 +1037,7 @@ div.tocify {
 <h1>Session info</h1>
 <details>
 <p><summary>Session info</summary></p>
-<pre><code>## [1] &quot;2020-11-17 11:12:21 UTC&quot;</code></pre>
+<pre><code>## [1] &quot;2020-11-17 16:08:23 UTC&quot;</code></pre>
 <pre><code>## ─ Session info ───────────────────────────────────────────────────────────────
 ##  setting  value                       
 ##  version  R version 4.0.3 (2020-10-10)
@@ -1113,6 +1116,7 @@ div.tocify {
 ##  GenomeInfoDb           * 1.26.0     2020-10-27 [1]
 ##  GenomeInfoDbData         1.2.4      2020-11-17 [1]
 ##  GenomicRanges          * 1.42.0     2020-10-27 [1]
+##  gganimate              * 1.0.7      2020-10-15 [1]
 ##  ggbeeswarm               0.6.0      2017-08-07 [1]
 ##  ggbiplot               * 0.55       2020-11-17 [1]
 ##  ggforce                * 0.3.2      2020-06-23 [1]
@@ -1150,6 +1154,7 @@ div.tocify {
 ##  lava                     1.6.8.1    2020-11-04 [1]
 ##  lifecycle                0.2.0      2020-03-06 [1]
 ##  limma                  * 3.46.0     2020-10-27 [1]
+##  locfdr                 * 1.1-8      2015-07-15 [1]
 ##  lubridate                1.7.9.2    2020-11-13 [1]
 ##  magrittr                 1.5        2014-11-22 [1]
 ##  maps                     3.3.0      2018-04-03 [1]
@@ -1234,7 +1239,7 @@ div.tocify {
 ##  truncnorm                1.0-8      2018-02-27 [1]
 ##  tweenr                   1.0.1      2018-12-14 [1]
 ##  usethis                  1.6.3      2020-09-17 [1]
-##  vctrs                    0.3.4      2020-08-29 [1]
+##  vctrs                    0.3.5      2020-11-17 [1]
 ##  vipor                    0.4.5      2017-03-22 [1]
 ##  viridis                  0.5.1      2018-03-29 [1]
 ##  viridisLite              0.3.0      2018-02-01 [1]
@@ -1312,6 +1317,7 @@ div.tocify {
 ##  Bioconductor                 
 ##  Bioconductor                 
 ##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
 ##  Github (vqv/ggbiplot@7325e88)
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
@@ -1351,75 +1357,18 @@ div.tocify {
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.3)               
-##  CRAN (R 4.0.3)               
-##  Bioconductor                 
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  Bioconductor                 
-##  CRAN (R 4.0.3)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.3)               
-##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.3)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  Bioconductor                 
-##  CRAN (R 4.0.2)               
-##  Bioconductor                 
 ##  Bioconductor                 
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
-##  Bioconductor                 
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
-##  Bioconductor                 
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
-##  Bioconductor                 
 ##  CRAN (R 4.0.2)               
 ##  Bioconductor                 
 ##  CRAN (R 4.0.3)               
@@ -1433,6 +1382,64 @@ div.tocify {
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.3)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.3)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  Bioconductor                 
+##  CRAN (R 4.0.2)               
+##  Bioconductor                 
+##  Bioconductor                 
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  Bioconductor                 
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  Bioconductor                 
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  Bioconductor                 
+##  CRAN (R 4.0.2)               
+##  Bioconductor                 
+##  CRAN (R 4.0.3)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.3)               
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.1)               
