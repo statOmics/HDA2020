@@ -506,6 +506,9 @@ div.tocify {
     <li>
       <a href="Lab3-Penalized-Regression.html">Lab 3</a>
     </li>
+    <li>
+      <a href="Lab4-Sparse-PCA-LDA.html">Lab 4</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -793,31 +796,28 @@ div.tocify {
 <span id="cb17-12"><a href="#cb17-12"></a>  <span class="dt">stop =</span> <span class="dv">-50</span>,</span>
 <span id="cb17-13"><a href="#cb17-13"></a>  <span class="dt">maxIte =</span> <span class="dv">25</span>,</span>
 <span id="cb17-14"><a href="#cb17-14"></a>  <span class="dt">trace =</span> <span class="ot">TRUE</span>)</span></code></pre></div>
-<pre><code>## ite:  1  ridge cost:  123.7285  |b|_1:  5.909294 
-## ite:  2  ridge cost:  109.6641  |b|_1:  6.448455 
-## ite:  3  ridge cost:  99.92269  |b|_1:  6.02098 
-## ite:  4  ridge cost:  93.00727  |b|_1:  5.881245 
-## ite:  5  ridge cost:  91.83409  |b|_1:  5.522317 
-## ite:  6  ridge cost:  91.28933  |b|_1:  5.411571 
-## ite:  7  ridge cost:  89.30009  |b|_1:  5.671952 
-## ite:  8  ridge cost:  88.05822  |b|_1:  5.865507 
-## ite:  9  ridge cost:  88.13947  |b|_1:  5.83897 
-## ite:  10  ridge cost:  88.11316  |b|_1:  5.840133 
-## ite:  11  ridge cost:  87.94291  |b|_1:  5.871112 
-## ite:  12  ridge cost:  87.86061  |b|_1:  5.886379 
-## ite:  13  ridge cost:  87.82045  |b|_1:  5.893902 
-## ite:  14  ridge cost:  87.80075  |b|_1:  5.897611 
-## ite:  15  ridge cost:  87.79106  |b|_1:  5.899438 
-## ite:  16  ridge cost:  87.7863  |b|_1:  5.900339 
-## ite:  17  ridge cost:  87.78395  |b|_1:  5.900783 
-## ite:  18  ridge cost:  87.78279  |b|_1:  5.901002 
-## ite:  19  ridge cost:  87.78222  |b|_1:  5.90111 
-## ite:  20  ridge cost:  87.78194  |b|_1:  5.901164 
-## ite:  21  ridge cost:  87.7818  |b|_1:  5.90119 
-## ite:  22  ridge cost:  87.78173  |b|_1:  5.901203 
+<pre><code>## ite:  1  ridge cost:  92.03423  |b|_1:  5.673329 
+## ite:  2  ridge cost:  91.77977  |b|_1:  5.396599 
+## ite:  3  ridge cost:  90.03927  |b|_1:  5.572282 
+## ite:  4  ridge cost:  88.59583  |b|_1:  5.777379 
+## ite:  5  ridge cost:  88.46092  |b|_1:  5.782843 
+## ite:  6  ridge cost:  88.23228  |b|_1:  5.818905 
+## ite:  7  ridge cost:  87.9999  |b|_1:  5.860653 
+## ite:  8  ridge cost:  87.88828  |b|_1:  5.881224 
+## ite:  9  ridge cost:  87.83398  |b|_1:  5.891362 
+## ite:  10  ridge cost:  87.80739  |b|_1:  5.896358 
+## ite:  11  ridge cost:  87.79433  |b|_1:  5.898821 
+## ite:  12  ridge cost:  87.78791  |b|_1:  5.900035 
+## ite:  13  ridge cost:  87.78474  |b|_1:  5.900634 
+## ite:  14  ridge cost:  87.78318  |b|_1:  5.900928 
+## ite:  15  ridge cost:  87.78241  |b|_1:  5.901074 
+## ite:  16  ridge cost:  87.78203  |b|_1:  5.901146 
+## ite:  17  ridge cost:  87.78184  |b|_1:  5.901181 
+## ite:  18  ridge cost:  87.78175  |b|_1:  5.901198 
+## ite:  19  ridge cost:  87.78171  |b|_1:  5.901207 
 ## ite:  1  ridge cost:  134.7777  |b|_1:  5.379259 
 ## ite:  2  ridge cost:  134.7777  |b|_1:  5.379259 
-## final update, total ridge cost:  222.5595  |b|_1:  11.28046</code></pre>
+## final update, total ridge cost:  222.5595  |b|_1:  11.28047</code></pre>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a>Vsda &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">0</span>, <span class="dt">nrow=</span><span class="kw">ncol</span>(X2), <span class="dt">ncol=</span><span class="dv">2</span>)</span>
 <span id="cb19-2"><a href="#cb19-2"></a>Vsda[breast.slda<span class="op">$</span>varIndex,] &lt;-<span class="st"> </span>breast.slda<span class="op">$</span>beta</span>
 <span id="cb19-3"><a href="#cb19-3"></a><span class="kw">colnames</span>(Vsda) &lt;-<span class="st"> </span><span class="kw">paste0</span>(<span class="st">&quot;V&quot;</span>,<span class="dv">1</span><span class="op">:</span><span class="kw">ncol</span>(Vsda))</span>
@@ -913,7 +913,7 @@ div.tocify {
 <h1>Session info</h1>
 <details>
 <p><summary>Session info</summary></p>
-<pre><code>## [1] &quot;2020-11-17 16:06:52 UTC&quot;</code></pre>
+<pre><code>## [1] &quot;2020-11-17 17:05:33 UTC&quot;</code></pre>
 <pre><code>## ─ Session info ───────────────────────────────────────────────────────────────
 ##  setting  value                       
 ##  version  R version 4.0.3 (2020-10-10)
@@ -1028,7 +1028,7 @@ div.tocify {
 ##  lubridate                1.7.9.2    2020-11-13 [1]
 ##  magrittr                 1.5        2014-11-22 [1]
 ##  maps                     3.3.0      2018-04-03 [1]
-##  MASS                     7.3-53     2020-09-09 [2]
+##  MASS                   * 7.3-53     2020-09-09 [2]
 ##  Matrix                 * 1.2-18     2019-11-27 [2]
 ##  MatrixGenerics         * 1.2.0      2020-10-27 [1]
 ##  matrixStats            * 0.57.0     2020-09-25 [1]

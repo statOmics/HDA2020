@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Adapted by Milan Malfait" />
+
+<meta name="date" content="2020-11-19" />
+
+<title>Analysis of High Dimensional Data - Lab 4</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<script src="site_libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #c4a000; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #000000; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #000000; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #000000; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">HDA2020</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fa fa-chalkboard-teacher"></span>
+     
+    Lectures
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="intro.html">1. Introduction</a>
+    </li>
+    <li>
+      <a href="svd.html">2. Singular Value Decomposition</a>
+    </li>
+    <li>
+      <a href="prediction.html">3. Prediction with High Dimensional Predictors</a>
+    </li>
+    <li>
+      <a href="sparseSvd.html">4. Sparse Singular Value Decomposition</a>
+    </li>
+    <li>
+      <a href="lda.html">5. Linear Discriminant Analysis</a>
+    </li>
+    <li>
+      <a href="lsi.html">6. Large Scale Inference</a>
+    </li>
+    <li>
+      <a href="hclust.html">Paper 1: Intro Hierarchical Clustering</a>
+    </li>
+    <li>
+      <a href="em.html">Paper 1: EM algorithm</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fa fa-laptop"></span>
+     
+    Practicals
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Lab1-Intro-SVD.html">Lab 1</a>
+    </li>
+    <li>
+      <a href="Lab2-PCA.html">Lab 2</a>
+    </li>
+    <li>
+      <a href="Lab3-Penalized-Regression.html">Lab 3</a>
+    </li>
+    <li>
+      <a href="Lab4-Sparse-PCA-LDA.html">Lab 4</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/statOmics/HDA2020">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="http://statomics.github.io/">statOmics</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Analysis of High Dimensional Data - Lab 4</h1>
+<h3 class="subtitle">Sparse PCA and LDA</h3>
+<h4 class="author">Adapted by Milan Malfait</h4>
+<h4 class="date">19 Nov 2020</h4>
+
+</div>
+
+
+<hr />
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co">## install packages with:</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="co">## install.packages(c(&quot;glmnet&quot;, &quot;MASS&quot;))</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="kw">library</span>(glmnet)</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="kw">library</span>(MASS)</span></code></pre></div>
+<div id="introduction" class="section level1">
+<h1><span class="header-section-number">1</span> Introduction</h1>
+<p><strong>In this lab session we will look at the following topics</strong></p>
+<ul>
+<li>Methods to set some of the loadings exactly to zero in a PCA.</li>
+<li>Use <code>glmnet()</code> to add penalties on principal component loadings.</li>
+<li>Use LDA to understand differences between groups in a high dimensional space.</li>
+</ul>
+<div id="the-dataset" class="section level2 unnumbered">
+<h2>The dataset</h2>
+<p>In this practical session, we use the dataset by <span class="citation">Alon et al. (1999)</span> on gene expression levels in 40 tumour and 22 normal colon tissue samples. They checked a total of 6500 human genes using the Affymetrix oligonucleotide array. You can read the data in as follows:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>Alon1999 &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;https://github.com/statOmics/HDA2020/raw/data/Alon1999.csv&quot;</span>)</span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="kw">str</span>(Alon1999[, <span class="dv">1</span><span class="op">:</span><span class="dv">10</span>])</span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="co">#&gt; &#39;data.frame&#39;:    62 obs. of  10 variables:</span></span>
+<span id="cb2-4"><a href="#cb2-4"></a><span class="co">#&gt;  $ Y : chr  &quot;t&quot; &quot;n&quot; &quot;t&quot; &quot;n&quot; ...</span></span>
+<span id="cb2-5"><a href="#cb2-5"></a><span class="co">#&gt;  $ X1: num  8589 9164 3826 6246 3230 ...</span></span>
+<span id="cb2-6"><a href="#cb2-6"></a><span class="co">#&gt;  $ X2: num  5468 6720 6970 7824 3694 ...</span></span>
+<span id="cb2-7"><a href="#cb2-7"></a><span class="co">#&gt;  $ X3: num  4263 4883 5370 5956 3401 ...</span></span>
+<span id="cb2-8"><a href="#cb2-8"></a><span class="co">#&gt;  $ X4: num  4065 3718 4706 3976 3464 ...</span></span>
+<span id="cb2-9"><a href="#cb2-9"></a><span class="co">#&gt;  $ X5: num  1998 2015 1167 2003 2181 ...</span></span>
+<span id="cb2-10"><a href="#cb2-10"></a><span class="co">#&gt;  $ X6: num  5282 5570 1572 2131 2923 ...</span></span>
+<span id="cb2-11"><a href="#cb2-11"></a><span class="co">#&gt;  $ X7: num  2170 3849 1325 1531 2069 ...</span></span>
+<span id="cb2-12"><a href="#cb2-12"></a><span class="co">#&gt;  $ X8: num  2773 2793 1472 1715 2949 ...</span></span>
+<span id="cb2-13"><a href="#cb2-13"></a><span class="co">#&gt;  $ X9: num  7526 7018 3297 3870 3303 ...</span></span>
+<span id="cb2-14"><a href="#cb2-14"></a><span class="kw">table</span>(Alon1999<span class="op">$</span>Y)</span>
+<span id="cb2-15"><a href="#cb2-15"></a><span class="co">#&gt; </span></span>
+<span id="cb2-16"><a href="#cb2-16"></a><span class="co">#&gt;  n  t </span></span>
+<span id="cb2-17"><a href="#cb2-17"></a><span class="co">#&gt; 22 40</span></span></code></pre></div>
+<p>The dataset contains one variable named <code>Y</code> with the values <code>t</code> and <code>n</code>. This variable indicates whether the sample came from tumourous (<code>t</code>) or normal (<code>n</code>) tissue.</p>
+<p>The goal of this practical is to find the best subset/combination of genes to detect tumourous tissue. As in <span class="citation">Alon et al. (1999)</span>, we use the 2000 genes with the highest minimal intensity across the samples.</p>
+</div>
+</div>
+<div id="sparse-pca" class="section level1">
+<h1><span class="header-section-number">2</span> Sparse PCA</h1>
+<p>In order to work easily with the data, first construct a scaled matrix <code>X</code> and a vector <code>Y</code> which gives the scaled predictors and the response variable:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>X &lt;-<span class="st"> </span><span class="kw">scale</span>(Alon1999[, <span class="dv">-1</span>])</span>
+<span id="cb3-2"><a href="#cb3-2"></a>Y &lt;-<span class="st"> </span><span class="kw">as.factor</span>(Alon1999[, <span class="dv">1</span>])</span></code></pre></div>
+<p>Use these objects to solve the following exercises.</p>
+<div id="exercises" class="section level2 unnumbered">
+<h2>Exercises</h2>
+<div id="perform-a-svd-on-x-and-store-the-scores-of-the-pcs-in-a-matrix-z." class="section level4 unnumbered">
+<h4>1. Perform a SVD on <code>X</code>, and store the scores of the PCs in a matrix <code>Z</code>.</h4>
+<details>
+<p><summary>Solution</summary></p>
+<p>Using <code>svd</code>:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>svd_X &lt;-<span class="st"> </span><span class="kw">svd</span>(X)</span>
+<span id="cb4-2"><a href="#cb4-2"></a>Z &lt;-<span class="st"> </span>svd_X<span class="op">$</span>u <span class="op">%*%</span><span class="st"> </span><span class="kw">diag</span>(svd_X<span class="op">$</span>d) <span class="co"># Calculate the scores</span></span>
+<span id="cb4-3"><a href="#cb4-3"></a>V &lt;-<span class="st"> </span>svd_X<span class="op">$</span>v                 <span class="co"># Calculate the loadings</span></span></code></pre></div>
+<p>Using <code>prcomp</code>:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co">## X is already centered and scaled so no need to do again</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a>pca_x &lt;-<span class="st"> </span><span class="kw">prcomp</span>(X, <span class="dt">center =</span> <span class="ot">FALSE</span>, <span class="dt">scale. =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="co">## The scores are given by `pca_x$x`, the loadings are `pca_x$rotation`</span></span></code></pre></div>
+</details>
+</div>
+<div id="plot-the-singular-values-and-confirm-that-the-first-and-second-pcs-can-approximate-the-data-to-some-extent." class="section level4 unnumbered">
+<h4>2. Plot the singular values and confirm that the first and second PCs can approximate the data to some extent.</h4>
+<details>
+<p><summary>Solution</summary></p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co">## Plotting parameters</span></span>
+<span id="cb6-2"><a href="#cb6-2"></a><span class="kw">par</span>(<span class="dt">pch =</span> <span class="dv">19</span>, <span class="dt">mfrow =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
+<span id="cb6-3"><a href="#cb6-3"></a></span>
+<span id="cb6-4"><a href="#cb6-4"></a><span class="kw">plot</span>(svd_X<span class="op">$</span>d, <span class="dt">type =</span> <span class="st">&quot;b&quot;</span>, <span class="dt">ylab =</span> <span class="st">&quot;Singular values&quot;</span>, <span class="dt">xlab =</span> <span class="st">&quot;PCs&quot;</span>)</span>
+<span id="cb6-5"><a href="#cb6-5"></a></span>
+<span id="cb6-6"><a href="#cb6-6"></a><span class="co">## Percentage variance explained for each PC</span></span>
+<span id="cb6-7"><a href="#cb6-7"></a>var_explained &lt;-<span class="st"> </span>svd_X<span class="op">$</span>d<span class="op">^</span><span class="dv">2</span> <span class="op">/</span><span class="st"> </span><span class="kw">sum</span>(svd_X<span class="op">$</span>d<span class="op">^</span><span class="dv">2</span>)</span>
+<span id="cb6-8"><a href="#cb6-8"></a><span class="kw">plot</span>(var_explained,</span>
+<span id="cb6-9"><a href="#cb6-9"></a>  <span class="dt">type =</span> <span class="st">&quot;b&quot;</span>, <span class="dt">ylab =</span> <span class="st">&quot;Percent variance explained&quot;</span>, <span class="dt">xlab =</span> <span class="st">&quot;PCs&quot;</span>,</span>
+<span id="cb6-10"><a href="#cb6-10"></a>  <span class="dt">col =</span> <span class="dv">2</span></span>
+<span id="cb6-11"><a href="#cb6-11"></a>)</span></code></pre></div>
+<p><img src="Lab4-Sparse-PCA-LDA_files/figure-html/pca-singular_values-plot-1.png" width="100%" style="display: block; margin: auto;" /></p>
+</details>
+</div>
+<div id="plot-the-first-two-pcs-and-use-different-colours-for-tumornormal-tissue." class="section level4 unnumbered">
+<h4>3. Plot the first two PCs and use different colours for tumor/normal tissue.</h4>
+<p>In order to plot different colors and add a legend with base <code>R</code> plotting, you can do the following:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw">par</span>(<span class="dt">mfrow =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))</span>
+<span id="cb7-2"><a href="#cb7-2"></a>cols &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;n&quot;</span> =<span class="st"> &quot;red&quot;</span>, <span class="st">&quot;t&quot;</span> =<span class="st"> &quot;blue&quot;</span>)</span>
+<span id="cb7-3"><a href="#cb7-3"></a><span class="kw">plot</span>(X[, <span class="dv">1</span>], X[, <span class="dv">2</span>], <span class="dt">col =</span> cols[Y], <span class="dt">pch =</span> <span class="dv">19</span>)</span>
+<span id="cb7-4"><a href="#cb7-4"></a><span class="kw">legend</span>(<span class="st">&quot;topleft&quot;</span>, <span class="kw">c</span>(<span class="st">&quot;Normal&quot;</span>, <span class="st">&quot;Tumor&quot;</span>),</span>
+<span id="cb7-5"><a href="#cb7-5"></a>  <span class="dt">col =</span> <span class="kw">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;blue&quot;</span>),</span>
+<span id="cb7-6"><a href="#cb7-6"></a>  <span class="dt">pch =</span> <span class="dv">19</span>, <span class="dt">title =</span> <span class="st">&quot;Tissue&quot;</span></span>
+<span id="cb7-7"><a href="#cb7-7"></a>)</span></code></pre></div>
+<p><img src="Lab4-Sparse-PCA-LDA_files/figure-html/unnamed-chunk-4-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>This plots the first two dimensions of the <code>X</code> (!) matrix with solid points (<code>pch = 19</code>), and the color red for normal tissue and blue for tumorous tissue. You can adapt this code to create the proper plot.</p>
+<details>
+<p><summary>Solution</summary></p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>cols &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;n&quot;</span> =<span class="st"> &quot;red&quot;</span>, <span class="st">&quot;t&quot;</span> =<span class="st"> &quot;blue&quot;</span>)</span>
+<span id="cb8-2"><a href="#cb8-2"></a><span class="kw">plot</span>(Z[, <span class="dv">1</span>], Z[, <span class="dv">2</span>],</span>
+<span id="cb8-3"><a href="#cb8-3"></a>  <span class="dt">col =</span> cols[Y],</span>
+<span id="cb8-4"><a href="#cb8-4"></a>  <span class="dt">xlab =</span> <span class="st">&quot;PC1&quot;</span>, <span class="dt">ylab =</span> <span class="st">&quot;PC2&quot;</span>, <span class="dt">pch =</span> <span class="dv">19</span></span>
+<span id="cb8-5"><a href="#cb8-5"></a>)</span>
+<span id="cb8-6"><a href="#cb8-6"></a><span class="kw">legend</span>(<span class="st">&quot;topleft&quot;</span>, <span class="kw">c</span>(<span class="st">&quot;Normal&quot;</span>, <span class="st">&quot;Tumor&quot;</span>),</span>
+<span id="cb8-7"><a href="#cb8-7"></a>  <span class="dt">col =</span> <span class="kw">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;blue&quot;</span>),</span>
+<span id="cb8-8"><a href="#cb8-8"></a>  <span class="dt">pch =</span> <span class="dv">19</span>, <span class="dt">title =</span> <span class="st">&quot;Tissue&quot;</span></span>
+<span id="cb8-9"><a href="#cb8-9"></a>)</span></code></pre></div>
+<p><img src="Lab4-Sparse-PCA-LDA_files/figure-html/pca-plot-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<p><strong>Interpretation:</strong> using only the first 2 PCs does not seem to separate the tumour and normal cases clearly.</p>
+</details>
+</div>
+<div id="plot-histograms-of-the-loadings-of-the-first-and-second-pcs.-which-loadings-are-the-most-important" class="section level4 unnumbered">
+<h4>4. Plot histograms of the loadings of the first and second PCs. Which loadings are the most important?</h4>
+<p>You can use the <code>hist</code> function to plot a histogram. Be sure to you use an appropriate value for the <code>breaks</code> argument.</p>
+<details>
+<p><summary>Solution</summary></p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="kw">par</span>(<span class="dt">mfrow =</span> <span class="kw">c</span>(<span class="dv">2</span>, <span class="dv">1</span>))</span>
+<span id="cb9-2"><a href="#cb9-2"></a><span class="co"># First</span></span>
+<span id="cb9-3"><a href="#cb9-3"></a><span class="kw">hist</span>(V[, <span class="dv">1</span>], <span class="dt">breaks =</span> <span class="dv">50</span>, <span class="dt">xlab =</span> <span class="st">&quot;PC 1 loadings&quot;</span>, <span class="dt">main =</span> <span class="st">&quot;&quot;</span>)</span>
+<span id="cb9-4"><a href="#cb9-4"></a><span class="co"># Add vertical line at 95% quantile</span></span>
+<span id="cb9-5"><a href="#cb9-5"></a><span class="kw">abline</span>(<span class="dt">v =</span> <span class="kw">quantile</span>(V[, <span class="dv">1</span>], <span class="fl">0.95</span>), <span class="dt">col =</span> <span class="st">&quot;red&quot;</span>, <span class="dt">lwd =</span> <span class="dv">2</span>)</span>
+<span id="cb9-6"><a href="#cb9-6"></a></span>
+<span id="cb9-7"><a href="#cb9-7"></a><span class="co"># Second</span></span>
+<span id="cb9-8"><a href="#cb9-8"></a><span class="kw">hist</span>(V[, <span class="dv">2</span>], <span class="dt">breaks =</span> <span class="dv">50</span>, <span class="dt">xlab =</span> <span class="st">&quot;PC 2 loadings&quot;</span>, <span class="dt">main =</span> <span class="st">&quot;&quot;</span>)</span>
+<span id="cb9-9"><a href="#cb9-9"></a><span class="kw">abline</span>(<span class="dt">v =</span> <span class="kw">c</span>(</span>
+<span id="cb9-10"><a href="#cb9-10"></a>  <span class="kw">quantile</span>(V[, <span class="dv">2</span>], <span class="fl">0.05</span>),</span>
+<span id="cb9-11"><a href="#cb9-11"></a>  <span class="kw">quantile</span>(V[, <span class="dv">2</span>], <span class="fl">0.95</span>)</span>
+<span id="cb9-12"><a href="#cb9-12"></a>), <span class="dt">col =</span> <span class="st">&quot;red&quot;</span>, <span class="dt">lwd =</span> <span class="dv">2</span>)</span></code></pre></div>
+<p><img src="Lab4-Sparse-PCA-LDA_files/figure-html/pc-loadings-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>Vertical lines were added at the 95th percentile for PC1 and the 5th and 95th percentiles for PC2 to reflect where the “highest” (in absolute value) loadings are situated (no negative loadings for PC1, so only showing the 95th percentile).</p>
+<p><strong>Interpretation:</strong> remember that the PC loadings reflect the <em>contributions</em> of each feature (in this case: gene) to the PC. From these histograms it should be clear that only a minor fraction of the genes are really driving these first 2 PCs, especially for PC 2 (where the bulk of genes has loadings close to 0).</p>
+</details>
+</div>
+<div id="we-know-that-the-first-pc-mathbfz_1-is-given-by" class="section level4 unnumbered">
+<h4>5. We know that the first PC <span class="math inline">\(\mathbf{Z_1}\)</span>, is given by</h4>
+<p><span class="math display">\[
+  \mathbf{Z_1}=\mathbf{X} \mathbf{V_1}
+  \]</span></p>
+<p>Where <span class="math inline">\(\mathbf{V_1}\)</span> are the loadings of the first PC. If we put this in regression notation, we get</p>
+<p><span class="math display">\[
+  \mathbf{Y}=\mathbf{X}\boldsymbol{\beta}
+  \]</span></p>
+<p>where <span class="math inline">\(\boldsymbol{\beta}\)</span> now represent the <span class="math inline">\(\mathbf{V_1}\)</span> loadings, and <span class="math inline">\(\mathbf{Y}\)</span> is <span class="math inline">\(\mathbf{Z_1}\)</span>.</p>
+<p>Recall that the ridge regression solution for <span class="math inline">\(\boldsymbol{\beta}\)</span> is given by</p>
+<p><span class="math display">\[
+  \boldsymbol{\beta}_{\text{ridge}}
+    = (\mathbf{X^TX}+\gamma\mathbf{I})^{-1}\mathbf{X}^T\mathbf Y
+  \]</span></p>
+<p><strong>Question:</strong> Replace <span class="math inline">\(\mathbf{Y}\)</span> with <span class="math inline">\(\mathbf{Z_1}\)</span> and verify in <code>R</code> that</p>
+<p><span class="math display">\[
+  \mathbf V_1 = 
+    \frac{\boldsymbol\beta_{\text{ridge}}}{\|\boldsymbol\beta_{\text{ridge}}\|_2}
+  \]</span></p>
+<p>for any <span class="math inline">\(\gamma &gt; 0\)</span> of your choice. Remember that <span class="math inline">\(\|\boldsymbol\beta_{\text{ridge}}\|_2 = \sqrt{\sum_{j=1}^p \beta_j^2}\)</span></p>
+<details>
+<p><summary>Solution</summary></p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>p &lt;-<span class="st"> </span><span class="kw">dim</span>(X)[<span class="dv">2</span>]</span>
+<span id="cb10-2"><a href="#cb10-2"></a></span>
+<span id="cb10-3"><a href="#cb10-3"></a><span class="co"># Let&#39;s take a ridiculously large gamma: 200</span></span>
+<span id="cb10-4"><a href="#cb10-4"></a>tXX_gamma_I &lt;-<span class="st"> </span><span class="kw">t</span>(X) <span class="op">%*%</span><span class="st"> </span>X <span class="op">+</span><span class="st"> </span><span class="dv">200</span> <span class="op">*</span><span class="st"> </span><span class="kw">diag</span>(p)</span>
+<span id="cb10-5"><a href="#cb10-5"></a></span>
+<span id="cb10-6"><a href="#cb10-6"></a><span class="co">## This might take a while to calculate</span></span>
+<span id="cb10-7"><a href="#cb10-7"></a>beta_ridge &lt;-<span class="st"> </span><span class="kw">solve</span>(tXX_gamma_I) <span class="op">%*%</span><span class="st"> </span><span class="kw">t</span>(X) <span class="op">%*%</span><span class="st"> </span>Z[, <span class="dv">1</span>]</span>
+<span id="cb10-8"><a href="#cb10-8"></a></span>
+<span id="cb10-9"><a href="#cb10-9"></a><span class="co">#||beta_ridge||_2</span></span>
+<span id="cb10-10"><a href="#cb10-10"></a>mag_beta_ridge &lt;-<span class="st"> </span><span class="kw">sqrt</span>(<span class="kw">sum</span>(beta_ridge<span class="op">^</span><span class="dv">2</span>))</span></code></pre></div>
+<p>For comparison, let’s plot <span class="math inline">\(\boldsymbol\beta_{\text{ridge}} / \|\boldsymbol\beta_{\text{ridge}}\|_2\)</span> against the PC1 loadings <span class="math inline">\(\mathbf V_1\)</span>.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="kw">par</span>(<span class="dt">mfrow =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))</span>
+<span id="cb11-2"><a href="#cb11-2"></a></span>
+<span id="cb11-3"><a href="#cb11-3"></a><span class="co"># Plot against the loadings</span></span>
+<span id="cb11-4"><a href="#cb11-4"></a><span class="kw">plot</span>(svd_X<span class="op">$</span>v[, <span class="dv">1</span>], beta_ridge <span class="op">/</span><span class="st"> </span>mag_beta_ridge,</span>
+<span id="cb11-5"><a href="#cb11-5"></a>  <span class="dt">xlab =</span> <span class="kw">expression</span>(<span class="st">&quot;V&quot;</span>[<span class="dv">1</span>]),</span>
+<span id="cb11-6"><a href="#cb11-6"></a>  <span class="dt">ylab =</span> <span class="kw">expression</span>(beta[<span class="st">&quot;ridge&quot;</span>] <span class="op">/</span><span class="st"> </span><span class="kw">paste</span>(<span class="st">&quot;||&quot;</span>, beta, <span class="st">&quot;||&quot;</span>)[<span class="dv">2</span>]),</span>
+<span id="cb11-7"><a href="#cb11-7"></a>  <span class="dt">pch =</span> <span class="dv">19</span></span>
+<span id="cb11-8"><a href="#cb11-8"></a>)</span></code></pre></div>
+<p><img src="Lab4-Sparse-PCA-LDA_files/figure-html/beta_ridge-vs-V1-plot-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="co"># Or just simply take the difference between them</span></span>
+<span id="cb12-2"><a href="#cb12-2"></a><span class="kw">max</span>(<span class="kw">abs</span>(svd_X<span class="op">$</span>v[, <span class="dv">1</span>] <span class="op">-</span><span class="st"> </span>beta_ridge <span class="op">/</span><span class="st"> </span>mag_beta_ridge))</span>
+<span id="cb12-3"><a href="#cb12-3"></a><span class="co">#&gt; [1] 5.187517e-14</span></span></code></pre></div>
+</details>
+<p>Then you’ve proven that the loadings of the PCs can be computed from the ridge regression coefficients.</p>
+<p>We can now move on to sparse PCA, where we use penalised regression to set some of the loadings (<span class="math inline">\(\boldsymbol{\beta}\)</span>s) to zero.</p>
+</div>
+<div id="we-have-seen-elastic-net-type-penalties.-if-we-call-the-loadings-of-the-first-pc-as-boldsymbolbeta-and-denote-pc1-as-mathbfy-we-saw-that-boldsymbolbeta-can-be-derived-by-minimising-the-sse" class="section level4 unnumbered">
+<h4>6. We have seen elastic net type penalties. If we call the loadings of the first PC as <span class="math inline">\(\boldsymbol{\beta}\)</span> and denote PC1 as <span class="math inline">\(\mathbf{Y}\)</span>, we saw that <span class="math inline">\(\boldsymbol{\beta}\)</span> can be derived by minimising the SSE:</h4>
+<p><span class="math display">\[
+  \text{SSE}=\|\mathbf Y-\mathbf{X}\boldsymbol \beta\|^2_2+\gamma\|\boldsymbol \beta\|^2_2 \text{ for any } \gamma&gt;0).
+  \]</span></p>
+<p>Note that this equality holds for any positive <span class="math inline">\(\gamma\)</span>. So we can’t penalise the <span class="math inline">\(\boldsymbol\beta\)</span>s not being zero by choosing a different <span class="math inline">\(\gamma\)</span>. Remember that for ridge regression, the <span class="math inline">\(\beta\)</span>’s only become 0 for <span class="math inline">\(\gamma = \infty\)</span>. Fortunately we have other tools.</p>
+<p>In addition to the <span class="math inline">\(L_2\)</span> penalization, we can use the <span class="math inline">\(L_1\)</span> penalization of Lasso. This allows us to force some of the <span class="math inline">\(\boldsymbol\beta\)</span>s to become zero. The new SSE will be of the form:</p>
+<p><span class="math display">\[
+  \text{SSE}=\|\mathbf Y-\mathbf{X}\boldsymbol \beta\|^2_2+\gamma\|\boldsymbol \beta\|^2_2 +\gamma_1\|\boldsymbol \beta\|_1.
+  \]</span></p>
+<p>This is exactly the elastic net SSE, and <span class="math inline">\(\gamma_1\)</span> is the Lasso type penalty that sets loadings to zero.</p>
+<p>Now use the <code>glmnet</code> and <code>cv.glmnet</code> functions to select an appropriate number of non-zero loadings for the first and second PCs. Use <code>alpha = 0.5</code> in your elastic net models and use <code>Z1</code> and <code>Z2</code> as the response variables (you should fit 2 separate models).</p>
+<details>
+<p><summary>Solution</summary></p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="kw">par</span>(<span class="dt">mfrow =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
+<span id="cb13-2"><a href="#cb13-2"></a><span class="co"># For PC1</span></span>
+<span id="cb13-3"><a href="#cb13-3"></a><span class="kw">set.seed</span>(<span class="dv">45</span>)</span>
+<span id="cb13-4"><a href="#cb13-4"></a>fit_loadings1 &lt;-<span class="st"> </span><span class="kw">cv.glmnet</span>(X, Z[, <span class="dv">1</span>],</span>
+<span id="cb13-5"><a href="#cb13-5"></a>  <span class="dt">alpha =</span> <span class="fl">0.5</span>, <span class="dt">nfolds =</span> <span class="dv">5</span></span>
+<span id="cb13-6"><a href="#cb13-6"></a>)</span>
+<span id="cb13-7"><a href="#cb13-7"></a><span class="kw">plot</span>(fit_loadings1, <span class="dt">main =</span> <span class="st">&quot;PC1&quot;</span>)</span>
+<span id="cb13-8"><a href="#cb13-8"></a></span>
+<span id="cb13-9"><a href="#cb13-9"></a><span class="co"># For PC2</span></span>
+<span id="cb13-10"><a href="#cb13-10"></a><span class="kw">set.seed</span>(<span class="dv">45</span>)</span>
+<span id="cb13-11"><a href="#cb13-11"></a>fit_loadings2 &lt;-<span class="st"> </span><span class="kw">cv.glmnet</span>(X, Z[, <span class="dv">2</span>], <span class="dt">alpha =</span> <span class="fl">0.5</span>, <span class="dt">nfolds =</span> <span class="dv">5</span>)</span>
+<span id="cb13-12"><a href="#cb13-12"></a><span class="kw">plot</span>(fit_loadings2, <span class="dt">main =</span> <span class="st">&quot;PC2&quot;</span>)</span></code></pre></div>
+<p><img src="Lab4-Sparse-PCA-LDA_files/figure-html/PC-cv_glmnet-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>To see how many features are important for each fit, we can make coefficient profile plots. Note that the actual <code>glmnet</code> fit objects are included in the <code>cv.glmnet</code> objects under <code>$glmnet.fit</code>.</p>
+<p>I added vertical dashed lines at <code>lambda.min</code> and <code>lambda.1se</code>.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="kw">par</span>(<span class="dt">mfrow =</span> <span class="kw">c</span>(<span class="dv">2</span>, <span class="dv">1</span>))</span>
+<span id="cb14-2"><a href="#cb14-2"></a><span class="kw">plot</span>(fit_loadings1<span class="op">$</span>glmnet.fit, <span class="dt">main =</span> <span class="st">&quot;PC1&quot;</span>, <span class="dt">xvar =</span> <span class="st">&quot;lambda&quot;</span>)</span>
+<span id="cb14-3"><a href="#cb14-3"></a><span class="kw">abline</span>(<span class="dt">v =</span> <span class="kw">log</span>(fit_loadings1<span class="op">$</span>lambda.min), <span class="dt">lty =</span> <span class="dv">3</span>)</span>
+<span id="cb14-4"><a href="#cb14-4"></a><span class="kw">abline</span>(<span class="dt">v =</span> <span class="kw">log</span>(fit_loadings1<span class="op">$</span>lambda<span class="fl">.1</span>se), <span class="dt">lty =</span> <span class="dv">3</span>)</span>
+<span id="cb14-5"><a href="#cb14-5"></a><span class="kw">plot</span>(fit_loadings2<span class="op">$</span>glmnet.fit, <span class="dt">main =</span> <span class="st">&quot;PC2&quot;</span>, <span class="dt">xvar =</span> <span class="st">&quot;lambda&quot;</span>)</span>
+<span id="cb14-6"><a href="#cb14-6"></a><span class="kw">abline</span>(<span class="dt">v =</span> <span class="kw">log</span>(fit_loadings2<span class="op">$</span>lambda.min), <span class="dt">lty =</span> <span class="dv">3</span>)</span>
+<span id="cb14-7"><a href="#cb14-7"></a><span class="kw">abline</span>(<span class="dt">v =</span> <span class="kw">log</span>(fit_loadings2<span class="op">$</span>lambda<span class="fl">.1</span>se), <span class="dt">lty =</span> <span class="dv">3</span>)</span></code></pre></div>
+<p><img src="Lab4-Sparse-PCA-LDA_files/figure-html/PC-glmnet-coefficient-plots-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>To get the exact number of non-zero coefficients for <code>lambda.min</code> and <code>lambda.1se</code>, just print the <code>cv.glmnet</code> objects.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>fit_loadings1</span>
+<span id="cb15-2"><a href="#cb15-2"></a><span class="co">#&gt; </span></span>
+<span id="cb15-3"><a href="#cb15-3"></a><span class="co">#&gt; Call:  cv.glmnet(x = X, y = Z[, 1], nfolds = 5, alpha = 0.5) </span></span>
+<span id="cb15-4"><a href="#cb15-4"></a><span class="co">#&gt; </span></span>
+<span id="cb15-5"><a href="#cb15-5"></a><span class="co">#&gt; Measure: Mean-Squared Error </span></span>
+<span id="cb15-6"><a href="#cb15-6"></a><span class="co">#&gt; </span></span>
+<span id="cb15-7"><a href="#cb15-7"></a><span class="co">#&gt;     Lambda Measure    SE Nonzero</span></span>
+<span id="cb15-8"><a href="#cb15-8"></a><span class="co">#&gt; min  1.195   10.88 1.888     101</span></span>
+<span id="cb15-9"><a href="#cb15-9"></a><span class="co">#&gt; 1se  1.655   12.68 1.742      96</span></span>
+<span id="cb15-10"><a href="#cb15-10"></a>fit_loadings2</span>
+<span id="cb15-11"><a href="#cb15-11"></a><span class="co">#&gt; </span></span>
+<span id="cb15-12"><a href="#cb15-12"></a><span class="co">#&gt; Call:  cv.glmnet(x = X, y = Z[, 2], nfolds = 5, alpha = 0.5) </span></span>
+<span id="cb15-13"><a href="#cb15-13"></a><span class="co">#&gt; </span></span>
+<span id="cb15-14"><a href="#cb15-14"></a><span class="co">#&gt; Measure: Mean-Squared Error </span></span>
+<span id="cb15-15"><a href="#cb15-15"></a><span class="co">#&gt; </span></span>
+<span id="cb15-16"><a href="#cb15-16"></a><span class="co">#&gt;     Lambda Measure    SE Nonzero</span></span>
+<span id="cb15-17"><a href="#cb15-17"></a><span class="co">#&gt; min 0.2923   11.70 4.123      80</span></span>
+<span id="cb15-18"><a href="#cb15-18"></a><span class="co">#&gt; 1se 1.1800   15.79 6.171      67</span></span></code></pre></div>
+<p><strong>Interpretation:</strong> for PC1, we see that around 90 to 100 genes are most important, based on the range of <span class="math inline">\(\gamma\)</span> (<code>lambda</code>) values between <code>lambda.min</code> and <code>lambda.1se</code>. Similarly, for PC2 we get around 65 - 80 genes. With this information, we can now choose one of the <code>lambda</code> values and construct PCs that will have non-zero loadings for only a few genes.</p>
+</details>
+</div>
+<div id="plot-your-newly-derived-first-and-second-pcs-and-use-different-colors-for-the-tumor-and-normal-tissues.-how-well-do-these-new-pcs-separate-the-response-classes-compare-this-to-the-plot-in-exercise-3.-formulate-a-conclusion-based-on-the-two-graphs." class="section level4 unnumbered">
+<h4>7. Plot your newly derived first and second PCs and use different colors for the tumor and normal tissues. How well do these new PCs separate the response classes? Compare this to the plot in exercise 3. Formulate a conclusion based on the two graphs.</h4>
+<p>Use <code>lambda.1se</code> as your choice for <span class="math inline">\(\gamma\)</span>. You can extract the coefficients (<span class="math inline">\(\beta\)</span>’s) from the <code>cv.glmnet</code> objects using the <code>coef</code> function, set the <code>s</code> argument to the chosen <span class="math inline">\(\gamma\)</span>. This will return a <em>sparse matrix</em> by default, so you might want to use <code>as.vector</code> to convert to a more friendly format.</p>
+<details>
+<p><summary>Solution</summary></p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a>sparse_loadings1 &lt;-<span class="st"> </span><span class="kw">as.vector</span>(<span class="kw">coef</span>(fit_loadings1, <span class="dt">s =</span> fit_loadings1<span class="op">$</span>lambda<span class="fl">.1</span>se))</span>
+<span id="cb16-2"><a href="#cb16-2"></a>sparse_loadings2 &lt;-<span class="st"> </span><span class="kw">as.vector</span>(<span class="kw">coef</span>(fit_loadings2, <span class="dt">s =</span> fit_loadings2<span class="op">$</span>lambda<span class="fl">.1</span>se))</span>
+<span id="cb16-3"><a href="#cb16-3"></a></span>
+<span id="cb16-4"><a href="#cb16-4"></a><span class="co">## How many non-zero loadings do we have (excluding the intercept)?</span></span>
+<span id="cb16-5"><a href="#cb16-5"></a>(non_zero1 &lt;-<span class="st"> </span><span class="kw">sum</span>(<span class="kw">abs</span>(sparse_loadings1[<span class="op">-</span><span class="dv">1</span>]) <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>))</span>
+<span id="cb16-6"><a href="#cb16-6"></a><span class="co">#&gt; [1] 96</span></span>
+<span id="cb16-7"><a href="#cb16-7"></a>(non_zero2 &lt;-<span class="st"> </span><span class="kw">sum</span>(<span class="kw">abs</span>(sparse_loadings2[<span class="op">-</span><span class="dv">1</span>]) <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>))</span>
+<span id="cb16-8"><a href="#cb16-8"></a><span class="co">#&gt; [1] 67</span></span>
+<span id="cb16-9"><a href="#cb16-9"></a></span>
+<span id="cb16-10"><a href="#cb16-10"></a>SPC1 &lt;-<span class="st"> </span>X <span class="op">%*%</span><span class="st"> </span>sparse_loadings1[<span class="op">-</span><span class="dv">1</span>] <span class="co"># without the intercept</span></span>
+<span id="cb16-11"><a href="#cb16-11"></a>SPC2 &lt;-<span class="st"> </span>X <span class="op">%*%</span><span class="st"> </span>sparse_loadings2[<span class="op">-</span><span class="dv">1</span>] <span class="co"># without the intercept</span></span>
+<span id="cb16-12"><a href="#cb16-12"></a></span>
+<span id="cb16-13"><a href="#cb16-13"></a><span class="kw">par</span>(<span class="dt">mfrow =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
+<span id="cb16-14"><a href="#cb16-14"></a><span class="kw">plot</span>(Z[, <span class="dv">1</span>], Z[, <span class="dv">2</span>],</span>
+<span id="cb16-15"><a href="#cb16-15"></a>  <span class="dt">col =</span> cols[Y], <span class="dt">xlab =</span> <span class="st">&quot;PC1&quot;</span>, <span class="dt">ylab =</span> <span class="st">&quot;PC2&quot;</span>, <span class="dt">pch =</span> <span class="dv">16</span>,</span>
+<span id="cb16-16"><a href="#cb16-16"></a>  <span class="dt">main =</span> <span class="st">&quot;All 2000 genes </span><span class="ch">\n</span><span class="st">for PC1 and PC2&quot;</span></span>
+<span id="cb16-17"><a href="#cb16-17"></a>)</span>
+<span id="cb16-18"><a href="#cb16-18"></a><span class="kw">legend</span>(<span class="op">-</span><span class="dv">45</span>, <span class="dv">-25</span>,</span>
+<span id="cb16-19"><a href="#cb16-19"></a>  <span class="dt">legend =</span> <span class="kw">c</span>(<span class="st">&quot;Normal tissue&quot;</span>, <span class="st">&quot;Tumor tissue&quot;</span>), <span class="dt">bty =</span> <span class="st">&quot;n&quot;</span>,</span>
+<span id="cb16-20"><a href="#cb16-20"></a>  <span class="dt">col =</span> <span class="kw">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;blue&quot;</span>), <span class="dt">pch =</span> <span class="kw">c</span>(<span class="dv">16</span>, <span class="dv">16</span>), <span class="dt">cex =</span> <span class="dv">1</span></span>
+<span id="cb16-21"><a href="#cb16-21"></a>)</span>
+<span id="cb16-22"><a href="#cb16-22"></a><span class="kw">plot</span>(SPC1, SPC2,</span>
+<span id="cb16-23"><a href="#cb16-23"></a>  <span class="dt">col =</span> cols[Y], <span class="dt">xlab =</span> <span class="st">&quot;SPC1&quot;</span>, <span class="dt">ylab =</span> <span class="st">&quot;SPC2&quot;</span>, <span class="dt">pch =</span> <span class="dv">16</span>,</span>
+<span id="cb16-24"><a href="#cb16-24"></a>  <span class="dt">main =</span> <span class="kw">paste</span>(non_zero1, <span class="st">&quot;genes for SPC1 </span><span class="ch">\n</span><span class="st"> and&quot;</span>, non_zero2, <span class="st">&quot;genes for SPC2&quot;</span>)</span>
+<span id="cb16-25"><a href="#cb16-25"></a>)</span>
+<span id="cb16-26"><a href="#cb16-26"></a><span class="kw">legend</span>(<span class="op">-</span><span class="dv">45</span>, <span class="dv">-25</span>,</span>
+<span id="cb16-27"><a href="#cb16-27"></a>  <span class="dt">legend =</span> <span class="kw">c</span>(<span class="st">&quot;Normal tissue&quot;</span>, <span class="st">&quot;Tumor tissue&quot;</span>), <span class="dt">bty =</span> <span class="st">&quot;n&quot;</span>,</span>
+<span id="cb16-28"><a href="#cb16-28"></a>  <span class="dt">col =</span> <span class="kw">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;blue&quot;</span>), <span class="dt">pch =</span> <span class="kw">c</span>(<span class="dv">16</span>, <span class="dv">16</span>), <span class="dt">cex =</span> <span class="dv">1</span></span>
+<span id="cb16-29"><a href="#cb16-29"></a>)</span></code></pre></div>
+<p><img src="Lab4-Sparse-PCA-LDA_files/figure-html/sparse-PCA-plots-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<p><strong>Conclusion:</strong> Only about 4.80% (96) of the genes are useful for PC1 and only about 3.35% (67) of the genes are useful for PC2 . Sparse PCA has succeeded in setting the uninformative genes/loadings to zero. In seperating normal and tumour tissues, SPCA performs vitually the same as PCA. The key point here is that SPCA uses only a minor proportion of the original features to achieve the same results, suggesting that the largest variability of the data is only driven by a minority of features.</p>
+</details>
+</div>
+</div>
+</div>
+<div id="lda" class="section level1">
+<h1><span class="header-section-number">3</span> LDA</h1>
+<p>In this section, we will perform LDA on the gene data to get a clear understanding on the genes responsible for separating the tumor and normal tissue groups.</p>
+<p>Remember that the LDA problem can be stated as</p>
+<p><span class="math display">\[
+\mathbf{v}
+  = \text{ArgMax}_a \frac{\mathbf{a^T B a}}{\mathbf{a^T W a}}
+    \text{ subject to }
+    \mathbf{a^T W a} = 1
+\]</span></p>
+<p>Which is equivalent to the eigenvalue/eigenvector problem</p>
+<p><span class="math display">\[
+\mathbf W^{-1} \mathbf B \mathbf a=\lambda \mathbf a
+\]</span></p>
+<p>In our case, where we only have two groups, only one solution exists. This is the eigenvector <span class="math inline">\(\mathbf v\)</span> and its eigenvalue. We can then write the PC-scores as</p>
+<p><span class="math display">\[
+\mathbf Z=\mathbf X \mathbf v
+\]</span></p>
+<div id="exercises-1" class="section level2 unnumbered">
+<h2>Exercises</h2>
+<div id="the-function-lda-in-the-mass-package-performs-lda.-similar-to-the-glmnet-function-you-will-need-to-supply-an-x-argument.-the-argument-grouping-is-the-vector-with-the-response-and-this-has-to-be-a-factor-variable.-you-have-that-stored-as-y.-fit-an-lda-on-x-with-grouping-y." class="section level4 unnumbered">
+<h4>1. The function <code>lda()</code> in the <code>MASS</code> package performs LDA. Similar to the <code>glmnet()</code> function, you will need to supply an <code>x</code> argument. The argument <code>grouping</code> is the vector with the response, and this has to be a factor variable. You have that stored as <code>Y</code>. Fit an LDA on <code>X</code> with grouping <code>Y</code>.</h4>
+<details>
+<p><summary>Solution</summary></p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="co">## Perform LDA</span></span>
+<span id="cb17-2"><a href="#cb17-2"></a>alon_lda &lt;-<span class="st"> </span><span class="kw">lda</span>(<span class="dt">x =</span> X, <span class="dt">grouping =</span> Y)</span>
+<span id="cb17-3"><a href="#cb17-3"></a><span class="co">#&gt; Warning in lda.default(x, grouping, ...): variables are collinear</span></span></code></pre></div>
+<p>Note the warning regarding collinearity.</p>
+</details>
+</div>
+<div id="mathbf-v-can-be-extracted-from-the-object-as-the-element-scaling.-extract-this-and-call-it-v1." class="section level4 unnumbered">
+<h4>2. <span class="math inline">\(\mathbf v\)</span> can be extracted from the object as the element <code>scaling</code>. Extract this and call it <code>V1</code>.</h4>
+<details>
+<p><summary>Solution</summary></p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a>V1 &lt;-<span class="st"> </span>alon_lda<span class="op">$</span>scaling</span></code></pre></div>
+</details>
+</div>
+<div id="compute-mathbf-z-and-call-it-z1." class="section level4 unnumbered">
+<h4>3. Compute <span class="math inline">\(\mathbf Z\)</span> and call it <code>Z1</code>.</h4>
+<details>
+<p><summary>Solution</summary></p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a>Z1 &lt;-<span class="st"> </span>X <span class="op">%*%</span><span class="st"> </span>V1</span></code></pre></div>
+</details>
+</div>
+<div id="now-check-to-see-how-well-your-single-ldaz1-separates-the-tumour-and-normal-tissues-groups.-compare-it-to-the-plot-in-3-of-the-previous-exercise-and-observe-whether-lda-performs-better-in-separating-the-two-groups." class="section level4 unnumbered">
+<h4>4. Now check to see how well your single LDA/<code>Z1</code> separates the tumour and normal tissues groups. Compare it to the plot in (3) of the previous exercise, and observe whether LDA performs better in separating the two groups.</h4>
+<p>You could use a boxplot for visualization, but feel free to be creative!</p>
+<details>
+<p><summary>Solution</summary></p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a><span class="kw">par</span>(<span class="dt">mfrow =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))</span>
+<span id="cb20-2"><a href="#cb20-2"></a><span class="kw">boxplot</span>(Z1 <span class="op">~</span><span class="st"> </span>Y, <span class="dt">col =</span> cols, <span class="dt">ylab =</span> <span class="kw">expression</span>(<span class="st">&quot;Z&quot;</span>[<span class="dv">1</span>]), </span>
+<span id="cb20-3"><a href="#cb20-3"></a>        <span class="dt">main =</span> <span class="st">&quot;Separation of normal and tumour samples by LDA&quot;</span>)</span></code></pre></div>
+<p><img src="Lab4-Sparse-PCA-LDA_files/figure-html/unnamed-chunk-10-1.png" width="100%" style="display: block; margin: auto;" /></p>
+</details>
+</div>
+<div id="as-was-the-case-with-the-first-and-second-pc-z1-is-a-linear-combination-determined-by-the-loadings-mathbf-v.-these-are-non-zero-for-all-genes.-to-get-a-few-interesting-genes-you-can-use-a-sparse-lda.-note-that-you-can-use-the-package-sparselda-with-the-function-sda-to-perform-this-analysis-but-lets-do-this-as-we-did-for-sparse-pca." class="section level4 unnumbered">
+<h4>5. As was the case with the first and second PC, <code>Z1</code> is a linear combination determined by the loadings <span class="math inline">\(\mathbf v\)</span>. These are non-zero for all genes. To get a few interesting genes, you can use a sparse LDA. Note that you can use the package <code>sparseLDA</code> with the function <code>sda()</code> to perform this analysis, but let’s do this as we did for sparse PCA.</h4>
+<ol style="list-style-type: lower-alpha">
+<li>Use the <code>cv.glmnet</code> function with <code>x=X</code>, <code>y=Z1</code> and <code>alpha=0.5</code> to select an appropriate number of non-zero genes for the LDA.</li>
+</ol>
+<details>
+<p><summary>Solution</summary></p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a><span class="kw">set.seed</span>(<span class="dv">45</span>)</span>
+<span id="cb21-2"><a href="#cb21-2"></a>lda_loadings &lt;-<span class="st"> </span><span class="kw">cv.glmnet</span>(X, Z1, <span class="dt">alpha =</span> <span class="fl">0.5</span>, <span class="dt">nfolds =</span> <span class="dv">5</span>)</span>
+<span id="cb21-3"><a href="#cb21-3"></a><span class="kw">plot</span>(lda_loadings)</span></code></pre></div>
+<p><img src="Lab4-Sparse-PCA-LDA_files/figure-html/unnamed-chunk-11-1.png" width="100%" style="display: block; margin: auto;" /></p>
+</details>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>Check to see how well this subset of genes does in separating the tumour and normal tissue groups. Are they as effective as the entire set of genes?</li>
+</ol>
+<details>
+<p><summary>Solution</summary></p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a>sparse_lda_loadings &lt;-<span class="st"> </span><span class="kw">as.vector</span>(</span>
+<span id="cb22-2"><a href="#cb22-2"></a>  <span class="kw">coef</span>(lda_loadings, <span class="dt">s =</span> lda_loadings<span class="op">$</span>lambda<span class="fl">.1</span>se)</span>
+<span id="cb22-3"><a href="#cb22-3"></a>)</span>
+<span id="cb22-4"><a href="#cb22-4"></a></span>
+<span id="cb22-5"><a href="#cb22-5"></a><span class="co"># See the genes involved</span></span>
+<span id="cb22-6"><a href="#cb22-6"></a><span class="kw">plot</span>(sparse_lda_loadings[sparse_lda_loadings <span class="op">!=</span><span class="st"> </span><span class="dv">0</span>],</span>
+<span id="cb22-7"><a href="#cb22-7"></a>  <span class="dt">pch =</span> <span class="dv">16</span>, <span class="dt">type =</span> <span class="st">&quot;n&quot;</span>, <span class="dt">xlim =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">20</span>)</span>
+<span id="cb22-8"><a href="#cb22-8"></a>)</span>
+<span id="cb22-9"><a href="#cb22-9"></a><span class="kw">text</span>(</span>
+<span id="cb22-10"><a href="#cb22-10"></a>  sparse_lda_loadings[sparse_lda_loadings <span class="op">!=</span><span class="st"> </span><span class="dv">0</span>],</span>
+<span id="cb22-11"><a href="#cb22-11"></a>  <span class="kw">colnames</span>(X)[sparse_lda_loadings <span class="op">!=</span><span class="st"> </span><span class="dv">0</span>]</span>
+<span id="cb22-12"><a href="#cb22-12"></a>)</span>
+<span id="cb22-13"><a href="#cb22-13"></a><span class="kw">abline</span>(<span class="dt">h =</span> <span class="dv">0</span>, <span class="dt">lwd =</span> <span class="dv">3</span>)</span></code></pre></div>
+<p><img src="Lab4-Sparse-PCA-LDA_files/figure-html/unnamed-chunk-12-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a></span>
+<span id="cb23-2"><a href="#cb23-2"></a><span class="co"># without the intercept</span></span>
+<span id="cb23-3"><a href="#cb23-3"></a>SLDA &lt;-<span class="st"> </span>X <span class="op">%*%</span><span class="st"> </span>sparse_lda_loadings[<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb23-4"><a href="#cb23-4"></a></span>
+<span id="cb23-5"><a href="#cb23-5"></a><span class="co"># number of non-zero loadings</span></span>
+<span id="cb23-6"><a href="#cb23-6"></a>n_nonzero &lt;-<span class="st"> </span><span class="kw">sum</span>(sparse_lda_loadings <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>)</span>
+<span id="cb23-7"><a href="#cb23-7"></a></span>
+<span id="cb23-8"><a href="#cb23-8"></a><span class="co"># boxplots</span></span>
+<span id="cb23-9"><a href="#cb23-9"></a><span class="kw">par</span>(<span class="dt">mfrow =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
+<span id="cb23-10"><a href="#cb23-10"></a><span class="kw">boxplot</span>(Z1 <span class="op">~</span><span class="st"> </span>Y,</span>
+<span id="cb23-11"><a href="#cb23-11"></a>  <span class="dt">col =</span> cols, <span class="dt">ylab =</span> <span class="st">&quot;LDA&quot;</span>,</span>
+<span id="cb23-12"><a href="#cb23-12"></a>  <span class="dt">main =</span> <span class="st">&quot;Entire set of 2000 genes&quot;</span></span>
+<span id="cb23-13"><a href="#cb23-13"></a>)</span>
+<span id="cb23-14"><a href="#cb23-14"></a><span class="kw">boxplot</span>(SLDA <span class="op">~</span><span class="st"> </span>Y,</span>
+<span id="cb23-15"><a href="#cb23-15"></a>  <span class="dt">col =</span> cols, <span class="dt">ylab =</span> <span class="st">&quot;SLDA&quot;</span>,</span>
+<span id="cb23-16"><a href="#cb23-16"></a>  <span class="dt">main =</span> <span class="kw">sprintf</span>(<span class="st">&quot;Subset of %d genes&quot;</span>, n_nonzero)</span>
+<span id="cb23-17"><a href="#cb23-17"></a>)</span></code></pre></div>
+<p><img src="Lab4-Sparse-PCA-LDA_files/figure-html/unnamed-chunk-12-2.png" width="100%" style="display: block; margin: auto;" /></p>
+</details>
+</div>
+</div>
+</div>
+<div id="references" class="section level1 unnumbered">
+<h1>References</h1>
+<div id="refs" class="references">
+<div id="ref-alon1999broad">
+<p>Alon, Uri, Naama Barkai, Daniel A Notterman, Kurt Gish, Suzanne Ybarra, Daniel Mack, and Arnold J Levine. 1999. “Broad Patterns of Gene Expression Revealed by Clustering Analysis of Tumor and Normal Colon Tissues Probed by Oligonucleotide Arrays.” <em>Proceedings of the National Academy of Sciences</em> 96 (12): 6745–50.</p>
+</div>
+</div>
+</div>
+
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiQW5hbHlzaXMgb2YgSGlnaCBEaW1lbnNpb25hbCBEYXRhIC0gTGFiIDQiCnN1YnRpdGxlOiAiU3BhcnNlIFBDQSBhbmQgTERBIgphdXRob3I6ICJBZGFwdGVkIGJ5IE1pbGFuIE1hbGZhaXQiCmRhdGU6ICIxOSBOb3YgMjAyMCIKcmVmZXJlbmNlczoKLSBpZDogYWxvbjE5OTlicm9hZAogIHR5cGU6IGFydGljbGUtam91cm5hbAogIGF1dGhvcjoKICAtIGZhbWlseTogQWxvbgogICAgZ2l2ZW46IFVyaQogIC0gZmFtaWx5OiBCYXJrYWkKICAgIGdpdmVuOiBOYWFtYQogIC0gZmFtaWx5OiBOb3R0ZXJtYW4KICAgIGdpdmVuOiBEYW5pZWwgQQogIC0gZmFtaWx5OiBHaXNoCiAgICBnaXZlbjogS3VydAogIC0gZmFtaWx5OiBZYmFycmEKICAgIGdpdmVuOiBTdXphbm5lCiAgLSBmYW1pbHk6IE1hY2sKICAgIGdpdmVuOiBEYW5pZWwKICAtIGZhbWlseTogTGV2aW5lCiAgICBnaXZlbjogQXJub2xkIEoKICBpc3N1ZWQ6CiAgLSB5ZWFyOiAxOTk5CiAgdGl0bGU6IEJyb2FkIHBhdHRlcm5zIG9mIGdlbmUgZXhwcmVzc2lvbiByZXZlYWxlZCBieSBjbHVzdGVyaW5nIGFuYWx5c2lzIG9mIHR1bW9yCiAgICBhbmQgbm9ybWFsIGNvbG9uIHRpc3N1ZXMgcHJvYmVkIGJ5IG9saWdvbnVjbGVvdGlkZSBhcnJheXMKICBjb250YWluZXItdGl0bGU6IFByb2NlZWRpbmdzIG9mIHRoZSBOYXRpb25hbCBBY2FkZW15IG9mIFNjaWVuY2VzCiAgcHVibGlzaGVyOiBOYXRpb25hbCBBY2FkIFNjaWVuY2VzCiAgcGFnZTogNjc0NS02NzUwCiAgdm9sdW1lOiAnOTYnCiAgaXNzdWU6ICcxMicKLS0tCgpgYGB7ciBzZXR1cCwgaW5jbHVkZT1GQUxTRSwgY2FjaGU9RkFMU0V9CmtuaXRyOjpvcHRzX2NodW5rJHNldCgKICBjb2xsYXBzZSA9IFRSVUUsCiAgY29tbWVudCA9ICIjPiIsCiAgZmlnLmFsaWduID0gImNlbnRlciIsCiAgZmlnLndpZHRoID0gOCwKICBmaWcuYXNwID0gMC42MTgsCiAgb3V0LndpZHRoID0gIjEwMCUiCikKYGBgCgoqKioKCmBgYHtyIGxpYnJhcmllcywgd2FybmluZz1GQUxTRSwgbWVzc2FnZT1GQUxTRX0KIyMgaW5zdGFsbCBwYWNrYWdlcyB3aXRoOgojIyBpbnN0YWxsLnBhY2thZ2VzKGMoImdsbW5ldCIsICJNQVNTIikpCmxpYnJhcnkoZ2xtbmV0KQpsaWJyYXJ5KE1BU1MpCmBgYAoKCiMgSW50cm9kdWN0aW9uCgoqKkluIHRoaXMgbGFiIHNlc3Npb24gd2Ugd2lsbCBsb29rIGF0IHRoZSBmb2xsb3dpbmcgdG9waWNzKioKCiAgLSBNZXRob2RzIHRvIHNldCBzb21lIG9mIHRoZSBsb2FkaW5ncyBleGFjdGx5IHRvIHplcm8gaW4gYSBQQ0EuCiAgLSBVc2UgYGdsbW5ldCgpYCB0byBhZGQgcGVuYWx0aWVzIG9uIHByaW5jaXBhbCBjb21wb25lbnQgbG9hZGluZ3MuCiAgLSBVc2UgTERBIHRvIHVuZGVyc3RhbmQgZGlmZmVyZW5jZXMgYmV0d2VlbiBncm91cHMgaW4gYSBoaWdoIGRpbWVuc2lvbmFsIHNwYWNlLgogIAojIyBUaGUgZGF0YXNldCB7LX0KCkluIHRoaXMgcHJhY3RpY2FsIHNlc3Npb24sIHdlIHVzZSB0aGUgZGF0YXNldCBieSBAYWxvbjE5OTlicm9hZCBvbgpnZW5lIGV4cHJlc3Npb24gbGV2ZWxzIGluIDQwIHR1bW91ciBhbmQgMjIgbm9ybWFsIGNvbG9uIHRpc3N1ZSBzYW1wbGVzLgpUaGV5IGNoZWNrZWQgYSB0b3RhbCBvZiA2NTAwIGh1bWFuIGdlbmVzIHVzaW5nIHRoZSBBZmZ5bWV0cml4IG9saWdvbnVjbGVvdGlkZSBhcnJheS4KWW91IGNhbiByZWFkIHRoZSBkYXRhIGluIGFzIGZvbGxvd3M6CgpgYGB7ciBsb2FkLWRhdGF9CkFsb24xOTk5IDwtIHJlYWQuY3N2KCJodHRwczovL2dpdGh1Yi5jb20vc3RhdE9taWNzL0hEQTIwMjAvcmF3L2RhdGEvQWxvbjE5OTkuY3N2IikKc3RyKEFsb24xOTk5WywgMToxMF0pCnRhYmxlKEFsb24xOTk5JFkpCmBgYAoKVGhlIGRhdGFzZXQgY29udGFpbnMgb25lIHZhcmlhYmxlIG5hbWVkIGBZYCB3aXRoIHRoZSB2YWx1ZXMgYHRgIGFuZCBgbmAuClRoaXMgdmFyaWFibGUgaW5kaWNhdGVzIHdoZXRoZXIgdGhlIHNhbXBsZSBjYW1lIGZyb20gdHVtb3Vyb3VzIChgdGApIG9yCm5vcm1hbCAoYG5gKSB0aXNzdWUuCgpUaGUgZ29hbCBvZiB0aGlzIHByYWN0aWNhbCBpcyB0byBmaW5kIHRoZSBiZXN0IHN1YnNldC9jb21iaW5hdGlvbiBvZiBnZW5lcyB0byBkZXRlY3QgdHVtb3Vyb3VzIHRpc3N1ZS4KQXMgaW4gQGFsb24xOTk5YnJvYWQsIHdlIHVzZSB0aGUgMjAwMCBnZW5lcyB3aXRoIHRoZSBoaWdoZXN0IG1pbmltYWwgaW50ZW5zaXR5CmFjcm9zcyB0aGUgc2FtcGxlcy4KCiMgU3BhcnNlIFBDQQoKSW4gb3JkZXIgdG8gd29yayBlYXNpbHkgd2l0aCB0aGUgZGF0YSwgZmlyc3QgY29uc3RydWN0IGEgc2NhbGVkIG1hdHJpeApgWGAgYW5kIGEgdmVjdG9yIGBZYCB3aGljaCBnaXZlcyB0aGUgc2NhbGVkIHByZWRpY3RvcnMgYW5kIHRoZSByZXNwb25zZQp2YXJpYWJsZToKCmBgYHtyfQpYIDwtIHNjYWxlKEFsb24xOTk5WywgLTFdKQpZIDwtIGFzLmZhY3RvcihBbG9uMTk5OVssIDFdKQpgYGAKClVzZSB0aGVzZSBvYmplY3RzIHRvIHNvbHZlIHRoZSBmb2xsb3dpbmcgZXhlcmNpc2VzLgoKIyMgRXhlcmNpc2VzIHstfQoKIyMjIyAxLiBQZXJmb3JtIGEgU1ZEIG9uIGBYYCwgYW5kIHN0b3JlIHRoZSBzY29yZXMgb2YgdGhlIFBDcyBpbiBhIG1hdHJpeCBgWmAuIHstfQoKPGRldGFpbHM+PHN1bW1hcnk+U29sdXRpb248L3N1bW1hcnk+CgpVc2luZyBgc3ZkYDoKCmBgYHtyfQpzdmRfWCA8LSBzdmQoWCkKWiA8LSBzdmRfWCR1ICUqJSBkaWFnKHN2ZF9YJGQpICMgQ2FsY3VsYXRlIHRoZSBzY29yZXMKViA8LSBzdmRfWCR2ICAgICAgICAgICAgICAgICAjIENhbGN1bGF0ZSB0aGUgbG9hZGluZ3MKYGBgCgpVc2luZyBgcHJjb21wYDoKCmBgYHtyfQojIyBYIGlzIGFscmVhZHkgY2VudGVyZWQgYW5kIHNjYWxlZCBzbyBubyBuZWVkIHRvIGRvIGFnYWluCnBjYV94IDwtIHByY29tcChYLCBjZW50ZXIgPSBGQUxTRSwgc2NhbGUuID0gRkFMU0UpCiMjIFRoZSBzY29yZXMgYXJlIGdpdmVuIGJ5IGBwY2FfeCR4YCwgdGhlIGxvYWRpbmdzIGFyZSBgcGNhX3gkcm90YXRpb25gCmBgYAoKPC9kZXRhaWxzPgoKCiMjIyMgMi4gUGxvdCB0aGUgc2luZ3VsYXIgdmFsdWVzIGFuZCBjb25maXJtIHRoYXQgdGhlIGZpcnN0IGFuZCBzZWNvbmQgUENzIGNhbiBhcHByb3hpbWF0ZSB0aGUgZGF0YSB0byBzb21lIGV4dGVudC4gey19Cgo8ZGV0YWlscz48c3VtbWFyeT5Tb2x1dGlvbjwvc3VtbWFyeT4KCmBgYHtyIHBjYS1zaW5ndWxhcl92YWx1ZXMtcGxvdH0KIyMgUGxvdHRpbmcgcGFyYW1ldGVycwpwYXIocGNoID0gMTksIG1mcm93ID0gYygxLCAyKSkKCnBsb3Qoc3ZkX1gkZCwgdHlwZSA9ICJiIiwgeWxhYiA9ICJTaW5ndWxhciB2YWx1ZXMiLCB4bGFiID0gIlBDcyIpCgojIyBQZXJjZW50YWdlIHZhcmlhbmNlIGV4cGxhaW5lZCBmb3IgZWFjaCBQQwp2YXJfZXhwbGFpbmVkIDwtIHN2ZF9YJGReMiAvIHN1bShzdmRfWCRkXjIpCnBsb3QodmFyX2V4cGxhaW5lZCwKICB0eXBlID0gImIiLCB5bGFiID0gIlBlcmNlbnQgdmFyaWFuY2UgZXhwbGFpbmVkIiwgeGxhYiA9ICJQQ3MiLAogIGNvbCA9IDIKKQpgYGAKCjwvZGV0YWlscz4KCgojIyMjIDMuIFBsb3QgdGhlIGZpcnN0IHR3byBQQ3MgYW5kIHVzZSBkaWZmZXJlbnQgY29sb3VycyBmb3IgdHVtb3Ivbm9ybWFsIHRpc3N1ZS4gey19CgpJbiBvcmRlciB0byBwbG90IGRpZmZlcmVudCBjb2xvcnMgYW5kIGFkZCBhIGxlZ2VuZCB3aXRoIGJhc2UgYFJgIHBsb3R0aW5nLCB5b3UgY2FuIGRvIHRoZSBmb2xsb3dpbmc6CgpgYGB7cn0KcGFyKG1mcm93ID0gYygxLCAxKSkKY29scyA8LSBjKCJuIiA9ICJyZWQiLCAidCIgPSAiYmx1ZSIpCnBsb3QoWFssIDFdLCBYWywgMl0sIGNvbCA9IGNvbHNbWV0sIHBjaCA9IDE5KQpsZWdlbmQoInRvcGxlZnQiLCBjKCJOb3JtYWwiLCAiVHVtb3IiKSwKICBjb2wgPSBjKCJyZWQiLCAiYmx1ZSIpLAogIHBjaCA9IDE5LCB0aXRsZSA9ICJUaXNzdWUiCikKYGBgCgpUaGlzIHBsb3RzIHRoZSBmaXJzdCB0d28gZGltZW5zaW9ucyBvZiB0aGUgYFhgICghKSBtYXRyaXggd2l0aCBzb2xpZApwb2ludHMgKGBwY2ggPSAxOWApLCBhbmQgdGhlIGNvbG9yIHJlZCBmb3Igbm9ybWFsIHRpc3N1ZSBhbmQgYmx1ZSBmb3IKdHVtb3JvdXMgdGlzc3VlLiBZb3UgY2FuIGFkYXB0IHRoaXMgY29kZSB0byBjcmVhdGUgdGhlIHByb3BlciBwbG90LgoKPGRldGFpbHM+PHN1bW1hcnk+U29sdXRpb248L3N1bW1hcnk+CgpgYGB7ciBwY2EtcGxvdH0KY29scyA8LSBjKCJuIiA9ICJyZWQiLCAidCIgPSAiYmx1ZSIpCnBsb3QoWlssIDFdLCBaWywgMl0sCiAgY29sID0gY29sc1tZXSwKICB4bGFiID0gIlBDMSIsIHlsYWIgPSAiUEMyIiwgcGNoID0gMTkKKQpsZWdlbmQoInRvcGxlZnQiLCBjKCJOb3JtYWwiLCAiVHVtb3IiKSwKICBjb2wgPSBjKCJyZWQiLCAiYmx1ZSIpLAogIHBjaCA9IDE5LCB0aXRsZSA9ICJUaXNzdWUiCikKYGBgCgpfX0ludGVycHJldGF0aW9uOl9fIHVzaW5nIG9ubHkgdGhlIGZpcnN0IDIgUENzIGRvZXMgbm90IHNlZW0gdG8gc2VwYXJhdGUgdGhlIHR1bW91ciBhbmQgbm9ybWFsIGNhc2VzIGNsZWFybHkuCgo8L2RldGFpbHM+CgoKIyMjIyA0LiBQbG90IGhpc3RvZ3JhbXMgb2YgdGhlIGxvYWRpbmdzIG9mIHRoZSBmaXJzdCBhbmQgc2Vjb25kIFBDcy4gV2hpY2ggbG9hZGluZ3MgYXJlIHRoZSBtb3N0IGltcG9ydGFudD8gey19CgpZb3UgY2FuIHVzZSB0aGUgYGhpc3RgIGZ1bmN0aW9uIHRvIHBsb3QgYSBoaXN0b2dyYW0uCkJlIHN1cmUgdG8geW91IHVzZSBhbiBhcHByb3ByaWF0ZSB2YWx1ZSBmb3IgdGhlIGBicmVha3NgIGFyZ3VtZW50LgoKPGRldGFpbHM+PHN1bW1hcnk+U29sdXRpb248L3N1bW1hcnk+CgpgYGB7ciBwYy1sb2FkaW5ncywgZmlnLmFzcCA9IDEuMn0KcGFyKG1mcm93ID0gYygyLCAxKSkKIyBGaXJzdApoaXN0KFZbLCAxXSwgYnJlYWtzID0gNTAsIHhsYWIgPSAiUEMgMSBsb2FkaW5ncyIsIG1haW4gPSAiIikKIyBBZGQgdmVydGljYWwgbGluZSBhdCA5NSUgcXVhbnRpbGUKYWJsaW5lKHYgPSBxdWFudGlsZShWWywgMV0sIDAuOTUpLCBjb2wgPSAicmVkIiwgbHdkID0gMikKCiMgU2Vjb25kCmhpc3QoVlssIDJdLCBicmVha3MgPSA1MCwgeGxhYiA9ICJQQyAyIGxvYWRpbmdzIiwgbWFpbiA9ICIiKQphYmxpbmUodiA9IGMoCiAgcXVhbnRpbGUoVlssIDJdLCAwLjA1KSwKICBxdWFudGlsZShWWywgMl0sIDAuOTUpCiksIGNvbCA9ICJyZWQiLCBsd2QgPSAyKQpgYGAKClZlcnRpY2FsIGxpbmVzIHdlcmUgYWRkZWQgYXQgdGhlIDk1dGggcGVyY2VudGlsZSBmb3IgUEMxIGFuZCB0aGUgNXRoIGFuZCA5NXRoIHBlcmNlbnRpbGVzIGZvciBQQzIgdG8gcmVmbGVjdCB3aGVyZSB0aGUgImhpZ2hlc3QiIChpbiBhYnNvbHV0ZSB2YWx1ZSkgbG9hZGluZ3MgYXJlIHNpdHVhdGVkIChubyBuZWdhdGl2ZSBsb2FkaW5ncyBmb3IgUEMxLCBzbyBvbmx5IHNob3dpbmcgdGhlIDk1dGggcGVyY2VudGlsZSkuCgpfX0ludGVycHJldGF0aW9uOl9fIHJlbWVtYmVyIHRoYXQgdGhlIFBDIGxvYWRpbmdzIHJlZmxlY3QgdGhlICpjb250cmlidXRpb25zKiBvZiBlYWNoIGZlYXR1cmUgKGluIHRoaXMgY2FzZTogZ2VuZSkgdG8gdGhlIFBDLgpGcm9tIHRoZXNlIGhpc3RvZ3JhbXMgaXQgc2hvdWxkIGJlIGNsZWFyIHRoYXQgb25seSBhIG1pbm9yIGZyYWN0aW9uIG9mIHRoZSBnZW5lcyBhcmUgcmVhbGx5IGRyaXZpbmcgdGhlc2UgZmlyc3QgMiBQQ3MsIGVzcGVjaWFsbHkgZm9yIFBDIDIgKHdoZXJlIHRoZSBidWxrIG9mIGdlbmVzIGhhcyBsb2FkaW5ncyBjbG9zZSB0byAwKS4KCjwvZGV0YWlscz4KCgojIyMjIDUuIFdlIGtub3cgdGhhdCB0aGUgZmlyc3QgUEMgJFxtYXRoYmZ7Wl8xfSQsIGlzIGdpdmVuIGJ5IHstfQoKICAkJAogIFxtYXRoYmZ7Wl8xfT1cbWF0aGJme1h9IFxtYXRoYmZ7Vl8xfQogICQkCgogIFdoZXJlICRcbWF0aGJme1ZfMX0kIGFyZSB0aGUgbG9hZGluZ3Mgb2YgdGhlIGZpcnN0IFBDLiBJZiB3ZSBwdXQgdGhpcyBpbiByZWdyZXNzaW9uIG5vdGF0aW9uLCB3ZSBnZXQKCiAgJCQKICBcbWF0aGJme1l9PVxtYXRoYmZ7WH1cYm9sZHN5bWJvbHtcYmV0YX0KICAkJCAKCiAgd2hlcmUgJFxib2xkc3ltYm9se1xiZXRhfSQgbm93IHJlcHJlc2VudCB0aGUgJFxtYXRoYmZ7Vl8xfSQgbG9hZGluZ3MsIGFuZAogICRcbWF0aGJme1l9JCBpcyAkXG1hdGhiZntaXzF9JC4KCiAgUmVjYWxsIHRoYXQgdGhlIHJpZGdlIHJlZ3Jlc3Npb24gc29sdXRpb24gZm9yICRcYm9sZHN5bWJvbHtcYmV0YX0kIGlzIGdpdmVuIGJ5CgogICQkCiAgXGJvbGRzeW1ib2x7XGJldGF9X3tcdGV4dHtyaWRnZX19CiAgICA9IChcbWF0aGJme1heVFh9K1xnYW1tYVxtYXRoYmZ7SX0pXnstMX1cbWF0aGJme1h9XlRcbWF0aGJmIFkKICAkJAoKICBfX1F1ZXN0aW9uOl9fIFJlcGxhY2UgJFxtYXRoYmZ7WX0kIHdpdGggJFxtYXRoYmZ7Wl8xfSQgYW5kIHZlcmlmeSBpbiAKICBgUmAgdGhhdAoKICAkJAogIFxtYXRoYmYgVl8xID0gCiAgICBcZnJhY3tcYm9sZHN5bWJvbFxiZXRhX3tcdGV4dHtyaWRnZX19fXtcfFxib2xkc3ltYm9sXGJldGFfe1x0ZXh0e3JpZGdlfX1cfF8yfQogICQkCgogIGZvciBhbnkgJFxnYW1tYSA+IDAkIG9mIHlvdXIgY2hvaWNlLgogIFJlbWVtYmVyIHRoYXQKICAkXHxcYm9sZHN5bWJvbFxiZXRhX3tcdGV4dHtyaWRnZX19XHxfMiA9IFxzcXJ0e1xzdW1fe2o9MX1ecCBcYmV0YV9qXjJ9JAoKPGRldGFpbHM+PHN1bW1hcnk+U29sdXRpb248L3N1bW1hcnk+CgpgYGB7ciwgY2FjaGU9VFJVRX0KcCA8LSBkaW0oWClbMl0KCiMgTGV0J3MgdGFrZSBhIHJpZGljdWxvdXNseSBsYXJnZSBnYW1tYTogMjAwCnRYWF9nYW1tYV9JIDwtIHQoWCkgJSolIFggKyAyMDAgKiBkaWFnKHApCgojIyBUaGlzIG1pZ2h0IHRha2UgYSB3aGlsZSB0byBjYWxjdWxhdGUKYmV0YV9yaWRnZSA8LSBzb2x2ZSh0WFhfZ2FtbWFfSSkgJSolIHQoWCkgJSolIFpbLCAxXQoKI3x8YmV0YV9yaWRnZXx8XzIKbWFnX2JldGFfcmlkZ2UgPC0gc3FydChzdW0oYmV0YV9yaWRnZV4yKSkKYGBgCgpGb3IgY29tcGFyaXNvbiwgbGV0J3MgcGxvdAokXGJvbGRzeW1ib2xcYmV0YV97XHRleHR7cmlkZ2V9fSAvIFx8XGJvbGRzeW1ib2xcYmV0YV97XHRleHR7cmlkZ2V9fVx8XzIkCmFnYWluc3QgdGhlIFBDMSBsb2FkaW5ncyAkXG1hdGhiZiBWXzEkLgoKYGBge3IgYmV0YV9yaWRnZS12cy1WMS1wbG90fQpwYXIobWZyb3cgPSBjKDEsIDEpKQoKIyBQbG90IGFnYWluc3QgdGhlIGxvYWRpbmdzCnBsb3Qoc3ZkX1gkdlssIDFdLCBiZXRhX3JpZGdlIC8gbWFnX2JldGFfcmlkZ2UsCiAgeGxhYiA9IGV4cHJlc3Npb24oIlYiWzFdKSwKICB5bGFiID0gZXhwcmVzc2lvbihiZXRhWyJyaWRnZSJdIC8gcGFzdGUoInx8IiwgYmV0YSwgInx8IilbMl0pLAogIHBjaCA9IDE5CikKIyBPciBqdXN0IHNpbXBseSB0YWtlIHRoZSBkaWZmZXJlbmNlIGJldHdlZW4gdGhlbQptYXgoYWJzKHN2ZF9YJHZbLCAxXSAtIGJldGFfcmlkZ2UgLyBtYWdfYmV0YV9yaWRnZSkpCmBgYAoKPC9kZXRhaWxzPgoKICBUaGVuIHlvdSd2ZSBwcm92ZW4gdGhhdCB0aGUgbG9hZGluZ3Mgb2YgdGhlIFBDcyBjYW4gYmUgY29tcHV0ZWQgZnJvbSB0aGUKICByaWRnZSByZWdyZXNzaW9uIGNvZWZmaWNpZW50cy4KICAKICBXZSBjYW4gbm93IG1vdmUgb24gdG8gc3BhcnNlIFBDQSwgd2hlcmUgd2UgdXNlIHBlbmFsaXNlZCByZWdyZXNzaW9uIHRvIHNldCBzb21lIG9mIHRoZSBsb2FkaW5ncyAoJFxib2xkc3ltYm9se1xiZXRhfSRzKSB0byB6ZXJvLgoKIyMjIyA2LiBXZSBoYXZlIHNlZW4gZWxhc3RpYyBuZXQgdHlwZSBwZW5hbHRpZXMuIElmIHdlIGNhbGwgdGhlIGxvYWRpbmdzIG9mIHRoZSBmaXJzdCBQQyBhcyAkXGJvbGRzeW1ib2x7XGJldGF9JCBhbmQgZGVub3RlIFBDMSBhcyAkXG1hdGhiZntZfSQsIHdlIHNhdyB0aGF0ICRcYm9sZHN5bWJvbHtcYmV0YX0kIGNhbiBiZSBkZXJpdmVkIGJ5IG1pbmltaXNpbmcgdGhlIFNTRTogey19CgogICQkCiAgXHRleHR7U1NFfT1cfFxtYXRoYmYgWS1cbWF0aGJme1h9XGJvbGRzeW1ib2wgXGJldGFcfF4yXzIrXGdhbW1hXHxcYm9sZHN5bWJvbCBcYmV0YVx8XjJfMiBcdGV4dHsgZm9yIGFueSB9IFxnYW1tYT4wKS4KICAkJAoKICBOb3RlIHRoYXQgdGhpcyBlcXVhbGl0eSBob2xkcyBmb3IgYW55IHBvc2l0aXZlICRcZ2FtbWEkLiBTbyB3ZSBjYW4ndCBwZW5hbGlzZSB0aGUgJFxib2xkc3ltYm9sXGJldGEkcyBub3QgYmVpbmcgemVybyBieSBjaG9vc2luZyBhIGRpZmZlcmVudCAkXGdhbW1hJC4KICBSZW1lbWJlciB0aGF0IGZvciByaWRnZSByZWdyZXNzaW9uLCB0aGUgJFxiZXRhJCdzIG9ubHkgYmVjb21lIDAgZm9yICRcZ2FtbWEgPSBcaW5mdHkkLgogIEZvcnR1bmF0ZWx5IHdlIGhhdmUgb3RoZXIgdG9vbHMuIAoKICBJbiBhZGRpdGlvbiB0byB0aGUgJExfMiQgcGVuYWxpemF0aW9uLCB3ZSBjYW4gdXNlIHRoZSAkTF8xJCBwZW5hbGl6YXRpb24gb2YgTGFzc28uIFRoaXMgYWxsb3dzIHVzIHRvIGZvcmNlIHNvbWUgb2YgdGhlICRcYm9sZHN5bWJvbFxiZXRhJHMgdG8gYmVjb21lIHplcm8uIFRoZSBuZXcgU1NFIHdpbGwgYmUgb2YgdGhlIGZvcm06CgogICQkCiAgXHRleHR7U1NFfT1cfFxtYXRoYmYgWS1cbWF0aGJme1h9XGJvbGRzeW1ib2wgXGJldGFcfF4yXzIrXGdhbW1hXHxcYm9sZHN5bWJvbCBcYmV0YVx8XjJfMiArXGdhbW1hXzFcfFxib2xkc3ltYm9sIFxiZXRhXHxfMS4KICAkJAoKICBUaGlzIGlzIGV4YWN0bHkgdGhlIGVsYXN0aWMgbmV0IFNTRSwgYW5kICRcZ2FtbWFfMSQgaXMgdGhlIExhc3NvIHR5cGUgcGVuYWx0eSB0aGF0IHNldHMgbG9hZGluZ3MgdG8gemVyby4gCgogIE5vdyB1c2UgdGhlIGBnbG1uZXRgIGFuZCBgY3YuZ2xtbmV0YCBmdW5jdGlvbnMgdG8gc2VsZWN0IGFuIGFwcHJvcHJpYXRlIG51bWJlciBvZiBub24temVybyBsb2FkaW5ncyBmb3IgdGhlIGZpcnN0IGFuZCBzZWNvbmQgUENzLgogIFVzZSBgYWxwaGEgPSAwLjVgIGluIHlvdXIgZWxhc3RpYyBuZXQgbW9kZWxzIGFuZCB1c2UgYFoxYCBhbmQgYFoyYCBhcyB0aGUgcmVzcG9uc2UgdmFyaWFibGVzICh5b3Ugc2hvdWxkIGZpdCAyIHNlcGFyYXRlIG1vZGVscykuCgo8ZGV0YWlscz48c3VtbWFyeT5Tb2x1dGlvbjwvc3VtbWFyeT4KCmBgYHtyIFBDLWN2X2dsbW5ldH0KcGFyKG1mcm93ID0gYygxLCAyKSkKIyBGb3IgUEMxCnNldC5zZWVkKDQ1KQpmaXRfbG9hZGluZ3MxIDwtIGN2LmdsbW5ldChYLCBaWywgMV0sCiAgYWxwaGEgPSAwLjUsIG5mb2xkcyA9IDUKKQpwbG90KGZpdF9sb2FkaW5nczEsIG1haW4gPSAiUEMxIikKCiMgRm9yIFBDMgpzZXQuc2VlZCg0NSkKZml0X2xvYWRpbmdzMiA8LSBjdi5nbG1uZXQoWCwgWlssIDJdLCBhbHBoYSA9IDAuNSwgbmZvbGRzID0gNSkKcGxvdChmaXRfbG9hZGluZ3MyLCBtYWluID0gIlBDMiIpCmBgYAoKVG8gc2VlIGhvdyBtYW55IGZlYXR1cmVzIGFyZSBpbXBvcnRhbnQgZm9yIGVhY2ggZml0LCB3ZSBjYW4gbWFrZSBjb2VmZmljaWVudCBwcm9maWxlIHBsb3RzLgpOb3RlIHRoYXQgdGhlIGFjdHVhbCBgZ2xtbmV0YCBmaXQgb2JqZWN0cyBhcmUgaW5jbHVkZWQgaW4gdGhlIGBjdi5nbG1uZXRgIG9iamVjdHMgdW5kZXIgYCRnbG1uZXQuZml0YC4KCkkgYWRkZWQgdmVydGljYWwgZGFzaGVkIGxpbmVzIGF0IGBsYW1iZGEubWluYCBhbmQgYGxhbWJkYS4xc2VgLgoKYGBge3IgUEMtZ2xtbmV0LWNvZWZmaWNpZW50LXBsb3RzLCBmaWcuYXNwID0gMS4yfQpwYXIobWZyb3cgPSBjKDIsIDEpKQpwbG90KGZpdF9sb2FkaW5nczEkZ2xtbmV0LmZpdCwgbWFpbiA9ICJQQzEiLCB4dmFyID0gImxhbWJkYSIpCmFibGluZSh2ID0gbG9nKGZpdF9sb2FkaW5nczEkbGFtYmRhLm1pbiksIGx0eSA9IDMpCmFibGluZSh2ID0gbG9nKGZpdF9sb2FkaW5nczEkbGFtYmRhLjFzZSksIGx0eSA9IDMpCnBsb3QoZml0X2xvYWRpbmdzMiRnbG1uZXQuZml0LCBtYWluID0gIlBDMiIsIHh2YXIgPSAibGFtYmRhIikKYWJsaW5lKHYgPSBsb2coZml0X2xvYWRpbmdzMiRsYW1iZGEubWluKSwgbHR5ID0gMykKYWJsaW5lKHYgPSBsb2coZml0X2xvYWRpbmdzMiRsYW1iZGEuMXNlKSwgbHR5ID0gMykKYGBgCgpUbyBnZXQgdGhlIGV4YWN0IG51bWJlciBvZiBub24temVybyBjb2VmZmljaWVudHMgZm9yIGBsYW1iZGEubWluYCBhbmQgYGxhbWJkYS4xc2VgLCBqdXN0IHByaW50IHRoZSBgY3YuZ2xtbmV0YCBvYmplY3RzLgpgYGB7cn0KZml0X2xvYWRpbmdzMQpmaXRfbG9hZGluZ3MyCmBgYAoKX19JbnRlcnByZXRhdGlvbjpfXyBmb3IgUEMxLCB3ZSBzZWUgdGhhdCBhcm91bmQgOTAgdG8gMTAwIGdlbmVzIGFyZSBtb3N0IGltcG9ydGFudCwgYmFzZWQgb24gdGhlIHJhbmdlIG9mICRcZ2FtbWEkIChgbGFtYmRhYCkgdmFsdWVzIGJldHdlZW4gYGxhbWJkYS5taW5gIGFuZCBgbGFtYmRhLjFzZWAuClNpbWlsYXJseSwgZm9yIFBDMiB3ZSBnZXQgYXJvdW5kIDY1IC0gODAgZ2VuZXMuCldpdGggdGhpcyBpbmZvcm1hdGlvbiwgd2UgY2FuIG5vdyBjaG9vc2Ugb25lIG9mIHRoZSBgbGFtYmRhYCB2YWx1ZXMgYW5kIGNvbnN0cnVjdCBQQ3MgdGhhdCB3aWxsIGhhdmUgbm9uLXplcm8gbG9hZGluZ3MgZm9yIG9ubHkgYSBmZXcgZ2VuZXMuCgo8L2RldGFpbHM+CgoKIyMjIyA3LiBQbG90IHlvdXIgbmV3bHkgZGVyaXZlZCBmaXJzdCBhbmQgc2Vjb25kIFBDcyBhbmQgdXNlIGRpZmZlcmVudCBjb2xvcnMgZm9yIHRoZSB0dW1vciBhbmQgbm9ybWFsIHRpc3N1ZXMuIEhvdyB3ZWxsIGRvIHRoZXNlIG5ldyBQQ3Mgc2VwYXJhdGUgdGhlIHJlc3BvbnNlIGNsYXNzZXM/IENvbXBhcmUgdGhpcyB0byB0aGUgcGxvdCBpbiBleGVyY2lzZSAzLiBGb3JtdWxhdGUgYSBjb25jbHVzaW9uIGJhc2VkIG9uIHRoZSB0d28gZ3JhcGhzLiB7LX0KClVzZSBgbGFtYmRhLjFzZWAgYXMgeW91ciBjaG9pY2UgZm9yICRcZ2FtbWEkLgpZb3UgY2FuIGV4dHJhY3QgdGhlIGNvZWZmaWNpZW50cyAoJFxiZXRhJCdzKSBmcm9tIHRoZSBgY3YuZ2xtbmV0YCBvYmplY3RzIHVzaW5nIHRoZSBgY29lZmAgZnVuY3Rpb24sIHNldCB0aGUgYHNgIGFyZ3VtZW50IHRvIHRoZSBjaG9zZW4gJFxnYW1tYSQuClRoaXMgd2lsbCByZXR1cm4gYSAqc3BhcnNlIG1hdHJpeCogYnkgZGVmYXVsdCwgc28geW91IG1pZ2h0IHdhbnQgdG8gdXNlIGBhcy52ZWN0b3JgIHRvIGNvbnZlcnQgdG8gYSBtb3JlIGZyaWVuZGx5IGZvcm1hdC4KCjxkZXRhaWxzPjxzdW1tYXJ5PlNvbHV0aW9uPC9zdW1tYXJ5PgoKYGBge3Igc3BhcnNlLVBDQS1wbG90cywgZmlnLndpZHRoID0gOX0Kc3BhcnNlX2xvYWRpbmdzMSA8LSBhcy52ZWN0b3IoY29lZihmaXRfbG9hZGluZ3MxLCBzID0gZml0X2xvYWRpbmdzMSRsYW1iZGEuMXNlKSkKc3BhcnNlX2xvYWRpbmdzMiA8LSBhcy52ZWN0b3IoY29lZihmaXRfbG9hZGluZ3MyLCBzID0gZml0X2xvYWRpbmdzMiRsYW1iZGEuMXNlKSkKCiMjIEhvdyBtYW55IG5vbi16ZXJvIGxvYWRpbmdzIGRvIHdlIGhhdmUgKGV4Y2x1ZGluZyB0aGUgaW50ZXJjZXB0KT8KKG5vbl96ZXJvMSA8LSBzdW0oYWJzKHNwYXJzZV9sb2FkaW5nczFbLTFdKSA+IDApKQoobm9uX3plcm8yIDwtIHN1bShhYnMoc3BhcnNlX2xvYWRpbmdzMlstMV0pID4gMCkpCgpTUEMxIDwtIFggJSolIHNwYXJzZV9sb2FkaW5nczFbLTFdICMgd2l0aG91dCB0aGUgaW50ZXJjZXB0ClNQQzIgPC0gWCAlKiUgc3BhcnNlX2xvYWRpbmdzMlstMV0gIyB3aXRob3V0IHRoZSBpbnRlcmNlcHQKCnBhcihtZnJvdyA9IGMoMSwgMikpCnBsb3QoWlssIDFdLCBaWywgMl0sCiAgY29sID0gY29sc1tZXSwgeGxhYiA9ICJQQzEiLCB5bGFiID0gIlBDMiIsIHBjaCA9IDE2LAogIG1haW4gPSAiQWxsIDIwMDAgZ2VuZXMgXG5mb3IgUEMxIGFuZCBQQzIiCikKbGVnZW5kKC00NSwgLTI1LAogIGxlZ2VuZCA9IGMoIk5vcm1hbCB0aXNzdWUiLCAiVHVtb3IgdGlzc3VlIiksIGJ0eSA9ICJuIiwKICBjb2wgPSBjKCJyZWQiLCAiYmx1ZSIpLCBwY2ggPSBjKDE2LCAxNiksIGNleCA9IDEKKQpwbG90KFNQQzEsIFNQQzIsCiAgY29sID0gY29sc1tZXSwgeGxhYiA9ICJTUEMxIiwgeWxhYiA9ICJTUEMyIiwgcGNoID0gMTYsCiAgbWFpbiA9IHBhc3RlKG5vbl96ZXJvMSwgImdlbmVzIGZvciBTUEMxIFxuIGFuZCIsIG5vbl96ZXJvMiwgImdlbmVzIGZvciBTUEMyIikKKQpsZWdlbmQoLTQ1LCAtMjUsCiAgbGVnZW5kID0gYygiTm9ybWFsIHRpc3N1ZSIsICJUdW1vciB0aXNzdWUiKSwgYnR5ID0gIm4iLAogIGNvbCA9IGMoInJlZCIsICJibHVlIiksIHBjaCA9IGMoMTYsIDE2KSwgY2V4ID0gMQopCmBgYAoKX19Db25jbHVzaW9uOl9fIE9ubHkgYWJvdXQgCmByIHNwcmludGYoIiUuMmYiLCAxMDAgKiBub25femVybzEgLyBsZW5ndGgoc3BhcnNlX2xvYWRpbmdzMSkpYCUgKGByIG5vbl96ZXJvMWApIG9mIHRoZSBnZW5lcyBhcmUgdXNlZnVsIGZvciBQQzEgYW5kIG9ubHkgYWJvdXQKYHIgc3ByaW50ZigiJS4yZiIsIDEwMCAqIG5vbl96ZXJvMiAvIGxlbmd0aChzcGFyc2VfbG9hZGluZ3MyKSlgJSAoYHIgbm9uX3plcm8yYCkgb2YgdGhlIGdlbmVzIGFyZSB1c2VmdWwgZm9yIFBDMiAuClNwYXJzZSBQQ0EgaGFzIHN1Y2NlZWRlZCBpbiBzZXR0aW5nIHRoZSB1bmluZm9ybWF0aXZlIGdlbmVzL2xvYWRpbmdzIHRvIHplcm8uCkluIHNlcGVyYXRpbmcgbm9ybWFsIGFuZCB0dW1vdXIgdGlzc3VlcywgU1BDQSBwZXJmb3JtcyB2aXR1YWxseSB0aGUgc2FtZSBhcyBQQ0EuClRoZSBrZXkgcG9pbnQgaGVyZSBpcyB0aGF0IFNQQ0EgdXNlcyBvbmx5IGEgbWlub3IgcHJvcG9ydGlvbiBvZiB0aGUgb3JpZ2luYWwgZmVhdHVyZXMgdG8gYWNoaWV2ZSB0aGUgc2FtZSByZXN1bHRzLCBzdWdnZXN0aW5nIHRoYXQgdGhlIGxhcmdlc3QgdmFyaWFiaWxpdHkgb2YgdGhlIGRhdGEgaXMgb25seSBkcml2ZW4gYnkgYSBtaW5vcml0eSBvZiBmZWF0dXJlcy4gCgo8L2RldGFpbHM+CgoKIyBMREEKCkluIHRoaXMgc2VjdGlvbiwgd2Ugd2lsbCBwZXJmb3JtIExEQSBvbiB0aGUgZ2VuZSBkYXRhIHRvIGdldCBhIGNsZWFyIHVuZGVyc3RhbmRpbmcgb24gdGhlIGdlbmVzIHJlc3BvbnNpYmxlIGZvciBzZXBhcmF0aW5nIHRoZSB0dW1vciBhbmQgbm9ybWFsIHRpc3N1ZSBncm91cHMuCgpSZW1lbWJlciB0aGF0IHRoZSBMREEgcHJvYmxlbSBjYW4gYmUgc3RhdGVkIGFzCgokJApcbWF0aGJme3Z9CiAgPSBcdGV4dHtBcmdNYXh9X2EgXGZyYWN7XG1hdGhiZnthXlQgQiBhfX17XG1hdGhiZnthXlQgVyBhfX0KICAgIFx0ZXh0eyBzdWJqZWN0IHRvIH0KICAgIFxtYXRoYmZ7YV5UIFcgYX0gPSAxCiQkCgpXaGljaCBpcyBlcXVpdmFsZW50IHRvIHRoZSBlaWdlbnZhbHVlL2VpZ2VudmVjdG9yIHByb2JsZW0gCgokJApcbWF0aGJmIFdeey0xfSBcbWF0aGJmIEIgXG1hdGhiZiBhPVxsYW1iZGEgXG1hdGhiZiBhCiQkCgpJbiBvdXIgY2FzZSwgd2hlcmUgd2Ugb25seSBoYXZlIHR3byBncm91cHMsIG9ubHkgb25lIHNvbHV0aW9uIGV4aXN0cy4KVGhpcyBpcyB0aGUgZWlnZW52ZWN0b3IgJFxtYXRoYmYgdiQgYW5kIGl0cyBlaWdlbnZhbHVlLgpXZSBjYW4gdGhlbiB3cml0ZSB0aGUgUEMtc2NvcmVzIGFzCgokJApcbWF0aGJmIFo9XG1hdGhiZiBYIFxtYXRoYmYgdgokJAoKCiMjIEV4ZXJjaXNlcyB7LX0KCiMjIyMgMS4gVGhlIGZ1bmN0aW9uIGBsZGEoKWAgaW4gdGhlIGBNQVNTYCBwYWNrYWdlIHBlcmZvcm1zIExEQS4gU2ltaWxhciB0byB0aGUgYGdsbW5ldCgpYCBmdW5jdGlvbiwgeW91IHdpbGwgbmVlZCB0byBzdXBwbHkgYW4gYHhgIGFyZ3VtZW50LiBUaGUgYXJndW1lbnQgYGdyb3VwaW5nYCBpcyB0aGUgdmVjdG9yIHdpdGggdGhlIHJlc3BvbnNlLCBhbmQgdGhpcyBoYXMgdG8gYmUgYSBmYWN0b3IgdmFyaWFibGUuIFlvdSBoYXZlIHRoYXQgc3RvcmVkIGFzIGBZYC4gRml0IGFuIExEQSBvbiBgWGAgd2l0aCBncm91cGluZyBgWWAuIHstfQoKPGRldGFpbHM+PHN1bW1hcnk+U29sdXRpb248L3N1bW1hcnk+CgpgYGB7cn0KIyMgUGVyZm9ybSBMREEKYWxvbl9sZGEgPC0gbGRhKHggPSBYLCBncm91cGluZyA9IFkpCmBgYAoKTm90ZSB0aGUgd2FybmluZyByZWdhcmRpbmcgY29sbGluZWFyaXR5LgoKPC9kZXRhaWxzPgoKIyMjIyAyLiAkXG1hdGhiZiB2JCBjYW4gYmUgZXh0cmFjdGVkIGZyb20gdGhlIG9iamVjdCBhcyB0aGUgZWxlbWVudCBgc2NhbGluZ2AuIEV4dHJhY3QgdGhpcyBhbmQgY2FsbCBpdCBgVjFgLiB7LX0KCjxkZXRhaWxzPjxzdW1tYXJ5PlNvbHV0aW9uPC9zdW1tYXJ5PgoKYGBge3J9ClYxIDwtIGFsb25fbGRhJHNjYWxpbmcKYGBgCgo8L2RldGFpbHM+CgojIyMjIDMuIENvbXB1dGUgJFxtYXRoYmYgWiQgYW5kIGNhbGwgaXQgYFoxYC4gey19Cgo8ZGV0YWlscz48c3VtbWFyeT5Tb2x1dGlvbjwvc3VtbWFyeT4KCmBgYHtyfQpaMSA8LSBYICUqJSBWMQpgYGAKCjwvZGV0YWlscz4KCiMjIyMgNC4gTm93IGNoZWNrIHRvIHNlZSBob3cgd2VsbCB5b3VyIHNpbmdsZSBMREEvYFoxYCBzZXBhcmF0ZXMgdGhlIHR1bW91ciBhbmQgbm9ybWFsIHRpc3N1ZXMgZ3JvdXBzLiBDb21wYXJlIGl0IHRvIHRoZSBwbG90IGluICgzKSBvZiB0aGUgcHJldmlvdXMgZXhlcmNpc2UsIGFuZCBvYnNlcnZlIHdoZXRoZXIgTERBIHBlcmZvcm1zIGJldHRlciBpbiBzZXBhcmF0aW5nIHRoZSB0d28gZ3JvdXBzLiB7LX0KCllvdSBjb3VsZCB1c2UgYSBib3hwbG90IGZvciB2aXN1YWxpemF0aW9uLCBidXQgZmVlbCBmcmVlIHRvIGJlIGNyZWF0aXZlIQoKPGRldGFpbHM+PHN1bW1hcnk+U29sdXRpb248L3N1bW1hcnk+CgpgYGB7cn0KcGFyKG1mcm93ID0gYygxLCAxKSkKYm94cGxvdChaMSB+IFksIGNvbCA9IGNvbHMsIHlsYWIgPSBleHByZXNzaW9uKCJaIlsxXSksIAogICAgICAgIG1haW4gPSAiU2VwYXJhdGlvbiBvZiBub3JtYWwgYW5kIHR1bW91ciBzYW1wbGVzIGJ5IExEQSIpCmBgYAoKPC9kZXRhaWxzPgoKIyMjIyA1LiBBcyB3YXMgdGhlIGNhc2Ugd2l0aCB0aGUgZmlyc3QgYW5kIHNlY29uZCBQQywgYFoxYCBpcyBhIGxpbmVhciBjb21iaW5hdGlvbiBkZXRlcm1pbmVkIGJ5IHRoZSBsb2FkaW5ncyAkXG1hdGhiZiB2JC4gVGhlc2UgYXJlIG5vbi16ZXJvIGZvciBhbGwgZ2VuZXMuIFRvIGdldCBhIGZldyBpbnRlcmVzdGluZyBnZW5lcywgeW91IGNhbiB1c2UgYSBzcGFyc2UgTERBLiBOb3RlIHRoYXQgeW91IGNhbiB1c2UgdGhlIHBhY2thZ2UgYHNwYXJzZUxEQWAgd2l0aCB0aGUgZnVuY3Rpb24gYHNkYSgpYCB0byBwZXJmb3JtIHRoaXMgYW5hbHlzaXMsIGJ1dCBsZXQncyBkbyB0aGlzIGFzIHdlIGRpZCBmb3Igc3BhcnNlIFBDQS4gey19CgphLiBVc2UgdGhlIGBjdi5nbG1uZXRgIGZ1bmN0aW9uIHdpdGggYHg9WGAsIGB5PVoxYCBhbmQgYGFscGhhPTAuNWAgdG8gc2VsZWN0IGFuIGFwcHJvcHJpYXRlIG51bWJlciBvZiBub24temVybyBnZW5lcyBmb3IgdGhlIExEQS4KCjxkZXRhaWxzPjxzdW1tYXJ5PlNvbHV0aW9uPC9zdW1tYXJ5PgoKYGBge3J9CnNldC5zZWVkKDQ1KQpsZGFfbG9hZGluZ3MgPC0gY3YuZ2xtbmV0KFgsIFoxLCBhbHBoYSA9IDAuNSwgbmZvbGRzID0gNSkKcGxvdChsZGFfbG9hZGluZ3MpCmBgYAoKPC9kZXRhaWxzPgoKYi4gQ2hlY2sgdG8gc2VlIGhvdyB3ZWxsIHRoaXMgc3Vic2V0IG9mIGdlbmVzIGRvZXMgaW4gc2VwYXJhdGluZyB0aGUgdHVtb3VyIGFuZCBub3JtYWwgdGlzc3VlIGdyb3Vwcy4gQXJlIHRoZXkgYXMgZWZmZWN0aXZlIGFzIHRoZSBlbnRpcmUgc2V0IG9mIGdlbmVzPwoKPGRldGFpbHM+PHN1bW1hcnk+U29sdXRpb248L3N1bW1hcnk+CgpgYGB7cn0Kc3BhcnNlX2xkYV9sb2FkaW5ncyA8LSBhcy52ZWN0b3IoCiAgY29lZihsZGFfbG9hZGluZ3MsIHMgPSBsZGFfbG9hZGluZ3MkbGFtYmRhLjFzZSkKKQoKIyBTZWUgdGhlIGdlbmVzIGludm9sdmVkCnBsb3Qoc3BhcnNlX2xkYV9sb2FkaW5nc1tzcGFyc2VfbGRhX2xvYWRpbmdzICE9IDBdLAogIHBjaCA9IDE2LCB0eXBlID0gIm4iLCB4bGltID0gYygwLCAyMCkKKQp0ZXh0KAogIHNwYXJzZV9sZGFfbG9hZGluZ3Nbc3BhcnNlX2xkYV9sb2FkaW5ncyAhPSAwXSwKICBjb2xuYW1lcyhYKVtzcGFyc2VfbGRhX2xvYWRpbmdzICE9IDBdCikKYWJsaW5lKGggPSAwLCBsd2QgPSAzKQoKIyB3aXRob3V0IHRoZSBpbnRlcmNlcHQKU0xEQSA8LSBYICUqJSBzcGFyc2VfbGRhX2xvYWRpbmdzWy0xXQoKIyBudW1iZXIgb2Ygbm9uLXplcm8gbG9hZGluZ3MKbl9ub256ZXJvIDwtIHN1bShzcGFyc2VfbGRhX2xvYWRpbmdzID4gMCkKCiMgYm94cGxvdHMKcGFyKG1mcm93ID0gYygxLCAyKSkKYm94cGxvdChaMSB+IFksCiAgY29sID0gY29scywgeWxhYiA9ICJMREEiLAogIG1haW4gPSAiRW50aXJlIHNldCBvZiAyMDAwIGdlbmVzIgopCmJveHBsb3QoU0xEQSB+IFksCiAgY29sID0gY29scywgeWxhYiA9ICJTTERBIiwKICBtYWluID0gc3ByaW50ZigiU3Vic2V0IG9mICVkIGdlbmVzIiwgbl9ub256ZXJvKQopCmBgYAoKPC9kZXRhaWxzPgoKCiMgUmVmZXJlbmNlcyB7LX0K</div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("Lab4-Sparse-PCA-LDA.Rmd");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
