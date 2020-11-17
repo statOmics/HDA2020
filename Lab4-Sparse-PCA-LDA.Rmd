@@ -37,6 +37,8 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.align = "center",
+  fig.width = 8,
+  fig.asp = 0.618,
   out.width = "100%"
 )
 ```
@@ -45,7 +47,7 @@ knitr::opts_chunk$set(
 
 ```{r libraries, warning=FALSE, message=FALSE}
 ## install packages with:
-## install.packages(c("glmnet"))
+## install.packages(c("glmnet", "MASS"))
 library(glmnet)
 library(MASS)
 ```
@@ -69,6 +71,7 @@ You can read the data in as follows:
 ```{r load-data}
 Alon1999 <- read.csv("https://github.com/statOmics/HDA2020/raw/data/Alon1999.csv")
 str(Alon1999[, 1:10])
+table(Alon1999$Y)
 ```
 
 The dataset contains one variable named `Y` with the values `t` and `n`.
@@ -97,24 +100,44 @@ Use these objects to solve the following exercises.
 #### 1. Perform a SVD on `X`, and store the scores of the PCs in a matrix `Z`. {-}
 
 <details><summary>Solution</summary>
+
+Using `svd`:
+
 ```{r}
 svd_X <- svd(X)
 Z <- svd_X$u %*% diag(svd_X$d) # Calculate the scores
 V <- svd_X$v                 # Calculate the loadings
 ```
+
+Using `prcomp`:
+
+```{r}
+## X is already centered and scaled so no need to do again
+pca_x <- prcomp(X, center = FALSE, scale. = FALSE)
+## The scores are given by `pca_x$x`, the loadings are `pca_x$rotation`
+```
+
 </details>
 
 
 #### 2. Plot the singular values and confirm that the first and second PCs can approximate the data to some extent. {-}
 
 <details><summary>Solution</summary>
-```{r}
-plot(svd_X$d,
-  type = "b",
-  ylab = "Singular values",
-  xlab = "PCs"
+
+```{r pca-singular_values-plot}
+## Plotting parameters
+par(pch = 19, mfrow = c(1, 2))
+
+plot(svd_X$d, type = "b", ylab = "Singular values", xlab = "PCs")
+
+## Percentage variance explained for each PC
+var_explained <- svd_X$d^2 / sum(svd_X$d^2)
+plot(var_explained,
+  type = "b", ylab = "Percent variance explained", xlab = "PCs",
+  col = 2
 )
 ```
+
 </details>
 
 
@@ -123,9 +146,10 @@ plot(svd_X$d,
 In order to plot different colors and add a legend with base `R` plotting, you can do the following:
 
 ```{r}
+par(mfrow = c(1, 1))
 cols <- c("n" = "red", "t" = "blue")
 plot(X[, 1], X[, 2], col = cols[Y], pch = 19)
-legend("bottomright", c("Normal", "Tumor"),
+legend("topleft", c("Normal", "Tumor"),
   col = c("red", "blue"),
   pch = 19, title = "Tissue"
 )
@@ -136,37 +160,50 @@ points (`pch = 19`), and the color red for normal tissue and blue for
 tumorous tissue. You can adapt this code to create the proper plot.
 
 <details><summary>Solution</summary>
-```{r}
+
+```{r pca-plot}
 cols <- c("n" = "red", "t" = "blue")
 plot(Z[, 1], Z[, 2],
   col = cols[Y],
-  xlab = "PC1", ylab = "PC2", pch = 19, cex = 1.5
+  xlab = "PC1", ylab = "PC2", pch = 19
 )
-legend("bottomleft", c("Normal", "Tumor"),
+legend("topleft", c("Normal", "Tumor"),
   col = c("red", "blue"),
   pch = 19, title = "Tissue"
 )
 ```
+
+__Interpretation:__ using only the first 2 PCs does not seem to separate the tumour and normal cases clearly.
+
 </details>
 
 
 #### 4. Plot histograms of the loadings of the first and second PCs. Which loadings are the most important? {-}
 
+You can use the `hist` function to plot a histogram.
+Be sure to you use an appropriate value for the `breaks` argument.
+
 <details><summary>Solution</summary>
 
-```{r}
+```{r pc-loadings, fig.asp = 1.2}
+par(mfrow = c(2, 1))
 # First
-hist(V[, 1], breaks = 50)
+hist(V[, 1], breaks = 50, xlab = "PC 1 loadings", main = "")
 # Add vertical line at 95% quantile
 abline(v = quantile(V[, 1], 0.95), col = "red", lwd = 2)
 
 # Second
-hist(V[, 2], breaks = 50)
+hist(V[, 2], breaks = 50, xlab = "PC 2 loadings", main = "")
 abline(v = c(
   quantile(V[, 2], 0.05),
   quantile(V[, 2], 0.95)
 ), col = "red", lwd = 2)
 ```
+
+Vertical lines were added at the 95th percentile for PC1 and the 5th and 95th percentiles for PC2 to reflect where the "highest" (in absolute value) loadings are situated (no negative loadings for PC1, so only showing the 95th percentile).
+
+__Interpretation:__ remember that the PC loadings reflect the *contributions* of each feature (in this case: gene) to the PC.
+From these histograms it should be clear that only a minor fraction of the genes are really driving these first 2 PCs, especially for PC 2 (where the bulk of genes has loadings close to 0).
 
 </details>
 
@@ -207,25 +244,34 @@ abline(v = c(
 
 <details><summary>Solution</summary>
 
-```{r, cache=FALSE}
+```{r, cache=TRUE}
 p <- dim(X)[2]
 
 # Let's take a ridiculously large gamma: 200
 tXX_gamma_I <- t(X) %*% X + 200 * diag(p)
 
-## This might take a while
+## This might take a while to calculate
 beta_ridge <- solve(tXX_gamma_I) %*% t(X) %*% Z[, 1]
 
 #||beta_ridge||_2
 mag_beta_ridge <- sqrt(sum(beta_ridge^2))
+```
 
-# Plot agains the loadings
+For comparison, let's plot
+$\boldsymbol\beta_{\text{ridge}} / \|\boldsymbol\beta_{\text{ridge}}\|_2$
+against the PC1 loadings $\mathbf V_1$.
+
+```{r beta_ridge-vs-V1-plot}
+par(mfrow = c(1, 1))
+
+# Plot against the loadings
 plot(svd_X$v[, 1], beta_ridge / mag_beta_ridge,
-  xlab = "V1",
-  ylab = "beta_ridge/||beta_ridge||"
+  xlab = expression("V"[1]),
+  ylab = expression(beta["ridge"] / paste("||", beta, "||")[2]),
+  pch = 19
 )
 # Or just simply take the difference between them
-all(abs(svd_X$v[, 1] - beta_ridge / mag_beta_ridge) < 1e-13)
+max(abs(svd_X$v[, 1] - beta_ridge / mag_beta_ridge))
 ```
 
 </details>
@@ -241,7 +287,9 @@ all(abs(svd_X$v[, 1] - beta_ridge / mag_beta_ridge) < 1e-13)
   \text{SSE}=\|\mathbf Y-\mathbf{X}\boldsymbol \beta\|^2_2+\gamma\|\boldsymbol \beta\|^2_2 \text{ for any } \gamma>0).
   $$
 
-  Note that this equality holds for all positive $\gamma$, whatsoever. So we can't penalise the $\boldsymbol\beta$s not being zero by choosing a different $\gamma$. Fortunately we have other tools. 
+  Note that this equality holds for any positive $\gamma$. So we can't penalise the $\boldsymbol\beta$s not being zero by choosing a different $\gamma$.
+  Remember that for ridge regression, the $\beta$'s only become 0 for $\gamma = \infty$.
+  Fortunately we have other tools. 
 
   In addition to the $L_2$ penalization, we can use the $L_1$ penalization of Lasso. This allows us to force some of the $\boldsymbol\beta$s to become zero. The new SSE will be of the form:
 
@@ -251,42 +299,76 @@ all(abs(svd_X$v[, 1] - beta_ridge / mag_beta_ridge) < 1e-13)
 
   This is exactly the elastic net SSE, and $\gamma_1$ is the Lasso type penalty that sets loadings to zero. 
 
-  Now use the `glmnet` and `cv.glmnet` functions to select an appropriate number of non-zero loadings for the first and second PCs. Note that for elastic net, `cv.glmnet` takes `alpha=0.5`. Then you replace $\mathbf Y$ with `Z1` for PC1 and `Z2` for PC2.
+  Now use the `glmnet` and `cv.glmnet` functions to select an appropriate number of non-zero loadings for the first and second PCs.
+  Use `alpha = 0.5` in your elastic net models and use `Z1` and `Z2` as the response variables (you should fit 2 separate models).
 
 <details><summary>Solution</summary>
 
-```{r}
+```{r PC-cv_glmnet}
 par(mfrow = c(1, 2))
 # For PC1
 set.seed(45)
 fit_loadings1 <- cv.glmnet(X, Z[, 1],
   alpha = 0.5, nfolds = 5
 )
-plot(fit_loadings1) # 97 to 93 genes will be important
+plot(fit_loadings1, main = "PC1")
 
 # For PC2
 set.seed(45)
 fit_loadings2 <- cv.glmnet(X, Z[, 2], alpha = 0.5, nfolds = 5)
-plot(fit_loadings2) # 77-75 genes will make sense
+plot(fit_loadings2, main = "PC2")
 ```
+
+To see how many features are important for each fit, we can make coefficient profile plots.
+Note that the actual `glmnet` fit objects are included in the `cv.glmnet` objects under `$glmnet.fit`.
+
+I added vertical dashed lines at `lambda.min` and `lambda.1se`.
+
+```{r PC-glmnet-coefficient-plots, fig.asp = 1.2}
+par(mfrow = c(2, 1))
+plot(fit_loadings1$glmnet.fit, main = "PC1", xvar = "lambda")
+abline(v = log(fit_loadings1$lambda.min), lty = 3)
+abline(v = log(fit_loadings1$lambda.1se), lty = 3)
+plot(fit_loadings2$glmnet.fit, main = "PC2", xvar = "lambda")
+abline(v = log(fit_loadings2$lambda.min), lty = 3)
+abline(v = log(fit_loadings2$lambda.1se), lty = 3)
+```
+
+To get the exact number of non-zero coefficients for `lambda.min` and `lambda.1se`, just print the `cv.glmnet` objects.
+```{r}
+fit_loadings1
+fit_loadings2
+```
+
+__Interpretation:__ for PC1, we see that around 90 to 100 genes are most important, based on the range of $\gamma$ (`lambda`) values between `lambda.min` and `lambda.1se`.
+Similarly, for PC2 we get around 65 - 80 genes.
+With this information, we can now choose one of the `lambda` values and construct PCs that will have non-zero loadings for only a few genes.
 
 </details>
 
 
 #### 7. Plot your newly derived first and second PCs and use different colors for the tumor and normal tissues. How well do these new PCs separate the response classes? Compare this to the plot in exercise 3. Formulate a conclusion based on the two graphs. {-}
 
+Use `lambda.1se` as your choice for $\gamma$.
+You can extract the coefficients ($\beta$'s) from the `cv.glmnet` objects using the `coef` function, set the `s` argument to the chosen $\gamma$.
+This will return a *sparse matrix* by default, so you might want to use `as.vector` to convert to a more friendly format.
+
 <details><summary>Solution</summary>
 
-```{r}
+```{r sparse-PCA-plots, fig.width = 9}
 sparse_loadings1 <- as.vector(coef(fit_loadings1, s = fit_loadings1$lambda.1se))
 sparse_loadings2 <- as.vector(coef(fit_loadings2, s = fit_loadings2$lambda.1se))
+
+## How many non-zero loadings do we have (excluding the intercept)?
+(non_zero1 <- sum(abs(sparse_loadings1[-1]) > 0))
+(non_zero2 <- sum(abs(sparse_loadings2[-1]) > 0))
 
 SPC1 <- X %*% sparse_loadings1[-1] # without the intercept
 SPC2 <- X %*% sparse_loadings2[-1] # without the intercept
 
 par(mfrow = c(1, 2))
 plot(Z[, 1], Z[, 2],
-  col = cols[Y], xlab = "PC1", ylab = "PC2", pch = 16, cex = 1.5,
+  col = cols[Y], xlab = "PC1", ylab = "PC2", pch = 16,
   main = "All 2000 genes \nfor PC1 and PC2"
 )
 legend(-45, -25,
@@ -294,8 +376,8 @@ legend(-45, -25,
   col = c("red", "blue"), pch = c(16, 16), cex = 1
 )
 plot(SPC1, SPC2,
-  col = cols[Y], xlab = "SPC1", ylab = "SPC2", pch = 16, cex = 1.5,
-  main = "99 genes for SPC1 \n and 75 genes for SPC2 "
+  col = cols[Y], xlab = "SPC1", ylab = "SPC2", pch = 16,
+  main = paste(non_zero1, "genes for SPC1 \n and", non_zero2, "genes for SPC2")
 )
 legend(-45, -25,
   legend = c("Normal tissue", "Tumor tissue"), bty = "n",
@@ -303,10 +385,12 @@ legend(-45, -25,
 )
 ```
 
-__Conclusion:__ Only about 5% (99/2000) of the genes are useful for PC1 and only about 4% (75/2000) of the genes are useful for PC2 .
-Sparse PCA has succeded in setting the useless genes/loadings to zero.
-In seperating normal and tumour tissues, SPCA perform almost the same as PCA if not better.
-The key point here is that SPCA uses only a tiny proportion of the genes to achieve the same task. 
+__Conclusion:__ Only about 
+`r sprintf("%.2f", 100 * non_zero1 / length(sparse_loadings1))`% (`r non_zero1`) of the genes are useful for PC1 and only about
+`r sprintf("%.2f", 100 * non_zero2 / length(sparse_loadings2))`% (`r non_zero2`) of the genes are useful for PC2 .
+Sparse PCA has succeeded in setting the uninformative genes/loadings to zero.
+In seperating normal and tumour tissues, SPCA performs vitually the same as PCA.
+The key point here is that SPCA uses only a minor proportion of the original features to achieve the same results, suggesting that the largest variability of the data is only driven by a minority of features. 
 
 </details>
 
