@@ -81,8 +81,7 @@ Questions related to the course contents can be asked by posting on [UFora](http
 
 #### Paper Reading Session I: Introduction to Clustering
 
-  - Paper reading session 1, November 12 2020. Fraley and Raftery (1998). How Many Clusters? Which Clustering Method? Answers Via
-  Model-Based Cluster Analysis. The Computer Journal, (41)8:578- 588. [Paper](https://sites.stat.washington.edu/people/raftery/Research/PDF/fraley1998.pdf)
+  - Paper reading session 1, November 12 2020. [Paper: Fraley and Raftery (1998). How Many Clusters? Which Clustering Method? Answers Via Model-Based Cluster Analysis. The Computer Journal, (41)8:578-588.](https://sites.stat.washington.edu/people/raftery/Research/PDF/fraley1998.pdf)
   - [Paper Reading Session I: Introduction to Hierarchical Clustering](./hclust.html)
   - [EM algorithm](./em.html)
 
