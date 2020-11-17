@@ -42,7 +42,7 @@ The dataset `dti` contains
 
 ```{r}
 library(tidyverse)
-library(locfit)
+library(locfdr)
 library(gganimate)
 
 dti <- read_csv("https://raw.githubusercontent.com/statOmics/HDA2020/data/dti.csv")
