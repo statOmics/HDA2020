@@ -110,7 +110,7 @@ str(kidney_data[, 1:10])
 
 ## Extract gene expression data as matrix X
 X <- kidney_data %>% 
-  select(-Patient_ID, -Reject_Status) %>% 
+  dplyr::select(-Patient_ID, -Reject_Status) %>% 
   as.matrix()
 rownames(X) <- kidney_data$Patient_ID
 dim(X)
@@ -198,7 +198,7 @@ When submitting, please use the following format:
 where `Name` is your __family name__.
 It's also recommended to mention your full name in the report itself.
 
-Submissions should be done __through [UFora](?????LINK??????)__.
+Submissions should be done __through [UFora](https://ufora.ugent.be/d2l/home/221212)__.
 
 <span style="color:red">__The deadline for submission is 17/12/2020 at 23:59__</span>
 
