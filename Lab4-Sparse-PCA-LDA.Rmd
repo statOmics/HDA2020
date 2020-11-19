@@ -509,7 +509,7 @@ abline(h = 0, lwd = 3)
 SLDA <- X %*% sparse_lda_loadings[-1]
 
 # number of non-zero loadings
-n_nonzero <- sum(sparse_lda_loadings > 0)
+n_nonzero <- sum(sparse_lda_loadings != 0)
 
 # boxplots
 par(mfrow = c(1, 2))
@@ -524,6 +524,10 @@ boxplot(SLDA ~ Y,
 ```
 
 </details>
+
+
+For a simple explanation of the concept and interpretation of LDA (and other statistical methods), have a look at <https://www.youtube.com/watch?v=azXCzI57Yfc>
+
 
 
 # References {-}
