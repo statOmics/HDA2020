@@ -475,7 +475,7 @@ Otherwise none of the null hypotheses is rejected.
 
 The adjusted $p$-value (also known as the $q$-value in FDR literature):
  \[
-   q_{(i)}=\tilde{p}_{(i)} = \min\left[\min_{j=i,\ldots, m}\left(m p_{(j)}/j,1\right) \right].
+   q_{(i)}=\tilde{p}_{(i)} = \min\left[\min_{j=i,\ldots, m}\left(m p_{(j)}/j\right), 1 \right].
  \]
 
 ---
