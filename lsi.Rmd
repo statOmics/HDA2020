@@ -942,11 +942,12 @@ The massive parallel data structure enables us
 
 Efron relaxes the local fdr method by assuming that the null distribution is a Normal distribution but with a mean and variance that can be estimated empirically (based on all the features).
 
-This can be done by setting the argument `nulltype` in the locfdr function equal to `nulltype=1`, which is the default.
+This can be done by setting the argument `nulltype` in the locfdr function equal to `nulltype = 1`, which is the default or be setting `nulltype = 2`.
 
 The locfdr method then uses
-1. maximum likelihood to estimate the null by only considering the middle part in the distribution of the test statistics (MLE) or
-2. by a geometric method that places the best fitting normal under the peak of the estimate of f(z). (CME)
+
+1. `nulltype = 1` maximum likelihood to estimate the null by only considering the middle part in the distribution of the test statistics (MLE) or
+2. `nulltype = 2` a geometric method that places the best fitting normal under the peak of the estimate of f(z). (CME)
 
 ### Brainscan example
 
