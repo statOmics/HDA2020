@@ -259,7 +259,7 @@ The identity FWER$=1- (1-\alpha)^m$ may be inverted to find the significance lev
 \[
    \alpha = 1-(1-\text{FWER})^{1/m}
 \]
-so that the simultaneous testing procedure controls the FWER at the desired level (method of \v{S}id\'ak).
+so that the simultaneous testing procedure controls the FWER at the desired level (method of Sidàk).
 
 Examples:
 
