@@ -79,7 +79,7 @@ normal (`n`) tissue.
 The goal of this practical is to ...................................
 
 
-## Testing many hypotheses
+## Testing many hypotheses {#testing-hypotheses}
 
 To demonstrate the ideas we will be working with, we will simulate artificial data.
 Note that since we are doing simulations, we can control everything and also know
@@ -121,16 +121,17 @@ If we now perform $m_0$ such tests (using the 0 subscript to denote that they
 are all hypotheses for which the *null* is true), we can summarise the possible
 outcomes as in the table below:
 
-$$
-\begin{table}
-   \begin{tabular}{ r|l|l|l }
-      & Accept $H_{0}$ & Reject $H_{0}$ & Total \\
-      & (True Negative) & (False Positive) \\
-      \hline
-	  Null True & U & V & $m_0$
-   \end{tabular}
-\end{table}
-$$
+```{r, echo=FALSE}
+knitr::kable(
+  data.frame(
+    "Accept H_0" = c("U (True Negative)", ""),
+    "Reject H_0" = c("V (False Positive)", ""),
+    "Total" = c("m_0", ""),
+    row.names = c("Null True", "")
+  )
+)
+```
+
 
 Here, $U$ and $V$ represent the total number of true negative and false positive
 results we get, respectively, out of $m_0$ total tests.
@@ -381,11 +382,29 @@ Note, however that in general, controlling the FWER at levels such as 0.05 is ve
 conservative, i.e. if there were ture alternative cases we might miss them.
 
 
-# Simulating data under a mixture of null and alternative hypotheses
+# The False Discovery Rate (FDR)
+
+Now let's consider a situation where we have both true null and true alternative
+cases. In this situation we are prone to two types of errors: false positives 
+(type 1, as in the previous case) and false negatives (type 2, i.e. accepting
+$H_0$ while it's actually false).
+
+We can then extend the table from [before](#testing-hypotheses):
+
+```{r, echo=FALSE}
+knitr::kable(
+  data.frame(
+    "Accept H_0" = c("U (True Negative)", "T (False Negative)", "W"),
+    "Reject H_0" = c("V (False Positive)", "S (True Positive", "R"),
+    "Total" = c("m_0", "m_1", "m"),
+    row.names = c("Null True", "Alternative True", "Total")
+  )
+)
+```
 
 
+# Exercises: FDR simulations
 
-# Exercises: mixed data simulation
 
 
 # Exercises: real data (Alon *et al.* (1999))
