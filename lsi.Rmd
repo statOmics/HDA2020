@@ -1009,6 +1009,15 @@ animate(pfdr, nframes = 103, end_pause = 3)
 
 Note, that the local fdr method allows us to detect differential brain activity in a specific region in the front part of the brain for which a larger fractional anisotropy is observed on average for childeren having dyslexia.
 
+We can also estimate the FDR of the set that we return as the average local fdr in this set. 
+
+```{r}
+dti %>%
+  filter(lfdr < 0.2) %>%
+  pull(lfdr) %>%
+  mean
+```
+
 ## Power
 
 
