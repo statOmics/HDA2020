@@ -25,7 +25,8 @@ knitr::include_graphics("./figures/DTIColor.jpg")
 - DTI measures fluid flows in the brain
 - Comparing brain activity of six dyslexic children versus six normal controls
 - From each child, DTI produced observations on 15443 voxels (voxel = small volume at a particular (x, y, x) coordinate)
-- For each voxel, a two-sided two-sample t-test has been performed, resulting in a z-value (15443 z-values)
+- For each voxel, a two-sided two-sample t-test has been performed, resulting in a z-value (15443 z-values) for fractional anisotropy.
+-  Low values for FA indicate diffusion in all directions, high values indicates directional diffusion.
 - Research question: at what brain locations (voxels) show dyslexic children a different brain activity as compared to children without dyslexia?
 
 For each voxel separately, this is a simple problem, but the large scale of the problem (15443 simultaneous hypothesis tests) causes the problem of multiplicity.
@@ -36,8 +37,7 @@ The dataset `dti` contains
 
 - Spatial location (x, y, z) of each voxel
 - z-statistic for assessing differential brain activity between dyslexic and non-dyslexic children
-- Positive z-value higher activity in dyslexic than non-dyslexic children
-- Negative z-value lower activity in dyslexic than non-dyslexic children.
+
 
 
 ```{r}
@@ -127,8 +127,8 @@ It is much more easy to observe patterns of activity.
 
 Note, however that
 
-- the upregulation (z > 0 and p < 0.05) in dyslexic children is appearing in spatial patterns in some locations.
-- the downregulation (z < 0 and p > 0.05) is scattered throughout the brain.
+- Higher average FA (z > 0 and p < 0.05) in dyslexic children is appearing in spatial patterns in some locations.
+- Lower average FA (z < 0 and p > 0.05) in dyslexic children is scattered throughout the brain.
 - Multiple testing problem.
 - If there would be no association between brain activity and dyslexia we can expect on average `r nrow(dti) * 0.05` false positive voxels.
 - Note, that only `r sum(dti$p.value < 0.05)` were significant at the 5% significance level, so we can expect that the majority of the returned voxels are false positives.
@@ -1007,7 +1007,7 @@ pfdr <- dti %>%
 animate(pfdr, nframes = 103, end_pause = 3)
 ```
 
-Note, that the local fdr method allows us to detect differential brain activity in a specific region of the brain for which a larger activity is observed on average for childeren that do not have dyslexia.
+Note, that the local fdr method allows us to detect differential brain activity in a specific region in the front part of the brain for which a larger fractional anisotropy is observed on average for childeren having dyslexia.
 
 ## Power
 
