@@ -1,0 +1,277 @@
+---
+title: "Analysis of High Dimensional Data - Lab 5"
+subtitle: "Large Scale Inference"
+author: "Adapted by Milan Malfait"
+date: "3 Dec 2020"
+references:
+- id: alon1999broad
+  type: article-journal
+  author:
+  - family: Alon
+    given: Uri
+  - family: Barkai
+    given: Naama
+  - family: Notterman
+    given: Daniel A
+  - family: Gish
+    given: Kurt
+  - family: Ybarra
+    given: Suzanne
+  - family: Mack
+    given: Daniel
+  - family: Levine
+    given: Arnold J
+  issued:
+  - year: 1999
+  title: Broad patterns of gene expression revealed by clustering analysis of tumor
+    and normal colon tissues probed by oligonucleotide arrays
+  container-title: Proceedings of the National Academy of Sciences
+  publisher: National Acad Sciences
+  page: 6745-6750
+  volume: '96'
+  issue: '12'
+---
+
+```{r setup, include=FALSE, cache=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.align = "center",
+  fig.width = 8,
+  fig.asp = 0.618,
+  out.width = "100%"
+)
+```
+
+***
+
+```{r libraries, warning=FALSE, message=FALSE}
+## install packages with:
+## install.packages("locfdr")
+library(locfdr)
+```
+
+
+# Introduction
+
+**In this lab session we will look at the following topics**
+
+  - .......................................................
+  
+## The dataset {-}
+
+In this practical session, we use the same dataset as in
+[Lab 4](./Lab4-Sparse-PCA-LDA.html) by @alon1999broad on
+gene expression levels in 40 tumour and 22 normal colon tissue samples.
+They checked a total of 6500 human genes using the Affymetrix oligonucleotide array.
+You can read the data in as follows:
+
+```{r load-data}
+Alon1999 <- read.csv("https://github.com/statOmics/HDA2020/raw/data/Alon1999.csv")
+str(Alon1999[, 1:10])
+table(Alon1999$Y)
+```
+
+The dataset contains one variable named `Y` with the values `t` and `n`.
+This variable indicates whether the sample came from tumourous (`t`) or
+normal (`n`) tissue.
+
+The goal of this practical is to ...................................
+
+
+## Testing many hypotheses
+
+To demonstrate the ideas we will be working with, we will simulate artificial data.
+Note that since we are doing simulations, we can control everything and also know
+exactly what the underlying "true" distribution is (sometimes also called the "ground truth").
+However, keep in mind that this is an unlikely representation of real-world data.
+
+In particular, we will simulate data for multiple hypothesis tests where
+__the null hypothesis is always true__. I.e. for the $i$th test, we assume that
+$\mu_{1i}$ and $\mu_{2i}$ represent the means of the two populations of interest,
+the null hypothesis for comparing the two means is
+$H_{0i} : \mu_{1i} = \mu_{2i}$. Let the alternative hypothesis of this test be
+$H_{1i} : \mu_{1i} \neq \mu_{2i}$, i.e. we perform a *two-tailed* test.
+Suppose we have data collected from both populations, given by $X_{1i}$ and $X_{2i}$
+of size $n_{1i}$ and $n_{2i}$, respectively, and assume that both populations
+have the same knwon variance $\sigma_i^2$. Then we can test this hypothesis by using
+__Z-scores__, given by
+
+$$ Z_i=\frac{\bar X_{1i}-\bar X_{2i}}{\sigma_i\sqrt{1/n_{1i}+1/n_{2i}}} $$
+
+Under the null hypothesis, the scores will be distributed as a *standard normal*
+$Z_i\sim N(0,1)$. The null hypothesis is rejected in favor of the alternative if
+$z_i < \phi_{\alpha_i/2}$ or $z_i > \phi_{1-\alpha_i/2}$, or equivalently if
+$|z_i| > \phi_{1-\alpha_i/2}$, where $\phi_{\alpha_i/2}$ is the $\alpha_i/2$th
+quantile of the standard normal distribution.
+
+In a multiple hypothesis testing setting, we will perform $m$ tests using the
+same test statistic. If the *null* were true for all hypotheses, we woul end up
+with a sample $z_1,\ldots,z_m$ from a standard normal distribution.
+
+In this setting, we can only make one type of error: wrongly rejecting the null
+hypothesis, i.e. a __type 1 error__. The probability of making this error is given
+by
+
+$$ \alpha_i=\text{P}\{\text{ reject } H_{0i} | H_{0i}\} $$
+
+(the $| H_{0i}$ part should be read as "given that the null hypothesis is true").
+
+If we now perform $m_0$ such tests (using the 0 subscript to denote that they
+are all hypotheses for which the *null* is true), we can summarise the possible
+outcomes as in the table below:
+
+$$
+\begin{table}
+   \begin{tabular}{ r|l|l|l }
+      & Accept $H_{0}$ & Reject $H_{0}$ & Total \\
+      & (True Negative) & (False Positive) \\
+      \hline
+	  Null True & U & V & $m_0$
+   \end{tabular}
+\end{table}
+$$
+
+Here, $U$ and $V$ represent the total number of true negative and false positive
+results we get, respectively, out of $m_0$ total tests.
+
+As an example, let's simulate the scenario above. In the code below, the `replicate`
+function is used to repeat the same procedure a number of times.
+Essentially, the following steps are performed :
+
+1. Sample $N = 12$ observations for 2 hypothetical groups from normal distributions 
+   with the same mean and known variance
+2. Calculate Z-scores based on the 2 group means
+3. Repeat steps 1 to 2 `m0` times
+
+This mimics performing `m0` hypothesis tests on data for which we know the null
+hypothesis is true.
+
+For simplicity we assume the variance to be known and equal to 1 for both groups.
+We simulate 10 observations for each group and calculate the denominator for the
+Z-scores since it's the same for each test.
+
+```{r}
+## Set parameters for the simulation
+N <- 10 # samples per group
+m0 <- 1000 # number of hypothesis tests
+mu_1 <- 3 # true mean group 1
+mu_2 <- 3 # true mean group 2
+sigma <- 1 # known variance
+denom <- sigma * sqrt(2 / N) # denominator for Z-scores
+
+set.seed(123) # seed for reproducibility
+null_z_scores <- replicate(m0, {
+  group1 <- rnorm(N, mean = mu_1, sd = sqrt(sigma))
+  group2 <- rnorm(N, mean = mu_2, sd = sqrt(sigma))
+
+  ## Calculate Z-score
+  (mean(group2) - mean(group1)) / denom
+})
+
+## Visuzlize Z-scores
+hist(null_z_scores, breaks = 50, freq = FALSE)
+## Overlay theoretical standard normal
+lines(x <- seq(-5, 5, length.out = 100), dnorm(x), col = "dodgerblue", lwd = 3)
+## Draw vertical lines at 5 and 95th percentiles
+abline(v = qnorm(c(0.05, 0.95)), col = "firebrick", lty = 2, lwd = 3)
+```
+
+We see that the Z-scores are nicely distributed as a standard normal.
+The vertical dashed lines indicate the 5th and 95th percentiles of the standard
+normal. The regions outside these lines indicate the Z-scores that we would call
+significant if we used a cut-off of $\alpha = 0.05$. So, even though we simulated
+data under the null hypothesis, our Z-test still returns "significant" results for
+a number of cases just by chance!
+
+Let's calculate the p-values for our hypothesis tests and see what the damage is.
+To calculate the p-values, we use the `pnorm()` function in this case, which returns
+the value of the standard normal CDF (i.e. `pnorm(x)` = $P(Z < x)$). Since we consider
+a two-tailed test, we take the absolute values of the Z-scores and set the `lower.tail`
+argument in `pnorm` to `FALSE` (by default it's `TRUE`), so that we get 
+`pnorm(abs(x), lower.tail = FALSE)` = $P(Z > |x|)$ and multiply this value by 2.
+
+```{r}
+null_pvals <- 2 * pnorm(abs(null_z_scores), lower.tail = FALSE)
+
+alpha <- 0.05 # significance cutoff
+
+hist(null_pvals, breaks = seq(0, 1, by = 0.05))
+abline(v = alpha, col = "firebrick", lwd = 3)
+
+called <- (null_pvals < alpha)
+
+## V = number of false positives, in this case: all significant tests
+(V <- sum(called))
+mean(called) # V / m0
+```
+
+So we get 48 significant tests (false positives) out of a total of 1000, which is, 
+unsurprisingly, approximately equal to our significance cutoff $\alpha$.
+Note also that the p-values are uniformly distibuted under the null hypothesis.
+
+If we had carried out only a few tests (say 10) it would be very unlikely to observe
+a false positive (on average: 0.05 * 10 = 0.5 false positives) at $\alpha = 0.05$,
+but since now we're carrying out so many, we're almost guaranteed to get false positives.
+This is what is known as the __multiple hypothesis testing problem__.
+
+Note that in real-world data the quantities $U$ and $V$ are *unknown* (because
+we don't know the truth! If we did, we wouldn't have to carry out any hypothesis
+tests in the first place). However, by using simulated data, we do know the truth
+and so we can explore these quantities.
+
+
+## The family-wise error rate
+
+If we carry out many tests, we're almost guaranteed to get type I errors, just by
+chance. Therefore the type I error rate is no longer a relevant metric.
+Instead, we consider the __Familywise Error Rate (FWER)__, given by
+
+$$
+\text{FWER}=\text{P}\{V > 0\}
+  = \text{P}\{\text{rejecting at least one } H_{0i}| H_0\}
+$$
+
+where $H_0$ is the intersection of all  partial nulls ($H_{0i}$) $i=1,\ldots,m_0$.
+In general, we would prefer testing procedures that keep the FWER under control,
+i.e. correct for the multiplicity problem.
+So instead of choosing $\alpha$ to control the probability of getting a false positive
+in each test, we try to control the FWER, i.e. the probability of getting
+*at least* one false positive in our *set* of hypothesis tests.
+
+In the following exercises, we will explore this idea on some synthetic data.
+
+
+
+# Exercises: null data simulation
+
+
+
+
+# Simulating data under a mixture of null and alternative hypotheses
+
+
+
+# Exercises: mixed data simulation
+
+
+# Exercises: real data (Alon *et al.* (1999))
+
+
+
+# References {-}
+
+
+
+# Session info {-}
+
+<details><summary>Session info</summary>
+
+```{r session_info, echo=FALSE, cache=FALSE}
+Sys.time()
+sessioninfo::session_info()
+```
+
+</details>
+
+# [Home](https://statomics.github.io/HDA2020/) {-}
