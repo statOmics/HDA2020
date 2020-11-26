@@ -306,9 +306,9 @@ names(fwer) <- paste("m0 =", m0_vec)
 for (i in seq_along(m0_vec)) {
   ## Simulate B times, each time recording V > 0
   at_least_one_signif <- replicate(B, {
-    null_tests <- rnorm(m0_vec[i], mean = 0, sd = 1) # z-score distribution
-    signif <- abs(null_tests) > qnorm(1 - alpha / 2)
-    sum(signif) > 0
+    null_stats <- rnorm(m0_vec[i], mean = 0, sd = 1) # z-score distribution
+    tests <- abs(null_stats) > qnorm(1 - alpha / 2)
+    sum(tests) > 0
   })
   fwer[i] <- mean(at_least_one_signif) # proportion of V >= 1
 }
@@ -365,9 +365,9 @@ names(fwer) <- paste("m0 =", m0_vec)
 for (i in seq_along(m0_vec)) {
   ## Simulate B times, each time recording V > 0
   at_least_one_signif <- replicate(B, {
-    null_tests <- rnorm(m0_vec[i], mean = 0, sd = 1) # z-score distribution
-    signif <- abs(null_tests) > qnorm(1 - alpha_vec[i] / 2)
-    sum(signif) > 0
+    null_stats <- rnorm(m0_vec[i], mean = 0, sd = 1) # z-score distribution
+    tests <- abs(null_stats) > qnorm(1 - alpha_vec[i] / 2)
+    sum(tests) > 0
   })
   fwer[i] <- mean(at_least_one_signif) # proportion of V >= 1
 }
