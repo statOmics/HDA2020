@@ -320,7 +320,25 @@ fwer
 
 # Controlling the FWER
 
-<!-- TODO: ADD SHORT PARAGRAPH ON CONTROLLING THE FWER -->
+We saw in the previous exercises that when conducting a large number of hypothesis
+tests the FWER becomes unacceptably large. So what can we do to lower it?
+The most straightforward way would be to just lower $\alpha$ (so we get less false positives).
+
+Note that we can write the FWER under the null hypothesis (so the p-values are uniformly distributed) as
+
+$$
+\text{FWER} = P(\text{at least one rejection}) &= 1 - P(\text{no rejections}) \\
+  &= 1 - \prod_{i=1}^m_0 P(p_i > \alpha) \\
+  &= 1 - \prod_{i=1}^m_0 (1 - \alpha) \\
+  &= 1 - (1 - \alpha)^m_0
+$$
+
+where $p_i$ is the p-value for the $i$th test.
+
+If we wanted to control the FWER at a certain level (e.g. 0.05), we can simply solve
+the equation above for $\alpha$ and get, for a given FWER:
+
+$$ \alpha = 1 - (1 - \text{FWER})^{1/m_0} $$
 
 
 ## Exercise
@@ -356,6 +374,11 @@ fwer
 ```
 
 </details>
+
+The procedure described above is also known as Sidak's procedure.
+Another widely used technique to control the FWER is the Bonferroni correction.
+Note, however that in general, controlling the FWER at levels such as 0.05 is very
+conservative, i.e. if there were ture alternative cases we might miss them.
 
 
 # Simulating data under a mixture of null and alternative hypotheses
