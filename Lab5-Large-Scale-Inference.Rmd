@@ -243,9 +243,119 @@ In the following exercises, we will explore this idea on some synthetic data.
 
 
 
-# Exercises: null data simulation
+# Exercises: FWER null data simulation {-}
+
+We will simulate performing hypothesis tests for which the null distribution is
+always true for different values of `m0`.
+
+To make the code more simple, we will directly sample the Z-score statistics from
+a standard normal (instead of sampling the individual groups and then performing
+the test on them, as shown above). We can also skip the p-value calculation and
+compare our Z-scores directly to the $(1 - \alpha) / 2$th quantile of the standard
+normal distribution (using the `qnorm()` function).
+
+#### 1. Set `m0 = 5` and generate `m0` Z-score statistics by sampling from the standard normal distribution. Check which ones are significant using a cutoff `alpha = 0.05` {-}
+
+To check significance you can use `abs(z_score) > qnorm(1 - alpha / 2)`
 
 
+#### 2. Calculate $V$, the number of significant tests. {-}
+
+Note that to count a logical vector, you can just use `sum` on it, since `TRUE`
+is numerically interpreted as 1 and `FALSE` as 0.
+
+
+#### 3. Check that `V > 0` (at least one significant) and store the result in a variable (e.g. `at_least_one_signif <- V > 0`). {-}
+
+
+#### 4. Repeat steps 1-3 1000 times and keep track of the result in step 3 by storing it in a vector. {-}
+
+You can either use a `for` loop or `replicate`. If using a `for` loop, make sure to
+create an empty vector of the desired length first! Growing a vector is technically
+possible but is very inefficient. You can initialize an empty (logical) vector of 
+a certain length with `vec <- logical(length = x)`
+
+
+#### 5. Now compute the FWER as the proportion of times $V$ was greater than 0. {-}
+
+
+#### 6. Repeat the same procedure for `m0 = 50` and `m0 = 1000`. Interpret the results. {-}
+
+
+## Solutions {-}
+
+<details><summary>Solution</summary>
+
+I combined the exercises above into one code block, to avoid repeated code.
+Essentially, I wrapped the simulation in a `for` loop that goes over the different
+values of `m0`.
+
+```{r}
+## Repeat 1000 times for m0 = 5, 50 and 1000, directly simulate test statistic
+## record minimal p-value and check if smaller than alpha
+set.seed(1)
+B <- 1000 # number of simulations
+m0_vec <- c(5, 50, 1000)
+alpha <- 0.05
+## Initialize empty vector to store FWER results
+fwer <- numeric(length = length(m0_vec))
+names(fwer) <- paste("m0 =", m0_vec)
+
+## Loop over m0 values and simulate test statistics
+for (i in seq_along(m0_vec)) {
+  ## Simulate B times, each time recording V > 0
+  at_least_one_signif <- replicate(B, {
+    null_tests <- rnorm(m0_vec[i], mean = 0, sd = 1) # z-score distribution
+    signif <- abs(null_tests) > qnorm(1 - alpha / 2)
+    sum(signif) > 0
+  })
+  fwer[i] <- mean(at_least_one_signif) # proportion of V >= 1
+}
+fwer
+```
+
+</details>
+
+
+
+# Controlling the FWER
+
+<!-- TODO: ADD SHORT PARAGRAPH ON CONTROLLING THE FWER -->
+
+
+## Exercise
+
+Using your simulation code from before, confirm that when setting; `alpha = 0.0102`
+and `m0 = 5`, `alpha = 0.00102` and `m0 = 50`, and finally `alpha = 0.000051292`
+and `m0 = 1000` all result in an FWER of approximately 0.05.
+
+<details><summary>Solution</summary>
+
+```{r}
+## Repeat 1000 times for m0 = 5, 50 and 1000, directly simulate test statistic
+## record minimal p-value and check if smaller than alpha
+set.seed(1)
+B <- 1000 # number of simulations
+m0_vec <- c(5, 50, 1000)
+alpha_vec <- c(0.0102, 0.00102, 0.000051292)
+## Initialize empty vector to store FWER results
+fwer <- numeric(length = length(m0_vec))
+names(fwer) <- paste("m0 =", m0_vec)
+
+## Loop over m0 values and simulate test statistics
+for (i in seq_along(m0_vec)) {
+  ## Simulate B times, each time recording V > 0
+  at_least_one_signif <- replicate(B, {
+    null_tests <- rnorm(m0_vec[i], mean = 0, sd = 1) # z-score distribution
+    signif <- abs(null_tests) > qnorm(1 - alpha_vec[i] / 2)
+    sum(signif) > 0
+  })
+  fwer[i] <- mean(at_least_one_signif) # proportion of V >= 1
+}
+fwer
+```
+
+</details>
 
 
 # Simulating data under a mixture of null and alternative hypotheses
