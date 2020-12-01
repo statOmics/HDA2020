@@ -235,6 +235,9 @@ the test on them, as shown above). We can also skip the p-value calculation and
 compare our Z-scores directly to the $(1 - \alpha) / 2$th quantile of the standard
 normal distribution (using the `qnorm()` function).
 
+
+### Tasks {-}
+
 #### 1. Set `m0 = 5` and generate `m0` Z-score statistics by sampling from the standard normal distribution. Check which ones are significant using a cutoff `alpha = 0.05` {-}
 
 To check significance you can use `abs(z_score) > qnorm(1 - alpha / 2)`
@@ -263,7 +266,7 @@ a certain length with `vec <- logical(length = x)`
 #### 6. Repeat the same procedure for `m0 = 50` and `m0 = 1000`. Interpret the results. {-}
 
 
-## Solutions {-}
+### Solutions {-}
 
 <details><summary>Solution</summary>
 
@@ -432,6 +435,9 @@ number of times in the following exercises.
 
 # Exercises: FDR simulations
 
+
+### Tasks {-}
+
 #### 1. Set `m0 = 90` and `m1 = 10` and generate `m = 100` test statistics, `m0` of them from the standard normal distribution (N(0, 1)) (null distribution) and m1 of them from N(3, 1) (the alternative distribution). {-}
 
 
@@ -444,7 +450,7 @@ number of times in the following exercises.
 #### 4. Repeat steps 1-3 1000 times and keep track of the FDP for each iteration. Then compute the FDR as the mean of the FDPs. Interpret the results. {-} 
 
 
-## Solutions {-}
+### Solutions {-}
 
 <details><summary>Solution</summary>
 
@@ -675,11 +681,11 @@ sum(fdr < 0.05)
 </details>
 
 
-#### 7. Compare the FWER and FDR corrections. Which one is more conservative?
+#### 7. Compare the FWER and FDR corrections. Which one is more conservative? {-}
 
 
 
-# Further reading
+# Further reading {-}
 
 - Chapter 6 of the [Biomedical Data Science](./http://genomicsclass.github.io/book/) book
 
