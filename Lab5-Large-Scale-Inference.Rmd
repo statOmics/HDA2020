@@ -313,10 +313,12 @@ The most straightforward way would be to just lower $\alpha$ (so we get less fal
 Note that we can write the FWER under the null hypothesis (so the p-values are uniformly distributed) as
 
 $$
+\begin{align}
 \text{FWER} = P(\text{at least one rejection}) &= 1 - P(\text{no rejections}) \\
-  &= 1 - \prod_{i=1}^m_0 P(p_i > \alpha) \\
-  &= 1 - \prod_{i=1}^m_0 (1 - \alpha) \\
-  &= 1 - (1 - \alpha)^m_0
+  &= 1 - \prod_{i=1}^{m} P(p_i > \alpha) \\
+  &= 1 - \prod_{i=1}^{m} (1 - \alpha) \\
+  &= 1 - (1 - \alpha)^{m}
+\end{align}
 $$
 
 where $p_i$ is the p-value for the $i$th test.
@@ -324,7 +326,7 @@ where $p_i$ is the p-value for the $i$th test.
 If we wanted to control the FWER at a certain level (e.g. 0.05), we can simply solve
 the equation above for $\alpha$ and get, for a given FWER:
 
-$$ \alpha = 1 - (1 - \text{FWER})^{1/m_0} $$
+$$ \alpha = 1 - (1 - \text{FWER})^{1/m} $$
 
 
 ## Exercise {-}
