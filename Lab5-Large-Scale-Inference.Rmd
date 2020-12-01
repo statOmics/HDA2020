@@ -540,20 +540,114 @@ in the `t.test()` result under the `$p.value`, `$statistic` and `$parameter`
 slots.
 
 <details><summary>Solution</summary>
+
+In the solution below, I used the `apply` function to loop over the genes, essentially
+this is similar to a `for` loop but is a bit more succinct to write and takes
+care of pre-allocating memory instead of having te set up empty matrices first
+manually. Setting the second argument (`MARGIN`) to 2 tells `apply` to loop over
+the *columns* of the input matrix instead of the *rows*. For details, see `?apply`.
+Briefly, `apply()` takes a matrix, margin and function as input arguments, it then
+applies the function to each column or row (depending on the margin) of the matrix.
+The results are either a vector if each function call returns a single value or
+a matrix if a vector is returned at each call. Note that `apply` will return the
+resulting matrix with the calculated values in the rows. As it makes more sense 
+to have these in columns, the matrix is transposed.
+
+```{r}
+## Split gene data and grouping variable and convert to matrix
+gene_data <- as.matrix(alon[, -1])
+group <- alon$Y
+
+## Use `apply` to loop over columns of gene data and perform t-tests, extracting
+## p-values, test stastistics, and degrees of freedom
+ttest_results <- t(apply(gene_data, 2, function(x) {
+  t_test <- t.test(x ~ group)
+  p_val <- t_test$p.value
+  stat <- t_test$statistic
+  df <- t_test$parameter
+  ## Return values in named vector
+  c(stat, "p_val" = p_val, df)
+}))
+
+## Take a look at results
+head(ttest_results)
+```
+
 </details>
 
 
 #### 3. Plot a histogram of the p-values and interpret {-}
 
+<details><summary>Solution</summary>
+
+Setting `breaks` from 0 to 1 with a width of 0.05 makes sense for p-values because
+the first bar will then represent the number of p-values smaller than 0.05 (which
+we often use as cutoff).
+
+```{r p_val-hist}
+p_vals <- ttest_results[, "p_val"]
+hist(
+  p_vals,
+  breaks = seq(0, 1, by = 0.05), main = "", xlab = "p-value",
+  ylim = c(0, 500)
+)
+```
+
+</details>
 
 #### 4. How many discoveries / significant genes do you find when using $\alpha = 0.05$? {-}
 
+<details><summary>Solution</summary>
+
+```{r}
+alpha <- 0.05
+sum(p_vals < alpha)
+```
+
+</details>
 
 #### 5. Correct for the multiplicity problem by controlling the FWER at 5% {-}
 
 - What should we use as $\alpha$?
 
 - How many discoveries are left over when using the FWER-adjusted $\alpha$?
+
+<details><summary>Solution</summary>
+
+Remember that $\alpha$ can be calculated for a given FWER as
+
+$$ \alpha = 1 - (1 - \text{FWER})^{1/m} $$
+
+```{r}
+m <- nrow(ttest_results) # number of tests performed
+fwer <- 0.05
+adj_alpha <- 1 - (1 - fwer)^(1/m)
+
+## Number of significant discoveries at FWER 5%
+sum(p_vals < adj_alpha)
+```
+
+Note that you can also use the *Bonferroni* correction to get a similar result.
+This is also implemented in the `p.adjust` function by using `method = "bonferroni"`.
+Essentially, the Bonferroni correction sets a new $\alpha_m = \alpha / m$ by
+dividing the original with the number of tests performed $m$. So the result is
+slightly different than the procedure given above (which is known as Sidak's
+procedure but is less commonly used). The `p.adjust` function returns adjusted
+p-values, since modifying the cut-off $\alpha$ by dividing with $m$ is the same
+as multiplying the p-values with $m$ and then using the original cut-off.
+
+```{r}
+bonf_pvals <- p.adjust(p_vals, method = "bonferroni")
+sum(bonf_pvals < alpha)
+
+## Note that bonferroni correction is simply multiplying the original p-values
+## with m (and cutting off any values bigger than 1)
+idx <- which(bonf_pvals < 1)
+head(bonf_pvals[idx])
+head(p_vals[idx] * m)
+```
+
+</details>
 
 
 #### 6. Use the FDR method to adjust the original p-values {-}
@@ -563,6 +657,22 @@ slots.
 - Plot the adjusted p-values against the originals, what is the effect of the adjustment?
 
 - How many discoveries are left when controlling the FDR at 5%?
+
+<details><summary>Solution</summary>
+
+```{r fdr-adjust}
+fdr <- p.adjust(p_vals, method = "BH")
+
+plot(
+  p_vals[order(p_vals)], fdr[order(p_vals)],
+  pch = 19, cex = 0.6, xlab = "p-value", ylab = "FDR-adjusted p-value", col = 4
+)
+abline(a = 0, b = 1)
+
+sum(fdr < 0.05)
+```
+
+</details>
 
 
 #### 7. Compare the FWER and FDR corrections. Which one is more conservative?
