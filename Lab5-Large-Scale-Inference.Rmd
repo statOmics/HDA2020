@@ -57,26 +57,6 @@ library(locfdr)
 **In this lab session we will look at the following topics**
 
   - .......................................................
-  
-## The dataset {-}
-
-In this practical session, we use the same dataset as in
-[Lab 4](./Lab4-Sparse-PCA-LDA.html) by @alon1999broad on
-gene expression levels in 40 tumour and 22 normal colon tissue samples.
-They checked a total of 6500 human genes using the Affymetrix oligonucleotide array.
-You can read the data in as follows:
-
-```{r load-data}
-Alon1999 <- read.csv("https://github.com/statOmics/HDA2020/raw/data/Alon1999.csv")
-str(Alon1999[, 1:10])
-table(Alon1999$Y)
-```
-
-The dataset contains one variable named `Y` with the values `t` and `n`.
-This variable indicates whether the sample came from tumourous (`t`) or
-normal (`n`) tissue.
-
-The goal of this practical is to ...................................
 
 
 ## Testing many hypotheses {#testing-hypotheses}
@@ -514,13 +494,84 @@ vector of p-values and the desired method (for Benjamini-Hochberg, use
 
 # Exercises: real data (Alon *et al.* (1999))
 
+We will take another look at the dataset by @alon1999broad on gene expression
+levels in 40 tumour and 22 normal colon tissue samples.
+We used this data also in [Lab 4](./Lab4-Sparse-PCA-LDA.html).
+However, this time we're interested in finding genes that expressed *significantly*
+different between the tumor and normal samples. In other words, we will perform
+hypothesis tests for each of the __2000 genes__. This is clearly a multiple
+testing problem.
+
+### Tasks {-}
+
+#### 1. Read in the data {-}
+
+(Just run the code given below.)
+
+```{r load-data}
+alon <- read.csv("https://github.com/statOmics/HDA2020/raw/data/Alon1999.csv")
+str(alon[, 1:10])
+table(alon$Y)
+```
+
+As a reminder, the data consists of gene expression levels in 40 tumor and 22
+normal colon tissue samples. The expression on 6500 human genes were measured
+using the Affymetrix oligonucleotide array.
+As in @alon1999broad, we use the *2000 genes with the highest minimal intensity*
+across the samples.
+
+The dataset contains one variable named `Y` with the values `t` and `n`.
+This variable indicates whether the sample came from tumourous (`t`) or
+normal (`n`) tissue.
+
+
+#### 2. Perform 2-sample t-tests for each gene, comparing the tumor and normal tissue groups {-}
+
+Use the `t.test()` function in base R. By default, this will compute a two-sample
+t-test with *unequal variances* ([Welch's t-test][Welch]).
+You can supply a *formula* (using the `~`) to `t.test()` similar to `lm()`.
+
+Use either a `for` loop to iterate over all genes or the `apply()` function.
+
+Store the test statistic, p-value and degrees of freedom of each test in a
+matrix (each row should be a gene, 1 column containing the test statistcs 1
+column the p-values and 1 for the degrees of freedom). You can find these values
+in the `t.test()` result under the `$p.value`, `$statistic` and `$parameter`
+slots.
+
+<details><summary>Solution</summary>
+</details>
+
+
+#### 3. Plot a histogram of the p-values and interpret {-}
+
+
+#### 4. How many discoveries / significant genes do you find when using $\alpha = 0.05$? {-}
+
+
+#### 5. Correct for the multiplicity problem by controlling the FWER at 5% {-}
+
+- What should we use as $\alpha$?
+
+- How many discoveries are left over when using the FWER-adjusted $\alpha$?
+
+
+#### 6. Use the FDR method to adjust the original p-values {-}
+
+- Use the `p.adjust()` function with `method = "BH"`
+
+- Plot the adjusted p-values against the originals, what is the effect of the adjustment?
+
+- How many discoveries are left when controlling the FDR at 5%?
+
+
+#### 7. Compare the FWER and FDR corrections. Which one is more conservative?
+
+
 
 # Further reading
 
 - Chapter 6 of the [Biomedical Data Science](./http://genomicsclass.github.io/book/) book
-
-
-# References {-}
 
 
 
@@ -536,3 +587,9 @@ sessioninfo::session_info()
 </details>
 
 # [Home](https://statomics.github.io/HDA2020/) {-}
+
+[Welch]:https://en.wikipedia.org/wiki/Welch%27s_t-test
+
+
+
+# References {-}
