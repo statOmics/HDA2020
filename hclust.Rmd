@@ -4,6 +4,9 @@ author: "Lieven Clement"
 output:
   html_document:
     df_print: paged
+  pdf_document:
+    toc: true
+    number_sections: true
 ---
 
 # Introduction

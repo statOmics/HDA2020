@@ -26,6 +26,9 @@ jobs:
       - name: Set up pandoc
         uses: r-lib/actions/setup-pandoc@master
         
+      - name: Set up TinyTex
+        uses: r-lib/actions/setup-tinytex@v1
+        
       - name: Install X11 dependencies on MacOS
         if: runner.os == 'macOS'
         run: |

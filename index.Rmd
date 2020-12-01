@@ -50,43 +50,43 @@ Questions related to the course contents can be asked by posting on [UFora](http
 
   - Slides: [Lecture 1: Intro](slides/IntroHighDim.pdf)
   - Software: [Install and Launch Statistical Software](./software4stats.html)
-  - [Introduction](./intro.html)
+  - [Introduction](./intro.html) [[PDF](./intro.pdf)]
   - [Introduction to RMarkdown](./Introduction-RMarkdown.html)
   - [Introduction to matrices in R](./Introduction-Matrices-R.html)
 
 
 #### 2. Singular value decomposition
 
-  - [Lecture 2-3: Singular value decomposition](./svd.html)
+  - [Lecture 2-3: Singular value decomposition](./svd.html) [[PDF](./svd.pdf)]
   - [Lab 1: Introduction and SVD applications](./Lab1-Intro-SVD.html)
   - [Lab 2: PCA](./Lab2-PCA.html)
 
 #### 3. Prediction with High Dimensional Predictors
 
-  - [Lecture 4-5: Prediction Theory](./prediction.html)
+  - [Lecture 4-5: Prediction Theory](./prediction.html) [[PDF](./prediction.pdf)]
   - [Lab 3: Penalized regression and prediction](./Lab3-Penalized-Regression.html)
 
 #### 4. Sparse Singular Value Decomposition
 
-  - [Lecture 5: Sparse SVD](./sparseSvd.html)
+  - [Lecture 5: Sparse SVD](./sparseSvd.html) [[PDF](./sparseSvd.pdf)]
 
 #### 5. Linear discriminant analysis
 
-  - [Lecture 5: Linear Discriminant Analysis Theory](./lda.html)
+  - [Lecture 5: Linear Discriminant Analysis Theory](./lda.html) [[PDF](./lda.pdf)]
   - [Lab 4: Sparse PCA and LDA](./Lab4-Sparse-PCA-LDA.html)
 
 #### 6. Large Scale inference
 
-  - [Lecture 6: Large Scale Inference](./lsi.html)
+  - [Lecture 6: Large Scale Inference](./lsi.html) [[PDF](./lsi.pdf)]
   - [Lab 5: Large Scale Inference](./Lab5-Large-Scale-Inference.html)
 
 #### Paper Reading Session I: Introduction to Clustering
 
   - Paper reading session 1, November 12 2020. [Paper: Fraley and Raftery (1998). How Many Clusters? Which Clustering Method? Answers Via Model-Based Cluster Analysis. The Computer Journal, (41)8:578-588.](https://sites.stat.washington.edu/people/raftery/Research/PDF/fraley1998.pdf)
-  - [Paper Reading Session I: Introduction to Hierarchical Clustering](./hclust.html)
-  - [EM algorithm](./em.html)
+  - [Paper Reading Session I: Introduction to Hierarchical Clustering](./hclust.html) [[PDF](./hclust.pdf)]
+  - [EM algorithm](./em.html) [[PDF](./em.pdf)]
 
 ### Homework assignments
 
-- [Homework: Canonical Correlation Analysis](./HW-CCA.html)
-- [Group Project](./Project.html)
+- [Homework: Canonical Correlation Analysis](./HW-CCA.html) [[PDF](./HW-CCA.pdf)]
+- [Group Project](./Project.html) [[PDF](./Project.pdf)]

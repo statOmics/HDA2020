@@ -6,6 +6,8 @@ date: "19 Nov 2020"
 output:
   html_document:
     number_sections: false
+  pdf_document:
+    number_sections: false
 references:
 - id: einecke2010molecular
   type: article-journal
