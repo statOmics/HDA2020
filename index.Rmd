@@ -78,6 +78,7 @@ Questions related to the course contents can be asked by posting on [UFora](http
 #### 6. Large Scale inference
 
   - [Lecture 6: Large Scale Inference](./lsi.html)
+  - [Lab 5: Large Scale Inference](./Lab5-Large-Scale-Inference.html)
 
 #### Paper Reading Session I: Introduction to Clustering
 
