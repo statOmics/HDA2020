@@ -45,13 +45,6 @@ knitr::opts_chunk$set(
 
 ***
 
-```{r libraries, warning=FALSE, message=FALSE}
-## install packages with:
-## install.packages("locfdr")
-library(locfdr)
-```
-
-
 # Introduction
 
 **In this lab session we will look at the following topics**
