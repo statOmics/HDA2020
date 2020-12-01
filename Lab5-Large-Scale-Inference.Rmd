@@ -56,7 +56,9 @@ library(locfdr)
 
 **In this lab session we will look at the following topics**
 
-  - .......................................................
+  - FWER
+  - FDR
+  - Multiple testing problem in a real dataset
 
 
 ## Testing many hypotheses {#testing-hypotheses}
