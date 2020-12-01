@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Adapted by Milan Malfait" />
+
+
+<title>Analysis of High Dimensional Data - Lab 5</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<script src="site_libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #c4a000; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #000000; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #000000; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #000000; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">HDA2020</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fa fa-chalkboard-teacher"></span>
+     
+    Lectures
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="intro.html">1. Introduction</a>
+    </li>
+    <li>
+      <a href="svd.html">2. Singular Value Decomposition</a>
+    </li>
+    <li>
+      <a href="prediction.html">3. Prediction with High Dimensional Predictors</a>
+    </li>
+    <li>
+      <a href="sparseSvd.html">4. Sparse Singular Value Decomposition</a>
+    </li>
+    <li>
+      <a href="lda.html">5. Linear Discriminant Analysis</a>
+    </li>
+    <li>
+      <a href="lsi.html">6. Large Scale Inference</a>
+    </li>
+    <li>
+      <a href="hclust.html">Paper 1: Intro Hierarchical Clustering</a>
+    </li>
+    <li>
+      <a href="em.html">Paper 1: EM algorithm</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fa fa-laptop"></span>
+     
+    Practicals
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Lab1-Intro-SVD.html">Lab 1</a>
+    </li>
+    <li>
+      <a href="Lab2-PCA.html">Lab 2</a>
+    </li>
+    <li>
+      <a href="Lab3-Penalized-Regression.html">Lab 3</a>
+    </li>
+    <li>
+      <a href="Lab4-Sparse-PCA-LDA.html">Lab 4</a>
+    </li>
+    <li>
+      <a href="Lab5-Large-Scale-Inference.html">Lab 5</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/statOmics/HDA2020">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="http://statomics.github.io/">statOmics</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Analysis of High Dimensional Data - Lab 5</h1>
+<h3 class="subtitle">Large Scale Inference</h3>
+<h4 class="author">Adapted by Milan Malfait</h4>
+<h4 class="date">3 Dec 2020</h4>
+
+</div>
+
+
+<hr />
+<div id="introduction" class="section level1">
+<h1><span class="header-section-number">1</span> Introduction</h1>
+<p><strong>In this lab session we will look at the following topics</strong></p>
+<ul>
+<li>FWER</li>
+<li>FDR</li>
+<li>Multiple testing problem in a real dataset</li>
+</ul>
+<div id="testing-hypotheses" class="section level2">
+<h2><span class="header-section-number">1.1</span> Testing many hypotheses</h2>
+<p>To demonstrate the ideas we will be working with, we will simulate artificial data. Note that since we are doing simulations, we can control everything and also know exactly what the underlying “true” distribution is (sometimes also called the “ground truth”). However, keep in mind that this is an unlikely representation of real-world data.</p>
+<p>In particular, we will simulate data for multiple hypothesis tests where <strong>the null hypothesis is always true</strong>. I.e. for the <span class="math inline">\(i\)</span>th test, we assume that <span class="math inline">\(\mu_{1i}\)</span> and <span class="math inline">\(\mu_{2i}\)</span> represent the means of the two populations of interest, the null hypothesis for comparing the two means is <span class="math inline">\(H_{0i} : \mu_{1i} = \mu_{2i}\)</span>. Let the alternative hypothesis of this test be <span class="math inline">\(H_{1i} : \mu_{1i} \neq \mu_{2i}\)</span>, i.e. we perform a <em>two-tailed</em> test. Suppose we have data collected from both populations, given by <span class="math inline">\(X_{1i}\)</span> and <span class="math inline">\(X_{2i}\)</span> of size <span class="math inline">\(n_{1i}\)</span> and <span class="math inline">\(n_{2i}\)</span>, respectively, and assume that both populations have the same knwon variance <span class="math inline">\(\sigma_i^2\)</span>. Then we can test this hypothesis by using <strong>Z-scores</strong>, given by</p>
+<p><span class="math display">\[ Z_i=\frac{\bar X_{1i}-\bar X_{2i}}{\sigma_i\sqrt{1/n_{1i}+1/n_{2i}}} \]</span></p>
+<p>Under the null hypothesis, the scores will be distributed as a <em>standard normal</em> <span class="math inline">\(Z_i\sim N(0,1)\)</span>. The null hypothesis is rejected in favor of the alternative if <span class="math inline">\(z_i &lt; \phi_{\alpha_i/2}\)</span> or <span class="math inline">\(z_i &gt; \phi_{1-\alpha_i/2}\)</span>, or equivalently if <span class="math inline">\(|z_i| &gt; \phi_{1-\alpha_i/2}\)</span>, where <span class="math inline">\(\phi_{\alpha_i/2}\)</span> is the <span class="math inline">\(\alpha_i/2\)</span>th quantile of the standard normal distribution.</p>
+<p>In a multiple hypothesis testing setting, we will perform <span class="math inline">\(m\)</span> tests using the same test statistic. If the <em>null</em> were true for all hypotheses, we woul end up with a sample <span class="math inline">\(z_1,\ldots,z_m\)</span> from a standard normal distribution.</p>
+<p>In this setting, we can only make one type of error: wrongly rejecting the null hypothesis, i.e. a <strong>type 1 error</strong>. The probability of making this error is given by</p>
+<p><span class="math display">\[ \alpha_i=\text{P}\{\text{ reject } H_{0i} | H_{0i}\} \]</span></p>
+<p>(the <span class="math inline">\(| H_{0i}\)</span> part should be read as “given that the null hypothesis is true”).</p>
+<p>If we now perform <span class="math inline">\(m_0\)</span> such tests (using the 0 subscript to denote that they are all hypotheses for which the <em>null</em> is true), we can summarise the possible outcomes as in the table below:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">Accept.H_0</th>
+<th align="left">Reject.H_0</th>
+<th align="left">Total</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Null True</td>
+<td align="left">U (True Negative)</td>
+<td align="left">V (False Positive)</td>
+<td align="left">m_0</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+</tbody>
+</table>
+<p>Here, <span class="math inline">\(U\)</span> and <span class="math inline">\(V\)</span> represent the total number of true negative and false positive results we get, respectively, out of <span class="math inline">\(m_0\)</span> total tests.</p>
+<p>As an example, let’s simulate the scenario above. In the code below, the <code>replicate</code> function is used to repeat the same procedure a number of times. Essentially, the following steps are performed :</p>
+<ol style="list-style-type: decimal">
+<li>Sample <span class="math inline">\(N = 12\)</span> observations for 2 hypothetical groups from normal distributions with the same mean and known variance</li>
+<li>Calculate Z-scores based on the 2 group means</li>
+<li>Repeat steps 1 to 2 <code>m0</code> times</li>
+</ol>
+<p>This mimics performing <code>m0</code> hypothesis tests on data for which we know the null hypothesis is true.</p>
+<p>For simplicity we assume the variance to be known and equal to 1 for both groups. We simulate 10 observations for each group and calculate the denominator for the Z-scores since it’s the same for each test.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co">## Set parameters for the simulation</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a>N &lt;-<span class="st"> </span><span class="dv">10</span> <span class="co"># samples per group</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a>m0 &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="co"># number of hypothesis tests</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a>mu_<span class="dv">1</span> &lt;-<span class="st"> </span><span class="dv">3</span> <span class="co"># true mean group 1</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a>mu_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="dv">3</span> <span class="co"># true mean group 2</span></span>
+<span id="cb1-6"><a href="#cb1-6"></a>sigma &lt;-<span class="st"> </span><span class="dv">1</span> <span class="co"># known variance</span></span>
+<span id="cb1-7"><a href="#cb1-7"></a>denom &lt;-<span class="st"> </span>sigma <span class="op">*</span><span class="st"> </span><span class="kw">sqrt</span>(<span class="dv">2</span> <span class="op">/</span><span class="st"> </span>N) <span class="co"># denominator for Z-scores</span></span>
+<span id="cb1-8"><a href="#cb1-8"></a></span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="kw">set.seed</span>(<span class="dv">123</span>) <span class="co"># seed for reproducibility</span></span>
+<span id="cb1-10"><a href="#cb1-10"></a>null_z_scores &lt;-<span class="st"> </span><span class="kw">replicate</span>(m0, {</span>
+<span id="cb1-11"><a href="#cb1-11"></a>  group1 &lt;-<span class="st"> </span><span class="kw">rnorm</span>(N, <span class="dt">mean =</span> mu_<span class="dv">1</span>, <span class="dt">sd =</span> <span class="kw">sqrt</span>(sigma))</span>
+<span id="cb1-12"><a href="#cb1-12"></a>  group2 &lt;-<span class="st"> </span><span class="kw">rnorm</span>(N, <span class="dt">mean =</span> mu_<span class="dv">2</span>, <span class="dt">sd =</span> <span class="kw">sqrt</span>(sigma))</span>
+<span id="cb1-13"><a href="#cb1-13"></a></span>
+<span id="cb1-14"><a href="#cb1-14"></a>  <span class="co">## Calculate Z-score</span></span>
+<span id="cb1-15"><a href="#cb1-15"></a>  (<span class="kw">mean</span>(group2) <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(group1)) <span class="op">/</span><span class="st"> </span>denom</span>
+<span id="cb1-16"><a href="#cb1-16"></a>})</span>
+<span id="cb1-17"><a href="#cb1-17"></a></span>
+<span id="cb1-18"><a href="#cb1-18"></a><span class="co">## Visuzlize Z-scores</span></span>
+<span id="cb1-19"><a href="#cb1-19"></a><span class="kw">hist</span>(null_z_scores, <span class="dt">breaks =</span> <span class="dv">50</span>, <span class="dt">freq =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb1-20"><a href="#cb1-20"></a><span class="co">## Overlay theoretical standard normal</span></span>
+<span id="cb1-21"><a href="#cb1-21"></a><span class="kw">lines</span>(x &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="op">-</span><span class="dv">5</span>, <span class="dv">5</span>, <span class="dt">length.out =</span> <span class="dv">100</span>), <span class="kw">dnorm</span>(x), <span class="dt">col =</span> <span class="st">&quot;dodgerblue&quot;</span>, <span class="dt">lwd =</span> <span class="dv">3</span>)</span>
+<span id="cb1-22"><a href="#cb1-22"></a><span class="co">## Draw vertical lines at 5 and 95th percentiles</span></span>
+<span id="cb1-23"><a href="#cb1-23"></a><span class="kw">abline</span>(<span class="dt">v =</span> <span class="kw">qnorm</span>(<span class="kw">c</span>(<span class="fl">0.05</span>, <span class="fl">0.95</span>)), <span class="dt">col =</span> <span class="st">&quot;firebrick&quot;</span>, <span class="dt">lty =</span> <span class="dv">2</span>, <span class="dt">lwd =</span> <span class="dv">3</span>)</span></code></pre></div>
+<p><img src="Lab5-Large-Scale-Inference_files/figure-html/unnamed-chunk-2-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>We see that the Z-scores are nicely distributed as a standard normal. The vertical dashed lines indicate the 5th and 95th percentiles of the standard normal. The regions outside these lines indicate the Z-scores that we would call significant if we used a cut-off of <span class="math inline">\(\alpha = 0.05\)</span>. So, even though we simulated data under the null hypothesis, our Z-test still returns “significant” results for a number of cases just by chance!</p>
+<p>Let’s calculate the p-values for our hypothesis tests and see what the damage is. To calculate the p-values, we use the <code>pnorm()</code> function in this case, which returns the value of the standard normal CDF (i.e. <code>pnorm(x)</code> = <span class="math inline">\(P(Z &lt; x)\)</span>). Since we consider a two-tailed test, we take the absolute values of the Z-scores and set the <code>lower.tail</code> argument in <code>pnorm</code> to <code>FALSE</code> (by default it’s <code>TRUE</code>), so that we get <code>pnorm(abs(x), lower.tail = FALSE)</code> = <span class="math inline">\(P(Z &gt; |x|)\)</span> and multiply this value by 2.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>null_pvals &lt;-<span class="st"> </span><span class="dv">2</span> <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(<span class="kw">abs</span>(null_z_scores), <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb2-2"><a href="#cb2-2"></a></span>
+<span id="cb2-3"><a href="#cb2-3"></a>alpha &lt;-<span class="st"> </span><span class="fl">0.05</span> <span class="co"># significance cutoff</span></span>
+<span id="cb2-4"><a href="#cb2-4"></a></span>
+<span id="cb2-5"><a href="#cb2-5"></a><span class="kw">hist</span>(null_pvals, <span class="dt">breaks =</span> <span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dt">by =</span> <span class="fl">0.05</span>))</span>
+<span id="cb2-6"><a href="#cb2-6"></a><span class="kw">abline</span>(<span class="dt">v =</span> alpha, <span class="dt">col =</span> <span class="st">&quot;firebrick&quot;</span>, <span class="dt">lwd =</span> <span class="dv">3</span>)</span></code></pre></div>
+<p><img src="Lab5-Large-Scale-Inference_files/figure-html/unnamed-chunk-3-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a></span>
+<span id="cb3-2"><a href="#cb3-2"></a>called &lt;-<span class="st"> </span>(null_pvals <span class="op">&lt;</span><span class="st"> </span>alpha)</span>
+<span id="cb3-3"><a href="#cb3-3"></a></span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="co">## V = number of false positives, in this case: all significant tests</span></span>
+<span id="cb3-5"><a href="#cb3-5"></a>(V &lt;-<span class="st"> </span><span class="kw">sum</span>(called))</span>
+<span id="cb3-6"><a href="#cb3-6"></a><span class="co">#&gt; [1] 48</span></span>
+<span id="cb3-7"><a href="#cb3-7"></a><span class="kw">mean</span>(called) <span class="co"># V / m0</span></span>
+<span id="cb3-8"><a href="#cb3-8"></a><span class="co">#&gt; [1] 0.048</span></span></code></pre></div>
+<p>So we get 48 significant tests (false positives) out of a total of 1000, which is, unsurprisingly, approximately equal to our significance cutoff <span class="math inline">\(\alpha\)</span>. Note also that the p-values are uniformly distibuted under the null hypothesis.</p>
+<p>If we had carried out only a few tests (say 10) it would be very unlikely to observe a false positive (on average: 0.05 * 10 = 0.5 false positives) at <span class="math inline">\(\alpha = 0.05\)</span>, but since now we’re carrying out so many, we’re almost guaranteed to get false positives. This is what is known as the <strong>multiple hypothesis testing problem</strong>.</p>
+<p>Note that in real-world data the quantities <span class="math inline">\(U\)</span> and <span class="math inline">\(V\)</span> are <em>unknown</em> (because we don’t know the truth! If we did, we wouldn’t have to carry out any hypothesis tests in the first place). However, by using simulated data, we do know the truth and so we can explore these quantities.</p>
+</div>
+<div id="the-family-wise-error-rate" class="section level2">
+<h2><span class="header-section-number">1.2</span> The family-wise error rate</h2>
+<p>If we carry out many tests, we’re almost guaranteed to get type I errors, just by chance. Therefore the type I error rate is no longer a relevant metric. Instead, we consider the <strong>Familywise Error Rate (FWER)</strong>, given by</p>
+<p><span class="math display">\[
+\text{FWER}=\text{P}\{V &gt; 0\}
+  = \text{P}\{\text{rejecting at least one } H_{0i}| H_0\}
+\]</span></p>
+<p>where <span class="math inline">\(H_0\)</span> is the intersection of all partial nulls (<span class="math inline">\(H_{0i}\)</span>) <span class="math inline">\(i=1,\ldots,m_0\)</span>. In general, we would prefer testing procedures that keep the FWER under control, i.e. correct for the multiplicity problem. So instead of choosing <span class="math inline">\(\alpha\)</span> to control the probability of getting a false positive in each test, we try to control the FWER, i.e. the probability of getting <em>at least</em> one false positive in our <em>set</em> of hypothesis tests.</p>
+<p>In the following exercises, we will explore this idea on some synthetic data.</p>
+</div>
+</div>
+<div id="exercises-fwer-null-data-simulation" class="section level1 unnumbered">
+<h1>Exercises: FWER null data simulation</h1>
+<p>We will simulate performing hypothesis tests for which the null distribution is always true for different values of <code>m0</code>.</p>
+<p>To make the code more simple, we will directly sample the Z-score statistics from a standard normal (instead of sampling the individual groups and then performing the test on them, as shown above). We can also skip the p-value calculation and compare our Z-scores directly to the <span class="math inline">\((1 - \alpha) / 2\)</span>th quantile of the standard normal distribution (using the <code>qnorm()</code> function).</p>
+<div id="tasks" class="section level3 unnumbered">
+<h3>Tasks</h3>
+<div id="set-m0-5-and-generate-m0-z-score-statistics-by-sampling-from-the-standard-normal-distribution.-check-which-ones-are-significant-using-a-cutoff-alpha-0.05" class="section level4 unnumbered">
+<h4>1. Set <code>m0 = 5</code> and generate <code>m0</code> Z-score statistics by sampling from the standard normal distribution. Check which ones are significant using a cutoff <code>alpha = 0.05</code></h4>
+<p>To check significance you can use <code>abs(z_score) &gt; qnorm(1 - alpha / 2)</code></p>
+</div>
+<div id="calculate-v-the-number-of-significant-tests." class="section level4 unnumbered">
+<h4>2. Calculate <span class="math inline">\(V\)</span>, the number of significant tests.</h4>
+<p>Note that to count a logical vector, you can just use <code>sum</code> on it, since <code>TRUE</code> is numerically interpreted as 1 and <code>FALSE</code> as 0.</p>
+</div>
+<div id="check-that-v-0-at-least-one-significant-and-store-the-result-in-a-variable-e.g.-at_least_one_signif---v-0." class="section level4 unnumbered">
+<h4>3. Check that <code>V &gt; 0</code> (at least one significant) and store the result in a variable (e.g. <code>at_least_one_signif &lt;- V &gt; 0</code>).</h4>
+</div>
+<div id="repeat-steps-1-3-1000-times-and-keep-track-of-the-result-in-step-3-by-storing-it-in-a-vector." class="section level4 unnumbered">
+<h4>4. Repeat steps 1-3 1000 times and keep track of the result in step 3 by storing it in a vector.</h4>
+<p>You can either use a <code>for</code> loop or <code>replicate</code>. If using a <code>for</code> loop, make sure to create an empty vector of the desired length first! Growing a vector is technically possible but is very inefficient. You can initialize an empty (logical) vector of a certain length with <code>vec &lt;- logical(length = x)</code></p>
+</div>
+<div id="now-compute-the-fwer-as-the-proportion-of-times-v-was-greater-than-0." class="section level4 unnumbered">
+<h4>5. Now compute the FWER as the proportion of times <span class="math inline">\(V\)</span> was greater than 0.</h4>
+</div>
+<div id="repeat-the-same-procedure-for-m0-50-and-m0-1000.-interpret-the-results." class="section level4 unnumbered">
+<h4>6. Repeat the same procedure for <code>m0 = 50</code> and <code>m0 = 1000</code>. Interpret the results.</h4>
+</div>
+</div>
+<div id="solutions" class="section level3 unnumbered">
+<h3>Solutions</h3>
+<details>
+<p><summary>Solution</summary></p>
+<p>I combined the exercises above into one code block, to avoid repeated code. Essentially, I wrapped the simulation in a <code>for</code> loop that goes over the different values of <code>m0</code>.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="co">## Repeat 1000 times for m0 = 5, 50 and 1000, directly simulate test statistic</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a><span class="co">## record minimal p-value and check if smaller than alpha</span></span>
+<span id="cb4-3"><a href="#cb4-3"></a><span class="kw">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb4-4"><a href="#cb4-4"></a>B &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="co"># number of simulations</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a>m0_vec &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">5</span>, <span class="dv">50</span>, <span class="dv">1000</span>)</span>
+<span id="cb4-6"><a href="#cb4-6"></a>alpha &lt;-<span class="st"> </span><span class="fl">0.05</span></span>
+<span id="cb4-7"><a href="#cb4-7"></a><span class="co">## Initialize empty vector to store FWER results</span></span>
+<span id="cb4-8"><a href="#cb4-8"></a>fwer &lt;-<span class="st"> </span><span class="kw">numeric</span>(<span class="dt">length =</span> <span class="kw">length</span>(m0_vec))</span>
+<span id="cb4-9"><a href="#cb4-9"></a><span class="kw">names</span>(fwer) &lt;-<span class="st"> </span><span class="kw">paste</span>(<span class="st">&quot;m0 =&quot;</span>, m0_vec)</span>
+<span id="cb4-10"><a href="#cb4-10"></a></span>
+<span id="cb4-11"><a href="#cb4-11"></a><span class="co">## Loop over m0 values and simulate test statistics</span></span>
+<span id="cb4-12"><a href="#cb4-12"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="kw">seq_along</span>(m0_vec)) {</span>
+<span id="cb4-13"><a href="#cb4-13"></a>  <span class="co">## Simulate B times, each time recording V &gt; 0</span></span>
+<span id="cb4-14"><a href="#cb4-14"></a>  at_least_one_signif &lt;-<span class="st"> </span><span class="kw">replicate</span>(B, {</span>
+<span id="cb4-15"><a href="#cb4-15"></a>    null_stats &lt;-<span class="st"> </span><span class="kw">rnorm</span>(m0_vec[i], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>) <span class="co"># z-score distribution</span></span>
+<span id="cb4-16"><a href="#cb4-16"></a>    tests &lt;-<span class="st"> </span><span class="kw">abs</span>(null_stats) <span class="op">&gt;</span><span class="st"> </span><span class="kw">qnorm</span>(<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>alpha <span class="op">/</span><span class="st"> </span><span class="dv">2</span>)</span>
+<span id="cb4-17"><a href="#cb4-17"></a>    <span class="kw">sum</span>(tests) <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span></span>
+<span id="cb4-18"><a href="#cb4-18"></a>  })</span>
+<span id="cb4-19"><a href="#cb4-19"></a>  fwer[i] &lt;-<span class="st"> </span><span class="kw">mean</span>(at_least_one_signif) <span class="co"># proportion of V &gt;= 1</span></span>
+<span id="cb4-20"><a href="#cb4-20"></a>}</span>
+<span id="cb4-21"><a href="#cb4-21"></a>fwer</span>
+<span id="cb4-22"><a href="#cb4-22"></a><span class="co">#&gt;    m0 = 5   m0 = 50 m0 = 1000 </span></span>
+<span id="cb4-23"><a href="#cb4-23"></a><span class="co">#&gt;     0.269     0.931     1.000</span></span></code></pre></div>
+</details>
+</div>
+</div>
+<div id="controlling-the-fwer" class="section level1">
+<h1><span class="header-section-number">2</span> Controlling the FWER</h1>
+<p>We saw in the previous exercises that when conducting a large number of hypothesis tests the FWER becomes unacceptably large. So what can we do to lower it? The most straightforward way would be to just lower <span class="math inline">\(\alpha\)</span> (so we get less false positives).</p>
+<p>Note that we can write the FWER under the null hypothesis (so the p-values are uniformly distributed) as</p>
+<p><span class="math display">\[
+\begin{align}
+\text{FWER} = P(\text{at least one rejection}) &amp;= 1 - P(\text{no rejections}) \\
+  &amp;= 1 - \prod_{i=1}^{m} P(p_i &gt; \alpha) \\
+  &amp;= 1 - \prod_{i=1}^{m} (1 - \alpha) \\
+  &amp;= 1 - (1 - \alpha)^{m}
+\end{align}
+\]</span></p>
+<p>where <span class="math inline">\(p_i\)</span> is the p-value for the <span class="math inline">\(i\)</span>th test.</p>
+<p>If we wanted to control the FWER at a certain level (e.g. 0.05), we can simply solve the equation above for <span class="math inline">\(\alpha\)</span> and get, for a given FWER:</p>
+<p><span class="math display">\[ \alpha = 1 - (1 - \text{FWER})^{1/m} \]</span></p>
+<div id="exercise" class="section level2 unnumbered">
+<h2>Exercise</h2>
+<p>Using your simulation code from before, confirm that when setting; <code>alpha = 0.0102</code> and <code>m0 = 5</code>, <code>alpha = 0.00102</code> and <code>m0 = 50</code>, and finally <code>alpha = 0.000051292</code> and <code>m0 = 1000</code> all result in an FWER of approximately 0.05.</p>
+<details>
+<p><summary>Solution</summary></p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co">## Repeat 1000 times for m0 = 5, 50 and 1000, directly simulate test statistic</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="co">## record minimal p-value and check if smaller than alpha</span></span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="kw">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb5-4"><a href="#cb5-4"></a>B &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="co"># number of simulations</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a>m0_vec &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">5</span>, <span class="dv">50</span>, <span class="dv">1000</span>)</span>
+<span id="cb5-6"><a href="#cb5-6"></a>alpha_vec &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.0102</span>, <span class="fl">0.00102</span>, <span class="fl">0.000051292</span>)</span>
+<span id="cb5-7"><a href="#cb5-7"></a><span class="co">## Initialize empty vector to store FWER results</span></span>
+<span id="cb5-8"><a href="#cb5-8"></a>fwer &lt;-<span class="st"> </span><span class="kw">numeric</span>(<span class="dt">length =</span> <span class="kw">length</span>(m0_vec))</span>
+<span id="cb5-9"><a href="#cb5-9"></a><span class="kw">names</span>(fwer) &lt;-<span class="st"> </span><span class="kw">paste</span>(<span class="st">&quot;m0 =&quot;</span>, m0_vec)</span>
+<span id="cb5-10"><a href="#cb5-10"></a></span>
+<span id="cb5-11"><a href="#cb5-11"></a><span class="co">## Loop over m0 values and simulate test statistics</span></span>
+<span id="cb5-12"><a href="#cb5-12"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="kw">seq_along</span>(m0_vec)) {</span>
+<span id="cb5-13"><a href="#cb5-13"></a>  <span class="co">## Simulate B times, each time recording V &gt; 0</span></span>
+<span id="cb5-14"><a href="#cb5-14"></a>  at_least_one_signif &lt;-<span class="st"> </span><span class="kw">replicate</span>(B, {</span>
+<span id="cb5-15"><a href="#cb5-15"></a>    null_stats &lt;-<span class="st"> </span><span class="kw">rnorm</span>(m0_vec[i], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>) <span class="co"># z-score distribution</span></span>
+<span id="cb5-16"><a href="#cb5-16"></a>    tests &lt;-<span class="st"> </span><span class="kw">abs</span>(null_stats) <span class="op">&gt;</span><span class="st"> </span><span class="kw">qnorm</span>(<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>alpha_vec[i] <span class="op">/</span><span class="st"> </span><span class="dv">2</span>)</span>
+<span id="cb5-17"><a href="#cb5-17"></a>    <span class="kw">sum</span>(tests) <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span></span>
+<span id="cb5-18"><a href="#cb5-18"></a>  })</span>
+<span id="cb5-19"><a href="#cb5-19"></a>  fwer[i] &lt;-<span class="st"> </span><span class="kw">mean</span>(at_least_one_signif) <span class="co"># proportion of V &gt;= 1</span></span>
+<span id="cb5-20"><a href="#cb5-20"></a>}</span>
+<span id="cb5-21"><a href="#cb5-21"></a>fwer</span>
+<span id="cb5-22"><a href="#cb5-22"></a><span class="co">#&gt;    m0 = 5   m0 = 50 m0 = 1000 </span></span>
+<span id="cb5-23"><a href="#cb5-23"></a><span class="co">#&gt;     0.057     0.045     0.057</span></span></code></pre></div>
+</details>
+<p>The procedure described above is also known as Sidak’s procedure. Another widely used technique to control the FWER is the Bonferroni correction. Note, however that in general, controlling the FWER at levels such as 0.05 is very conservative, i.e. if there were ture alternative cases we might miss them.</p>
+</div>
+</div>
+<div id="the-false-discovery-rate-fdr" class="section level1">
+<h1><span class="header-section-number">3</span> The False Discovery Rate (FDR)</h1>
+<p>Now let’s consider a situation where we have both true null and true alternative cases. In this situation we are prone to two types of errors: false positives (type 1, as in the previous case) and false negatives (type 2, i.e. accepting <span class="math inline">\(H_0\)</span> while it’s actually false).</p>
+<p>We can then extend the table from <a href="#testing-hypotheses">before</a>:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">Accept.H_0</th>
+<th align="left">Reject.H_0</th>
+<th align="left">Total</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Null True</td>
+<td align="left">U (True Negative)</td>
+<td align="left">V (False Positive)</td>
+<td align="left">m_0</td>
+</tr>
+<tr class="even">
+<td align="left">Alternative True</td>
+<td align="left">T (False Negative)</td>
+<td align="left">S (True Positive</td>
+<td align="left">m_1</td>
+</tr>
+<tr class="odd">
+<td align="left">Total</td>
+<td align="left">W</td>
+<td align="left">R</td>
+<td align="left">m</td>
+</tr>
+</tbody>
+</table>
+<p>In addition to the FWER, another important concept for multiple hypothesis testing is the <strong>False Discovery Rate (FDR)</strong>:</p>
+<p><span class="math display">\[
+\text{FDR} = E[V/R]
+\]</span></p>
+<p>i.e. the expected proportion of false positives among all positive tests. The ratio <span class="math inline">\(V/R\)</span> is also called the False Discovery Proportion (FDP).</p>
+<p>However, the only quantities from the table above that are observable in real data, are <span class="math inline">\(W\)</span>, <span class="math inline">\(R\)</span> and <span class="math inline">\(m\)</span>. So to illustrate the concept, we will again make use of simulated data.</p>
+<p>In the code below, 1.000 tests are simulated, for which 90% come from cases where the null is true and the other 10% for which the alternative is true. We assume the <em>effect size</em> (difference between the 2 groups) to be equal to 2 under the alternative, so that we can sample the test statistics from a normal distribution with mean 2.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>m &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="co"># total number of hypotheses</span></span>
+<span id="cb6-2"><a href="#cb6-2"></a>p0 &lt;-<span class="st"> </span><span class="fl">0.9</span> <span class="co"># 90% of cases are true null</span></span>
+<span id="cb6-3"><a href="#cb6-3"></a>m0 &lt;-<span class="st"> </span><span class="kw">round</span>(p0 <span class="op">*</span><span class="st"> </span>m) <span class="co"># round to avoid floating point problems</span></span>
+<span id="cb6-4"><a href="#cb6-4"></a>m1 &lt;-<span class="st"> </span><span class="kw">round</span>((<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>p0) <span class="op">*</span><span class="st"> </span>m)</span>
+<span id="cb6-5"><a href="#cb6-5"></a></span>
+<span id="cb6-6"><a href="#cb6-6"></a><span class="kw">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb6-7"><a href="#cb6-7"></a>alpha &lt;-<span class="st"> </span><span class="fl">0.05</span></span>
+<span id="cb6-8"><a href="#cb6-8"></a>null_stats &lt;-<span class="st"> </span><span class="kw">rnorm</span>(m0)</span>
+<span id="cb6-9"><a href="#cb6-9"></a>alt_stats &lt;-<span class="st"> </span><span class="kw">rnorm</span>(m1, <span class="dt">mean =</span> <span class="dv">3</span>)</span>
+<span id="cb6-10"><a href="#cb6-10"></a>null_tests &lt;-<span class="st"> </span><span class="kw">abs</span>(null_stats) <span class="op">&gt;</span><span class="st"> </span><span class="kw">qnorm</span>(<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>alpha <span class="op">/</span><span class="st"> </span><span class="dv">2</span>)</span>
+<span id="cb6-11"><a href="#cb6-11"></a>alt_tests &lt;-<span class="st"> </span><span class="kw">abs</span>(alt_stats) <span class="op">&gt;</span><span class="st"> </span><span class="kw">qnorm</span>(<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>alpha <span class="op">/</span><span class="st"> </span><span class="dv">2</span>)</span>
+<span id="cb6-12"><a href="#cb6-12"></a></span>
+<span id="cb6-13"><a href="#cb6-13"></a>(U &lt;-<span class="st"> </span><span class="kw">sum</span>(<span class="op">!</span>null_tests)) <span class="co"># true negatives</span></span>
+<span id="cb6-14"><a href="#cb6-14"></a><span class="co">#&gt; [1] 842</span></span>
+<span id="cb6-15"><a href="#cb6-15"></a>(V &lt;-<span class="st"> </span><span class="kw">sum</span>(null_tests)) <span class="co"># false positives</span></span>
+<span id="cb6-16"><a href="#cb6-16"></a><span class="co">#&gt; [1] 58</span></span>
+<span id="cb6-17"><a href="#cb6-17"></a>(S &lt;-<span class="st"> </span><span class="kw">sum</span>(alt_tests)) <span class="co"># true positives</span></span>
+<span id="cb6-18"><a href="#cb6-18"></a><span class="co">#&gt; [1] 87</span></span>
+<span id="cb6-19"><a href="#cb6-19"></a>(T &lt;-<span class="st"> </span><span class="kw">sum</span>(<span class="op">!</span>alt_tests)) <span class="co"># false negatives</span></span>
+<span id="cb6-20"><a href="#cb6-20"></a><span class="co">#&gt; [1] 13</span></span>
+<span id="cb6-21"><a href="#cb6-21"></a></span>
+<span id="cb6-22"><a href="#cb6-22"></a>R &lt;-<span class="st"> </span>V <span class="op">+</span><span class="st"> </span>S <span class="co"># total number of positives</span></span>
+<span id="cb6-23"><a href="#cb6-23"></a></span>
+<span id="cb6-24"><a href="#cb6-24"></a>(FDP &lt;-<span class="st"> </span>V <span class="op">/</span><span class="st"> </span>R)</span>
+<span id="cb6-25"><a href="#cb6-25"></a><span class="co">#&gt; [1] 0.4</span></span></code></pre></div>
+<p>We see that 40% of the positive cases are actually false positives. To get an idea of the FDR, the expected FDP, we will repeat this procedure a number of times in the following exercises.</p>
+</div>
+<div id="exercises-fdr-simulations" class="section level1">
+<h1><span class="header-section-number">4</span> Exercises: FDR simulations</h1>
+<div id="tasks-1" class="section level3 unnumbered">
+<h3>Tasks</h3>
+<div id="set-m0-90-and-m1-10-and-generate-m-100-test-statistics-m0-of-them-from-the-standard-normal-distribution-n0-1-null-distribution-and-m1-of-them-from-n3-1-the-alternative-distribution." class="section level4 unnumbered">
+<h4>1. Set <code>m0 = 90</code> and <code>m1 = 10</code> and generate <code>m = 100</code> test statistics, <code>m0</code> of them from the standard normal distribution (N(0, 1)) (null distribution) and m1 of them from N(3, 1) (the alternative distribution).</h4>
+</div>
+<div id="test-for-significance-at-alpha-0.05-by-comparing-the-test-statistics-to-the-standard-normal-for-both-sets-of-tests." class="section level4 unnumbered">
+<h4>2. Test for significance at <code>alpha = 0.05</code> by comparing the test statistics to the standard normal, for both sets of tests.</h4>
+</div>
+<div id="calculate-v-s-r-and-the-fdp." class="section level4 unnumbered">
+<h4>3. Calculate <span class="math inline">\(V\)</span>, <span class="math inline">\(S\)</span>, <span class="math inline">\(R\)</span> and the FDP.</h4>
+</div>
+<div id="repeat-steps-1-3-1000-times-and-keep-track-of-the-fdp-for-each-iteration.-then-compute-the-fdr-as-the-mean-of-the-fdps.-interpret-the-results." class="section level4 unnumbered">
+<h4>4. Repeat steps 1-3 1000 times and keep track of the FDP for each iteration. Then compute the FDR as the mean of the FDPs. Interpret the results.</h4>
+</div>
+</div>
+<div id="solutions-1" class="section level3 unnumbered">
+<h3>Solutions</h3>
+<details>
+<p><summary>Solution</summary></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb7-2"><a href="#cb7-2"></a>B &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="co"># number of simulations</span></span>
+<span id="cb7-3"><a href="#cb7-3"></a>m0 &lt;-<span class="st"> </span><span class="dv">90</span></span>
+<span id="cb7-4"><a href="#cb7-4"></a>m1 &lt;-<span class="st"> </span><span class="dv">10</span></span>
+<span id="cb7-5"><a href="#cb7-5"></a>alpha &lt;-<span class="st"> </span><span class="fl">0.05</span></span>
+<span id="cb7-6"><a href="#cb7-6"></a></span>
+<span id="cb7-7"><a href="#cb7-7"></a><span class="co">## Simulate B times, each time recording V &gt; 0</span></span>
+<span id="cb7-8"><a href="#cb7-8"></a>FDP &lt;-<span class="st"> </span><span class="kw">replicate</span>(B, {</span>
+<span id="cb7-9"><a href="#cb7-9"></a>  null_stats &lt;-<span class="st"> </span><span class="kw">rnorm</span>(m0, <span class="dt">mean =</span> <span class="dv">0</span>)</span>
+<span id="cb7-10"><a href="#cb7-10"></a>  alt_stats &lt;-<span class="st"> </span><span class="kw">rnorm</span>(m1, <span class="dt">mean =</span> <span class="dv">3</span>)</span>
+<span id="cb7-11"><a href="#cb7-11"></a>  null_tests &lt;-<span class="st"> </span><span class="kw">abs</span>(null_stats) <span class="op">&gt;</span><span class="st"> </span><span class="kw">qnorm</span>(<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>alpha <span class="op">/</span><span class="st"> </span><span class="dv">2</span>)</span>
+<span id="cb7-12"><a href="#cb7-12"></a>  alt_tests &lt;-<span class="st"> </span><span class="kw">abs</span>(alt_stats) <span class="op">&gt;</span><span class="st"> </span><span class="kw">qnorm</span>(<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>alpha <span class="op">/</span><span class="st"> </span><span class="dv">2</span>)</span>
+<span id="cb7-13"><a href="#cb7-13"></a>  V &lt;-<span class="st"> </span><span class="kw">sum</span>(null_tests) <span class="co"># false positives</span></span>
+<span id="cb7-14"><a href="#cb7-14"></a>  S &lt;-<span class="st"> </span><span class="kw">sum</span>(alt_tests) <span class="co"># true positives</span></span>
+<span id="cb7-15"><a href="#cb7-15"></a>  R &lt;-<span class="st"> </span>V <span class="op">+</span><span class="st"> </span>S</span>
+<span id="cb7-16"><a href="#cb7-16"></a>  <span class="co">## Return V / R</span></span>
+<span id="cb7-17"><a href="#cb7-17"></a>  V <span class="op">/</span><span class="st"> </span>R</span>
+<span id="cb7-18"><a href="#cb7-18"></a>})</span>
+<span id="cb7-19"><a href="#cb7-19"></a></span>
+<span id="cb7-20"><a href="#cb7-20"></a>(FDR &lt;-<span class="st"> </span><span class="kw">mean</span>(FDP))</span>
+<span id="cb7-21"><a href="#cb7-21"></a><span class="co">#&gt; [1] 0.3426611</span></span></code></pre></div>
+<p>The FDR tells us the expected proportion of positive tests that will be false positives.</p>
+</details>
+<p>As with the FWER, we can now think of methods to control the FDR. A very popular method that is widely used in large-scale inference for high-throughput sequencing data is the <strong>Benjamini-Hochberg correction</strong>. The details of this technique lie outside the scope of this exercise session, but essentially it <em>adjusts</em> the p-values such that the FDR is controlled at a certain level. Note that this is a somewhat different approach then the FWER-controlling techniques, where significance cut-off <span class="math inline">\(\alpha\)</span> was adjusted instead of the p-values themselves.</p>
+<p>The Benjamini-Hochberg (and other techniques) are readily available in base R in the <code>p.adjust()</code> function (see <code>?p.adjust</code> for details). You just supply it a vector of p-values and the desired method (for Benjamini-Hochberg, use <code>method = "BH"</code>).</p>
+</div>
+</div>
+<div id="exercises-real-data-alon-et-al.-1999" class="section level1">
+<h1><span class="header-section-number">5</span> Exercises: real data (Alon <em>et al.</em> (1999))</h1>
+<p>We will take another look at the dataset by <span class="citation">Alon et al. (1999)</span> on gene expression levels in 40 tumour and 22 normal colon tissue samples. We used this data also in <a href="./Lab4-Sparse-PCA-LDA.html">Lab 4</a>. However, this time we’re interested in finding genes that expressed <em>significantly</em> different between the tumor and normal samples. In other words, we will perform hypothesis tests for each of the <strong>2000 genes</strong>. This is clearly a multiple testing problem.</p>
+<div id="tasks-2" class="section level3 unnumbered">
+<h3>Tasks</h3>
+<div id="read-in-the-data" class="section level4 unnumbered">
+<h4>1. Read in the data</h4>
+<p>(Just run the code given below.)</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>alon &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;https://github.com/statOmics/HDA2020/raw/data/Alon1999.csv&quot;</span>)</span>
+<span id="cb8-2"><a href="#cb8-2"></a><span class="kw">str</span>(alon[, <span class="dv">1</span><span class="op">:</span><span class="dv">10</span>])</span>
+<span id="cb8-3"><a href="#cb8-3"></a><span class="co">#&gt; &#39;data.frame&#39;:    62 obs. of  10 variables:</span></span>
+<span id="cb8-4"><a href="#cb8-4"></a><span class="co">#&gt;  $ Y : chr  &quot;t&quot; &quot;n&quot; &quot;t&quot; &quot;n&quot; ...</span></span>
+<span id="cb8-5"><a href="#cb8-5"></a><span class="co">#&gt;  $ X1: num  8589 9164 3826 6246 3230 ...</span></span>
+<span id="cb8-6"><a href="#cb8-6"></a><span class="co">#&gt;  $ X2: num  5468 6720 6970 7824 3694 ...</span></span>
+<span id="cb8-7"><a href="#cb8-7"></a><span class="co">#&gt;  $ X3: num  4263 4883 5370 5956 3401 ...</span></span>
+<span id="cb8-8"><a href="#cb8-8"></a><span class="co">#&gt;  $ X4: num  4065 3718 4706 3976 3464 ...</span></span>
+<span id="cb8-9"><a href="#cb8-9"></a><span class="co">#&gt;  $ X5: num  1998 2015 1167 2003 2181 ...</span></span>
+<span id="cb8-10"><a href="#cb8-10"></a><span class="co">#&gt;  $ X6: num  5282 5570 1572 2131 2923 ...</span></span>
+<span id="cb8-11"><a href="#cb8-11"></a><span class="co">#&gt;  $ X7: num  2170 3849 1325 1531 2069 ...</span></span>
+<span id="cb8-12"><a href="#cb8-12"></a><span class="co">#&gt;  $ X8: num  2773 2793 1472 1715 2949 ...</span></span>
+<span id="cb8-13"><a href="#cb8-13"></a><span class="co">#&gt;  $ X9: num  7526 7018 3297 3870 3303 ...</span></span>
+<span id="cb8-14"><a href="#cb8-14"></a><span class="kw">table</span>(alon<span class="op">$</span>Y)</span>
+<span id="cb8-15"><a href="#cb8-15"></a><span class="co">#&gt; </span></span>
+<span id="cb8-16"><a href="#cb8-16"></a><span class="co">#&gt;  n  t </span></span>
+<span id="cb8-17"><a href="#cb8-17"></a><span class="co">#&gt; 22 40</span></span></code></pre></div>
+<p>As a reminder, the data consists of gene expression levels in 40 tumor and 22 normal colon tissue samples. The expression on 6500 human genes were measured using the Affymetrix oligonucleotide array. As in <span class="citation">Alon et al. (1999)</span>, we use the <em>2000 genes with the highest minimal intensity</em> across the samples.</p>
+<p>The dataset contains one variable named <code>Y</code> with the values <code>t</code> and <code>n</code>. This variable indicates whether the sample came from tumourous (<code>t</code>) or normal (<code>n</code>) tissue.</p>
+</div>
+<div id="perform-2-sample-t-tests-for-each-gene-comparing-the-tumor-and-normal-tissue-groups" class="section level4 unnumbered">
+<h4>2. Perform 2-sample t-tests for each gene, comparing the tumor and normal tissue groups</h4>
+<p>Use the <code>t.test()</code> function in base R. By default, this will compute a two-sample t-test with <em>unequal variances</em> (<a href="https://en.wikipedia.org/wiki/Welch%27s_t-test">Welch’s t-test</a>). You can supply a <em>formula</em> (using the <code>~</code>) to <code>t.test()</code> similar to <code>lm()</code>.</p>
+<p>Use either a <code>for</code> loop to iterate over all genes or the <code>apply()</code> function.</p>
+<p>Store the test statistic, p-value and degrees of freedom of each test in a matrix (each row should be a gene, 1 column containing the test statistcs 1 column the p-values and 1 for the degrees of freedom). You can find these values in the <code>t.test()</code> result under the <code>$p.value</code>, <code>$statistic</code> and <code>$parameter</code> slots.</p>
+<details>
+<p><summary>Solution</summary></p>
+<p>In the solution below, I used the <code>apply</code> function to loop over the genes, essentially this is similar to a <code>for</code> loop but is a bit more succinct to write and takes care of pre-allocating memory instead of having te set up empty matrices first manually. Setting the second argument (<code>MARGIN</code>) to 2 tells <code>apply</code> to loop over the <em>columns</em> of the input matrix instead of the <em>rows</em>. For details, see <code>?apply</code>. Briefly, <code>apply()</code> takes a matrix, margin and function as input arguments, it then applies the function to each column or row (depending on the margin) of the matrix. The results are either a vector if each function call returns a single value or a matrix if a vector is returned at each call. Note that <code>apply</code> will return the resulting matrix with the calculated values in the rows. As it makes more sense to have these in columns, the matrix is transposed.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="co">## Split gene data and grouping variable and convert to matrix</span></span>
+<span id="cb9-2"><a href="#cb9-2"></a>gene_data &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(alon[, <span class="dv">-1</span>])</span>
+<span id="cb9-3"><a href="#cb9-3"></a>group &lt;-<span class="st"> </span>alon<span class="op">$</span>Y</span>
+<span id="cb9-4"><a href="#cb9-4"></a></span>
+<span id="cb9-5"><a href="#cb9-5"></a><span class="co">## Use `apply` to loop over columns of gene data and perform t-tests, extracting</span></span>
+<span id="cb9-6"><a href="#cb9-6"></a><span class="co">## p-values, test stastistics, and degrees of freedom</span></span>
+<span id="cb9-7"><a href="#cb9-7"></a>ttest_results &lt;-<span class="st"> </span><span class="kw">t</span>(<span class="kw">apply</span>(gene_data, <span class="dv">2</span>, <span class="cf">function</span>(x) {</span>
+<span id="cb9-8"><a href="#cb9-8"></a>  t_test &lt;-<span class="st"> </span><span class="kw">t.test</span>(x <span class="op">~</span><span class="st"> </span>group)</span>
+<span id="cb9-9"><a href="#cb9-9"></a>  p_val &lt;-<span class="st"> </span>t_test<span class="op">$</span>p.value</span>
+<span id="cb9-10"><a href="#cb9-10"></a>  stat &lt;-<span class="st"> </span>t_test<span class="op">$</span>statistic</span>
+<span id="cb9-11"><a href="#cb9-11"></a>  df &lt;-<span class="st"> </span>t_test<span class="op">$</span>parameter</span>
+<span id="cb9-12"><a href="#cb9-12"></a>  <span class="co">## Return values in named vector</span></span>
+<span id="cb9-13"><a href="#cb9-13"></a>  <span class="kw">c</span>(stat, <span class="st">&quot;p_val&quot;</span> =<span class="st"> </span>p_val, df)</span>
+<span id="cb9-14"><a href="#cb9-14"></a>}))</span>
+<span id="cb9-15"><a href="#cb9-15"></a></span>
+<span id="cb9-16"><a href="#cb9-16"></a><span class="co">## Take a look at results</span></span>
+<span id="cb9-17"><a href="#cb9-17"></a><span class="kw">head</span>(ttest_results)</span>
+<span id="cb9-18"><a href="#cb9-18"></a><span class="co">#&gt;             t      p_val       df</span></span>
+<span id="cb9-19"><a href="#cb9-19"></a><span class="co">#&gt; X1 -1.6728613 0.10068961 49.30072</span></span>
+<span id="cb9-20"><a href="#cb9-20"></a><span class="co">#&gt; X2 -1.4319967 0.15787615 54.30090</span></span>
+<span id="cb9-21"><a href="#cb9-21"></a><span class="co">#&gt; X3 -2.1292624 0.03758201 56.77667</span></span>
+<span id="cb9-22"><a href="#cb9-22"></a><span class="co">#&gt; X4 -0.9455604 0.34869002 52.67760</span></span>
+<span id="cb9-23"><a href="#cb9-23"></a><span class="co">#&gt; X5 -1.7852252 0.07953894 57.07236</span></span>
+<span id="cb9-24"><a href="#cb9-24"></a><span class="co">#&gt; X6 -1.4214810 0.16143092 49.62772</span></span></code></pre></div>
+</details>
+</div>
+<div id="plot-a-histogram-of-the-p-values-and-interpret" class="section level4 unnumbered">
+<h4>3. Plot a histogram of the p-values and interpret</h4>
+<details>
+<p><summary>Solution</summary></p>
+<p>Setting <code>breaks</code> from 0 to 1 with a width of 0.05 makes sense for p-values because the first bar will then represent the number of p-values smaller than 0.05 (which we often use as cutoff).</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>p_vals &lt;-<span class="st"> </span>ttest_results[, <span class="st">&quot;p_val&quot;</span>]</span>
+<span id="cb10-2"><a href="#cb10-2"></a><span class="kw">hist</span>(</span>
+<span id="cb10-3"><a href="#cb10-3"></a>  p_vals,</span>
+<span id="cb10-4"><a href="#cb10-4"></a>  <span class="dt">breaks =</span> <span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dt">by =</span> <span class="fl">0.05</span>), <span class="dt">main =</span> <span class="st">&quot;&quot;</span>, <span class="dt">xlab =</span> <span class="st">&quot;p-value&quot;</span>,</span>
+<span id="cb10-5"><a href="#cb10-5"></a>  <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">500</span>)</span>
+<span id="cb10-6"><a href="#cb10-6"></a>)</span></code></pre></div>
+<p><img src="Lab5-Large-Scale-Inference_files/figure-html/p_val-hist-1.png" width="100%" style="display: block; margin: auto;" /></p>
+</details>
+</div>
+<div id="how-many-discoveries-significant-genes-do-you-find-when-using-alpha-0.05" class="section level4 unnumbered">
+<h4>4. How many discoveries / significant genes do you find when using <span class="math inline">\(\alpha = 0.05\)</span>?</h4>
+<details>
+<p><summary>Solution</summary></p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>alpha &lt;-<span class="st"> </span><span class="fl">0.05</span></span>
+<span id="cb11-2"><a href="#cb11-2"></a><span class="kw">sum</span>(p_vals <span class="op">&lt;</span><span class="st"> </span>alpha)</span>
+<span id="cb11-3"><a href="#cb11-3"></a><span class="co">#&gt; [1] 478</span></span></code></pre></div>
+</details>
+</div>
+<div id="correct-for-the-multiplicity-problem-by-controlling-the-fwer-at-5" class="section level4 unnumbered">
+<h4>5. Correct for the multiplicity problem by controlling the FWER at 5%</h4>
+<ul>
+<li><p>What should we use as <span class="math inline">\(\alpha\)</span>?</p></li>
+<li><p>How many discoveries are left over when using the FWER-adjusted <span class="math inline">\(\alpha\)</span>?</p></li>
+</ul>
+<details>
+<p><summary>Solution</summary></p>
+<p>Remember that <span class="math inline">\(\alpha\)</span> can be calculated for a given FWER as</p>
+<p><span class="math display">\[ \alpha = 1 - (1 - \text{FWER})^{1/m} \]</span></p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>m &lt;-<span class="st"> </span><span class="kw">nrow</span>(ttest_results) <span class="co"># number of tests performed</span></span>
+<span id="cb12-2"><a href="#cb12-2"></a>fwer &lt;-<span class="st"> </span><span class="fl">0.05</span></span>
+<span id="cb12-3"><a href="#cb12-3"></a>adj_alpha &lt;-<span class="st"> </span><span class="dv">1</span> <span class="op">-</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>fwer)<span class="op">^</span>(<span class="dv">1</span><span class="op">/</span>m)</span>
+<span id="cb12-4"><a href="#cb12-4"></a></span>
+<span id="cb12-5"><a href="#cb12-5"></a><span class="co">## Number of significant discoveries at FWER 5%</span></span>
+<span id="cb12-6"><a href="#cb12-6"></a><span class="kw">sum</span>(p_vals <span class="op">&lt;</span><span class="st"> </span>adj_alpha)</span>
+<span id="cb12-7"><a href="#cb12-7"></a><span class="co">#&gt; [1] 11</span></span></code></pre></div>
+<p>Note that you can also use the <em>Bonferroni</em> correction to get a similar result. This is also implemented in the <code>p.adjust</code> function by using <code>method = "bonferroni"</code>. Essentially, the Bonferroni correction sets a new <span class="math inline">\(\alpha_m = \alpha / m\)</span> by dividing the original with the number of tests performed <span class="math inline">\(m\)</span>. So the result is slightly different than the procedure given above (which is known as Sidak’s procedure but is less commonly used). The <code>p.adjust</code> function returns adjusted p-values, since modifying the cut-off <span class="math inline">\(\alpha\)</span> by dividing with <span class="math inline">\(m\)</span> is the same as multiplying the p-values with <span class="math inline">\(m\)</span> and then using the original cut-off.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>bonf_pvals &lt;-<span class="st"> </span><span class="kw">p.adjust</span>(p_vals, <span class="dt">method =</span> <span class="st">&quot;bonferroni&quot;</span>)</span>
+<span id="cb13-2"><a href="#cb13-2"></a><span class="kw">sum</span>(bonf_pvals <span class="op">&lt;</span><span class="st"> </span>alpha)</span>
+<span id="cb13-3"><a href="#cb13-3"></a><span class="co">#&gt; [1] 11</span></span>
+<span id="cb13-4"><a href="#cb13-4"></a></span>
+<span id="cb13-5"><a href="#cb13-5"></a><span class="co">## Note that bonferroni correction is simply multiplying the original p-values</span></span>
+<span id="cb13-6"><a href="#cb13-6"></a><span class="co">## with m (and cutting off any values bigger than 1)</span></span>
+<span id="cb13-7"><a href="#cb13-7"></a>idx &lt;-<span class="st"> </span><span class="kw">which</span>(bonf_pvals <span class="op">&lt;</span><span class="st"> </span><span class="dv">1</span>)</span>
+<span id="cb13-8"><a href="#cb13-8"></a><span class="kw">head</span>(bonf_pvals[idx])</span>
+<span id="cb13-9"><a href="#cb13-9"></a><span class="co">#&gt;        X15        X26        X31        X43        X47        X62 </span></span>
+<span id="cb13-10"><a href="#cb13-10"></a><span class="co">#&gt; 0.77687260 0.08333083 0.22133271 0.03115825 0.11433842 0.07860578</span></span>
+<span id="cb13-11"><a href="#cb13-11"></a><span class="kw">head</span>(p_vals[idx] <span class="op">*</span><span class="st"> </span>m)</span>
+<span id="cb13-12"><a href="#cb13-12"></a><span class="co">#&gt;        X15        X26        X31        X43        X47        X62 </span></span>
+<span id="cb13-13"><a href="#cb13-13"></a><span class="co">#&gt; 0.77687260 0.08333083 0.22133271 0.03115825 0.11433842 0.07860578</span></span></code></pre></div>
+</details>
+</div>
+<div id="use-the-fdr-method-to-adjust-the-original-p-values" class="section level4 unnumbered">
+<h4>6. Use the FDR method to adjust the original p-values</h4>
+<ul>
+<li><p>Use the <code>p.adjust()</code> function with <code>method = "BH"</code></p></li>
+<li><p>Plot the adjusted p-values against the originals, what is the effect of the adjustment?</p></li>
+<li><p>How many discoveries are left when controlling the FDR at 5%?</p></li>
+</ul>
+<details>
+<p><summary>Solution</summary></p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>fdr &lt;-<span class="st"> </span><span class="kw">p.adjust</span>(p_vals, <span class="dt">method =</span> <span class="st">&quot;BH&quot;</span>)</span>
+<span id="cb14-2"><a href="#cb14-2"></a></span>
+<span id="cb14-3"><a href="#cb14-3"></a><span class="kw">plot</span>(</span>
+<span id="cb14-4"><a href="#cb14-4"></a>  p_vals[<span class="kw">order</span>(p_vals)], fdr[<span class="kw">order</span>(p_vals)],</span>
+<span id="cb14-5"><a href="#cb14-5"></a>  <span class="dt">pch =</span> <span class="dv">19</span>, <span class="dt">cex =</span> <span class="fl">0.6</span>, <span class="dt">xlab =</span> <span class="st">&quot;p-value&quot;</span>, <span class="dt">ylab =</span> <span class="st">&quot;FDR-adjusted p-value&quot;</span>, <span class="dt">col =</span> <span class="dv">4</span></span>
+<span id="cb14-6"><a href="#cb14-6"></a>)</span>
+<span id="cb14-7"><a href="#cb14-7"></a><span class="kw">abline</span>(<span class="dt">a =</span> <span class="dv">0</span>, <span class="dt">b =</span> <span class="dv">1</span>)</span></code></pre></div>
+<p><img src="Lab5-Large-Scale-Inference_files/figure-html/fdr-adjust-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a></span>
+<span id="cb15-2"><a href="#cb15-2"></a><span class="kw">sum</span>(fdr <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.05</span>)</span>
+<span id="cb15-3"><a href="#cb15-3"></a><span class="co">#&gt; [1] 190</span></span></code></pre></div>
+</details>
+</div>
+<div id="compare-the-fwer-and-fdr-corrections.-which-one-is-more-conservative" class="section level4 unnumbered">
+<h4>7. Compare the FWER and FDR corrections. Which one is more conservative?</h4>
+</div>
+</div>
+</div>
+<div id="further-reading" class="section level1 unnumbered">
+<h1>Further reading</h1>
+<ul>
+<li>Chapter 6 of the <a href="./http://genomicsclass.github.io/book/">Biomedical Data Science</a> book</li>
+</ul>
+</div>
+<div id="session-info" class="section level1 unnumbered">
+<h1>Session info</h1>
+<details>
+<p><summary>Session info</summary></p>
+<pre><code>#&gt; [1] &quot;2020-12-01 17:40:08 UTC&quot;
+#&gt; ─ Session info ───────────────────────────────────────────────────────────────
+#&gt;  setting  value                       
+#&gt;  version  R version 4.0.3 (2020-10-10)
+#&gt;  os       macOS Catalina 10.15.7      
+#&gt;  system   x86_64, darwin17.0          
+#&gt;  ui       X11                         
+#&gt;  language (EN)                        
+#&gt;  collate  en_US.UTF-8                 
+#&gt;  ctype    en_US.UTF-8                 
+#&gt;  tz       UTC                         
+#&gt;  date     2020-12-01                  
+#&gt; 
+#&gt; ─ Packages ───────────────────────────────────────────────────────────────────
+#&gt;  package                * version  date       lib source                       
+#&gt;  AnnotationDbi            1.52.0   2020-10-27 [1] Bioconductor                 
+#&gt;  AnnotationHub          * 2.22.0   2020-10-27 [1] Bioconductor                 
+#&gt;  assertthat               0.2.1    2019-03-21 [1] CRAN (R 4.0.2)               
+#&gt;  backports                1.2.0    2020-11-02 [1] CRAN (R 4.0.2)               
+#&gt;  beachmat                 2.6.2    2020-11-24 [1] Bioconductor                 
+#&gt;  beeswarm                 0.2.3    2016-04-25 [1] CRAN (R 4.0.2)               
+#&gt;  Biobase                * 2.50.0   2020-10-27 [1] Bioconductor                 
+#&gt;  BiocFileCache          * 1.14.0   2020-10-27 [1] Bioconductor                 
+#&gt;  BiocGenerics           * 0.36.0   2020-10-27 [1] Bioconductor                 
+#&gt;  BiocManager              1.30.10  2019-11-16 [1] CRAN (R 4.0.2)               
+#&gt;  BiocNeighbors            1.8.1    2020-11-11 [1] Bioconductor                 
+#&gt;  BiocParallel             1.24.1   2020-11-06 [1] Bioconductor                 
+#&gt;  BiocSingular             1.6.0    2020-10-27 [1] Bioconductor                 
+#&gt;  BiocVersion              3.12.0   2020-05-14 [1] Bioconductor                 
+#&gt;  bit                      4.0.4    2020-08-04 [1] CRAN (R 4.0.2)               
+#&gt;  bit64                    4.0.5    2020-08-30 [1] CRAN (R 4.0.2)               
+#&gt;  bitops                   1.0-6    2013-08-17 [1] CRAN (R 4.0.2)               
+#&gt;  blob                     1.2.1    2020-01-20 [1] CRAN (R 4.0.2)               
+#&gt;  boot                   * 1.3-25   2020-04-26 [1] CRAN (R 4.0.2)               
+#&gt;  broom                    0.7.2    2020-10-20 [1] CRAN (R 4.0.2)               
+#&gt;  callr                    3.5.1    2020-10-13 [1] CRAN (R 4.0.2)               
+#&gt;  CCA                    * 1.2      2012-10-29 [1] CRAN (R 4.0.2)               
+#&gt;  cellranger               1.1.0    2016-07-27 [1] CRAN (R 4.0.2)               
+#&gt;  cli                      2.2.0    2020-11-20 [1] CRAN (R 4.0.2)               
+#&gt;  cluster                * 2.1.0    2019-06-19 [1] CRAN (R 4.0.2)               
+#&gt;  codetools                0.2-16   2018-12-24 [2] CRAN (R 4.0.3)               
+#&gt;  colorspace               2.0-0    2020-11-11 [1] CRAN (R 4.0.2)               
+#&gt;  crayon                   1.3.4    2017-09-16 [1] CRAN (R 4.0.2)               
+#&gt;  curl                     4.3      2019-12-02 [1] CRAN (R 4.0.1)               
+#&gt;  DBI                      1.1.0    2019-12-15 [1] CRAN (R 4.0.2)               
+#&gt;  dbplyr                 * 2.0.0    2020-11-03 [1] CRAN (R 4.0.2)               
+#&gt;  DelayedArray             0.16.0   2020-10-27 [1] Bioconductor                 
+#&gt;  DelayedMatrixStats       1.12.1   2020-11-24 [1] Bioconductor                 
+#&gt;  desc                     1.2.0    2018-05-01 [1] CRAN (R 4.0.2)               
+#&gt;  devtools                 2.3.2    2020-09-18 [1] CRAN (R 4.0.2)               
+#&gt;  digest                   0.6.27   2020-10-24 [1] CRAN (R 4.0.2)               
+#&gt;  dotCall64              * 1.0-0    2018-07-30 [1] CRAN (R 4.0.2)               
+#&gt;  dplyr                  * 1.0.2    2020-08-18 [1] CRAN (R 4.0.2)               
+#&gt;  ellipsis                 0.3.1    2020-05-15 [1] CRAN (R 4.0.2)               
+#&gt;  evaluate                 0.14     2019-05-28 [1] CRAN (R 4.0.1)               
+#&gt;  ExperimentHub          * 1.16.0   2020-10-27 [1] Bioconductor                 
+#&gt;  fansi                    0.4.1    2020-01-08 [1] CRAN (R 4.0.2)               
+#&gt;  farver                   2.0.3    2020-01-16 [1] CRAN (R 4.0.2)               
+#&gt;  fastmap                  1.0.1    2019-10-08 [1] CRAN (R 4.0.2)               
+#&gt;  fda                    * 5.1.7    2020-11-28 [1] CRAN (R 4.0.2)               
+#&gt;  fds                    * 1.8      2018-10-31 [1] CRAN (R 4.0.2)               
+#&gt;  fields                 * 11.6     2020-10-09 [1] CRAN (R 4.0.2)               
+#&gt;  forcats                * 0.5.0    2020-03-01 [1] CRAN (R 4.0.2)               
+#&gt;  foreach                  1.5.1    2020-10-15 [1] CRAN (R 4.0.2)               
+#&gt;  fs                       1.5.0    2020-07-31 [1] CRAN (R 4.0.2)               
+#&gt;  generics                 0.1.0    2020-10-31 [1] CRAN (R 4.0.2)               
+#&gt;  GenomeInfoDb           * 1.26.1   2020-11-18 [1] Bioconductor                 
+#&gt;  GenomeInfoDbData         1.2.4    2020-12-01 [1] Bioconductor                 
+#&gt;  GenomicRanges          * 1.42.0   2020-10-27 [1] Bioconductor                 
+#&gt;  ggbeeswarm               0.6.0    2017-08-07 [1] CRAN (R 4.0.2)               
+#&gt;  ggbiplot               * 0.55     2020-12-01 [1] Github (vqv/ggbiplot@7325e88)
+#&gt;  ggplot2                * 3.3.2    2020-06-19 [1] CRAN (R 4.0.2)               
+#&gt;  GIGrvg                   0.5      2017-06-10 [1] CRAN (R 4.0.2)               
+#&gt;  git2r                    0.27.1   2020-05-03 [1] CRAN (R 4.0.2)               
+#&gt;  glmnet                 * 4.0-2    2020-06-16 [1] CRAN (R 4.0.2)               
+#&gt;  glue                     1.4.2    2020-08-27 [1] CRAN (R 4.0.2)               
+#&gt;  gridExtra                2.3      2017-09-09 [1] CRAN (R 4.0.2)               
+#&gt;  gtable                   0.3.0    2019-03-25 [1] CRAN (R 4.0.2)               
+#&gt;  haven                    2.3.1    2020-06-01 [1] CRAN (R 4.0.2)               
+#&gt;  hdrcde                   3.3      2018-12-21 [1] CRAN (R 4.0.2)               
+#&gt;  highr                    0.8      2019-03-20 [1] CRAN (R 4.0.2)               
+#&gt;  hms                      0.5.3    2020-01-08 [1] CRAN (R 4.0.2)               
+#&gt;  htmltools                0.5.0    2020-06-16 [1] CRAN (R 4.0.2)               
+#&gt;  httpuv                   1.5.4    2020-06-06 [1] CRAN (R 4.0.2)               
+#&gt;  httr                     1.4.2    2020-07-20 [1] CRAN (R 4.0.2)               
+#&gt;  HyperbolicDist           0.6-2    2009-09-23 [1] CRAN (R 4.0.2)               
+#&gt;  interactiveDisplayBase   1.28.0   2020-10-27 [1] Bioconductor                 
+#&gt;  IRanges                * 2.24.0   2020-10-27 [1] Bioconductor                 
+#&gt;  irlba                    2.3.3    2019-02-05 [1] CRAN (R 4.0.2)               
+#&gt;  iterators                1.0.13   2020-10-15 [1] CRAN (R 4.0.2)               
+#&gt;  jpeg                     0.1-8.1  2019-10-24 [1] CRAN (R 4.0.2)               
+#&gt;  jsonlite                 1.7.1    2020-09-07 [1] CRAN (R 4.0.2)               
+#&gt;  KernSmooth               2.23-17  2020-04-26 [2] CRAN (R 4.0.3)               
+#&gt;  knitr                    1.30     2020-09-22 [1] CRAN (R 4.0.2)               
+#&gt;  ks                       1.11.7   2020-02-11 [1] CRAN (R 4.0.2)               
+#&gt;  labeling                 0.4.2    2020-10-20 [1] CRAN (R 4.0.2)               
+#&gt;  later                    1.1.0.1  2020-06-05 [1] CRAN (R 4.0.2)               
+#&gt;  lattice                  0.20-41  2020-04-02 [2] CRAN (R 4.0.3)               
+#&gt;  lifecycle                0.2.0    2020-03-06 [1] CRAN (R 4.0.2)               
+#&gt;  lubridate                1.7.9.2  2020-11-13 [1] CRAN (R 4.0.2)               
+#&gt;  magrittr                 2.0.1    2020-11-17 [1] CRAN (R 4.0.2)               
+#&gt;  maps                     3.3.0    2018-04-03 [1] CRAN (R 4.0.2)               
+#&gt;  MASS                   * 7.3-53   2020-09-09 [2] CRAN (R 4.0.3)               
+#&gt;  Matrix                 * 1.2-18   2019-11-27 [2] CRAN (R 4.0.3)               
+#&gt;  MatrixGenerics         * 1.2.0    2020-10-27 [1] Bioconductor                 
+#&gt;  matrixStats            * 0.57.0   2020-09-25 [1] CRAN (R 4.0.2)               
+#&gt;  mclust                   5.4.7    2020-11-20 [1] CRAN (R 4.0.2)               
+#&gt;  memoise                  1.1.0    2017-04-21 [1] CRAN (R 4.0.2)               
+#&gt;  mime                     0.9      2020-02-04 [1] CRAN (R 4.0.2)               
+#&gt;  misc3d                   0.9-0    2020-09-06 [1] CRAN (R 4.0.2)               
+#&gt;  modelr                   0.1.8    2020-05-19 [1] CRAN (R 4.0.2)               
+#&gt;  munsell                  0.5.0    2018-06-12 [1] CRAN (R 4.0.2)               
+#&gt;  muscData               * 1.4.0    2020-10-29 [1] Bioconductor                 
+#&gt;  mvtnorm                  1.1-1    2020-06-09 [1] CRAN (R 4.0.2)               
+#&gt;  NormalBetaPrime        * 2.2      2019-01-19 [1] CRAN (R 4.0.2)               
+#&gt;  pcaPP                  * 1.9-73   2018-01-14 [1] CRAN (R 4.0.2)               
+#&gt;  pillar                   1.4.7    2020-11-20 [1] CRAN (R 4.0.2)               
+#&gt;  pkgbuild                 1.1.0    2020-07-13 [1] CRAN (R 4.0.2)               
+#&gt;  pkgconfig                2.0.3    2019-09-22 [1] CRAN (R 4.0.2)               
+#&gt;  pkgload                  1.1.0    2020-05-29 [1] CRAN (R 4.0.2)               
+#&gt;  plot3D                 * 1.3      2019-12-18 [1] CRAN (R 4.0.2)               
+#&gt;  pls                    * 2.7-3    2020-08-07 [1] CRAN (R 4.0.2)               
+#&gt;  plyr                   * 1.8.6    2020-03-03 [1] CRAN (R 4.0.2)               
+#&gt;  pracma                   2.2.9    2019-12-15 [1] CRAN (R 4.0.2)               
+#&gt;  prettyunits              1.1.1    2020-01-24 [1] CRAN (R 4.0.2)               
+#&gt;  processx                 3.4.5    2020-11-30 [1] CRAN (R 4.0.3)               
+#&gt;  promises                 1.1.1    2020-06-09 [1] CRAN (R 4.0.2)               
+#&gt;  ps                       1.4.0    2020-10-07 [1] CRAN (R 4.0.2)               
+#&gt;  pscl                     1.5.5    2020-03-07 [1] CRAN (R 4.0.2)               
+#&gt;  purrr                  * 0.3.4    2020-04-17 [1] CRAN (R 4.0.2)               
+#&gt;  R6                       2.5.0    2020-10-28 [1] CRAN (R 4.0.2)               
+#&gt;  rainbow                * 3.6      2019-01-29 [1] CRAN (R 4.0.2)               
+#&gt;  rappdirs                 0.3.1    2016-03-28 [1] CRAN (R 4.0.2)               
+#&gt;  Rcpp                     1.0.5    2020-07-06 [1] CRAN (R 4.0.2)               
+#&gt;  RCurl                  * 1.98-1.2 2020-04-18 [1] CRAN (R 4.0.2)               
+#&gt;  readr                  * 1.4.0    2020-10-05 [1] CRAN (R 4.0.2)               
+#&gt;  readxl                   1.3.1    2019-03-13 [1] CRAN (R 4.0.2)               
+#&gt;  remotes                  2.2.0    2020-07-21 [1] CRAN (R 4.0.2)               
+#&gt;  reprex                   0.3.0    2019-05-16 [1] CRAN (R 4.0.2)               
+#&gt;  rlang                    0.4.9    2020-11-26 [1] CRAN (R 4.0.2)               
+#&gt;  rmarkdown                2.5      2020-10-21 [1] CRAN (R 4.0.3)               
+#&gt;  rprojroot                2.0.2    2020-11-15 [1] CRAN (R 4.0.2)               
+#&gt;  RSQLite                  2.2.1    2020-09-30 [1] CRAN (R 4.0.2)               
+#&gt;  rstudioapi               0.13     2020-11-12 [1] CRAN (R 4.0.2)               
+#&gt;  rsvd                     1.0.3    2020-02-17 [1] CRAN (R 4.0.2)               
+#&gt;  rvest                    0.3.6    2020-07-25 [1] CRAN (R 4.0.2)               
+#&gt;  S4Vectors              * 0.28.0   2020-10-27 [1] Bioconductor                 
+#&gt;  scales                 * 1.1.1    2020-05-11 [1] CRAN (R 4.0.2)               
+#&gt;  scater                 * 1.18.3   2020-11-08 [1] Bioconductor                 
+#&gt;  scuttle                  1.0.3    2020-11-23 [1] Bioconductor                 
+#&gt;  sessioninfo              1.1.1    2018-11-05 [1] CRAN (R 4.0.2)               
+#&gt;  shape                    1.4.5    2020-09-13 [1] CRAN (R 4.0.2)               
+#&gt;  shiny                    1.5.0    2020-06-23 [1] CRAN (R 4.0.2)               
+#&gt;  SingleCellExperiment   * 1.12.0   2020-10-27 [1] Bioconductor                 
+#&gt;  spam                   * 2.5-1    2019-12-12 [1] CRAN (R 4.0.2)               
+#&gt;  sparseMatrixStats        1.2.0    2020-10-27 [1] Bioconductor                 
+#&gt;  stringi                  1.5.3    2020-09-09 [1] CRAN (R 4.0.2)               
+#&gt;  stringr                * 1.4.0    2019-02-10 [1] CRAN (R 4.0.2)               
+#&gt;  SummarizedExperiment   * 1.20.0   2020-10-27 [1] Bioconductor                 
+#&gt;  survival                 3.2-7    2020-09-28 [2] CRAN (R 4.0.3)               
+#&gt;  testthat                 3.0.0    2020-10-31 [1] CRAN (R 4.0.2)               
+#&gt;  tibble                 * 3.0.4    2020-10-12 [1] CRAN (R 4.0.2)               
+#&gt;  tidyr                  * 1.1.2    2020-08-27 [1] CRAN (R 4.0.2)               
+#&gt;  tidyselect               1.1.0    2020-05-11 [1] CRAN (R 4.0.2)               
+#&gt;  tidyverse              * 1.3.0    2019-11-21 [1] CRAN (R 4.0.2)               
+#&gt;  truncnorm                1.0-8    2018-02-27 [1] CRAN (R 4.0.2)               
+#&gt;  usethis                  1.6.3    2020-09-17 [1] CRAN (R 4.0.2)               
+#&gt;  vctrs                    0.3.5    2020-11-17 [1] CRAN (R 4.0.2)               
+#&gt;  vipor                    0.4.5    2017-03-22 [1] CRAN (R 4.0.2)               
+#&gt;  viridis                  0.5.1    2018-03-29 [1] CRAN (R 4.0.2)               
+#&gt;  viridisLite              0.3.0    2018-02-01 [1] CRAN (R 4.0.1)               
+#&gt;  withr                    2.3.0    2020-09-22 [1] CRAN (R 4.0.2)               
+#&gt;  xfun                     0.19     2020-10-30 [1] CRAN (R 4.0.2)               
+#&gt;  xml2                     1.3.2    2020-04-23 [1] CRAN (R 4.0.2)               
+#&gt;  xtable                   1.8-4    2019-04-21 [1] CRAN (R 4.0.2)               
+#&gt;  XVector                  0.30.0   2020-10-28 [1] Bioconductor                 
+#&gt;  yaml                     2.2.1    2020-02-01 [1] CRAN (R 4.0.2)               
+#&gt;  zlibbioc                 1.36.0   2020-10-28 [1] Bioconductor                 
+#&gt; 
+#&gt; [1] /Users/runner/work/_temp/Library
+#&gt; [2] /Library/Frameworks/R.framework/Versions/4.0/Resources/library</code></pre>
+</details>
+</div>
+<div id="home" class="section level1 unnumbered">
+<h1><a href="https://statomics.github.io/HDA2020/">Home</a></h1>
+</div>
+<div id="references" class="section level1 unnumbered">
+<h1>References</h1>
+<div id="refs" class="references">
+<div id="ref-alon1999broad">
+<p>Alon, Uri, Naama Barkai, Daniel A Notterman, Kurt Gish, Suzanne Ybarra, Daniel Mack, and Arnold J Levine. 1999. “Broad Patterns of Gene Expression Revealed by Clustering Analysis of Tumor and Normal Colon Tissues Probed by Oligonucleotide Arrays.” <em>Proceedings of the National Academy of Sciences</em> 96 (12): 6745–50.</p>
+</div>
+</div>
+</div>
+
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiQW5hbHlzaXMgb2YgSGlnaCBEaW1lbnNpb25hbCBEYXRhIC0gTGFiIDUiCnN1YnRpdGxlOiAiTGFyZ2UgU2NhbGUgSW5mZXJlbmNlIgphdXRob3I6ICJBZGFwdGVkIGJ5IE1pbGFuIE1hbGZhaXQiCmRhdGU6ICIzIERlYyAyMDIwIgpyZWZlcmVuY2VzOgotIGlkOiBhbG9uMTk5OWJyb2FkCiAgdHlwZTogYXJ0aWNsZS1qb3VybmFsCiAgYXV0aG9yOgogIC0gZmFtaWx5OiBBbG9uCiAgICBnaXZlbjogVXJpCiAgLSBmYW1pbHk6IEJhcmthaQogICAgZ2l2ZW46IE5hYW1hCiAgLSBmYW1pbHk6IE5vdHRlcm1hbgogICAgZ2l2ZW46IERhbmllbCBBCiAgLSBmYW1pbHk6IEdpc2gKICAgIGdpdmVuOiBLdXJ0CiAgLSBmYW1pbHk6IFliYXJyYQogICAgZ2l2ZW46IFN1emFubmUKICAtIGZhbWlseTogTWFjawogICAgZ2l2ZW46IERhbmllbAogIC0gZmFtaWx5OiBMZXZpbmUKICAgIGdpdmVuOiBBcm5vbGQgSgogIGlzc3VlZDoKICAtIHllYXI6IDE5OTkKICB0aXRsZTogQnJvYWQgcGF0dGVybnMgb2YgZ2VuZSBleHByZXNzaW9uIHJldmVhbGVkIGJ5IGNsdXN0ZXJpbmcgYW5hbHlzaXMgb2YgdHVtb3IKICAgIGFuZCBub3JtYWwgY29sb24gdGlzc3VlcyBwcm9iZWQgYnkgb2xpZ29udWNsZW90aWRlIGFycmF5cwogIGNvbnRhaW5lci10aXRsZTogUHJvY2VlZGluZ3Mgb2YgdGhlIE5hdGlvbmFsIEFjYWRlbXkgb2YgU2NpZW5jZXMKICBwdWJsaXNoZXI6IE5hdGlvbmFsIEFjYWQgU2NpZW5jZXMKICBwYWdlOiA2NzQ1LTY3NTAKICB2b2x1bWU6ICc5NicKICBpc3N1ZTogJzEyJwotLS0KCmBgYHtyIHNldHVwLCBpbmNsdWRlPUZBTFNFLCBjYWNoZT1GQUxTRX0Ka25pdHI6Om9wdHNfY2h1bmskc2V0KAogIGNvbGxhcHNlID0gVFJVRSwKICBjb21tZW50ID0gIiM+IiwKICBmaWcuYWxpZ24gPSAiY2VudGVyIiwKICBmaWcud2lkdGggPSA4LAogIGZpZy5hc3AgPSAwLjYxOCwKICBvdXQud2lkdGggPSAiMTAwJSIKKQpgYGAKCioqKgoKIyBJbnRyb2R1Y3Rpb24KCioqSW4gdGhpcyBsYWIgc2Vzc2lvbiB3ZSB3aWxsIGxvb2sgYXQgdGhlIGZvbGxvd2luZyB0b3BpY3MqKgoKICAtIEZXRVIKICAtIEZEUgogIC0gTXVsdGlwbGUgdGVzdGluZyBwcm9ibGVtIGluIGEgcmVhbCBkYXRhc2V0CgoKIyMgVGVzdGluZyBtYW55IGh5cG90aGVzZXMgeyN0ZXN0aW5nLWh5cG90aGVzZXN9CgpUbyBkZW1vbnN0cmF0ZSB0aGUgaWRlYXMgd2Ugd2lsbCBiZSB3b3JraW5nIHdpdGgsIHdlIHdpbGwgc2ltdWxhdGUgYXJ0aWZpY2lhbCBkYXRhLgpOb3RlIHRoYXQgc2luY2Ugd2UgYXJlIGRvaW5nIHNpbXVsYXRpb25zLCB3ZSBjYW4gY29udHJvbCBldmVyeXRoaW5nIGFuZCBhbHNvIGtub3cKZXhhY3RseSB3aGF0IHRoZSB1bmRlcmx5aW5nICJ0cnVlIiBkaXN0cmlidXRpb24gaXMgKHNvbWV0aW1lcyBhbHNvIGNhbGxlZCB0aGUgImdyb3VuZCB0cnV0aCIpLgpIb3dldmVyLCBrZWVwIGluIG1pbmQgdGhhdCB0aGlzIGlzIGFuIHVubGlrZWx5IHJlcHJlc2VudGF0aW9uIG9mIHJlYWwtd29ybGQgZGF0YS4KCkluIHBhcnRpY3VsYXIsIHdlIHdpbGwgc2ltdWxhdGUgZGF0YSBmb3IgbXVsdGlwbGUgaHlwb3RoZXNpcyB0ZXN0cyB3aGVyZQpfX3RoZSBudWxsIGh5cG90aGVzaXMgaXMgYWx3YXlzIHRydWVfXy4gSS5lLiBmb3IgdGhlICRpJHRoIHRlc3QsIHdlIGFzc3VtZSB0aGF0CiRcbXVfezFpfSQgYW5kICRcbXVfezJpfSQgcmVwcmVzZW50IHRoZSBtZWFucyBvZiB0aGUgdHdvIHBvcHVsYXRpb25zIG9mIGludGVyZXN0LAp0aGUgbnVsbCBoeXBvdGhlc2lzIGZvciBjb21wYXJpbmcgdGhlIHR3byBtZWFucyBpcwokSF97MGl9IDogXG11X3sxaX0gPSBcbXVfezJpfSQuIExldCB0aGUgYWx0ZXJuYXRpdmUgaHlwb3RoZXNpcyBvZiB0aGlzIHRlc3QgYmUKJEhfezFpfSA6IFxtdV97MWl9IFxuZXEgXG11X3syaX0kLCBpLmUuIHdlIHBlcmZvcm0gYSAqdHdvLXRhaWxlZCogdGVzdC4KU3VwcG9zZSB3ZSBoYXZlIGRhdGEgY29sbGVjdGVkIGZyb20gYm90aCBwb3B1bGF0aW9ucywgZ2l2ZW4gYnkgJFhfezFpfSQgYW5kICRYX3syaX0kCm9mIHNpemUgJG5fezFpfSQgYW5kICRuX3syaX0kLCByZXNwZWN0aXZlbHksIGFuZCBhc3N1bWUgdGhhdCBib3RoIHBvcHVsYXRpb25zCmhhdmUgdGhlIHNhbWUga253b24gdmFyaWFuY2UgJFxzaWdtYV9pXjIkLiBUaGVuIHdlIGNhbiB0ZXN0IHRoaXMgaHlwb3RoZXNpcyBieSB1c2luZwpfX1otc2NvcmVzX18sIGdpdmVuIGJ5CgokJCBaX2k9XGZyYWN7XGJhciBYX3sxaX0tXGJhciBYX3syaX19e1xzaWdtYV9pXHNxcnR7MS9uX3sxaX0rMS9uX3syaX19fSAkJAoKVW5kZXIgdGhlIG51bGwgaHlwb3RoZXNpcywgdGhlIHNjb3JlcyB3aWxsIGJlIGRpc3RyaWJ1dGVkIGFzIGEgKnN0YW5kYXJkIG5vcm1hbCoKJFpfaVxzaW0gTigwLDEpJC4gVGhlIG51bGwgaHlwb3RoZXNpcyBpcyByZWplY3RlZCBpbiBmYXZvciBvZiB0aGUgYWx0ZXJuYXRpdmUgaWYKJHpfaSA8IFxwaGlfe1xhbHBoYV9pLzJ9JCBvciAkel9pID4gXHBoaV97MS1cYWxwaGFfaS8yfSQsIG9yIGVxdWl2YWxlbnRseSBpZgokfHpfaXwgPiBccGhpX3sxLVxhbHBoYV9pLzJ9JCwgd2hlcmUgJFxwaGlfe1xhbHBoYV9pLzJ9JCBpcyB0aGUgJFxhbHBoYV9pLzIkdGgKcXVhbnRpbGUgb2YgdGhlIHN0YW5kYXJkIG5vcm1hbCBkaXN0cmlidXRpb24uCgpJbiBhIG11bHRpcGxlIGh5cG90aGVzaXMgdGVzdGluZyBzZXR0aW5nLCB3ZSB3aWxsIHBlcmZvcm0gJG0kIHRlc3RzIHVzaW5nIHRoZQpzYW1lIHRlc3Qgc3RhdGlzdGljLiBJZiB0aGUgKm51bGwqIHdlcmUgdHJ1ZSBmb3IgYWxsIGh5cG90aGVzZXMsIHdlIHdvdWwgZW5kIHVwCndpdGggYSBzYW1wbGUgJHpfMSxcbGRvdHMsel9tJCBmcm9tIGEgc3RhbmRhcmQgbm9ybWFsIGRpc3RyaWJ1dGlvbi4KCkluIHRoaXMgc2V0dGluZywgd2UgY2FuIG9ubHkgbWFrZSBvbmUgdHlwZSBvZiBlcnJvcjogd3JvbmdseSByZWplY3RpbmcgdGhlIG51bGwKaHlwb3RoZXNpcywgaS5lLiBhIF9fdHlwZSAxIGVycm9yX18uIFRoZSBwcm9iYWJpbGl0eSBvZiBtYWtpbmcgdGhpcyBlcnJvciBpcyBnaXZlbgpieQoKJCQgXGFscGhhX2k9XHRleHR7UH1ce1x0ZXh0eyByZWplY3QgfSBIX3swaX0gfCBIX3swaX1cfSAkJAoKKHRoZSAkfCBIX3swaX0kIHBhcnQgc2hvdWxkIGJlIHJlYWQgYXMgImdpdmVuIHRoYXQgdGhlIG51bGwgaHlwb3RoZXNpcyBpcyB0cnVlIikuCgpJZiB3ZSBub3cgcGVyZm9ybSAkbV8wJCBzdWNoIHRlc3RzICh1c2luZyB0aGUgMCBzdWJzY3JpcHQgdG8gZGVub3RlIHRoYXQgdGhleQphcmUgYWxsIGh5cG90aGVzZXMgZm9yIHdoaWNoIHRoZSAqbnVsbCogaXMgdHJ1ZSksIHdlIGNhbiBzdW1tYXJpc2UgdGhlIHBvc3NpYmxlCm91dGNvbWVzIGFzIGluIHRoZSB0YWJsZSBiZWxvdzoKCmBgYHtyLCBlY2hvPUZBTFNFfQprbml0cjo6a2FibGUoCiAgZGF0YS5mcmFtZSgKICAgICJBY2NlcHQgSF8wIiA9IGMoIlUgKFRydWUgTmVnYXRpdmUpIiwgIiIpLAogICAgIlJlamVjdCBIXzAiID0gYygiViAoRmFsc2UgUG9zaXRpdmUpIiwgIiIpLAogICAgIlRvdGFsIiA9IGMoIm1fMCIsICIiKSwKICAgIHJvdy5uYW1lcyA9IGMoIk51bGwgVHJ1ZSIsICIiKQogICkKKQpgYGAKCgpIZXJlLCAkVSQgYW5kICRWJCByZXByZXNlbnQgdGhlIHRvdGFsIG51bWJlciBvZiB0cnVlIG5lZ2F0aXZlIGFuZCBmYWxzZSBwb3NpdGl2ZQpyZXN1bHRzIHdlIGdldCwgcmVzcGVjdGl2ZWx5LCBvdXQgb2YgJG1fMCQgdG90YWwgdGVzdHMuCgpBcyBhbiBleGFtcGxlLCBsZXQncyBzaW11bGF0ZSB0aGUgc2NlbmFyaW8gYWJvdmUuIEluIHRoZSBjb2RlIGJlbG93LCB0aGUgYHJlcGxpY2F0ZWAKZnVuY3Rpb24gaXMgdXNlZCB0byByZXBlYXQgdGhlIHNhbWUgcHJvY2VkdXJlIGEgbnVtYmVyIG9mIHRpbWVzLgpFc3NlbnRpYWxseSwgdGhlIGZvbGxvd2luZyBzdGVwcyBhcmUgcGVyZm9ybWVkIDoKCjEuIFNhbXBsZSAkTiA9IDEyJCBvYnNlcnZhdGlvbnMgZm9yIDIgaHlwb3RoZXRpY2FsIGdyb3VwcyBmcm9tIG5vcm1hbCBkaXN0cmlidXRpb25zIAogICB3aXRoIHRoZSBzYW1lIG1lYW4gYW5kIGtub3duIHZhcmlhbmNlCjIuIENhbGN1bGF0ZSBaLXNjb3JlcyBiYXNlZCBvbiB0aGUgMiBncm91cCBtZWFucwozLiBSZXBlYXQgc3RlcHMgMSB0byAyIGBtMGAgdGltZXMKClRoaXMgbWltaWNzIHBlcmZvcm1pbmcgYG0wYCBoeXBvdGhlc2lzIHRlc3RzIG9uIGRhdGEgZm9yIHdoaWNoIHdlIGtub3cgdGhlIG51bGwKaHlwb3RoZXNpcyBpcyB0cnVlLgoKRm9yIHNpbXBsaWNpdHkgd2UgYXNzdW1lIHRoZSB2YXJpYW5jZSB0byBiZSBrbm93biBhbmQgZXF1YWwgdG8gMSBmb3IgYm90aCBncm91cHMuCldlIHNpbXVsYXRlIDEwIG9ic2VydmF0aW9ucyBmb3IgZWFjaCBncm91cCBhbmQgY2FsY3VsYXRlIHRoZSBkZW5vbWluYXRvciBmb3IgdGhlClotc2NvcmVzIHNpbmNlIGl0J3MgdGhlIHNhbWUgZm9yIGVhY2ggdGVzdC4KCmBgYHtyfQojIyBTZXQgcGFyYW1ldGVycyBmb3IgdGhlIHNpbXVsYXRpb24KTiA8LSAxMCAjIHNhbXBsZXMgcGVyIGdyb3VwCm0wIDwtIDEwMDAgIyBudW1iZXIgb2YgaHlwb3RoZXNpcyB0ZXN0cwptdV8xIDwtIDMgIyB0cnVlIG1lYW4gZ3JvdXAgMQptdV8yIDwtIDMgIyB0cnVlIG1lYW4gZ3JvdXAgMgpzaWdtYSA8LSAxICMga25vd24gdmFyaWFuY2UKZGVub20gPC0gc2lnbWEgKiBzcXJ0KDIgLyBOKSAjIGRlbm9taW5hdG9yIGZvciBaLXNjb3JlcwoKc2V0LnNlZWQoMTIzKSAjIHNlZWQgZm9yIHJlcHJvZHVjaWJpbGl0eQpudWxsX3pfc2NvcmVzIDwtIHJlcGxpY2F0ZShtMCwgewogIGdyb3VwMSA8LSBybm9ybShOLCBtZWFuID0gbXVfMSwgc2QgPSBzcXJ0KHNpZ21hKSkKICBncm91cDIgPC0gcm5vcm0oTiwgbWVhbiA9IG11XzIsIHNkID0gc3FydChzaWdtYSkpCgogICMjIENhbGN1bGF0ZSBaLXNjb3JlCiAgKG1lYW4oZ3JvdXAyKSAtIG1lYW4oZ3JvdXAxKSkgLyBkZW5vbQp9KQoKIyMgVmlzdXpsaXplIFotc2NvcmVzCmhpc3QobnVsbF96X3Njb3JlcywgYnJlYWtzID0gNTAsIGZyZXEgPSBGQUxTRSkKIyMgT3ZlcmxheSB0aGVvcmV0aWNhbCBzdGFuZGFyZCBub3JtYWwKbGluZXMoeCA8LSBzZXEoLTUsIDUsIGxlbmd0aC5vdXQgPSAxMDApLCBkbm9ybSh4KSwgY29sID0gImRvZGdlcmJsdWUiLCBsd2QgPSAzKQojIyBEcmF3IHZlcnRpY2FsIGxpbmVzIGF0IDUgYW5kIDk1dGggcGVyY2VudGlsZXMKYWJsaW5lKHYgPSBxbm9ybShjKDAuMDUsIDAuOTUpKSwgY29sID0gImZpcmVicmljayIsIGx0eSA9IDIsIGx3ZCA9IDMpCmBgYAoKV2Ugc2VlIHRoYXQgdGhlIFotc2NvcmVzIGFyZSBuaWNlbHkgZGlzdHJpYnV0ZWQgYXMgYSBzdGFuZGFyZCBub3JtYWwuClRoZSB2ZXJ0aWNhbCBkYXNoZWQgbGluZXMgaW5kaWNhdGUgdGhlIDV0aCBhbmQgOTV0aCBwZXJjZW50aWxlcyBvZiB0aGUgc3RhbmRhcmQKbm9ybWFsLiBUaGUgcmVnaW9ucyBvdXRzaWRlIHRoZXNlIGxpbmVzIGluZGljYXRlIHRoZSBaLXNjb3JlcyB0aGF0IHdlIHdvdWxkIGNhbGwKc2lnbmlmaWNhbnQgaWYgd2UgdXNlZCBhIGN1dC1vZmYgb2YgJFxhbHBoYSA9IDAuMDUkLiBTbywgZXZlbiB0aG91Z2ggd2Ugc2ltdWxhdGVkCmRhdGEgdW5kZXIgdGhlIG51bGwgaHlwb3RoZXNpcywgb3VyIFotdGVzdCBzdGlsbCByZXR1cm5zICJzaWduaWZpY2FudCIgcmVzdWx0cyBmb3IKYSBudW1iZXIgb2YgY2FzZXMganVzdCBieSBjaGFuY2UhCgpMZXQncyBjYWxjdWxhdGUgdGhlIHAtdmFsdWVzIGZvciBvdXIgaHlwb3RoZXNpcyB0ZXN0cyBhbmQgc2VlIHdoYXQgdGhlIGRhbWFnZSBpcy4KVG8gY2FsY3VsYXRlIHRoZSBwLXZhbHVlcywgd2UgdXNlIHRoZSBgcG5vcm0oKWAgZnVuY3Rpb24gaW4gdGhpcyBjYXNlLCB3aGljaCByZXR1cm5zCnRoZSB2YWx1ZSBvZiB0aGUgc3RhbmRhcmQgbm9ybWFsIENERiAoaS5lLiBgcG5vcm0oeClgID0gJFAoWiA8IHgpJCkuIFNpbmNlIHdlIGNvbnNpZGVyCmEgdHdvLXRhaWxlZCB0ZXN0LCB3ZSB0YWtlIHRoZSBhYnNvbHV0ZSB2YWx1ZXMgb2YgdGhlIFotc2NvcmVzIGFuZCBzZXQgdGhlIGBsb3dlci50YWlsYAphcmd1bWVudCBpbiBgcG5vcm1gIHRvIGBGQUxTRWAgKGJ5IGRlZmF1bHQgaXQncyBgVFJVRWApLCBzbyB0aGF0IHdlIGdldCAKYHBub3JtKGFicyh4KSwgbG93ZXIudGFpbCA9IEZBTFNFKWAgPSAkUChaID4gfHh8KSQgYW5kIG11bHRpcGx5IHRoaXMgdmFsdWUgYnkgMi4KCmBgYHtyfQpudWxsX3B2YWxzIDwtIDIgKiBwbm9ybShhYnMobnVsbF96X3Njb3JlcyksIGxvd2VyLnRhaWwgPSBGQUxTRSkKCmFscGhhIDwtIDAuMDUgIyBzaWduaWZpY2FuY2UgY3V0b2ZmCgpoaXN0KG51bGxfcHZhbHMsIGJyZWFrcyA9IHNlcSgwLCAxLCBieSA9IDAuMDUpKQphYmxpbmUodiA9IGFscGhhLCBjb2wgPSAiZmlyZWJyaWNrIiwgbHdkID0gMykKCmNhbGxlZCA8LSAobnVsbF9wdmFscyA8IGFscGhhKQoKIyMgViA9IG51bWJlciBvZiBmYWxzZSBwb3NpdGl2ZXMsIGluIHRoaXMgY2FzZTogYWxsIHNpZ25pZmljYW50IHRlc3RzCihWIDwtIHN1bShjYWxsZWQpKQptZWFuKGNhbGxlZCkgIyBWIC8gbTAKYGBgCgpTbyB3ZSBnZXQgNDggc2lnbmlmaWNhbnQgdGVzdHMgKGZhbHNlIHBvc2l0aXZlcykgb3V0IG9mIGEgdG90YWwgb2YgMTAwMCwgd2hpY2ggaXMsIAp1bnN1cnByaXNpbmdseSwgYXBwcm94aW1hdGVseSBlcXVhbCB0byBvdXIgc2lnbmlmaWNhbmNlIGN1dG9mZiAkXGFscGhhJC4KTm90ZSBhbHNvIHRoYXQgdGhlIHAtdmFsdWVzIGFyZSB1bmlmb3JtbHkgZGlzdGlidXRlZCB1bmRlciB0aGUgbnVsbCBoeXBvdGhlc2lzLgoKSWYgd2UgaGFkIGNhcnJpZWQgb3V0IG9ubHkgYSBmZXcgdGVzdHMgKHNheSAxMCkgaXQgd291bGQgYmUgdmVyeSB1bmxpa2VseSB0byBvYnNlcnZlCmEgZmFsc2UgcG9zaXRpdmUgKG9uIGF2ZXJhZ2U6IDAuMDUgKiAxMCA9IDAuNSBmYWxzZSBwb3NpdGl2ZXMpIGF0ICRcYWxwaGEgPSAwLjA1JCwKYnV0IHNpbmNlIG5vdyB3ZSdyZSBjYXJyeWluZyBvdXQgc28gbWFueSwgd2UncmUgYWxtb3N0IGd1YXJhbnRlZWQgdG8gZ2V0IGZhbHNlIHBvc2l0aXZlcy4KVGhpcyBpcyB3aGF0IGlzIGtub3duIGFzIHRoZSBfX211bHRpcGxlIGh5cG90aGVzaXMgdGVzdGluZyBwcm9ibGVtX18uCgpOb3RlIHRoYXQgaW4gcmVhbC13b3JsZCBkYXRhIHRoZSBxdWFudGl0aWVzICRVJCBhbmQgJFYkIGFyZSAqdW5rbm93biogKGJlY2F1c2UKd2UgZG9uJ3Qga25vdyB0aGUgdHJ1dGghIElmIHdlIGRpZCwgd2Ugd291bGRuJ3QgaGF2ZSB0byBjYXJyeSBvdXQgYW55IGh5cG90aGVzaXMKdGVzdHMgaW4gdGhlIGZpcnN0IHBsYWNlKS4gSG93ZXZlciwgYnkgdXNpbmcgc2ltdWxhdGVkIGRhdGEsIHdlIGRvIGtub3cgdGhlIHRydXRoCmFuZCBzbyB3ZSBjYW4gZXhwbG9yZSB0aGVzZSBxdWFudGl0aWVzLgoKCiMjIFRoZSBmYW1pbHktd2lzZSBlcnJvciByYXRlCgpJZiB3ZSBjYXJyeSBvdXQgbWFueSB0ZXN0cywgd2UncmUgYWxtb3N0IGd1YXJhbnRlZWQgdG8gZ2V0IHR5cGUgSSBlcnJvcnMsIGp1c3QgYnkKY2hhbmNlLiBUaGVyZWZvcmUgdGhlIHR5cGUgSSBlcnJvciByYXRlIGlzIG5vIGxvbmdlciBhIHJlbGV2YW50IG1ldHJpYy4KSW5zdGVhZCwgd2UgY29uc2lkZXIgdGhlIF9fRmFtaWx5d2lzZSBFcnJvciBSYXRlIChGV0VSKV9fLCBnaXZlbiBieQoKJCQKXHRleHR7RldFUn09XHRleHR7UH1ce1YgPiAwXH0KICA9IFx0ZXh0e1B9XHtcdGV4dHtyZWplY3RpbmcgYXQgbGVhc3Qgb25lIH0gSF97MGl9fCBIXzBcfQokJAoKd2hlcmUgJEhfMCQgaXMgdGhlIGludGVyc2VjdGlvbiBvZiBhbGwgIHBhcnRpYWwgbnVsbHMgKCRIX3swaX0kKSAkaT0xLFxsZG90cyxtXzAkLgpJbiBnZW5lcmFsLCB3ZSB3b3VsZCBwcmVmZXIgdGVzdGluZyBwcm9jZWR1cmVzIHRoYXQga2VlcCB0aGUgRldFUiB1bmRlciBjb250cm9sLAppLmUuIGNvcnJlY3QgZm9yIHRoZSBtdWx0aXBsaWNpdHkgcHJvYmxlbS4KU28gaW5zdGVhZCBvZiBjaG9vc2luZyAkXGFscGhhJCB0byBjb250cm9sIHRoZSBwcm9iYWJpbGl0eSBvZiBnZXR0aW5nIGEgZmFsc2UgcG9zaXRpdmUKaW4gZWFjaCB0ZXN0LCB3ZSB0cnkgdG8gY29udHJvbCB0aGUgRldFUiwgaS5lLiB0aGUgcHJvYmFiaWxpdHkgb2YgZ2V0dGluZwoqYXQgbGVhc3QqIG9uZSBmYWxzZSBwb3NpdGl2ZSBpbiBvdXIgKnNldCogb2YgaHlwb3RoZXNpcyB0ZXN0cy4KCkluIHRoZSBmb2xsb3dpbmcgZXhlcmNpc2VzLCB3ZSB3aWxsIGV4cGxvcmUgdGhpcyBpZGVhIG9uIHNvbWUgc3ludGhldGljIGRhdGEuCgoKCiMgRXhlcmNpc2VzOiBGV0VSIG51bGwgZGF0YSBzaW11bGF0aW9uIHstfQoKV2Ugd2lsbCBzaW11bGF0ZSBwZXJmb3JtaW5nIGh5cG90aGVzaXMgdGVzdHMgZm9yIHdoaWNoIHRoZSBudWxsIGRpc3RyaWJ1dGlvbiBpcwphbHdheXMgdHJ1ZSBmb3IgZGlmZmVyZW50IHZhbHVlcyBvZiBgbTBgLgoKVG8gbWFrZSB0aGUgY29kZSBtb3JlIHNpbXBsZSwgd2Ugd2lsbCBkaXJlY3RseSBzYW1wbGUgdGhlIFotc2NvcmUgc3RhdGlzdGljcyBmcm9tCmEgc3RhbmRhcmQgbm9ybWFsIChpbnN0ZWFkIG9mIHNhbXBsaW5nIHRoZSBpbmRpdmlkdWFsIGdyb3VwcyBhbmQgdGhlbiBwZXJmb3JtaW5nCnRoZSB0ZXN0IG9uIHRoZW0sIGFzIHNob3duIGFib3ZlKS4gV2UgY2FuIGFsc28gc2tpcCB0aGUgcC12YWx1ZSBjYWxjdWxhdGlvbiBhbmQKY29tcGFyZSBvdXIgWi1zY29yZXMgZGlyZWN0bHkgdG8gdGhlICQoMSAtIFxhbHBoYSkgLyAyJHRoIHF1YW50aWxlIG9mIHRoZSBzdGFuZGFyZApub3JtYWwgZGlzdHJpYnV0aW9uICh1c2luZyB0aGUgYHFub3JtKClgIGZ1bmN0aW9uKS4KCgojIyMgVGFza3Mgey19CgojIyMjIDEuIFNldCBgbTAgPSA1YCBhbmQgZ2VuZXJhdGUgYG0wYCBaLXNjb3JlIHN0YXRpc3RpY3MgYnkgc2FtcGxpbmcgZnJvbSB0aGUgc3RhbmRhcmQgbm9ybWFsIGRpc3RyaWJ1dGlvbi4gQ2hlY2sgd2hpY2ggb25lcyBhcmUgc2lnbmlmaWNhbnQgdXNpbmcgYSBjdXRvZmYgYGFscGhhID0gMC4wNWAgey19CgpUbyBjaGVjayBzaWduaWZpY2FuY2UgeW91IGNhbiB1c2UgYGFicyh6X3Njb3JlKSA+IHFub3JtKDEgLSBhbHBoYSAvIDIpYAoKCiMjIyMgMi4gQ2FsY3VsYXRlICRWJCwgdGhlIG51bWJlciBvZiBzaWduaWZpY2FudCB0ZXN0cy4gey19CgpOb3RlIHRoYXQgdG8gY291bnQgYSBsb2dpY2FsIHZlY3RvciwgeW91IGNhbiBqdXN0IHVzZSBgc3VtYCBvbiBpdCwgc2luY2UgYFRSVUVgCmlzIG51bWVyaWNhbGx5IGludGVycHJldGVkIGFzIDEgYW5kIGBGQUxTRWAgYXMgMC4KCgojIyMjIDMuIENoZWNrIHRoYXQgYFYgPiAwYCAoYXQgbGVhc3Qgb25lIHNpZ25pZmljYW50KSBhbmQgc3RvcmUgdGhlIHJlc3VsdCBpbiBhIHZhcmlhYmxlIChlLmcuIGBhdF9sZWFzdF9vbmVfc2lnbmlmIDwtIFYgPiAwYCkuIHstfQoKCiMjIyMgNC4gUmVwZWF0IHN0ZXBzIDEtMyAxMDAwIHRpbWVzIGFuZCBrZWVwIHRyYWNrIG9mIHRoZSByZXN1bHQgaW4gc3RlcCAzIGJ5IHN0b3JpbmcgaXQgaW4gYSB2ZWN0b3IuIHstfQoKWW91IGNhbiBlaXRoZXIgdXNlIGEgYGZvcmAgbG9vcCBvciBgcmVwbGljYXRlYC4gSWYgdXNpbmcgYSBgZm9yYCBsb29wLCBtYWtlIHN1cmUgdG8KY3JlYXRlIGFuIGVtcHR5IHZlY3RvciBvZiB0aGUgZGVzaXJlZCBsZW5ndGggZmlyc3QhIEdyb3dpbmcgYSB2ZWN0b3IgaXMgdGVjaG5pY2FsbHkKcG9zc2libGUgYnV0IGlzIHZlcnkgaW5lZmZpY2llbnQuIFlvdSBjYW4gaW5pdGlhbGl6ZSBhbiBlbXB0eSAobG9naWNhbCkgdmVjdG9yIG9mIAphIGNlcnRhaW4gbGVuZ3RoIHdpdGggYHZlYyA8LSBsb2dpY2FsKGxlbmd0aCA9IHgpYAoKCiMjIyMgNS4gTm93IGNvbXB1dGUgdGhlIEZXRVIgYXMgdGhlIHByb3BvcnRpb24gb2YgdGltZXMgJFYkIHdhcyBncmVhdGVyIHRoYW4gMC4gey19CgoKIyMjIyA2LiBSZXBlYXQgdGhlIHNhbWUgcHJvY2VkdXJlIGZvciBgbTAgPSA1MGAgYW5kIGBtMCA9IDEwMDBgLiBJbnRlcnByZXQgdGhlIHJlc3VsdHMuIHstfQoKCiMjIyBTb2x1dGlvbnMgey19Cgo8ZGV0YWlscz48c3VtbWFyeT5Tb2x1dGlvbjwvc3VtbWFyeT4KCkkgY29tYmluZWQgdGhlIGV4ZXJjaXNlcyBhYm92ZSBpbnRvIG9uZSBjb2RlIGJsb2NrLCB0byBhdm9pZCByZXBlYXRlZCBjb2RlLgpFc3NlbnRpYWxseSwgSSB3cmFwcGVkIHRoZSBzaW11bGF0aW9uIGluIGEgYGZvcmAgbG9vcCB0aGF0IGdvZXMgb3ZlciB0aGUgZGlmZmVyZW50CnZhbHVlcyBvZiBgbTBgLgoKYGBge3J9CiMjIFJlcGVhdCAxMDAwIHRpbWVzIGZvciBtMCA9IDUsIDUwIGFuZCAxMDAwLCBkaXJlY3RseSBzaW11bGF0ZSB0ZXN0IHN0YXRpc3RpYwojIyByZWNvcmQgbWluaW1hbCBwLXZhbHVlIGFuZCBjaGVjayBpZiBzbWFsbGVyIHRoYW4gYWxwaGEKc2V0LnNlZWQoMSkKQiA8LSAxMDAwICMgbnVtYmVyIG9mIHNpbXVsYXRpb25zCm0wX3ZlYyA8LSBjKDUsIDUwLCAxMDAwKQphbHBoYSA8LSAwLjA1CiMjIEluaXRpYWxpemUgZW1wdHkgdmVjdG9yIHRvIHN0b3JlIEZXRVIgcmVzdWx0cwpmd2VyIDwtIG51bWVyaWMobGVuZ3RoID0gbGVuZ3RoKG0wX3ZlYykpCm5hbWVzKGZ3ZXIpIDwtIHBhc3RlKCJtMCA9IiwgbTBfdmVjKQoKIyMgTG9vcCBvdmVyIG0wIHZhbHVlcyBhbmQgc2ltdWxhdGUgdGVzdCBzdGF0aXN0aWNzCmZvciAoaSBpbiBzZXFfYWxvbmcobTBfdmVjKSkgewogICMjIFNpbXVsYXRlIEIgdGltZXMsIGVhY2ggdGltZSByZWNvcmRpbmcgViA+IDAKICBhdF9sZWFzdF9vbmVfc2lnbmlmIDwtIHJlcGxpY2F0ZShCLCB7CiAgICBudWxsX3N0YXRzIDwtIHJub3JtKG0wX3ZlY1tpXSwgbWVhbiA9IDAsIHNkID0gMSkgIyB6LXNjb3JlIGRpc3RyaWJ1dGlvbgogICAgdGVzdHMgPC0gYWJzKG51bGxfc3RhdHMpID4gcW5vcm0oMSAtIGFscGhhIC8gMikKICAgIHN1bSh0ZXN0cykgPiAwCiAgfSkKICBmd2VyW2ldIDwtIG1lYW4oYXRfbGVhc3Rfb25lX3NpZ25pZikgIyBwcm9wb3J0aW9uIG9mIFYgPj0gMQp9CmZ3ZXIKYGBgCgo8L2RldGFpbHM+CgoKCiMgQ29udHJvbGxpbmcgdGhlIEZXRVIKCldlIHNhdyBpbiB0aGUgcHJldmlvdXMgZXhlcmNpc2VzIHRoYXQgd2hlbiBjb25kdWN0aW5nIGEgbGFyZ2UgbnVtYmVyIG9mIGh5cG90aGVzaXMKdGVzdHMgdGhlIEZXRVIgYmVjb21lcyB1bmFjY2VwdGFibHkgbGFyZ2UuIFNvIHdoYXQgY2FuIHdlIGRvIHRvIGxvd2VyIGl0PwpUaGUgbW9zdCBzdHJhaWdodGZvcndhcmQgd2F5IHdvdWxkIGJlIHRvIGp1c3QgbG93ZXIgJFxhbHBoYSQgKHNvIHdlIGdldCBsZXNzIGZhbHNlIHBvc2l0aXZlcykuCgpOb3RlIHRoYXQgd2UgY2FuIHdyaXRlIHRoZSBGV0VSIHVuZGVyIHRoZSBudWxsIGh5cG90aGVzaXMgKHNvIHRoZSBwLXZhbHVlcyBhcmUgdW5pZm9ybWx5IGRpc3RyaWJ1dGVkKSBhcwoKJCQKXGJlZ2lue2FsaWdufQpcdGV4dHtGV0VSfSA9IFAoXHRleHR7YXQgbGVhc3Qgb25lIHJlamVjdGlvbn0pICY9IDEgLSBQKFx0ZXh0e25vIHJlamVjdGlvbnN9KSBcXAogICY9IDEgLSBccHJvZF97aT0xfV57bX0gUChwX2kgPiBcYWxwaGEpIFxcCiAgJj0gMSAtIFxwcm9kX3tpPTF9XnttfSAoMSAtIFxhbHBoYSkgXFwKICAmPSAxIC0gKDEgLSBcYWxwaGEpXnttfQpcZW5ke2FsaWdufQokJAoKd2hlcmUgJHBfaSQgaXMgdGhlIHAtdmFsdWUgZm9yIHRoZSAkaSR0aCB0ZXN0LgoKSWYgd2Ugd2FudGVkIHRvIGNvbnRyb2wgdGhlIEZXRVIgYXQgYSBjZXJ0YWluIGxldmVsIChlLmcuIDAuMDUpLCB3ZSBjYW4gc2ltcGx5IHNvbHZlCnRoZSBlcXVhdGlvbiBhYm92ZSBmb3IgJFxhbHBoYSQgYW5kIGdldCwgZm9yIGEgZ2l2ZW4gRldFUjoKCiQkIFxhbHBoYSA9IDEgLSAoMSAtIFx0ZXh0e0ZXRVJ9KV57MS9tfSAkJAoKCiMjIEV4ZXJjaXNlIHstfQoKVXNpbmcgeW91ciBzaW11bGF0aW9uIGNvZGUgZnJvbSBiZWZvcmUsIGNvbmZpcm0gdGhhdCB3aGVuIHNldHRpbmc7IGBhbHBoYSA9IDAuMDEwMmAKYW5kIGBtMCA9IDVgLCBgYWxwaGEgPSAwLjAwMTAyYCBhbmQgYG0wID0gNTBgLCBhbmQgZmluYWxseSBgYWxwaGEgPSAwLjAwMDA1MTI5MmAKYW5kIGBtMCA9IDEwMDBgIGFsbCByZXN1bHQgaW4gYW4gRldFUiBvZiBhcHByb3hpbWF0ZWx5IDAuMDUuCgo8ZGV0YWlscz48c3VtbWFyeT5Tb2x1dGlvbjwvc3VtbWFyeT4KCmBgYHtyfQojIyBSZXBlYXQgMTAwMCB0aW1lcyBmb3IgbTAgPSA1LCA1MCBhbmQgMTAwMCwgZGlyZWN0bHkgc2ltdWxhdGUgdGVzdCBzdGF0aXN0aWMKIyMgcmVjb3JkIG1pbmltYWwgcC12YWx1ZSBhbmQgY2hlY2sgaWYgc21hbGxlciB0aGFuIGFscGhhCnNldC5zZWVkKDEpCkIgPC0gMTAwMCAjIG51bWJlciBvZiBzaW11bGF0aW9ucwptMF92ZWMgPC0gYyg1LCA1MCwgMTAwMCkKYWxwaGFfdmVjIDwtIGMoMC4wMTAyLCAwLjAwMTAyLCAwLjAwMDA1MTI5MikKIyMgSW5pdGlhbGl6ZSBlbXB0eSB2ZWN0b3IgdG8gc3RvcmUgRldFUiByZXN1bHRzCmZ3ZXIgPC0gbnVtZXJpYyhsZW5ndGggPSBsZW5ndGgobTBfdmVjKSkKbmFtZXMoZndlcikgPC0gcGFzdGUoIm0wID0iLCBtMF92ZWMpCgojIyBMb29wIG92ZXIgbTAgdmFsdWVzIGFuZCBzaW11bGF0ZSB0ZXN0IHN0YXRpc3RpY3MKZm9yIChpIGluIHNlcV9hbG9uZyhtMF92ZWMpKSB7CiAgIyMgU2ltdWxhdGUgQiB0aW1lcywgZWFjaCB0aW1lIHJlY29yZGluZyBWID4gMAogIGF0X2xlYXN0X29uZV9zaWduaWYgPC0gcmVwbGljYXRlKEIsIHsKICAgIG51bGxfc3RhdHMgPC0gcm5vcm0obTBfdmVjW2ldLCBtZWFuID0gMCwgc2QgPSAxKSAjIHotc2NvcmUgZGlzdHJpYnV0aW9uCiAgICB0ZXN0cyA8LSBhYnMobnVsbF9zdGF0cykgPiBxbm9ybSgxIC0gYWxwaGFfdmVjW2ldIC8gMikKICAgIHN1bSh0ZXN0cykgPiAwCiAgfSkKICBmd2VyW2ldIDwtIG1lYW4oYXRfbGVhc3Rfb25lX3NpZ25pZikgIyBwcm9wb3J0aW9uIG9mIFYgPj0gMQp9CmZ3ZXIKYGBgCgo8L2RldGFpbHM+CgpUaGUgcHJvY2VkdXJlIGRlc2NyaWJlZCBhYm92ZSBpcyBhbHNvIGtub3duIGFzIFNpZGFrJ3MgcHJvY2VkdXJlLgpBbm90aGVyIHdpZGVseSB1c2VkIHRlY2huaXF1ZSB0byBjb250cm9sIHRoZSBGV0VSIGlzIHRoZSBCb25mZXJyb25pIGNvcnJlY3Rpb24uCk5vdGUsIGhvd2V2ZXIgdGhhdCBpbiBnZW5lcmFsLCBjb250cm9sbGluZyB0aGUgRldFUiBhdCBsZXZlbHMgc3VjaCBhcyAwLjA1IGlzIHZlcnkKY29uc2VydmF0aXZlLCBpLmUuIGlmIHRoZXJlIHdlcmUgdHVyZSBhbHRlcm5hdGl2ZSBjYXNlcyB3ZSBtaWdodCBtaXNzIHRoZW0uCgoKIyBUaGUgRmFsc2UgRGlzY292ZXJ5IFJhdGUgKEZEUikKCk5vdyBsZXQncyBjb25zaWRlciBhIHNpdHVhdGlvbiB3aGVyZSB3ZSBoYXZlIGJvdGggdHJ1ZSBudWxsIGFuZCB0cnVlIGFsdGVybmF0aXZlCmNhc2VzLiBJbiB0aGlzIHNpdHVhdGlvbiB3ZSBhcmUgcHJvbmUgdG8gdHdvIHR5cGVzIG9mIGVycm9yczogZmFsc2UgcG9zaXRpdmVzIAoodHlwZSAxLCBhcyBpbiB0aGUgcHJldmlvdXMgY2FzZSkgYW5kIGZhbHNlIG5lZ2F0aXZlcyAodHlwZSAyLCBpLmUuIGFjY2VwdGluZwokSF8wJCB3aGlsZSBpdCdzIGFjdHVhbGx5IGZhbHNlKS4KCldlIGNhbiB0aGVuIGV4dGVuZCB0aGUgdGFibGUgZnJvbSBbYmVmb3JlXSgjdGVzdGluZy1oeXBvdGhlc2VzKToKCmBgYHtyLCBlY2hvPUZBTFNFfQprbml0cjo6a2FibGUoCiAgZGF0YS5mcmFtZSgKICAgICJBY2NlcHQgSF8wIiA9IGMoIlUgKFRydWUgTmVnYXRpdmUpIiwgIlQgKEZhbHNlIE5lZ2F0aXZlKSIsICJXIiksCiAgICAiUmVqZWN0IEhfMCIgPSBjKCJWIChGYWxzZSBQb3NpdGl2ZSkiLCAiUyAoVHJ1ZSBQb3NpdGl2ZSIsICJSIiksCiAgICAiVG90YWwiID0gYygibV8wIiwgIm1fMSIsICJtIiksCiAgICByb3cubmFtZXMgPSBjKCJOdWxsIFRydWUiLCAiQWx0ZXJuYXRpdmUgVHJ1ZSIsICJUb3RhbCIpCiAgKQopCmBgYAoKSW4gYWRkaXRpb24gdG8gdGhlIEZXRVIsIGFub3RoZXIgaW1wb3J0YW50IGNvbmNlcHQgZm9yIG11bHRpcGxlIGh5cG90aGVzaXMKdGVzdGluZyBpcyB0aGUgX19GYWxzZSBEaXNjb3ZlcnkgUmF0ZSAoRkRSKV9fOgoKJCQKXHRleHR7RkRSfSA9IEVbVi9SXQokJAoKaS5lLiB0aGUgZXhwZWN0ZWQgcHJvcG9ydGlvbiBvZiBmYWxzZSBwb3NpdGl2ZXMgYW1vbmcgYWxsIHBvc2l0aXZlIHRlc3RzLgpUaGUgcmF0aW8gJFYvUiQgaXMgYWxzbyBjYWxsZWQgdGhlIEZhbHNlIERpc2NvdmVyeSBQcm9wb3J0aW9uIChGRFApLgoKSG93ZXZlciwgdGhlIG9ubHkgcXVhbnRpdGllcyBmcm9tIHRoZSB0YWJsZSBhYm92ZSB0aGF0IGFyZSBvYnNlcnZhYmxlIAppbiByZWFsIGRhdGEsIGFyZSAkVyQsICRSJCBhbmQgJG0kLiBTbyB0byBpbGx1c3RyYXRlIHRoZSBjb25jZXB0LCB3ZSB3aWxsIGFnYWluCm1ha2UgdXNlIG9mIHNpbXVsYXRlZCBkYXRhLgoKSW4gdGhlIGNvZGUgYmVsb3csIDEuMDAwIHRlc3RzIGFyZSBzaW11bGF0ZWQsIGZvciB3aGljaCA5MCUgY29tZSBmcm9tIGNhc2VzCndoZXJlIHRoZSBudWxsIGlzIHRydWUgYW5kIHRoZSBvdGhlciAxMCUgZm9yIHdoaWNoIHRoZSBhbHRlcm5hdGl2ZSBpcyB0cnVlLgpXZSBhc3N1bWUgdGhlICplZmZlY3Qgc2l6ZSogKGRpZmZlcmVuY2UgYmV0d2VlbiB0aGUgMiBncm91cHMpIHRvIGJlIGVxdWFsIHRvIDIKdW5kZXIgdGhlIGFsdGVybmF0aXZlLCBzbyB0aGF0IHdlIGNhbiBzYW1wbGUgdGhlIHRlc3Qgc3RhdGlzdGljcyBmcm9tIGEgbm9ybWFsCmRpc3RyaWJ1dGlvbiB3aXRoIG1lYW4gMi4KCmBgYHtyfQptIDwtIDEwMDAgIyB0b3RhbCBudW1iZXIgb2YgaHlwb3RoZXNlcwpwMCA8LSAwLjkgIyA5MCUgb2YgY2FzZXMgYXJlIHRydWUgbnVsbAptMCA8LSByb3VuZChwMCAqIG0pICMgcm91bmQgdG8gYXZvaWQgZmxvYXRpbmcgcG9pbnQgcHJvYmxlbXMKbTEgPC0gcm91bmQoKDEgLSBwMCkgKiBtKQoKc2V0LnNlZWQoMSkKYWxwaGEgPC0gMC4wNQpudWxsX3N0YXRzIDwtIHJub3JtKG0wKQphbHRfc3RhdHMgPC0gcm5vcm0obTEsIG1lYW4gPSAzKQpudWxsX3Rlc3RzIDwtIGFicyhudWxsX3N0YXRzKSA+IHFub3JtKDEgLSBhbHBoYSAvIDIpCmFsdF90ZXN0cyA8LSBhYnMoYWx0X3N0YXRzKSA+IHFub3JtKDEgLSBhbHBoYSAvIDIpCgooVSA8LSBzdW0oIW51bGxfdGVzdHMpKSAjIHRydWUgbmVnYXRpdmVzCihWIDwtIHN1bShudWxsX3Rlc3RzKSkgIyBmYWxzZSBwb3NpdGl2ZXMKKFMgPC0gc3VtKGFsdF90ZXN0cykpICMgdHJ1ZSBwb3NpdGl2ZXMKKFQgPC0gc3VtKCFhbHRfdGVzdHMpKSAjIGZhbHNlIG5lZ2F0aXZlcwoKUiA8LSBWICsgUyAjIHRvdGFsIG51bWJlciBvZiBwb3NpdGl2ZXMKCihGRFAgPC0gViAvIFIpCmBgYAoKV2Ugc2VlIHRoYXQgNDAlIG9mIHRoZSBwb3NpdGl2ZSBjYXNlcyBhcmUgYWN0dWFsbHkgZmFsc2UgcG9zaXRpdmVzLgpUbyBnZXQgYW4gaWRlYSBvZiB0aGUgRkRSLCB0aGUgZXhwZWN0ZWQgRkRQLCB3ZSB3aWxsIHJlcGVhdCB0aGlzIHByb2NlZHVyZSBhCm51bWJlciBvZiB0aW1lcyBpbiB0aGUgZm9sbG93aW5nIGV4ZXJjaXNlcy4KCgojIEV4ZXJjaXNlczogRkRSIHNpbXVsYXRpb25zCgoKIyMjIFRhc2tzIHstfQoKIyMjIyAxLiBTZXQgYG0wID0gOTBgIGFuZCBgbTEgPSAxMGAgYW5kIGdlbmVyYXRlIGBtID0gMTAwYCB0ZXN0IHN0YXRpc3RpY3MsIGBtMGAgb2YgdGhlbSBmcm9tIHRoZSBzdGFuZGFyZCBub3JtYWwgZGlzdHJpYnV0aW9uIChOKDAsIDEpKSAobnVsbCBkaXN0cmlidXRpb24pIGFuZCBtMSBvZiB0aGVtIGZyb20gTigzLCAxKSAodGhlIGFsdGVybmF0aXZlIGRpc3RyaWJ1dGlvbikuIHstfQoKCiMjIyMgMi4gVGVzdCBmb3Igc2lnbmlmaWNhbmNlIGF0IGBhbHBoYSA9IDAuMDVgIGJ5IGNvbXBhcmluZyB0aGUgdGVzdCBzdGF0aXN0aWNzIHRvIHRoZSBzdGFuZGFyZCBub3JtYWwsIGZvciBib3RoIHNldHMgb2YgdGVzdHMuIHstfQoKCiMjIyMgMy4gQ2FsY3VsYXRlICRWJCwgJFMkLCAkUiQgYW5kIHRoZSBGRFAuIHstfQoKCiMjIyMgNC4gUmVwZWF0IHN0ZXBzIDEtMyAxMDAwIHRpbWVzIGFuZCBrZWVwIHRyYWNrIG9mIHRoZSBGRFAgZm9yIGVhY2ggaXRlcmF0aW9uLiBUaGVuIGNvbXB1dGUgdGhlIEZEUiBhcyB0aGUgbWVhbiBvZiB0aGUgRkRQcy4gSW50ZXJwcmV0IHRoZSByZXN1bHRzLiB7LX0gCgoKIyMjIFNvbHV0aW9ucyB7LX0KCjxkZXRhaWxzPjxzdW1tYXJ5PlNvbHV0aW9uPC9zdW1tYXJ5PgoKYGBge3J9CnNldC5zZWVkKDEpCkIgPC0gMTAwMCAjIG51bWJlciBvZiBzaW11bGF0aW9ucwptMCA8LSA5MAptMSA8LSAxMAphbHBoYSA8LSAwLjA1CgojIyBTaW11bGF0ZSBCIHRpbWVzLCBlYWNoIHRpbWUgcmVjb3JkaW5nIFYgPiAwCkZEUCA8LSByZXBsaWNhdGUoQiwgewogIG51bGxfc3RhdHMgPC0gcm5vcm0obTAsIG1lYW4gPSAwKQogIGFsdF9zdGF0cyA8LSBybm9ybShtMSwgbWVhbiA9IDMpCiAgbnVsbF90ZXN0cyA8LSBhYnMobnVsbF9zdGF0cykgPiBxbm9ybSgxIC0gYWxwaGEgLyAyKQogIGFsdF90ZXN0cyA8LSBhYnMoYWx0X3N0YXRzKSA+IHFub3JtKDEgLSBhbHBoYSAvIDIpCiAgViA8LSBzdW0obnVsbF90ZXN0cykgIyBmYWxzZSBwb3NpdGl2ZXMKICBTIDwtIHN1bShhbHRfdGVzdHMpICMgdHJ1ZSBwb3NpdGl2ZXMKICBSIDwtIFYgKyBTCiAgIyMgUmV0dXJuIFYgLyBSCiAgViAvIFIKfSkKCihGRFIgPC0gbWVhbihGRFApKQpgYGAKClRoZSBGRFIgdGVsbHMgdXMgdGhlIGV4cGVjdGVkIHByb3BvcnRpb24gb2YgcG9zaXRpdmUgdGVzdHMgdGhhdCB3aWxsIGJlIGZhbHNlCnBvc2l0aXZlcy4KCjwvZGV0YWlscz4KCkFzIHdpdGggdGhlIEZXRVIsIHdlIGNhbiBub3cgdGhpbmsgb2YgbWV0aG9kcyB0byBjb250cm9sIHRoZSBGRFIuIEEgdmVyeSBwb3B1bGFyCm1ldGhvZCB0aGF0IGlzIHdpZGVseSB1c2VkIGluIGxhcmdlLXNjYWxlIGluZmVyZW5jZSBmb3IgaGlnaC10aHJvdWdocHV0CnNlcXVlbmNpbmcgZGF0YSBpcyB0aGUgX19CZW5qYW1pbmktSG9jaGJlcmcgY29ycmVjdGlvbl9fLiBUaGUgZGV0YWlscyBvZiB0aGlzCnRlY2huaXF1ZSBsaWUgb3V0c2lkZSB0aGUgc2NvcGUgb2YgdGhpcyBleGVyY2lzZSBzZXNzaW9uLCBidXQgZXNzZW50aWFsbHkgaXQKKmFkanVzdHMqIHRoZSBwLXZhbHVlcyBzdWNoIHRoYXQgdGhlIEZEUiBpcyBjb250cm9sbGVkIGF0IGEgY2VydGFpbiBsZXZlbC4KTm90ZSB0aGF0IHRoaXMgaXMgYSBzb21ld2hhdCBkaWZmZXJlbnQgYXBwcm9hY2ggdGhlbiB0aGUgRldFUi1jb250cm9sbGluZwp0ZWNobmlxdWVzLCB3aGVyZSBzaWduaWZpY2FuY2UgY3V0LW9mZiAkXGFscGhhJCB3YXMgYWRqdXN0ZWQgaW5zdGVhZCBvZiB0aGUKcC12YWx1ZXMgdGhlbXNlbHZlcy4KClRoZSBCZW5qYW1pbmktSG9jaGJlcmcgKGFuZCBvdGhlciB0ZWNobmlxdWVzKSBhcmUgcmVhZGlseSBhdmFpbGFibGUgaW4gYmFzZSBSIGluCnRoZSBgcC5hZGp1c3QoKWAgZnVuY3Rpb24gKHNlZSBgP3AuYWRqdXN0YCBmb3IgZGV0YWlscykuIFlvdSBqdXN0IHN1cHBseSBpdCBhCnZlY3RvciBvZiBwLXZhbHVlcyBhbmQgdGhlIGRlc2lyZWQgbWV0aG9kIChmb3IgQmVuamFtaW5pLUhvY2hiZXJnLCB1c2UKYG1ldGhvZCA9ICJCSCJgKS4KCgoKIyBFeGVyY2lzZXM6IHJlYWwgZGF0YSAoQWxvbiAqZXQgYWwuKiAoMTk5OSkpCgpXZSB3aWxsIHRha2UgYW5vdGhlciBsb29rIGF0IHRoZSBkYXRhc2V0IGJ5IEBhbG9uMTk5OWJyb2FkIG9uIGdlbmUgZXhwcmVzc2lvbgpsZXZlbHMgaW4gNDAgdHVtb3VyIGFuZCAyMiBub3JtYWwgY29sb24gdGlzc3VlIHNhbXBsZXMuCldlIHVzZWQgdGhpcyBkYXRhIGFsc28gaW4gW0xhYiA0XSguL0xhYjQtU3BhcnNlLVBDQS1MREEuaHRtbCkuCkhvd2V2ZXIsIHRoaXMgdGltZSB3ZSdyZSBpbnRlcmVzdGVkIGluIGZpbmRpbmcgZ2VuZXMgdGhhdCBleHByZXNzZWQgKnNpZ25pZmljYW50bHkqCmRpZmZlcmVudCBiZXR3ZWVuIHRoZSB0dW1vciBhbmQgbm9ybWFsIHNhbXBsZXMuIEluIG90aGVyIHdvcmRzLCB3ZSB3aWxsIHBlcmZvcm0KaHlwb3RoZXNpcyB0ZXN0cyBmb3IgZWFjaCBvZiB0aGUgX18yMDAwIGdlbmVzX18uIFRoaXMgaXMgY2xlYXJseSBhIG11bHRpcGxlCnRlc3RpbmcgcHJvYmxlbS4KCiMjIyBUYXNrcyB7LX0KCiMjIyMgMS4gUmVhZCBpbiB0aGUgZGF0YSB7LX0KCihKdXN0IHJ1biB0aGUgY29kZSBnaXZlbiBiZWxvdy4pCgpgYGB7ciBsb2FkLWRhdGF9CmFsb24gPC0gcmVhZC5jc3YoImh0dHBzOi8vZ2l0aHViLmNvbS9zdGF0T21pY3MvSERBMjAyMC9yYXcvZGF0YS9BbG9uMTk5OS5jc3YiKQpzdHIoYWxvblssIDE6MTBdKQp0YWJsZShhbG9uJFkpCmBgYAoKQXMgYSByZW1pbmRlciwgdGhlIGRhdGEgY29uc2lzdHMgb2YgZ2VuZSBleHByZXNzaW9uIGxldmVscyBpbiA0MCB0dW1vciBhbmQgMjIKbm9ybWFsIGNvbG9uIHRpc3N1ZSBzYW1wbGVzLiBUaGUgZXhwcmVzc2lvbiBvbiA2NTAwIGh1bWFuIGdlbmVzIHdlcmUgbWVhc3VyZWQKdXNpbmcgdGhlIEFmZnltZXRyaXggb2xpZ29udWNsZW90aWRlIGFycmF5LgpBcyBpbiBAYWxvbjE5OTlicm9hZCwgd2UgdXNlIHRoZSAqMjAwMCBnZW5lcyB3aXRoIHRoZSBoaWdoZXN0IG1pbmltYWwgaW50ZW5zaXR5KgphY3Jvc3MgdGhlIHNhbXBsZXMuCgpUaGUgZGF0YXNldCBjb250YWlucyBvbmUgdmFyaWFibGUgbmFtZWQgYFlgIHdpdGggdGhlIHZhbHVlcyBgdGAgYW5kIGBuYC4KVGhpcyB2YXJpYWJsZSBpbmRpY2F0ZXMgd2hldGhlciB0aGUgc2FtcGxlIGNhbWUgZnJvbSB0dW1vdXJvdXMgKGB0YCkgb3IKbm9ybWFsIChgbmApIHRpc3N1ZS4KCgojIyMjIDIuIFBlcmZvcm0gMi1zYW1wbGUgdC10ZXN0cyBmb3IgZWFjaCBnZW5lLCBjb21wYXJpbmcgdGhlIHR1bW9yIGFuZCBub3JtYWwgdGlzc3VlIGdyb3VwcyB7LX0KClVzZSB0aGUgYHQudGVzdCgpYCBmdW5jdGlvbiBpbiBiYXNlIFIuIEJ5IGRlZmF1bHQsIHRoaXMgd2lsbCBjb21wdXRlIGEgdHdvLXNhbXBsZQp0LXRlc3Qgd2l0aCAqdW5lcXVhbCB2YXJpYW5jZXMqIChbV2VsY2gncyB0LXRlc3RdW1dlbGNoXSkuCllvdSBjYW4gc3VwcGx5IGEgKmZvcm11bGEqICh1c2luZyB0aGUgYH5gKSB0byBgdC50ZXN0KClgIHNpbWlsYXIgdG8gYGxtKClgLgoKVXNlIGVpdGhlciBhIGBmb3JgIGxvb3AgdG8gaXRlcmF0ZSBvdmVyIGFsbCBnZW5lcyBvciB0aGUgYGFwcGx5KClgIGZ1bmN0aW9uLgoKU3RvcmUgdGhlIHRlc3Qgc3RhdGlzdGljLCBwLXZhbHVlIGFuZCBkZWdyZWVzIG9mIGZyZWVkb20gb2YgZWFjaCB0ZXN0IGluIGEKbWF0cml4IChlYWNoIHJvdyBzaG91bGQgYmUgYSBnZW5lLCAxIGNvbHVtbiBjb250YWluaW5nIHRoZSB0ZXN0IHN0YXRpc3RjcyAxCmNvbHVtbiB0aGUgcC12YWx1ZXMgYW5kIDEgZm9yIHRoZSBkZWdyZWVzIG9mIGZyZWVkb20pLiBZb3UgY2FuIGZpbmQgdGhlc2UgdmFsdWVzCmluIHRoZSBgdC50ZXN0KClgIHJlc3VsdCB1bmRlciB0aGUgYCRwLnZhbHVlYCwgYCRzdGF0aXN0aWNgIGFuZCBgJHBhcmFtZXRlcmAKc2xvdHMuCgo8ZGV0YWlscz48c3VtbWFyeT5Tb2x1dGlvbjwvc3VtbWFyeT4KCkluIHRoZSBzb2x1dGlvbiBiZWxvdywgSSB1c2VkIHRoZSBgYXBwbHlgIGZ1bmN0aW9uIHRvIGxvb3Agb3ZlciB0aGUgZ2VuZXMsIGVzc2VudGlhbGx5CnRoaXMgaXMgc2ltaWxhciB0byBhIGBmb3JgIGxvb3AgYnV0IGlzIGEgYml0IG1vcmUgc3VjY2luY3QgdG8gd3JpdGUgYW5kIHRha2VzCmNhcmUgb2YgcHJlLWFsbG9jYXRpbmcgbWVtb3J5IGluc3RlYWQgb2YgaGF2aW5nIHRlIHNldCB1cCBlbXB0eSBtYXRyaWNlcyBmaXJzdAptYW51YWxseS4gU2V0dGluZyB0aGUgc2Vjb25kIGFyZ3VtZW50IChgTUFSR0lOYCkgdG8gMiB0ZWxscyBgYXBwbHlgIHRvIGxvb3Agb3Zlcgp0aGUgKmNvbHVtbnMqIG9mIHRoZSBpbnB1dCBtYXRyaXggaW5zdGVhZCBvZiB0aGUgKnJvd3MqLiBGb3IgZGV0YWlscywgc2VlIGA/YXBwbHlgLgpCcmllZmx5LCBgYXBwbHkoKWAgdGFrZXMgYSBtYXRyaXgsIG1hcmdpbiBhbmQgZnVuY3Rpb24gYXMgaW5wdXQgYXJndW1lbnRzLCBpdCB0aGVuCmFwcGxpZXMgdGhlIGZ1bmN0aW9uIHRvIGVhY2ggY29sdW1uIG9yIHJvdyAoZGVwZW5kaW5nIG9uIHRoZSBtYXJnaW4pIG9mIHRoZSBtYXRyaXguClRoZSByZXN1bHRzIGFyZSBlaXRoZXIgYSB2ZWN0b3IgaWYgZWFjaCBmdW5jdGlvbiBjYWxsIHJldHVybnMgYSBzaW5nbGUgdmFsdWUgb3IKYSBtYXRyaXggaWYgYSB2ZWN0b3IgaXMgcmV0dXJuZWQgYXQgZWFjaCBjYWxsLiBOb3RlIHRoYXQgYGFwcGx5YCB3aWxsIHJldHVybiB0aGUKcmVzdWx0aW5nIG1hdHJpeCB3aXRoIHRoZSBjYWxjdWxhdGVkIHZhbHVlcyBpbiB0aGUgcm93cy4gQXMgaXQgbWFrZXMgbW9yZSBzZW5zZSAKdG8gaGF2ZSB0aGVzZSBpbiBjb2x1bW5zLCB0aGUgbWF0cml4IGlzIHRyYW5zcG9zZWQuCgpgYGB7cn0KIyMgU3BsaXQgZ2VuZSBkYXRhIGFuZCBncm91cGluZyB2YXJpYWJsZSBhbmQgY29udmVydCB0byBtYXRyaXgKZ2VuZV9kYXRhIDwtIGFzLm1hdHJpeChhbG9uWywgLTFdKQpncm91cCA8LSBhbG9uJFkKCiMjIFVzZSBgYXBwbHlgIHRvIGxvb3Agb3ZlciBjb2x1bW5zIG9mIGdlbmUgZGF0YSBhbmQgcGVyZm9ybSB0LXRlc3RzLCBleHRyYWN0aW5nCiMjIHAtdmFsdWVzLCB0ZXN0IHN0YXN0aXN0aWNzLCBhbmQgZGVncmVlcyBvZiBmcmVlZG9tCnR0ZXN0X3Jlc3VsdHMgPC0gdChhcHBseShnZW5lX2RhdGEsIDIsIGZ1bmN0aW9uKHgpIHsKICB0X3Rlc3QgPC0gdC50ZXN0KHggfiBncm91cCkKICBwX3ZhbCA8LSB0X3Rlc3QkcC52YWx1ZQogIHN0YXQgPC0gdF90ZXN0JHN0YXRpc3RpYwogIGRmIDwtIHRfdGVzdCRwYXJhbWV0ZXIKICAjIyBSZXR1cm4gdmFsdWVzIGluIG5hbWVkIHZlY3RvcgogIGMoc3RhdCwgInBfdmFsIiA9IHBfdmFsLCBkZikKfSkpCgojIyBUYWtlIGEgbG9vayBhdCByZXN1bHRzCmhlYWQodHRlc3RfcmVzdWx0cykKYGBgCgo8L2RldGFpbHM+CgoKIyMjIyAzLiBQbG90IGEgaGlzdG9ncmFtIG9mIHRoZSBwLXZhbHVlcyBhbmQgaW50ZXJwcmV0IHstfQoKPGRldGFpbHM+PHN1bW1hcnk+U29sdXRpb248L3N1bW1hcnk+CgpTZXR0aW5nIGBicmVha3NgIGZyb20gMCB0byAxIHdpdGggYSB3aWR0aCBvZiAwLjA1IG1ha2VzIHNlbnNlIGZvciBwLXZhbHVlcyBiZWNhdXNlCnRoZSBmaXJzdCBiYXIgd2lsbCB0aGVuIHJlcHJlc2VudCB0aGUgbnVtYmVyIG9mIHAtdmFsdWVzIHNtYWxsZXIgdGhhbiAwLjA1ICh3aGljaAp3ZSBvZnRlbiB1c2UgYXMgY3V0b2ZmKS4KCmBgYHtyIHBfdmFsLWhpc3R9CnBfdmFscyA8LSB0dGVzdF9yZXN1bHRzWywgInBfdmFsIl0KaGlzdCgKICBwX3ZhbHMsCiAgYnJlYWtzID0gc2VxKDAsIDEsIGJ5ID0gMC4wNSksIG1haW4gPSAiIiwgeGxhYiA9ICJwLXZhbHVlIiwKICB5bGltID0gYygwLCA1MDApCikKYGBgCgo8L2RldGFpbHM+CgojIyMjIDQuIEhvdyBtYW55IGRpc2NvdmVyaWVzIC8gc2lnbmlmaWNhbnQgZ2VuZXMgZG8geW91IGZpbmQgd2hlbiB1c2luZyAkXGFscGhhID0gMC4wNSQ/IHstfQoKPGRldGFpbHM+PHN1bW1hcnk+U29sdXRpb248L3N1bW1hcnk+CgpgYGB7cn0KYWxwaGEgPC0gMC4wNQpzdW0ocF92YWxzIDwgYWxwaGEpCmBgYAoKPC9kZXRhaWxzPgoKIyMjIyA1LiBDb3JyZWN0IGZvciB0aGUgbXVsdGlwbGljaXR5IHByb2JsZW0gYnkgY29udHJvbGxpbmcgdGhlIEZXRVIgYXQgNSUgey19CgotIFdoYXQgc2hvdWxkIHdlIHVzZSBhcyAkXGFscGhhJD8KCi0gSG93IG1hbnkgZGlzY292ZXJpZXMgYXJlIGxlZnQgb3ZlciB3aGVuIHVzaW5nIHRoZSBGV0VSLWFkanVzdGVkICRcYWxwaGEkPwoKPGRldGFpbHM+PHN1bW1hcnk+U29sdXRpb248L3N1bW1hcnk+CgpSZW1lbWJlciB0aGF0ICRcYWxwaGEkIGNhbiBiZSBjYWxjdWxhdGVkIGZvciBhIGdpdmVuIEZXRVIgYXMKCiQkIFxhbHBoYSA9IDEgLSAoMSAtIFx0ZXh0e0ZXRVJ9KV57MS9tfSAkJAoKYGBge3J9Cm0gPC0gbnJvdyh0dGVzdF9yZXN1bHRzKSAjIG51bWJlciBvZiB0ZXN0cyBwZXJmb3JtZWQKZndlciA8LSAwLjA1CmFkal9hbHBoYSA8LSAxIC0gKDEgLSBmd2VyKV4oMS9tKQoKIyMgTnVtYmVyIG9mIHNpZ25pZmljYW50IGRpc2NvdmVyaWVzIGF0IEZXRVIgNSUKc3VtKHBfdmFscyA8IGFkal9hbHBoYSkKYGBgCgpOb3RlIHRoYXQgeW91IGNhbiBhbHNvIHVzZSB0aGUgKkJvbmZlcnJvbmkqIGNvcnJlY3Rpb24gdG8gZ2V0IGEgc2ltaWxhciByZXN1bHQuClRoaXMgaXMgYWxzbyBpbXBsZW1lbnRlZCBpbiB0aGUgYHAuYWRqdXN0YCBmdW5jdGlvbiBieSB1c2luZyBgbWV0aG9kID0gImJvbmZlcnJvbmkiYC4KRXNzZW50aWFsbHksIHRoZSBCb25mZXJyb25pIGNvcnJlY3Rpb24gc2V0cyBhIG5ldyAkXGFscGhhX20gPSBcYWxwaGEgLyBtJCBieQpkaXZpZGluZyB0aGUgb3JpZ2luYWwgd2l0aCB0aGUgbnVtYmVyIG9mIHRlc3RzIHBlcmZvcm1lZCAkbSQuIFNvIHRoZSByZXN1bHQgaXMKc2xpZ2h0bHkgZGlmZmVyZW50IHRoYW4gdGhlIHByb2NlZHVyZSBnaXZlbiBhYm92ZSAod2hpY2ggaXMga25vd24gYXMgU2lkYWsncwpwcm9jZWR1cmUgYnV0IGlzIGxlc3MgY29tbW9ubHkgdXNlZCkuIFRoZSBgcC5hZGp1c3RgIGZ1bmN0aW9uIHJldHVybnMgYWRqdXN0ZWQKcC12YWx1ZXMsIHNpbmNlIG1vZGlmeWluZyB0aGUgY3V0LW9mZiAkXGFscGhhJCBieSBkaXZpZGluZyB3aXRoICRtJCBpcyB0aGUgc2FtZQphcyBtdWx0aXBseWluZyB0aGUgcC12YWx1ZXMgd2l0aCAkbSQgYW5kIHRoZW4gdXNpbmcgdGhlIG9yaWdpbmFsIGN1dC1vZmYuCgpgYGB7cn0KYm9uZl9wdmFscyA8LSBwLmFkanVzdChwX3ZhbHMsIG1ldGhvZCA9ICJib25mZXJyb25pIikKc3VtKGJvbmZfcHZhbHMgPCBhbHBoYSkKCiMjIE5vdGUgdGhhdCBib25mZXJyb25pIGNvcnJlY3Rpb24gaXMgc2ltcGx5IG11bHRpcGx5aW5nIHRoZSBvcmlnaW5hbCBwLXZhbHVlcwojIyB3aXRoIG0gKGFuZCBjdXR0aW5nIG9mZiBhbnkgdmFsdWVzIGJpZ2dlciB0aGFuIDEpCmlkeCA8LSB3aGljaChib25mX3B2YWxzIDwgMSkKaGVhZChib25mX3B2YWxzW2lkeF0pCmhlYWQocF92YWxzW2lkeF0gKiBtKQpgYGAKCjwvZGV0YWlscz4KCgojIyMjIDYuIFVzZSB0aGUgRkRSIG1ldGhvZCB0byBhZGp1c3QgdGhlIG9yaWdpbmFsIHAtdmFsdWVzIHstfQoKLSBVc2UgdGhlIGBwLmFkanVzdCgpYCBmdW5jdGlvbiB3aXRoIGBtZXRob2QgPSAiQkgiYAoKLSBQbG90IHRoZSBhZGp1c3RlZCBwLXZhbHVlcyBhZ2FpbnN0IHRoZSBvcmlnaW5hbHMsIHdoYXQgaXMgdGhlIGVmZmVjdCBvZiB0aGUgYWRqdXN0bWVudD8KCi0gSG93IG1hbnkgZGlzY292ZXJpZXMgYXJlIGxlZnQgd2hlbiBjb250cm9sbGluZyB0aGUgRkRSIGF0IDUlPwoKPGRldGFpbHM+PHN1bW1hcnk+U29sdXRpb248L3N1bW1hcnk+CgpgYGB7ciBmZHItYWRqdXN0fQpmZHIgPC0gcC5hZGp1c3QocF92YWxzLCBtZXRob2QgPSAiQkgiKQoKcGxvdCgKICBwX3ZhbHNbb3JkZXIocF92YWxzKV0sIGZkcltvcmRlcihwX3ZhbHMpXSwKICBwY2ggPSAxOSwgY2V4ID0gMC42LCB4bGFiID0gInAtdmFsdWUiLCB5bGFiID0gIkZEUi1hZGp1c3RlZCBwLXZhbHVlIiwgY29sID0gNAopCmFibGluZShhID0gMCwgYiA9IDEpCgpzdW0oZmRyIDwgMC4wNSkKYGBgCgo8L2RldGFpbHM+CgoKIyMjIyA3LiBDb21wYXJlIHRoZSBGV0VSIGFuZCBGRFIgY29ycmVjdGlvbnMuIFdoaWNoIG9uZSBpcyBtb3JlIGNvbnNlcnZhdGl2ZT8gey19CgoKCiMgRnVydGhlciByZWFkaW5nIHstfQoKLSBDaGFwdGVyIDYgb2YgdGhlIFtCaW9tZWRpY2FsIERhdGEgU2NpZW5jZV0oLi9odHRwOi8vZ2Vub21pY3NjbGFzcy5naXRodWIuaW8vYm9vay8pIGJvb2sKCgoKIyBTZXNzaW9uIGluZm8gey19Cgo8ZGV0YWlscz48c3VtbWFyeT5TZXNzaW9uIGluZm88L3N1bW1hcnk+CgpgYGB7ciBzZXNzaW9uX2luZm8sIGVjaG89RkFMU0UsIGNhY2hlPUZBTFNFfQpTeXMudGltZSgpCnNlc3Npb25pbmZvOjpzZXNzaW9uX2luZm8oKQpgYGAKCjwvZGV0YWlscz4KCiMgW0hvbWVdKGh0dHBzOi8vc3RhdG9taWNzLmdpdGh1Yi5pby9IREEyMDIwLykgey19CgpbV2VsY2hdOmh0dHBzOi8vZW4ud2lraXBlZGlhLm9yZy93aWtpL1dlbGNoJTI3c190LXRlc3QKCgoKIyBSZWZlcmVuY2VzIHstfQo=</div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("Lab5-Large-Scale-Inference.Rmd");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
