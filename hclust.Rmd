@@ -4,6 +4,9 @@ author: "Lieven Clement"
 output:
   html_document:
     df_print: paged
+  pdf_document:
+    toc: true
+    number_sections: true
 ---
 
 # Introduction
@@ -73,7 +76,9 @@ We consider three intercluster dissimilarities.
 
 i.e. the dissimilarity between $C_1$ and $C_2$ is determined by the smallest dissimilarity between a point of $C_1$ and a point of $C_2$.
 
-![](https://raw.githubusercontent.com/statOmics/HDA2020/master/assets/hclustNearest.png){width=70%}
+```{r, echo=FALSE, out.width='70%'}
+knitr::include_graphics("assets/hclustNearest.png")
+```
 
 ### Complete Linkage = Furthest Neighbour
    \[
@@ -84,7 +89,9 @@ i.e. the dissimilarity between $C_1$ and $C_2$ is determined by the smallest dis
    point of $C_2$.
 
 
-![](https://raw.githubusercontent.com/statOmics/HDA2020/master/assets/hclustFurthest.png){width=70%}
+```{r, echo=FALSE, out.width='70%'}
+knitr::include_graphics("assets/hclustFurthest.png")
+```
 
 ### Average Linkage = Group Average
 
@@ -96,7 +103,9 @@ i.e. the dissimilarity between $C_1$ and $C_2$ is determined by the smallest dis
    i.e. the dissimilarity between $C_1$ and $C_2$ is determined by the average dissimilarity between all points of $C_1$ and all
    points of $C_2$.
 
-![](https://raw.githubusercontent.com/statOmics/HDA2020/master/assets/hclustAverage.png){width=70%}
+```{r, echo=FALSE, out.width='70%'}
+knitr::include_graphics("assets/hclustAverage.png")
+```
 
 
 ## Cluster Tree
