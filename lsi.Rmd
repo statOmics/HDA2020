@@ -72,7 +72,12 @@ We will now plot the animated graph
 pZ
 ```
 
-```{r echo=FALSE, message=FALSE}
+
+__WARNING__: The animated graph will only be visible in the HTML output, not in PDF format.
+If you're reading the PDF version, check [online](https://statomics.github.io/HDA2020/lsi.html#111_Data_Exploration)
+for the animated graph.
+
+```{r echo=FALSE, message=FALSE, include=knitr::is_html_output()}
 animate(pZ, nframes = 103, end_pause = 3)
 ```
 
@@ -122,7 +127,7 @@ We will now plot the animated graph
 pPval
 ```
 
-```{r echo=FALSE, message=FALSE}
+```{r echo=FALSE, message=FALSE, include=knitr::is_html_output()}
 animate(pPval, nframes = 103, end_pause = 3)
 ```
 
@@ -653,7 +658,7 @@ pFDR <- dti %>%
   theme_grey()
 ```
 
-```{r echo = FALSE, message = FALSE}
+```{r echo = FALSE, message = FALSE, include=knitr::is_html_output()}
 animate(pFDR, nframes = 103, end_pause = 3)
 ```
 
@@ -1006,7 +1011,7 @@ pfdr <- dti %>%
   theme_grey()
 ```
 
-```{r echo=FALSE, message=FALSE}
+```{r echo=FALSE, message=FALSE, include=knitr::is_html_output()}
 animate(pfdr, nframes = 103, end_pause = 3)
 ```
 
