@@ -69,7 +69,7 @@ $H_{0i} : \mu_{1i} = \mu_{2i}$. Let the alternative hypothesis of this test be
 $H_{1i} : \mu_{1i} \neq \mu_{2i}$, i.e. we perform a *two-tailed* test.
 Suppose we have data collected from both populations, given by $X_{1i}$ and $X_{2i}$
 of size $n_{1i}$ and $n_{2i}$, respectively, and assume that both populations
-have the same knwon variance $\sigma_i^2$. Then we can test this hypothesis by using
+have the same known variance $\sigma_i^2$. Then we can test this hypothesis by using
 __Z-scores__, given by
 
 $$ Z_i=\frac{\bar X_{1i}-\bar X_{2i}}{\sigma_i\sqrt{1/n_{1i}+1/n_{2i}}} $$
@@ -145,20 +145,20 @@ null_z_scores <- replicate(m0, {
   (mean(group2) - mean(group1)) / denom
 })
 
-## Visuzlize Z-scores
+## Visualize Z-scores
 hist(null_z_scores, breaks = 50, freq = FALSE)
 ## Overlay theoretical standard normal
 lines(x <- seq(-5, 5, length.out = 100), dnorm(x), col = "dodgerblue", lwd = 3)
-## Draw vertical lines at 5 and 95th percentiles
-abline(v = qnorm(c(0.05, 0.95)), col = "firebrick", lty = 2, lwd = 3)
+## Draw vertical lines at 2.5 and 97.5th percentiles
+abline(v = qnorm(c(0.025, 0.975)), col = "firebrick", lty = 2, lwd = 3)
 ```
 
 We see that the Z-scores are nicely distributed as a standard normal.
-The vertical dashed lines indicate the 5th and 95th percentiles of the standard
+The vertical dashed lines indicate the 2.5th and 97.5th percentiles of the standard
 normal. The regions outside these lines indicate the Z-scores that we would call
-significant if we used a cut-off of $\alpha = 0.05$. So, even though we simulated
-data under the null hypothesis, our Z-test still returns "significant" results for
-a number of cases just by chance!
+significant if we used a cut-off of $\alpha = 0.05$ for a *two-tailed* test.
+So, even though we simulated data under the null hypothesis, our Z-test still
+returns "significant" results for a number of cases just by chance!
 
 Let's calculate the p-values for our hypothesis tests and see what the damage is.
 To calculate the p-values, we use the `pnorm()` function in this case, which returns
@@ -398,9 +398,9 @@ make use of simulated data.
 
 In the code below, 1.000 tests are simulated, for which 90% come from cases
 where the null is true and the other 10% for which the alternative is true.
-We assume the *effect size* (difference between the 2 groups) to be equal to 2
+We assume the *effect size* (difference between the 2 groups) to be equal to 3
 under the alternative, so that we can sample the test statistics from a normal
-distribution with mean 2.
+distribution with mean 3.
 
 ```{r}
 m <- 1000 # total number of hypotheses
