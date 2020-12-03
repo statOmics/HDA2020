@@ -89,7 +89,7 @@ Note, that it is difficult to see structure in the data.
 
 We can convert the z-statistic in a two-sided p-value for each voxel to assess
 
-\[H_0$: \text{There is on average no difference in brain activity in voxel xyz between dyslexic and non-dyslexic children}\]
+\[H_0: \text{There is on average no difference in brain activity in voxel xyz between dyslexic and non-dyslexic children}\]
   \[\mu_d=\mu_{nd}\]
 
 vs
@@ -537,12 +537,11 @@ Consider $m = 10,000$ tests
    \widehat{\text{FDP}}=\frac{FP}{R}=\frac{10}{200}=\frac{0.001 \times 10000}{200} = 0.05.
  \]
 
- \item
- Recall that the B\&H (1995) procedure involves finding the
- largest integer $k$ so that $p_{(k)} \leq k \alpha /m$, or,
- equivalently, $p_{(k)} m /k \leq \alpha$.
+Recall that the B\&H (1995) procedure involves finding the
+largest integer $k$ so that $p_{(k)} \leq k \alpha /m$, or,
+equivalently, $p_{(k)} m /k \leq \alpha$.
 
- In this example: $k=200$, $p_{(k)}=0.001$, $m=10,000$ and $\alpha=0.05$.
+In this example: $k=200$, $p_{(k)}=0.001$, $m=10,000$ and $\alpha=0.05$.
 
 ---
 
@@ -558,7 +557,7 @@ Consider $m = 10,000$ tests
 
  Thus, if we knew $m_0$ (the number of true nulls), we could improve the method by applying it to the level $\alpha m/m_0$ (cfr. Bonferroni).
 
- $\longrightarrow$ many FDR methods consist in estimating $m_0$ or the fraction of null genes $\m_0/m$.
+ $\longrightarrow$ many FDR methods consist in estimating $m_0$ or the fraction of null genes $m_0/m$.
 
 ---
 
