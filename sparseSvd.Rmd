@@ -47,7 +47,10 @@ In high dimensional data the PCs may have unclear interpretation because they de
 
 
 ```{r}
-toxData <- read_csv("https://raw.githubusercontent.com/statOmics/HDA2020/data/toxDataCentered.csv")
+toxData <- read_csv(
+  "https://raw.githubusercontent.com/statOmics/HDA2020/data/toxDataCentered.csv",
+  col_types = cols()
+)
 svdX <- svd(toxData[,-1])
 ```
 

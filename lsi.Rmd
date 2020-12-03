@@ -43,12 +43,13 @@ The dataset `dti` contains
 
 
 
-```{r}
+```{r, message=FALSE}
 library(tidyverse)
 library(locfdr)
 library(gganimate)
 
-dti <- read_csv("https://raw.githubusercontent.com/statOmics/HDA2020/data/dti.csv")
+dti <- read_csv("https://raw.githubusercontent.com/statOmics/HDA2020/data/dti.csv",
+                col_types = cols())
 ```
 
 ```{r}
