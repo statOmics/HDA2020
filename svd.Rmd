@@ -10,6 +10,10 @@ output:
       toc_float: true
       highlight: tango
       number_sections: true
+    pdf_document:
+      toc: true
+      number_sections: true
+      latex_engine: xelatex
 ---
 
 # Introduction
@@ -98,6 +102,8 @@ Let $\mathbf{X}$ be an $n\times p$ matrix e.g.
 
 <!-- Need "emo" package for emojis, install with -->
 <!-- `devtools::install_github("hadley/emo")` -->
+
+__Note:__ the emoji characters will not be visible in the PDF output.
 
 \[X=
 \left[\begin{array}{ccc}
@@ -668,7 +674,8 @@ as.cimg(approxMon) %>%
   plot(.,main=paste0("Approximation with ",k," singular vectors"),axes=FALSE)
 ```
 
-- We make the plot for a reconstruction with 2 singular vector. This leads to a data compression of $1-\frac{2\times (1+`r nrow(mondriaan)`+`r ncol(mondriaan)`)}{`r nrow(mondriaan) `\times `r ncol(mondriaan)`}$ = `r 100 - round(2*(1+nrow(mondriaan)+ncol(mondriaan))/(nrow(mondriaan)*ncol(mondriaan))*100,1)`%. We only use 2 left singular vectors (2\times `r nrow(mondriaan)`), 2 singular values, 2 right singular vectors (2\times `r ncol(mondriaan)`).
+- We make the plot for a reconstruction with 2 singular vector. This leads to a data compression of $1-\frac{2\times (1+`r nrow(mondriaan)`+`r ncol(mondriaan)`)}{`r nrow(mondriaan) `\times `r ncol(mondriaan)`}$ = `r 100 - round(2*(1+nrow(mondriaan)+ncol(mondriaan))/(nrow(mondriaan)*ncol(mondriaan))*100,1)`%. We only use 2 left singular vectors
+(2 $\times$ `r nrow(mondriaan)`), 2 singular values, 2 right singular vectors (2 $\times$ `r ncol(mondriaan)`).
 
 ```{r}
 k <- 2
@@ -1110,7 +1117,7 @@ Use of MDS:
 
 In this chapter we assume that the data matrix $\mathbf{X}$ is column-centered (i.e. each column has mean zero).
 
-Centering can be accomplished by multiplying the original data matrix $\mathbf{X}$ with the $n \times n$ \mathbflue{centering matrix}
+Centering can be accomplished by multiplying the original data matrix $\mathbf{X}$ with the $n \times n$ $\mathbf{centering\ matrix}$
  \[
    \mathbf{H} = \mathbf{I} - \frac{1}{n} \mathbf{1}\mathbf{1}^T ,
  \]
@@ -1252,14 +1259,15 @@ Thus for the $i^\text{th}$ individual we get
 
 We also know that we can approximate $\mathbf{X}$ by $\mathbf{X}_2$ which equals:
 
-\begin{eqnarray}
-\mathbf{X}_2 &=& \mathbf{Z_2}\mathbf{V}_2^T\\
-&=& \mathbf{Z_2}\left[\begin{array}{c} \mathbf{v}_1^T\\
-\mathbf{v}_2^T\end{array}\right]
-&=& \mathbf{Z_2}\left[\begin{array}{ccc}
-\tilde{\mathbf{v}}_{2,1}&\ldots&\tilde{\mathbf{v}}_{2,p}\end{array}
-\right]
-\end{eqnarray}
+\begin{align}
+  \mathbf{X}_2 &= \mathbf{Z_2}\mathbf{V}_2^T\\
+  &= \mathbf{Z_2}\left[\begin{array}{c} \mathbf{v}_1^T\\
+      \mathbf{v}_2^T\end{array}\right]
+  = \mathbf{Z_2}
+    \left[
+      \begin{array}{ccc}\tilde{\mathbf{v}}_{2,1} \ldots \tilde{\mathbf{v}}_{2,p}\end{array}
+    \right]
+\end{align}
 
 with $\mathbf{v}_1$ and $\mathbf{v}_2$ the first two right singular vector and $\tilde{\mathbf{v}}_j$ the j$^\text{th}$ column of the matrix $\mathbf{V}_2^T$.
 
@@ -1301,7 +1309,7 @@ diyBiplot
 biplot(Zk,Vk)
 ```
 
-The R code shows two ways of constructing a biplot: the first method starts from the SVD of \mathbf{X} and plots the p vectors $\tilde{\mathbf{v}}_{2,j}$ as arrows. Note that we used a scaling factor to give the arrows a convenient length in the graph (not too small, not too large); it does not affect the interpretation. The second way of obtaining the biplot is simply by using the R built-in function biplot.
+The R code shows two ways of constructing a biplot: the first method starts from the SVD of $\mathbf{X}$ and plots the p vectors $\tilde{\mathbf{v}}_{2,j}$ as arrows. Note that we used a scaling factor to give the arrows a convenient length in the graph (not too small, not too large); it does not affect the interpretation. The second way of obtaining the biplot is simply by using the R built-in function biplot.
 
 #### Illustration of projection
 
@@ -1935,7 +1943,7 @@ This factor
 
 - is the only factor in the density function that depends on $\mathbf{x}$
 
-- is a \mathbflue{quadratic} form
+- is a $\mathbf{quadratic}$ form
 
 - is constant in points $\mathbf{x}$ with constant density $f(\mathbf{x})$.
 

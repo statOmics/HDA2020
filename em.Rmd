@@ -10,6 +10,9 @@ output:
       toc_float: true
       highlight: tango
       number_sections: true
+    pdf_document:
+      toc: true
+      number_sections: true
 ---
 
 # Example of model based clustering with two groups
@@ -36,13 +39,13 @@ With
 We can estimate the model parameters $\boldsymbol{\theta} = [\mu_1,\mu_2,\pi_1]^T$ using maximum likelihood.
 
 \[
-L\left(\mu_1,\mu_2,\pi_1\vert \mathbf{X}\right) = \prod\limits_{i=1}^n \left[\pi_1 f_1(x_i) + (1-\pi_1) f_2(x_i)
+L\left(\mu_1,\mu_2,\pi_1\vert \mathbf{X}\right) = \prod_{i=1}^n \left[\pi_1 f_1(x_i) + (1-\pi_1) f_2(x_i)
 \right]\]
 
 It is easier to maximise the log-likelihood:
 
 \[
-l\left(\mu_1,\mu_2,\pi_1\vert \mathbf{X}\right) = \sum\limits_{i=1}^n \log\left[\pi_1 f_1(x_i) + (1-\pi_1) f_2(x_i)
+l\left(\mu_1,\mu_2,\pi_1\vert \mathbf{X}\right) = \sum_{i=1}^n \log\left[\pi_1 f_1(x_i) + (1-\pi_1) f_2(x_i)
 \right]\]
 
 The optimisation is difficult because we have to take the log of a sum and the likelihood does not factorise further.
@@ -98,7 +101,7 @@ f(x_i, z_{i1})&=&f(x_i\vert z_{i1}) f(z_{i1})\\
 and the log likelihood of the complete data becomes
 
 \[
-l\left(\mu_1,\mu_2,\pi_1\vert \mathbf{X, Z}\right) = \sum_\limits{i=1}^n z_{i1} \log \left[\pi_1  f_1(x_i)\right] + (1-z_{i1})\log \left[(1-\pi_1) f_2(x_i)\right]
+l\left(\mu_1,\mu_2,\pi_1\vert \mathbf{X, Z}\right) = \sum_{i=1}^n z_{i1} \log \left[\pi_1  f_1(x_i)\right] + (1-z_{i1})\log \left[(1-\pi_1) f_2(x_i)\right]
 \]
 
 - Note, that in the notation of the [Frayley and Raftery (1998)](https://sites.stat.washington.edu/people/raftery/Research/PDF/fraley1998.pdf) $z_2=1-z_1$ and $\pi_2= 1- \pi_1$
@@ -128,8 +131,8 @@ In iteration m+1
 \begin{eqnarray}
 Q\left(\mu_1,\mu_2,\pi_1\vert \mathbf{X, Z}\right)&=&
 E\left[l\left(\mu_1,\mu_2,\pi_1\vert \mathbf{X, Z}\right)\vert \mathbf{X}, \mu_1=\mu_1^m, \mu_2=\mu_2^m, \pi_1=\pi_1^m\right]\\ &=&
-E\left[\sum_\limits{i=1}^n z_{i1} \log\left[\pi_1  f_1(x_i)\right] + (1-z_{i1})\log \left[(1-\pi_1) f_2(x_i)\right]\vert \mathbf{X}, \mu_1=\mu_1^m, \mu_2=\mu_2^m, \pi_1=\pi_1^m\right]\\
-&=&\sum_\limits{i=1}^n E\left[z_{i1}\vert x_i,\mu_1=\mu_1^m, \mu_2=\mu_2^m, \pi_1=\pi_1^m\right]\log \left[\pi_1  f_1(x_i)\right] + \sum_\limits{i=1}^n \left(1- E\left[z_{i1}\vert x_i,\mu_1=\mu_1^m, \mu_2=\mu_2^m, \pi_1=\pi_1^m\right]\right)\log \left[(1-\pi_1) f_2(x_i)\right]
+E\left[\sum_{i=1}^n z_{i1} \log\left[\pi_1  f_1(x_i)\right] + (1-z_{i1})\log \left[(1-\pi_1) f_2(x_i)\right]\vert \mathbf{X}, \mu_1=\mu_1^m, \mu_2=\mu_2^m, \pi_1=\pi_1^m\right]\\
+&=&\sum_{i=1}^n E\left[z_{i1}\vert x_i,\mu_1=\mu_1^m, \mu_2=\mu_2^m, \pi_1=\pi_1^m\right]\log \left[\pi_1  f_1(x_i)\right] + \sum_{i=1}^n \left(1- E\left[z_{i1}\vert x_i,\mu_1=\mu_1^m, \mu_2=\mu_2^m, \pi_1=\pi_1^m\right]\right)\log \left[(1-\pi_1) f_2(x_i)\right]
 \end{eqnarray}
 
 Note, that the expected log likelihood simplifies to replacing the unknown class memberships in the complete likelihood by their expected values.
@@ -138,7 +141,6 @@ Note, that the expected log likelihood simplifies to replacing the unknown class
  E\left[z_{i1}\vert \mathbf{X},\mu_1=\mu_1^m, \mu_2=\mu_2^m, \pi_1=\pi_1^m\right] &=& 1 \times f(z_{i1}=1 \vert x_i,\mu_1=\mu_1^m, \mu_2=\mu_2^m, \pi_1=\pi_1^m)  + 0 \times f(z_{i1}=0 \vert x_i,\mu_1=\mu_1^m, \mu_2=\mu_2^m, \pi_1=\pi_1^m)  \\\\
  &=& f(z_{i1}= 1 \vert x_i,\mu_1=\mu_1^m, \mu_2=\mu_2^m, \pi_1=\pi_1^m)\\\\
  &=& \frac{f(z=1,x_i)}{f(x_i)}\\\\
-
 &=& \frac{\pi^m_1 f_1(x_i)}{\pi^m_1 f_1(x_i)+(1-\pi^m_1) f_2(x_i)}
 \end{eqnarray}
 
@@ -149,8 +151,8 @@ We will refer to the expected class membership as $\hat z_{i1}^{m+1}$
 Maximise the expected log-likelihood to obtain the unknown model parameters:
 
 \[
- Q\left(\mu_1,\mu_2,\pi_1\vert \mathbf{X, Z}\right) = \sum_\limits{i=1}^n \hat z_{i1}^m  \log \pi_1 + \sum_\limits{i=1}^n \hat z_{i1}^m  \log f_1(x_i) + \sum_\limits{i=1}^n\left(1- \hat z_{i1}\right)\log (1-\pi_1) +
- \sum_\limits{i=1}^n\left(1- \hat z_{i1}\right)\log f_2(x_i)
+ Q\left(\mu_1,\mu_2,\pi_1\vert \mathbf{X, Z}\right) = \sum_{i=1}^n \hat z_{i1}^m  \log \pi_1 + \sum_{i=1}^n \hat z_{i1}^m  \log f_1(x_i) + \sum_{i=1}^n\left(1- \hat z_{i1}\right)\log (1-\pi_1) +
+ \sum_{i=1}^n\left(1- \hat z_{i1}\right)\log f_2(x_i)
 \]
 
 So we observe that the expected log likelihood implies an estimation orthogonality between the normal distributions and the Bernoulli distribution.

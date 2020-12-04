@@ -10,6 +10,9 @@ output:
       toc_float: true
       highlight: tango
       number_sections: true
+    pdf_document:
+      toc: true
+      number_sections: true
 ---
 
 # Introduction
@@ -59,7 +62,7 @@ Issues with high-dimensional data:
 
 # Important tasks in high dimensional data analysis?
 
-## Example:   Kang et al. (2018)’s droplet-based scRNA-seq data of PBMCs cells from 8 lupus patients measured before and after 6h-treatment with INF-β (16 samples in total).
+## Example:   Kang et al. (2018)’s droplet-based scRNA-seq data of PBMCs cells from 8 lupus patients measured before and after 6h-treatment with INF-$\beta$ (16 samples in total).
 
 ```{r libraries, message=FALSE, warning=FALSE}
 library(tidyverse)
@@ -183,7 +186,7 @@ Other examples
 Y=f(\mathbf{x}) +\epsilon=\beta_0+\sum\limits_{j=1}^p x_j\beta_j + \epsilon
 \]
 with i.i.d. $\epsilon\sim N(0,\sigma^2)$
-- We will typically work on mean centered variables: Y-\bar{Y} and X - \bar{X}, then the intercept is dropped from the model:
+- We will typically work on mean centered variables: $Y-\bar{Y}$ and $X - \bar{X}$, then the intercept is dropped from the model:
 \[
 Y=f(\mathbf{x}) +\epsilon=\sum\limits_{j=1}^p x_j\beta_j + \epsilon
 \]
