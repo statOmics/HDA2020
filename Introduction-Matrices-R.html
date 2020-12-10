@@ -11,7 +11,7 @@
 
 <meta name="author" content="Adapted by Milan Malfait" />
 
-<meta name="date" content="2020-12-04" />
+<meta name="date" content="2020-12-10" />
 
 <title>Working with matrices in R</title>
 
@@ -470,6 +470,9 @@ div.tocify {
       <a href="svd.html">2. Singular Value Decomposition</a>
     </li>
     <li>
+      <a href="svdGeometricInterpretation.html">2.3. Geometric Interpretation SVD</a>
+    </li>
+    <li>
       <a href="prediction.html">3. Prediction with High Dimensional Predictors</a>
     </li>
     <li>
@@ -544,7 +547,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Working with matrices in R</h1>
 <h4 class="author">Adapted by Milan Malfait</h4>
-<h4 class="date">December 04, 2020</h4>
+<h4 class="date">December 10, 2020</h4>
 
 </div>
 
@@ -993,7 +996,7 @@ div.tocify {
 <h2>Session info</h2>
 <details>
 <p><summary>Session info</summary></p>
-<pre><code>#&gt; [1] &quot;2020-12-04 16:50:15 UTC&quot;
+<pre><code>#&gt; [1] &quot;2020-12-10 17:57:20 UTC&quot;
 #&gt; ─ Session info ───────────────────────────────────────────────────────────────
 #&gt;  setting  value                       
 #&gt;  version  R version 4.0.3 (2020-10-10)
@@ -1004,21 +1007,21 @@ div.tocify {
 #&gt;  collate  en_US.UTF-8                 
 #&gt;  ctype    en_US.UTF-8                 
 #&gt;  tz       UTC                         
-#&gt;  date     2020-12-04                  
+#&gt;  date     2020-12-10                  
 #&gt; 
 #&gt; ─ Packages ───────────────────────────────────────────────────────────────────
 #&gt;  package                * version  date       lib source        
 #&gt;  AnnotationDbi            1.52.0   2020-10-27 [1] Bioconductor  
 #&gt;  AnnotationHub          * 2.22.0   2020-10-27 [1] Bioconductor  
 #&gt;  assertthat               0.2.1    2019-03-21 [1] CRAN (R 4.0.2)
-#&gt;  backports                1.2.0    2020-11-02 [1] CRAN (R 4.0.2)
+#&gt;  backports                1.2.1    2020-12-09 [1] CRAN (R 4.0.3)
 #&gt;  beachmat                 2.6.2    2020-11-24 [1] Bioconductor  
 #&gt;  beeswarm                 0.2.3    2016-04-25 [1] CRAN (R 4.0.2)
 #&gt;  Biobase                * 2.50.0   2020-10-27 [1] Bioconductor  
 #&gt;  BiocFileCache          * 1.14.0   2020-10-27 [1] Bioconductor  
 #&gt;  BiocGenerics           * 0.36.0   2020-10-27 [1] Bioconductor  
 #&gt;  BiocManager              1.30.10  2019-11-16 [1] CRAN (R 4.0.2)
-#&gt;  BiocNeighbors            1.8.1    2020-11-11 [1] Bioconductor  
+#&gt;  BiocNeighbors            1.8.2    2020-12-07 [1] Bioconductor  
 #&gt;  BiocParallel             1.24.1   2020-11-06 [1] Bioconductor  
 #&gt;  BiocSingular             1.6.0    2020-10-27 [1] Bioconductor  
 #&gt;  BiocVersion              3.12.0   2020-05-14 [1] Bioconductor  
@@ -1053,8 +1056,8 @@ div.tocify {
 #&gt;  forcats                * 0.5.0    2020-03-01 [1] CRAN (R 4.0.2)
 #&gt;  fs                       1.5.0    2020-07-31 [1] CRAN (R 4.0.2)
 #&gt;  generics                 0.1.0    2020-10-31 [1] CRAN (R 4.0.2)
-#&gt;  GenomeInfoDb           * 1.26.1   2020-11-18 [1] Bioconductor  
-#&gt;  GenomeInfoDbData         1.2.4    2020-12-04 [1] Bioconductor  
+#&gt;  GenomeInfoDb           * 1.26.2   2020-12-08 [1] Bioconductor  
+#&gt;  GenomeInfoDbData         1.2.4    2020-12-10 [1] Bioconductor  
 #&gt;  GenomicRanges          * 1.42.0   2020-10-27 [1] Bioconductor  
 #&gt;  ggbeeswarm               0.6.0    2017-08-07 [1] CRAN (R 4.0.2)
 #&gt;  ggplot2                * 3.3.2    2020-06-19 [1] CRAN (R 4.0.2)
@@ -1072,7 +1075,7 @@ div.tocify {
 #&gt;  IRanges                * 2.24.0   2020-10-27 [1] Bioconductor  
 #&gt;  irlba                    2.3.3    2019-02-05 [1] CRAN (R 4.0.2)
 #&gt;  jpeg                     0.1-8.1  2019-10-24 [1] CRAN (R 4.0.2)
-#&gt;  jsonlite                 1.7.1    2020-09-07 [1] CRAN (R 4.0.2)
+#&gt;  jsonlite                 1.7.2    2020-12-09 [1] CRAN (R 4.0.3)
 #&gt;  KernSmooth               2.23-17  2020-04-26 [2] CRAN (R 4.0.3)
 #&gt;  knitr                    1.30     2020-09-22 [1] CRAN (R 4.0.2)
 #&gt;  ks                       1.11.7   2020-02-11 [1] CRAN (R 4.0.2)
@@ -1100,7 +1103,7 @@ div.tocify {
 #&gt;  pkgconfig                2.0.3    2019-09-22 [1] CRAN (R 4.0.2)
 #&gt;  plot3D                 * 1.3      2019-12-18 [1] CRAN (R 4.0.2)
 #&gt;  promises                 1.1.1    2020-06-09 [1] CRAN (R 4.0.2)
-#&gt;  ps                       1.4.0    2020-10-07 [1] CRAN (R 4.0.2)
+#&gt;  ps                       1.5.0    2020-12-05 [1] CRAN (R 4.0.2)
 #&gt;  purrr                  * 0.3.4    2020-04-17 [1] CRAN (R 4.0.2)
 #&gt;  R6                       2.5.0    2020-10-28 [1] CRAN (R 4.0.2)
 #&gt;  rainbow                * 3.6      2019-01-29 [1] CRAN (R 4.0.2)
