@@ -13,6 +13,8 @@ navbar:
         href: intro.html
       - text: "2. Singular Value Decomposition"
         href: svd.html
+      - text: "2.3. Geometric Interpretation SVD"
+        href: svdGeometricInterpretation.html
       - text: "3. Prediction with High Dimensional Predictors"
         href: prediction.html
       - text: "4. Sparse Singular Value Decomposition"
