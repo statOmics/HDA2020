@@ -12,6 +12,9 @@ output:
       number_sections: true
 ---
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/srUDBwP9IW8
+" frameborder="0" style="display: block; margin: auto;" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
 We introduce the geometric interpretation of the svd by using a toy example.
 
 # Iris dataset
@@ -133,7 +136,7 @@ irisSvd <- svd(X)
 
 2. We extract
 
-  - the right singular vectors $\matbf{V}$ and
+  - the right singular vectors $\mathbf{V}$ and
   - the projections $\mathbf{Z}$
 
 ```{r}
