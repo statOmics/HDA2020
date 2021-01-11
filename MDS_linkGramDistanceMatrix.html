@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Lieven Clement" />
+
+
+<title>MDS: Link Squared Distance Matrix and Gram Matrix in Practice</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<script src="site_libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #c4a000; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #000000; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #000000; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #000000; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">HDA2020</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fas fa-home"></span>
+     
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fas fa-chalkboard-teacher"></span>
+     
+    Lectures
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="intro.html">1. Introduction</a>
+    </li>
+    <li>
+      <a href="svd.html">2. Singular Value Decomposition</a>
+    </li>
+    <li>
+      <a href="svdGeometricInterpretation.html">2.3. Geometric Interpretation SVD</a>
+    </li>
+    <li>
+      <a href="MDS_linkGramDistanceMatrix.html">2.7. Link MDS and Gram Distance Matrix</a>
+    </li>
+    <li>
+      <a href="prediction.html">3. Prediction with High Dimensional Predictors</a>
+    </li>
+    <li>
+      <a href="sparseSvd.html">4. Sparse Singular Value Decomposition</a>
+    </li>
+    <li>
+      <a href="lda.html">5. Linear Discriminant Analysis</a>
+    </li>
+    <li>
+      <a href="lsi.html">6. Large Scale Inference</a>
+    </li>
+    <li>
+      <a href="hclust.html">Paper 1: Intro Hierarchical Clustering</a>
+    </li>
+    <li>
+      <a href="em.html">Paper 1: EM algorithm</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fas fa-laptop"></span>
+     
+    Practicals
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Lab1-Intro-SVD.html">Lab 1</a>
+    </li>
+    <li>
+      <a href="Lab2-PCA.html">Lab 2</a>
+    </li>
+    <li>
+      <a href="Lab3-Penalized-Regression.html">Lab 3</a>
+    </li>
+    <li>
+      <a href="Lab4-Sparse-PCA-LDA.html">Lab 4</a>
+    </li>
+    <li>
+      <a href="Lab5-Large-Scale-Inference.html">Lab 5</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/statOmics/HDA2020">
+    <span class="fas fa-github"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="http://statomics.github.io/">statOmics</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">MDS: Link Squared Distance Matrix and Gram Matrix in Practice</h1>
+<h4 class="author">Lieven Clement</h4>
+<h4 class="date">statOmics, Ghent University (<a href="https://statomics.github.io" class="uri">https://statomics.github.io</a>)</h4>
+
+</div>
+
+
+<div id="data" class="section level1">
+<h1><span class="header-section-number">1</span> Data</h1>
+<p>Part of the iris dataset</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>X &lt;-<span class="st"> </span>iris[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>] <span class="op">%&gt;%</span><span class="st"> </span>as.matrix</span>
+<span id="cb1-2"><a href="#cb1-2"></a>X</span></code></pre></div>
+<pre><code>##   Sepal.Length Sepal.Width Petal.Length Petal.Width
+## 1          5.1         3.5          1.4         0.2
+## 2          4.9         3.0          1.4         0.2
+## 3          4.7         3.2          1.3         0.2
+## 4          4.6         3.1          1.5         0.2
+## 5          5.0         3.6          1.4         0.2</code></pre>
+</div>
+<div id="centering" class="section level1">
+<h1><span class="header-section-number">2</span> Centering</h1>
+<p><span class="math display">\[
+  \mathbf{H} = \mathbf{I} - \frac{1}{n} \mathbf{1}\mathbf{1}^T ,
+\]</span> <span class="math display">\[
+ \mathbf{X}_c = \mathbf{H}\mathbf{X}
+\]</span> <span class="math display">\[
+\mathbf{H}\mathbf{X}_c = \mathbf{X}_c
+\]</span></p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>H &lt;-<span class="st"> </span><span class="kw">diag</span>(<span class="kw">nrow</span>(X)) <span class="op">-</span><span class="st"> </span><span class="kw">matrix</span>(<span class="dv">1</span><span class="op">/</span><span class="kw">nrow</span>(X),<span class="dt">nrow=</span><span class="kw">nrow</span>(X),<span class="dt">ncol=</span><span class="kw">nrow</span>(X))</span>
+<span id="cb3-2"><a href="#cb3-2"></a>Xc &lt;-<span class="st"> </span>H<span class="op">%*%</span>X</span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="kw">colMeans</span>(Xc)</span></code></pre></div>
+<pre><code>##  Sepal.Length   Sepal.Width  Petal.Length   Petal.Width 
+##  1.776357e-16 -8.881784e-17 -4.440892e-17  0.000000e+00</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>H<span class="op">%*%</span>Xc<span class="op">-</span>Xc</span></code></pre></div>
+<pre><code>##       Sepal.Length  Sepal.Width Petal.Length Petal.Width
+## [1,] -1.665335e-16 8.326673e-17 4.440892e-17           0
+## [2,] -1.804112e-16 1.110223e-16 4.440892e-17           0
+## [3,] -1.665335e-16 8.326673e-17 4.163336e-17           0
+## [4,] -1.665335e-16 8.326673e-17 4.163336e-17           0
+## [5,] -1.665335e-16 1.110223e-16 4.440892e-17           0</code></pre>
+</div>
+<div id="gram-matrix" class="section level1">
+<h1><span class="header-section-number">3</span> Gram matrix</h1>
+<p><strong>Gram matrix</strong>: <span class="math inline">\(\mathbf{G}=\mathbf{X}\mathbf{X}^T\)</span> Here we work on centered data so <span class="math inline">\(\mathbf{G}=\mathbf{X}_c\mathbf{X}_c^T\)</span></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>G &lt;-<span class="st"> </span>Xc<span class="op">%*%</span><span class="kw">t</span>(Xc)</span></code></pre></div>
+</div>
+<div id="squared-distance-matrix" class="section level1">
+<h1><span class="header-section-number">4</span> Squared Distance matrix</h1>
+<p><span class="math display">\[
+  \mathbf{D}_X = \mathbf{N} - 2\mathbf{X}\mathbf{X}^T + \mathbf{N}^T ,
+\]</span></p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>N &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">diag</span>(G),<span class="kw">nrow</span>(Xc),<span class="kw">nrow</span>(Xc))</span>
+<span id="cb8-2"><a href="#cb8-2"></a>N</span></code></pre></div>
+<pre><code>##       [,1]  [,2]  [,3]  [,4]  [,5]
+## [1,] 0.106 0.106 0.106 0.106 0.106
+## [2,] 0.080 0.080 0.080 0.080 0.080
+## [3,] 0.042 0.042 0.042 0.042 0.042
+## [4,] 0.110 0.110 0.110 0.110 0.110
+## [5,] 0.122 0.122 0.122 0.122 0.122</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>dist2 &lt;-<span class="st"> </span>N<span class="dv">-2</span><span class="op">*</span>G<span class="op">+</span><span class="kw">t</span>(N)</span>
+<span id="cb10-2"><a href="#cb10-2"></a>dist2</span></code></pre></div>
+<pre><code>##      [,1] [,2] [,3] [,4] [,5]
+## [1,] 0.00 0.29 0.26 0.42 0.02
+## [2,] 0.29 0.00 0.09 0.11 0.37
+## [3,] 0.26 0.09 0.00 0.06 0.26
+## [4,] 0.42 0.11 0.06 0.00 0.42
+## [5,] 0.02 0.37 0.26 0.42 0.00</code></pre>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="kw">dist</span>(Xc)<span class="op">^</span><span class="dv">2</span></span></code></pre></div>
+<pre><code>##      1    2    3    4
+## 2 0.29               
+## 3 0.26 0.09          
+## 4 0.42 0.11 0.06     
+## 5 0.02 0.37 0.26 0.42</code></pre>
+</div>
+<div id="link-gram-matrix-and-squared-distance-matrix" class="section level1">
+<h1><span class="header-section-number">5</span> Link Gram Matrix and Squared Distance Matrix</h1>
+<p><span class="math display">\[\mathbf{G} =\mathbf{X}_c\mathbf{X}_c^T=-\frac{1}{2}\mathbf{H}\mathbf{D}_X\mathbf{H}\]</span></p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>G</span></code></pre></div>
+<pre><code>##        [,1]   [,2]   [,3]   [,4]   [,5]
+## [1,]  0.106 -0.052 -0.056 -0.102  0.104
+## [2,] -0.052  0.080  0.016  0.040 -0.084
+## [3,] -0.056  0.016  0.042  0.046 -0.048
+## [4,] -0.102  0.040  0.046  0.110 -0.094
+## [5,]  0.104 -0.084 -0.048 -0.094  0.122</code></pre>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a><span class="dv">-1</span><span class="op">/</span><span class="dv">2</span><span class="op">*</span>H<span class="op">%*%</span>dist2<span class="op">%*%</span>H</span></code></pre></div>
+<pre><code>##        [,1]   [,2]   [,3]   [,4]   [,5]
+## [1,]  0.106 -0.052 -0.056 -0.102  0.104
+## [2,] -0.052  0.080  0.016  0.040 -0.084
+## [3,] -0.056  0.016  0.042  0.046 -0.048
+## [4,] -0.102  0.040  0.046  0.110 -0.094
+## [5,]  0.104 -0.084 -0.048 -0.094  0.122</code></pre>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a><span class="dv">-1</span><span class="op">/</span><span class="dv">2</span><span class="op">*</span>H<span class="op">%*%</span>dist2<span class="op">%*%</span>H <span class="op">-</span><span class="st"> </span>G</span></code></pre></div>
+<pre><code>##               [,1]          [,2]          [,3]         [,4]          [,5]
+## [1,] -2.775558e-17 -7.632783e-17 -2.775558e-17 1.387779e-17  0.000000e+00
+## [2,] -7.632783e-17 -5.551115e-17 -1.387779e-17 1.387779e-17 -2.775558e-17
+## [3,] -2.081668e-17 -1.387779e-17  2.775558e-17 6.245005e-17  2.775558e-17
+## [4,]  1.387779e-17  6.938894e-18  5.551115e-17 8.326673e-17  0.000000e+00
+## [5,]  0.000000e+00 -4.163336e-17  2.081668e-17 0.000000e+00  4.163336e-17</code></pre>
+</div>
+<div id="show-that-n-cancels-out-when-multiplying-with-h" class="section level1">
+<h1><span class="header-section-number">6</span> Show that N cancels out when multiplying with H</h1>
+<p><span class="math display">\[ \mathbf{H N H} = \mathbf{0}\]</span></p>
+<p><span class="math display">\[ \mathbf{H N}^T \mathbf{H} = \mathbf{0}\]</span></p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a>N<span class="op">%*%</span>H</span></code></pre></div>
+<pre><code>##               [,1]          [,2] [,3]         [,4] [,5]
+## [1,]  0.000000e+00  0.000000e+00    0 0.000000e+00    0
+## [2,] -6.938894e-18 -6.938894e-18    0 3.469447e-18    0
+## [3,]  0.000000e+00  0.000000e+00    0 0.000000e+00    0
+## [4,] -6.938894e-18 -6.938894e-18    0 6.938894e-18    0
+## [5,] -6.938894e-18 -6.938894e-18    0 3.469447e-18    0</code></pre>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a>H<span class="op">%*%</span><span class="kw">t</span>(N)</span></code></pre></div>
+<pre><code>##      [,1]          [,2] [,3]          [,4]          [,5]
+## [1,]    0 -6.938894e-18    0 -6.938894e-18 -6.938894e-18
+## [2,]    0 -6.938894e-18    0 -6.938894e-18 -6.938894e-18
+## [3,]    0  0.000000e+00    0  0.000000e+00  0.000000e+00
+## [4,]    0  3.469447e-18    0  6.938894e-18  3.469447e-18
+## [5,]    0  0.000000e+00    0  0.000000e+00  0.000000e+00</code></pre>
+</div>
+
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiTURTOiBMaW5rIFNxdWFyZWQgRGlzdGFuY2UgTWF0cml4IGFuZCBHcmFtIE1hdHJpeCBpbiBQcmFjdGljZSIKYXV0aG9yOiAiTGlldmVuIENsZW1lbnQiCmRhdGU6ICJzdGF0T21pY3MsIEdoZW50IFVuaXZlcnNpdHkgKGh0dHBzOi8vc3RhdG9taWNzLmdpdGh1Yi5pbykiCm91dHB1dDoKICAgIGh0bWxfZG9jdW1lbnQ6CiAgICAgIGNvZGVfZG93bmxvYWQ6IHRydWUKICAgICAgdGhlbWU6IGNvc21vCiAgICAgIHRvYzogdHJ1ZQogICAgICB0b2NfZmxvYXQ6IHRydWUKICAgICAgaGlnaGxpZ2h0OiB0YW5nbwogICAgICBudW1iZXJfc2VjdGlvbnM6IHRydWUKLS0tCgpgYGB7ciBlY2hvPUZBTFNFfQpsaWJyYXJ5KHRpZHl2ZXJzZSkKYGBgCgojIERhdGEKClBhcnQgb2YgdGhlIGlyaXMgZGF0YXNldAoKYGBge3J9ClggPC0gaXJpc1sxOjUsMTo0XSAlPiUgYXMubWF0cml4ClgKYGBgCgojIENlbnRlcmluZwoKXFsKICBcbWF0aGJme0h9ID0gXG1hdGhiZntJfSAtIFxmcmFjezF9e259IFxtYXRoYmZ7MX1cbWF0aGJmezF9XlQgLApcXQpcWwogXG1hdGhiZntYfV9jID0gXG1hdGhiZntIfVxtYXRoYmZ7WH0KXF0KXFsKXG1hdGhiZntIfVxtYXRoYmZ7WH1fYyA9IFxtYXRoYmZ7WH1fYwpcXQoKYGBge3J9CkggPC0gZGlhZyhucm93KFgpKSAtIG1hdHJpeCgxL25yb3coWCksbnJvdz1ucm93KFgpLG5jb2w9bnJvdyhYKSkKWGMgPC0gSCUqJVgKY29sTWVhbnMoWGMpCkglKiVYYy1YYwpgYGAKCiMgR3JhbSBtYXRyaXgKCioqR3JhbSBtYXRyaXgqKjogJFxtYXRoYmZ7R309XG1hdGhiZntYfVxtYXRoYmZ7WH1eVCQKSGVyZSB3ZSB3b3JrIG9uIGNlbnRlcmVkIGRhdGEgc28KJFxtYXRoYmZ7R309XG1hdGhiZntYfV9jXG1hdGhiZntYfV9jXlQkCgpgYGB7cn0KRyA8LSBYYyUqJXQoWGMpCmBgYAoKIyBTcXVhcmVkIERpc3RhbmNlIG1hdHJpeAoKXFsKICBcbWF0aGJme0R9X1ggPSBcbWF0aGJme059IC0gMlxtYXRoYmZ7WH1cbWF0aGJme1h9XlQgKyBcbWF0aGJme059XlQgLApcXQoKYGBge3J9Ck4gPC0gbWF0cml4KGRpYWcoRyksbnJvdyhYYyksbnJvdyhYYykpCk4KZGlzdDIgPC0gTi0yKkcrdChOKQpkaXN0MgpkaXN0KFhjKV4yCmBgYAoKIyBMaW5rIEdyYW0gTWF0cml4IGFuZCBTcXVhcmVkIERpc3RhbmNlIE1hdHJpeAoKXFtcbWF0aGJme0d9ID1cbWF0aGJme1h9X2NcbWF0aGJme1h9X2NeVD0tXGZyYWN7MX17Mn1cbWF0aGJme0h9XG1hdGhiZntEfV9YXG1hdGhiZntIfVxdCgpgYGB7cn0KRwotMS8yKkglKiVkaXN0MiUqJUgKLTEvMipIJSolZGlzdDIlKiVIIC0gRwpgYGAKCiMgU2hvdyB0aGF0IE4gY2FuY2VscyBvdXQgd2hlbiBtdWx0aXBseWluZyB3aXRoIEgKClxbIFxtYXRoYmZ7SCBOIEh9ID0gXG1hdGhiZnswfVxdCgpcWyBcbWF0aGJme0ggTn1eVCBcbWF0aGJme0h9ID0gXG1hdGhiZnswfVxdCgpgYGB7cn0KTiUqJUgKSCUqJXQoTikKYGBgCg==</div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("MDS_linkGramDistanceMatrix.Rmd");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
