@@ -43,7 +43,7 @@ navbar:
       - text: "Lab 5"
         href: Lab5-Large-Scale-Inference.html
   right:
-    - icon: fa-github
+    - icon: fab fa-github
       href: https://github.com/statOmics/HDA2020
     - text: "statOmics"
       href: http://statomics.github.io/
