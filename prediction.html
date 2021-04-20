@@ -20,6 +20,15 @@
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
 <script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
@@ -42,7 +51,14 @@
     </style>
 
 
-<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
 <style type="text/css" data-origin="pandoc">
 code.sourceCode > span { display: inline-block; line-height: 1.25; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -129,38 +145,9 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
   }
 })();
 </script>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
 
 
 <style type="text/css">
-h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
 #rmd-source-code {
   display: none;
 }
@@ -175,10 +162,6 @@ h6 {
   max-width: 940px;
   margin-left: auto;
   margin-right: auto;
-}
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
 }
 img {
   max-width:100%;
@@ -195,40 +178,13 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+pre code {
+  padding: 0;
+}
 </style>
 
 
 <style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 51px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h2 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h3 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h4 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h5 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h6 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
 .dropdown-submenu {
   position: relative;
 }
@@ -256,7 +212,7 @@ body {
   margin-right: -10px;
 }
 .dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
+  border-left-color: #adb5bd;
 }
 .dropdown-submenu.pull-left {
   float: none;
@@ -268,7 +224,7 @@ body {
 }
 </style>
 
-<script>
+<script type="text/javascript">
 // manage active state of menu based on current page
 $(document).ready(function () {
   // active menu anchor
@@ -279,10 +235,23 @@ $(document).ready(function () {
   var menuAnchor = $('a[href="' + href + '"]');
 
   // mark it active
-  menuAnchor.parent().addClass('active');
+  menuAnchor.tab('show');
 
   // if it's got a parent navbar menu mark it active as well
   menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
 });
 </script>
 
@@ -294,7 +263,6 @@ $(document).ready(function () {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
@@ -423,13 +391,13 @@ div.tocify {
 
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row-fluid">
-<div class="col-xs-12 col-sm-4 col-md-3">
+<div class="row">
+<div class="col-sm-12 col-md-4 col-lg-3">
 <div id="TOC" class="tocify">
 </div>
 </div>
 
-<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+<div class="toc-content col-sm-12 col-md-8 col-lg-9">
 
 
 
@@ -523,7 +491,7 @@ div.tocify {
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/statOmics/HDA2020">
-    <span class="fas fa-github"></span>
+    <span class="fab fa-github"></span>
      
   </a>
 </li>
@@ -535,11 +503,11 @@ div.tocify {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div class="fluid-row" id="header">
+<div id="header">
 
-<div class="btn-group pull-right">
-<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
-<ul class="dropdown-menu" style="min-width: 50px;">
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
 <li><a id="rmd-download-source" href="#">Download Rmd</a></li>
 </ul>
 </div>
@@ -1641,7 +1609,7 @@ n \times C_p = \Vert \mathbf{Y} - \mathbf{X}\boldsymbol{\beta}\Vert_2^2 + 2\sigm
 <pre><code>## The following object is masked from &#39;package:dplyr&#39;:
 ## 
 ##     collapse</code></pre>
-<pre><code>## This is mgcv 1.8-33. For overview type &#39;help(&quot;mgcv-package&quot;)&#39;.</code></pre>
+<pre><code>## This is mgcv 1.8-35. For overview type &#39;help(&quot;mgcv-package&quot;)&#39;.</code></pre>
 <pre><code>## 
 ## Attaching package: &#39;mgcv&#39;</code></pre>
 <pre><code>## The following object is masked from &#39;package:mclust&#39;:
@@ -1948,9 +1916,9 @@ n \times C_p = \Vert \mathbf{Y} - \mathbf{X}\boldsymbol{\beta}\Vert_2^2 + 2\sigm
 ## 
 ## Measure: Misclassification Error 
 ## 
-##     Lambda Measure      SE Nonzero
-## min 0.1044  0.1437 0.03366      18
-## 1se 0.1911  0.1688 0.03492       0</code></pre>
+##     Lambda Index Measure      SE Nonzero
+## min 0.1044    14  0.1437 0.03366      18
+## 1se 0.1911     1  0.1688 0.03492       0</code></pre>
 <p>The total misclassification error is used here to select a good value for <span class="math inline">\(\lambda\)</span>.</p>
 <div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1"></a><span class="co"># BiocManager::install(&quot;plotROC&quot;)</span></span>
 <span id="cb81-2"><a href="#cb81-2"></a><span class="kw">library</span>(plotROC)</span>
@@ -2106,9 +2074,9 @@ n \times C_p = \Vert \mathbf{Y} - \mathbf{X}\boldsymbol{\beta}\Vert_2^2 + 2\sigm
 ## 
 ## Measure: Misclassification Error 
 ## 
-##      Lambda Measure      SE Nonzero
-## min 0.01859  0.1313 0.02708     148
-## 1se 0.21876  0.1562 0.03391      26</code></pre>
+##      Lambda Index Measure      SE Nonzero
+## min 0.01859    66  0.1313 0.02708     148
+## 1se 0.21876    13  0.1562 0.03391      26</code></pre>
 <div class="sourceCode" id="cb91"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1"></a>dfElast &lt;-<span class="st"> </span><span class="kw">data.frame</span>(</span>
 <span id="cb91-2"><a href="#cb91-2"></a>  <span class="dt">pi =</span> <span class="kw">predict</span>(mElastic,</span>
 <span id="cb91-3"><a href="#cb91-3"></a>    <span class="dt">newx =</span> XTest,</span>
@@ -2161,10 +2129,10 @@ n \times C_p = \Vert \mathbf{Y} - \mathbf{X}\boldsymbol{\beta}\Vert_2^2 + 2\sigm
 <h1>Session info</h1>
 <details>
 <p><summary>Session info</summary></p>
-<pre><code>## [1] &quot;2021-01-11 08:45:11 UTC&quot;</code></pre>
+<pre><code>## [1] &quot;2021-04-20 13:16:54 UTC&quot;</code></pre>
 <pre><code>## ─ Session info ───────────────────────────────────────────────────────────────
 ##  setting  value                       
-##  version  R version 4.0.3 (2020-10-10)
+##  version  R version 4.0.5 (2021-03-31)
 ##  os       macOS Catalina 10.15.7      
 ##  system   x86_64, darwin17.0          
 ##  ui       X11                         
@@ -2172,92 +2140,94 @@ n \times C_p = \Vert \mathbf{Y} - \mathbf{X}\boldsymbol{\beta}\Vert_2^2 + 2\sigm
 ##  collate  en_US.UTF-8                 
 ##  ctype    en_US.UTF-8                 
 ##  tz       UTC                         
-##  date     2021-01-11                  
+##  date     2021-04-20                  
 ## 
 ## ─ Packages ───────────────────────────────────────────────────────────────────
 ##  package                * version    date       lib
 ##  AIMS                   * 1.22.0     2020-10-27 [1]
 ##  amap                     0.8-18     2019-12-12 [1]
 ##  AnnotationDbi            1.52.0     2020-10-27 [1]
-##  AnnotationHub          * 2.22.0     2020-10-27 [1]
+##  AnnotationHub          * 2.22.1     2021-04-16 [1]
 ##  askpass                  1.1        2019-01-13 [1]
 ##  assertthat               0.2.1      2019-03-21 [1]
 ##  backports                1.2.1      2020-12-09 [1]
 ##  beachmat                 2.6.4      2020-12-20 [1]
-##  beeswarm                 0.2.3      2016-04-25 [1]
+##  beeswarm                 0.3.1      2021-03-07 [1]
 ##  Biobase                * 2.50.0     2020-10-27 [1]
 ##  BiocFileCache          * 1.14.0     2020-10-27 [1]
-##  BiocGenerics           * 0.36.0     2020-10-27 [1]
-##  BiocManager              1.30.10    2019-11-16 [1]
+##  BiocGenerics           * 0.36.1     2021-04-16 [1]
+##  BiocManager              1.30.12    2021-03-28 [1]
 ##  BiocNeighbors            1.8.2      2020-12-07 [1]
 ##  BiocParallel             1.24.1     2020-11-06 [1]
 ##  BiocSingular             1.6.0      2020-10-27 [1]
 ##  BiocVersion              3.12.0     2020-05-14 [1]
-##  biomaRt                * 2.46.0     2020-10-27 [1]
+##  biomaRt                * 2.46.3     2021-02-11 [1]
 ##  bit                      4.0.4      2020-08-04 [1]
 ##  bit64                    4.0.5      2020-08-30 [1]
 ##  bitops                   1.0-6      2013-08-17 [1]
 ##  blob                     1.2.1      2020-01-20 [1]
-##  boot                   * 1.3-25     2020-04-26 [1]
+##  boot                   * 1.3-27     2021-02-12 [1]
 ##  bootstrap                2019.6     2019-06-17 [1]
 ##  breastCancerMAINZ      * 1.28.0     2020-10-29 [1]
-##  broom                    0.7.3      2020-12-16 [1]
-##  callr                    3.5.1      2020-10-13 [1]
-##  CCA                    * 1.2        2012-10-29 [1]
+##  broom                    0.7.6      2021-04-05 [1]
+##  bslib                    0.2.4      2021-01-25 [1]
+##  cachem                   1.0.4      2021-02-13 [1]
+##  callr                    3.6.0      2021-03-28 [1]
+##  CCA                    * 1.2.1      2021-03-01 [1]
 ##  cellranger               1.1.0      2016-07-27 [1]
-##  class                    7.3-17     2020-04-26 [2]
-##  cli                      2.2.0      2020-11-20 [1]
-##  cluster                * 2.1.0      2019-06-19 [1]
-##  codetools                0.2-16     2018-12-24 [2]
+##  class                    7.3-18     2021-01-24 [2]
+##  cli                      2.4.0      2021-04-05 [1]
+##  cluster                * 2.1.2      2021-04-17 [1]
+##  codetools                0.2-18     2020-11-04 [2]
 ##  colorspace               2.0-0      2020-11-11 [1]
-##  crayon                   1.3.4      2017-09-16 [1]
+##  crayon                   1.4.1      2021-02-08 [1]
 ##  curl                     4.3        2019-12-02 [1]
 ##  DAAG                   * 1.24       2020-03-10 [1]
-##  DBI                      1.1.0      2019-12-15 [1]
-##  dbplyr                 * 2.0.0      2020-11-03 [1]
-##  DelayedArray             0.16.0     2020-10-27 [1]
-##  DelayedMatrixStats       1.12.1     2020-11-24 [1]
-##  desc                     1.2.0      2018-05-01 [1]
-##  devtools                 2.3.2      2020-09-18 [1]
+##  DBI                      1.1.1      2021-01-15 [1]
+##  dbplyr                 * 2.1.1      2021-04-06 [1]
+##  DelayedArray             0.16.3     2021-03-24 [1]
+##  DelayedMatrixStats       1.12.3     2021-02-03 [1]
+##  desc                     1.3.0      2021-03-05 [1]
+##  devtools                 2.4.0      2021-04-07 [1]
 ##  digest                   0.6.27     2020-10-24 [1]
-##  dotCall64              * 1.0-0      2018-07-30 [1]
-##  dplyr                  * 1.0.2      2020-08-18 [1]
-##  e1071                  * 1.7-4      2020-10-14 [1]
+##  dotCall64              * 1.0-1      2021-02-11 [1]
+##  dplyr                  * 1.0.5      2021-03-05 [1]
+##  e1071                  * 1.7-6      2021-03-18 [1]
 ##  elasticnet               1.3        2020-05-15 [1]
 ##  ellipsis                 0.3.1      2020-05-15 [1]
 ##  evaluate                 0.14       2019-05-28 [1]
-##  ExperimentHub          * 1.16.0     2020-10-27 [1]
-##  fansi                    0.4.1      2020-01-08 [1]
-##  farver                   2.0.3      2020-01-16 [1]
-##  fastmap                  1.0.1      2019-10-08 [1]
+##  ExperimentHub          * 1.16.1     2021-04-16 [1]
+##  fansi                    0.4.2      2021-01-15 [1]
+##  farver                   2.1.0      2021-02-28 [1]
+##  fastmap                  1.1.0      2021-01-25 [1]
 ##  fda                    * 5.1.9      2020-12-16 [1]
 ##  fds                    * 1.8        2018-10-31 [1]
 ##  fields                 * 11.6       2020-10-09 [1]
-##  forcats                * 0.5.0      2020-03-01 [1]
+##  forcats                * 0.5.1      2021-01-27 [1]
 ##  foreach                  1.5.1      2020-10-15 [1]
 ##  fs                       1.5.0      2020-07-31 [1]
-##  genefu                 * 2.22.0     2020-10-27 [1]
+##  genefu                 * 2.22.1     2021-01-26 [1]
 ##  generics                 0.1.0      2020-10-31 [1]
-##  GenomeInfoDb           * 1.26.2     2020-12-08 [1]
-##  GenomeInfoDbData         1.2.4      2021-01-11 [1]
+##  GenomeInfoDb           * 1.26.7     2021-04-08 [1]
+##  GenomeInfoDbData         1.2.4      2021-04-20 [1]
 ##  GenomicRanges          * 1.42.0     2020-10-27 [1]
 ##  gganimate              * 1.0.7      2020-10-15 [1]
 ##  ggbeeswarm               0.6.0      2017-08-07 [1]
-##  ggbiplot               * 0.55       2021-01-11 [1]
-##  ggforce                * 0.3.2      2020-06-23 [1]
+##  ggbiplot               * 0.55       2021-04-20 [1]
+##  ggforce                * 0.3.3      2021-03-05 [1]
 ##  ggplot2                * 3.3.3      2020-12-30 [1]
 ##  GIGrvg                   0.5        2017-06-10 [1]
 ##  git2r                    0.28.0     2021-01-10 [1]
-##  glmnet                 * 4.0-2      2020-06-16 [1]
+##  glmnet                 * 4.1-1      2021-02-21 [1]
 ##  glue                     1.4.2      2020-08-27 [1]
 ##  gridExtra              * 2.3        2017-09-09 [1]
 ##  gtable                   0.3.0      2019-03-25 [1]
-##  haven                    2.3.1      2020-06-01 [1]
-##  hdrcde                   3.3        2018-12-21 [1]
-##  highr                    0.8        2019-03-20 [1]
-##  hms                      0.5.3      2020-01-08 [1]
-##  htmltools                0.5.0      2020-06-16 [1]
-##  httpuv                   1.5.4      2020-06-06 [1]
+##  haven                    2.4.0      2021-04-14 [1]
+##  hdrcde                   3.4        2021-01-18 [1]
+##  highr                    0.9        2021-04-16 [1]
+##  hms                      1.0.0      2021-01-13 [1]
+##  htmltools                0.5.1.1    2021-01-22 [1]
+##  httpuv                   1.5.5      2021-01-13 [1]
 ##  httr                     1.4.2      2020-07-20 [1]
 ##  HyperbolicDist           0.6-2      2009-09-23 [1]
 ##  iC10                   * 1.5        2019-02-08 [1]
@@ -2268,115 +2238,119 @@ n \times C_p = \Vert \mathbf{Y} - \mathbf{X}\boldsymbol{\beta}\Vert_2^2 + 2\sigm
 ##  irlba                    2.3.3      2019-02-05 [1]
 ##  iterators                1.0.13     2020-10-15 [1]
 ##  jpeg                     0.1-8.1    2019-10-24 [1]
+##  jquerylib                0.1.3      2020-12-17 [1]
 ##  jsonlite                 1.7.2      2020-12-09 [1]
-##  KernSmooth               2.23-17    2020-04-26 [2]
-##  knitr                    1.30       2020-09-22 [1]
-##  ks                       1.11.7     2020-02-11 [1]
+##  KernSmooth               2.23-18    2020-10-29 [2]
+##  knitr                    1.32       2021-04-14 [1]
+##  ks                       1.12.0     2021-02-07 [1]
 ##  labeling                 0.4.2      2020-10-20 [1]
 ##  lars                     1.2        2013-04-24 [1]
 ##  later                    1.1.0.1    2020-06-05 [1]
-##  latex2exp              * 0.4.0      2015-11-30 [1]
+##  latex2exp              * 0.5.0      2021-03-18 [1]
 ##  lattice                * 0.20-41    2020-04-02 [2]
 ##  latticeExtra             0.6-29     2019-12-19 [1]
-##  lava                     1.6.8.1    2020-11-04 [1]
-##  lifecycle                0.2.0      2020-03-06 [1]
+##  lava                     1.6.9      2021-03-11 [1]
+##  lifecycle                1.0.0      2021-02-15 [1]
 ##  limma                  * 3.46.0     2020-10-27 [1]
 ##  locfdr                 * 1.1-8      2015-07-15 [1]
-##  lubridate                1.7.9.2    2020-11-13 [1]
-##  magick                   2.5.2      2020-11-10 [1]
+##  lubridate                1.7.10     2021-02-26 [1]
+##  magick                   2.7.1      2021-03-20 [1]
 ##  magrittr                 2.0.1      2020-11-17 [1]
 ##  maps                     3.3.0      2018-04-03 [1]
-##  MASS                   * 7.3-53     2020-09-09 [2]
-##  Matrix                 * 1.2-18     2019-11-27 [2]
-##  MatrixGenerics         * 1.2.0      2020-10-27 [1]
-##  matrixStats            * 0.57.0     2020-09-25 [1]
+##  MASS                   * 7.3-53.1   2021-02-12 [2]
+##  Matrix                 * 1.3-2      2021-01-06 [2]
+##  MatrixGenerics         * 1.2.1      2021-01-30 [1]
+##  matrixStats            * 0.58.0     2021-01-29 [1]
 ##  mclust                 * 5.4.7      2020-11-20 [1]
 ##  mda                      0.5-2      2020-06-29 [1]
-##  memoise                  1.1.0      2017-04-21 [1]
-##  mgcv                   * 1.8-33     2020-08-27 [1]
-##  mime                     0.9        2020-02-04 [1]
+##  memoise                  2.0.0      2021-01-26 [1]
+##  mgcv                   * 1.8-35     2021-04-18 [1]
+##  mime                     0.10       2021-02-13 [1]
 ##  misc3d                   0.9-0      2020-09-06 [1]
 ##  modelr                   0.1.8      2020-05-19 [1]
 ##  munsell                  0.5.0      2018-06-12 [1]
 ##  muscData               * 1.4.0      2020-10-29 [1]
 ##  mvtnorm                  1.1-1      2020-06-09 [1]
-##  nlme                   * 3.1-149    2020-08-23 [2]
+##  nlme                   * 3.1-152    2021-02-04 [2]
 ##  NormalBetaPrime        * 2.2        2019-01-19 [1]
 ##  openssl                  1.4.3      2020-09-18 [1]
 ##  pamr                   * 1.56.1     2019-04-22 [1]
 ##  pcaPP                  * 1.9-73     2018-01-14 [1]
-##  pillar                   1.4.7      2020-11-20 [1]
+##  pillar                   1.6.0      2021-04-13 [1]
 ##  pkgbuild                 1.2.0      2020-12-15 [1]
 ##  pkgconfig                2.0.3      2019-09-22 [1]
-##  pkgload                  1.1.0      2020-05-29 [1]
+##  pkgload                  1.2.1      2021-04-06 [1]
 ##  plot3D                 * 1.3        2019-12-18 [1]
 ##  plotROC                * 2.2.1      2018-06-23 [1]
 ##  pls                    * 2.7-3      2020-08-07 [1]
 ##  plyr                   * 1.8.6      2020-03-03 [1]
 ##  png                      0.1-7      2013-12-03 [1]
 ##  polyclip                 1.10-0     2019-03-14 [1]
-##  pracma                   2.2.9      2019-12-15 [1]
+##  pracma                   2.3.3      2021-01-23 [1]
 ##  prettyunits              1.1.1      2020-01-24 [1]
-##  processx                 3.4.5      2020-11-30 [1]
+##  processx                 3.5.1      2021-04-04 [1]
 ##  prodlim                * 2019.11.13 2019-11-17 [1]
 ##  progress                 1.2.2      2019-05-16 [1]
-##  promises                 1.1.1      2020-06-09 [1]
-##  ps                       1.5.0      2020-12-05 [1]
+##  promises                 1.2.0.1    2021-02-11 [1]
+##  proxy                    0.4-25     2021-03-05 [1]
+##  ps                       1.6.0      2021-02-28 [1]
 ##  pscl                     1.5.5      2020-03-07 [1]
 ##  purrr                  * 0.3.4      2020-04-17 [1]
 ##  R6                       2.5.0      2020-10-28 [1]
 ##  rainbow                * 3.6        2019-01-29 [1]
-##  rappdirs                 0.3.1      2016-03-28 [1]
+##  rappdirs                 0.3.3      2021-01-31 [1]
 ##  RColorBrewer             1.1-2      2014-12-07 [1]
-##  Rcpp                     1.0.5      2020-07-06 [1]
-##  RCurl                  * 1.98-1.2   2020-04-18 [1]
+##  Rcpp                     1.0.6      2021-01-15 [1]
+##  RCurl                  * 1.98-1.3   2021-03-16 [1]
 ##  readr                  * 1.4.0      2020-10-05 [1]
 ##  readxl                   1.3.1      2019-03-13 [1]
-##  remotes                  2.2.0      2020-07-21 [1]
-##  reprex                   0.3.0      2019-05-16 [1]
+##  remotes                  2.3.0      2021-04-01 [1]
+##  reprex                   2.0.0      2021-04-02 [1]
 ##  rlang                    0.4.10     2020-12-30 [1]
-##  rmarkdown                2.6        2020-12-14 [1]
+##  rmarkdown                2.7        2021-02-19 [1]
 ##  rmeta                    3.0        2018-03-20 [1]
 ##  rprojroot                2.0.2      2020-11-15 [1]
-##  RSQLite                  2.2.2      2021-01-08 [1]
+##  RSQLite                  2.2.6      2021-04-11 [1]
 ##  rstudioapi               0.13       2020-11-12 [1]
-##  rsvd                     1.0.3      2020-02-17 [1]
-##  rvest                    0.3.6      2020-07-25 [1]
+##  rsvd                     1.0.5      2021-04-16 [1]
+##  rvest                    1.0.0      2021-03-09 [1]
 ##  S4Vectors              * 0.28.1     2020-12-09 [1]
+##  sass                     0.3.1      2021-01-24 [1]
 ##  scales                 * 1.1.1      2020-05-11 [1]
-##  scater                 * 1.18.3     2020-11-08 [1]
+##  scater                 * 1.18.6     2021-02-26 [1]
 ##  scuttle                  1.0.4      2020-12-17 [1]
 ##  SemiPar                * 1.0-4.2    2018-04-16 [1]
 ##  sessioninfo              1.1.1      2018-11-05 [1]
 ##  shape                    1.4.5      2020-09-13 [1]
-##  shiny                    1.5.0      2020-06-23 [1]
+##  shiny                    1.6.0      2021-01-25 [1]
 ##  SingleCellExperiment   * 1.12.0     2020-10-27 [1]
 ##  spam                   * 2.6-0      2020-12-14 [1]
 ##  sparseLDA              * 0.1-9      2016-09-22 [1]
-##  sparseMatrixStats        1.2.0      2020-10-27 [1]
+##  sparseMatrixStats        1.2.1      2021-02-02 [1]
 ##  stringi                  1.5.3      2020-09-09 [1]
 ##  stringr                * 1.4.0      2019-02-10 [1]
 ##  SummarizedExperiment   * 1.20.0     2020-10-27 [1]
 ##  SuppDists                1.1-9.5    2020-01-18 [1]
 ##  survcomp               * 1.40.0     2020-10-27 [1]
-##  survival               * 3.2-7      2020-09-28 [2]
+##  survival               * 3.2-10     2021-03-16 [2]
 ##  survivalROC              1.0.3      2013-01-13 [1]
-##  testthat                 3.0.1      2020-12-17 [1]
-##  tibble                 * 3.0.4      2020-10-12 [1]
-##  tidyr                  * 1.1.2      2020-08-27 [1]
+##  testthat                 3.0.2      2021-02-14 [1]
+##  tibble                 * 3.1.1      2021-04-18 [1]
+##  tidyr                  * 1.1.3      2021-03-03 [1]
 ##  tidyselect               1.1.0      2020-05-11 [1]
-##  tidyverse              * 1.3.0      2019-11-21 [1]
-##  tinytex                  0.28       2020-12-14 [1]
+##  tidyverse              * 1.3.1      2021-04-15 [1]
+##  tinytex                  0.31       2021-03-30 [1]
 ##  truncnorm                1.0-8      2018-02-27 [1]
-##  tweenr                   1.0.1      2018-12-14 [1]
-##  usethis                  2.0.0      2020-12-10 [1]
-##  vctrs                    0.3.6      2020-12-17 [1]
+##  tweenr                   1.0.2      2021-03-23 [1]
+##  usethis                  2.0.1      2021-02-10 [1]
+##  utf8                     1.2.1      2021-03-12 [1]
+##  vctrs                    0.3.7      2021-03-29 [1]
 ##  vipor                    0.4.5      2017-03-22 [1]
-##  viridis                  0.5.1      2018-03-29 [1]
-##  viridisLite              0.3.0      2018-02-01 [1]
-##  withr                    2.3.0      2020-09-22 [1]
-##  xfun                     0.20       2021-01-06 [1]
-##  XML                      3.99-0.5   2020-07-23 [1]
+##  viridis                  0.6.0      2021-04-15 [1]
+##  viridisLite              0.4.0      2021-04-13 [1]
+##  withr                    2.4.2      2021-04-18 [1]
+##  xfun                     0.22       2021-03-11 [1]
+##  XML                      3.99-0.6   2021-03-16 [1]
 ##  xml2                     1.3.2      2020-04-23 [1]
 ##  xtable                   1.8-4      2019-04-21 [1]
 ##  XVector                  0.30.0     2020-10-28 [1]
@@ -2412,10 +2386,12 @@ n \times C_p = \Vert \mathbf{Y} - \mathbf{X}\boldsymbol{\beta}\Vert_2^2 + 2\sigm
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.3)               
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.3)               
+##  CRAN (R 4.0.5)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.5)               
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.1)               
@@ -2454,7 +2430,7 @@ n \times C_p = \Vert \mathbf{Y} - \mathbf{X}\boldsymbol{\beta}\Vert_2^2 + 2\sigm
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.3)               
+##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
@@ -2476,83 +2452,77 @@ n \times C_p = \Vert \mathbf{Y} - \mathbf{X}\boldsymbol{\beta}\Vert_2^2 + 2\sigm
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.3)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.5)               
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.3)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  Bioconductor                 
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.3)               
-##  CRAN (R 4.0.3)               
-##  Bioconductor                 
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.5)               
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
 ##  Bioconductor                 
 ##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.3)               
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.5)               
+##  CRAN (R 4.0.5)               
+##  Bioconductor                 
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.5)               
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
 ##  Bioconductor                 
 ##  CRAN (R 4.0.2)               
-##  Bioconductor                 
-##  Bioconductor                 
+##  CRAN (R 4.0.5)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
@@ -2561,12 +2531,24 @@ n \times C_p = \Vert \mathbf{Y} - \mathbf{X}\boldsymbol{\beta}\Vert_2^2 + 2\sigm
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
 ##  Bioconductor                 
+##  Bioconductor                 
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  Bioconductor                 
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  Bioconductor                 
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
 ##  Bioconductor                 
 ##  CRAN (R 4.0.2)               
 ##  Bioconductor                 
-##  CRAN (R 4.0.3)               
+##  CRAN (R 4.0.5)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.5)               
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
@@ -2579,9 +2561,7 @@ n \times C_p = \Vert \mathbf{Y} - \mathbf{X}\boldsymbol{\beta}\Vert_2^2 + 2\sigm
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.2)               
-##  CRAN (R 4.0.1)               
-##  CRAN (R 4.0.2)               
+##  CRAN (R 4.0.5)               
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
 ##  CRAN (R 4.0.2)               
@@ -2625,7 +2605,7 @@ $(document).ready(function () {
 
 $(document).ready(function () {
   $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
+    $(this).parent().toggleClass('nav-tabs-open');
   });
 });
 </script>
