@@ -684,7 +684,7 @@ sum(fdr < 0.05)
 
 # Further reading {-}
 
-- Chapter 6 of the [Biomedical Data Science](./http://genomicsclass.github.io/book/) book
+- Chapter 6 of the [Biomedical Data Science](http://genomicsclass.github.io/book/) book
 
 
 
